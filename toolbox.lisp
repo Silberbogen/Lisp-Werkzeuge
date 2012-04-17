@@ -118,6 +118,26 @@ Es wird jegliches Item aus einer bestehenden Liste entfernt.
 Beispiel: (entferne 1000 '(1 2 50 1000 70000 1000)) => (1 2 50 70000)"
   `(remove ,item ,@liste))
 
+(defmacro entferne-wenn (objekt liste &rest schlüssel)
+  "(entferne-wenn test reihenfolge &key :from-end :start :end :count :key)
+ENTFERNE-WENN ist die deutsche Fassung von REMOVE-IF.
+ENTFERNE-WENN liefert eine Reihenfolge zurück, die weitestgehend der übergebenen Reihenfolge entspricht, jedoch wurden jene zwischen :start und :end herausgenommen, die dem test entsprachen. Das :count Argument, wenn angegeben, sorgt dafür das nicht mehr Argumente als gewünscht entfernt werden. Ausschließlich wenn das :count Argument angegeben wurde. In diesem Fall arbeitet die Funktion vom Ende aus rückwerts die Liste ab.
+ENTFERNE-WENN ist nicht destruktiv, die Ursprungsliste wird nicht verändert.
+ENTFERNE-WENN ist ein Abkömmling von ENTFERNE und hat ENTFERNE-WENN-NICHT als Bruderfunktion an seiner Seite.
+Beispiele: (entferne-wenn #'oddp '(1 2 4 1 3 4 5)) => (2 4 4)
+ (entferne-wenn #'evenp '(1 2 4 1 3 4 5) :count 1 :from-end t) => (1 2 4 1 3 5)"
+  `(remove-if ,objekt ,liste ,@schlüssel))
+
+(defmacro entferne-wenn-nicht (objekt liste &rest schlüssel)
+  "(entferne-wenn-nicht test reihenfolge &key :from-end :start :end :count :key)
+ENTFERNE-WENN-NICHT ist die deutsche Fassung von REMOVE-IF-NOT.
+ENTFERNE-WENN-NICHT liefert eine Reihenfolge zurück, die weitestgehend der übergebenen Reihenfolge entspricht, jedoch wurden jene zwischen :start und :end herausgenommen, die dem test nicht entsprachen. Das :count Argument, wenn angegeben, sorgt dafür das nicht mehr Argumente als gewünscht entfernt werden. Ausschließlich wenn das :count Argument angegeben wurde. In diesem Fall arbeitet die Funktion vom Ende aus rückwerts die Liste ab.
+ENTFERNE-WENN-NICHT ist nicht destruktiv, die Ursprungsliste wird nicht verändert.
+ENTFERNE-WENN-NICHT ist ein Abkömmling von ENTFERNE und hat ENTFERNE-WENN als Bruderfunktion an seiner Seite.
+Beispiel: (entferne-wenn-nicht #'evenp '(1 2 3 4 5 6 7 8 9) :count 2 :from-end t)
+=>  (1 2 3 4 5 6 8)"
+  `(remove-if-not ,objekt ,liste ,@schlüssel))
+
 (defmacro entferne-duplikate (sequenz &rest schlüssel)
   "(entferne-duplikate reihenfolge &key :from-end :test :start :end :key)
 ENTFERNE-DUPLIKATE ist die deutsche Fassung von REMOVE-DUPLICATES.
@@ -614,14 +634,6 @@ Beispiel: (letztes-weg '(a b c d)) => (A B C)"
       (when (rest liste)
 	  (cons (first liste) (entferne-letztes (rest liste))))))
 
-(defun entfernen-wenn (funktion liste)
-  "(entfernen-wenn funktion liste)"
-  (if (null liste)			 ; leer?
-      nil				 ; ja, ansonsten:
-      (if (funcall funktion (first liste)) ; Übereinstimmung beim nächsten first?
-	  (entfernen-wenn funktion (rest liste)) ; ja, daher Neuaufruf mit dem Rest der Liste
-	  (cons (first liste) (entfernen-wenn funktion (rest liste)))))) ;; das first erhalten - und mit dem Rest der liste fortfahren
-
 (defun ersetze (ausdruck1 ausdruck2 liste)
   "Ersetze Ausdruck1 durch Ausdruck2 in der Liste; Beispiel: (ersetze 'hallo 'holla '(Hallo Welt!)) => (HOLLA WELT!)"
    (cond ((endp liste) nil)
@@ -754,6 +766,15 @@ SICHERES-LESEN-AUS-STRING ermöglicht die Nutzung der Funktion read-from-string,
 ENTHÄLT-ARTIKEL-P prüft eine übergebene Liste, ob sie einen Artikel aus der Menge der bekannten Artikel enhält.
 Beispiel: (enthält-artikel-p '(der mann)) => (DER)"
   (schnittmenge '(der des dem den die das ein eine einer eines einem einen) liste))
+
+(defun mein-entferne-wenn (funktion liste)
+  "(mein-entferne-wenn funktion liste)
+MEIN-ENTFERNE-WENN entfernt ein Element, wenn die angewandte Funktion auf dieses Element den Wert T zurückliefert.
+Beispiel: (mein-entferne-wenn #'oddp '(1 2 3 4 5 6)) => (2 4 6)"
+  (unless (null liste)
+    (if (funcall funktion (first liste)) ; Übereinstimmung beim nächsten first?
+	(mein-entferne-wenn funktion (rest liste)) ; ja, daher Neuaufruf mit dem Rest der Liste
+	(cons (first liste) (mein-entferne-wenn funktion (rest liste)))))) ;; das first erhalten - und mit dem Rest der liste fortfahren
 
 (defun mein-subst (neu alt baum)
   (if (eql alt baum)
