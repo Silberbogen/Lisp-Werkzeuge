@@ -1,1 +1,3 @@
-Zur Zeit enthält diese Sammlung nur die Datei toolbox.lisp, die eine teilweise Übersetzung der Dokumentationszeichenketten von Common Lisp, respektive deutschsprachige Alternativfunktionen der meist gebräuchlichen Funktionen anbietet.
+Hier enthalten sind:
+ssp.lisp - eine Version des Spiels Schere-Stein-Papier, samt der neuen Variante Schere-Stein-Papier-Echse-Spock
+toolbox.lisp - eine Werkzeugbox mit deutschen Dokumentationszeichenketten und deutschen Fassungen der gängigsten Funktionen für Lisp-Einsteiger.
