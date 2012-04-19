@@ -407,6 +407,36 @@ T"
       ((n N nein Nein NEIN) nil)
       (otherwise (j-oder-n-p zeichenkette)))))
 
+(defmacro liste? (objekt)
+  "(liste? objekt)
+LISTE? ist ein Ersatz für das Prädikat LISTP.
+LIST? prüft ob ein Objekt eine Liste ist, wenn ja, so wird T zurückgegeben, ansonsten NIL.
+Beispiel: (liste? nil) => T"
+  `(listp ,objekt))
+
+(defmacro nichtleereliste? (objekt)
+  "(nichtleereliste? objekt)
+NICHTLEERELISTE? ist ein Ersatz für das Prädikat CONSP.
+NICHTLEERELISTE? prüft ob ein Objekt eine nicht leere Liste ist, wenn ja, so wird T zurückgegeben, ansonsten NIL.
+Beispiel: (nichtleereliste? '(a b))"
+  `(consp ,objekt))
+
+(defmacro nil! (ausdruck)
+  "(nil! ausdruck)
+NIL! setzt eine Variable oder einen Ausdruck auf NIL.
+Beispiel: (defparameter *test* '(1 2 3 4)) => *TEST*
+ (nil! (first *test*)) => NIL
+ *test* => (NIL 2 3 4)"
+  `(setf ,ausdruck nil))
+
+(defmacro nil? (objekt)
+  "(nil? test)
+NIL ist ein Ersatz für das Prädikat NULL.
+NIL? prüft ob ein Objekt NIL ist. Ist es NIL, so wird T zurückgegeben, sonst NIL.
+Beispiele: (nil? nil) => T
+ (nil? 'a) => NIL"
+  `(null ,objekt))
+
 (defun palindrom-p (sequenz) "(palindrom-p sequenz)
 Palindromp testet, ob eine übergebene Sequenz, eine übergebene Zeichenkette oder ein übergebenes Symbol ein Palindrom darstellt.
 Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
@@ -821,7 +851,23 @@ Beispiel: (assoc-if #'oddp '((2 hubbel) (3 dubbel) (5 gubbel))) => (3 DUBBEL)")
 (dokumentation-austauschen 'assoc-if-not 'function "(assoc-if-not prädikat a-liste &key :key)
 ASSOC-IF-NOT durchsucht die A-Liste nach einer Assoziation anhand des Prädikats. Hierbei können Prüfungen durch die Schlüsselwörter Einfluss nehmen. Der zurückgegebene Wert ist das erste Paar, dessen CAR-Wert die Prüfung von Prädikat nicht besteht, oder aber NIL. 
 ASSOC-IF-NOT verfügt über eine Eltern-Funktion, ASSOC und eine Bruder-Funktionen, ASSOC-IF.
+ASSOC-IF-NOT gilt als veraltet. Stattdessen sollte in ASSOC-IF in Verbindung mit COMPLEMENT benutzt werden.
 Beispiel: (assoc-if-not #'oddp '((2 hubbel) (3 dubbel) (5 gubbel))) => (2 HUBBEL)")
+
+(dokumentation-austauschen 'atom 'function "(atom objekt)
+ATOM ist ein Prädikat, auch wenn das markante P am Ende fehlt. ATOM liefert T zurück, wenn OBJEKT ein ATOM ist, ansonsten NIL.
+Beispiele: (atom 'sss) =>  true
+ (atom (cons 1 2)) =>  false
+ (atom nil) =>  true
+ (atom '()) =>  true
+ (atom 3) =>  true")
+
+(dokumentation-austauschen 'boundp 'function "(boundp objekt)
+BOUNDP liefert T Wert zurück, wenn OBJEKT eine gebundene Variable ist, sonst NIL.
+Beispiele: (defparameter *test* 1) => 1
+ (boundp '*test*) =>  T
+ (makunbound '*test*) =>  *TEST*
+ (boundp '*test*) =>  NIL")
 
 (dokumentation-austauschen 'car 'function "(car liste)
 Die Bedeutung des Mnemonics von CAR ist \"Contents of the Adress Register\" bei einer IBM 704.
@@ -841,6 +887,18 @@ CONS erzeugt genau eine neue CONS-Zelle. Es wird oftmals eingesetzt, um ein neue
 Hinweis: Mit der selbgeschriebenen Funktion SNOC kann ein Element an das Ende einer Liste gesetzt werden.
 Beispiel: (cons 'a '(b)) => (A B)
  (cons 'a 'b) => (A . B)")
+
+(dokumentation-austauschen 'consp 'function "(consp objekt)
+CONSP gibt T zurück, wenn OBJEKT ein CONS - und somit eine nicht leere Liste ist, ansonsten NIL. Eine leere Liste / NIL ist kein CONS, daher gibt CONSP hier ebenfalls NIL zurück.
+Beispiele:  (consp nil) =>  false
+ (consp (cons 1 2)) =>  true
+ (consp '()) ==  (consp 'nil) =>  false")
+
+(dokumentation-austauschen 'endp 'function "(endp objekt)
+ENDP ist der empfohlene Weg um auf das Ende einer echten Liste hin zu testen. Ist OBJEKT NIL, wird T zurückgegeben. Ist OBJEKT ein CONS wird NIL zurückgegeben.Jeder andere Wert führt zu einem Fehler.
+Beispiele: (endp nil) =>  true
+ (endp '(1 2)) =>  false
+ (endp (cddr '(1 2))) =>  true")
 
 (dokumentation-austauschen 'intersection 'function "(intersection list1 list2 &key :test :test-not :key)
 INTERSECTION fasst alle Elemente, die in beiden Listen, list1 und list2 vorhanden sind und,  wenn angegeben :test oder :test-not, das Testkriterium bestehen, zu einer neuen Liste, also einer Schnittmenge (engl. intersection) zusammen. Die Reihenfolge der Elemente in der neuen Liste ist implementationsabhängig und gilt als nicht vorhersehbar. Wird eine bestimmte Reihenfolge benötigt, so muß das Ergebnis entsprechend noch mit Hilfer der SORT-Funktion sortiert werden.
@@ -871,6 +929,13 @@ LIST konstruiert eine Liste aus den der Funktion übergebenen Argumenten, wobei 
 LIST bildet Listen aus einer Serie von CONS-Zellen und beendet die neue Liste mit NIL. Das CAR jeder Zelle deutet auf das übergebene Argument hin.
 Beispiele: (list 'a 'b) => (A B)
  (list 1 2 'ö (car '(a . b)) (+ 7 -3)) => (1 2 Ö A 4)")
+
+(dokumentation-austauschen 'listp 'function "(listp objekt)
+LISTP gibt wahr zurück, wenn OBJEKT eine Liste ist, sonst NIL.
+Beispiele:(listp nil) =>  true
+ (listp (cons 1 2)) =>  true
+ (listp (make-array 6)) =>  false
+ (listp t) =>  false")
 
 (dokumentation-austauschen 'member 'function "(member objekt liste &key :test :test-not :key)
 MEMBER überprüft anhand von :test (voreingestellt ist hier EQL) oder :test-not, ob ein Objekt ein Element der Liste ist. Das voreingestellte EQL prüft hierbei nur die oberste Hierarchie-Ebene.
@@ -934,6 +999,14 @@ Beispiele: (nthcdr 1 '(a b c)) => (B C)
  (nthcdr 0 '(a b c)) => (A B C)
  (nthcdr 2 '(a b . c)) => C
  (nthcdr 3 '(a b . c)) => FEHLER")
+
+(dokumentation-austauschen 'numberp 'function "(numberp objekt)
+NUMBERP liefert T zurück, wenn OBJEKT eine Zahl ist, ansonsten NIL.
+Beispiele: (numberp 12) =>  true
+ (numberp (expt 2 130)) =>  true
+ (numberp #c(5/3 7.2)) =>  true
+ (numberp nil) =>  false
+ (numberp (cons 1 2)) =>  false")
 
 (dokumentation-austauschen 'rassoc 'function "(rassoc objekt a-liste &key :test :test-not :key)
 RASSOC durchsucht die A-Liste nach einer Assoziation des Objekts. Hierbei können Prüfungen durch die Schlüsselwörter Einfluss nehmen. Der zurückgegebene Wert ist das erste Paar, dessen CDR-Wert dem von Objekt entspricht, oder aber NIL. 
@@ -1025,6 +1098,15 @@ Von allen drei Funktionen gibt es zusätzlich eine zerstörerische Version, die 
 Die Funktionen SUBST-IF-NOT und NSUBST-IF-NOT gelten als veraltet und überflüssig.
 Beispiel: (setq tree1 '(1 (1 2) (1 2 3) (1 2 3 4))) =>  (1 (1 2) (1 2 3) (1 2 3 4))
  (subst-if 5 #'listp tree1) =>  5")
+
+(dokumentation-austauschen 'symbolp 'function "(symbolp objekt)
+SYMBOLP liefert T zurück, wenn OBJEKT ein Symbol ist, sonst NIL.
+Beispiele: (symbolp 'elephant) =>  true
+ (symbolp 12) =>  false
+ (symbolp nil) =>  true
+ (symbolp '()) =>  true
+ (symbolp :test) =>  true
+ (symbolp \"hello\") =>  false")
 
 (dokumentation-austauschen 'union 'function "(union liste1 liste2 &key :test :test-not :key)
 UNION liefert die Vereinigungsmenge aus Liste1 und Liste2 zurück. Sind Schlüssel wie :test oder :test-not angegeben, werden die entsprechenden Prüfverfahren im Vorfeld herangezogen.
