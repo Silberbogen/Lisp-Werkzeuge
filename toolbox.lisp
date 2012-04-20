@@ -1008,6 +1008,27 @@ Beispiele: (numberp 12) =>  true
  (numberp nil) =>  false
  (numberp (cons 1 2)) =>  false")
 
+(dokumentation-austauschen 'quote 'function "(quote objekt)
+QUOTE ist eine besondere Funktion, die durch ihren Seiteneffekt die Evaluierung eines Objekts verhindert.
+QUOTE kann abgekürzt werden, in dem man vor ein Objekt ein Hochkommata ' setzt. Dieses Hochkommate ersetzt QUOTE sowie sein dazugehöriges Klammerpaar.
+Beispiele: (setq a 1) => 1
+ (quote (setq a 3)) => (SETQ A 3)
+ a => 1
+ 'a => A
+ ''a => (QUOTE A) oder 'A 
+ '''a => (QUOTE (QUOTE A)) oder ''A
+ (setq a 43) => 43
+ (list a (cons a 3)) => (43 (43 . 3))
+ (list (quote a) (quote (cons a 3))) => (A (CONS A 3)) 
+ 1 => 1
+ '1 => 1
+ \"foo\" => \"foo\"
+ '\"foo\" => \"foo\"
+ (car '(a b)) => A
+ '(car '(a b)) => (CAR (QUOTE (A B))) oder (CAR '(A B))
+ #(car '(a b)) => #(CAR (QUOTE (A B))) oder #(CAR '(A B))
+ '#(car '(a b)) => #(CAR (QUOTE (A B))) oder #(CAR '(A B))")
+
 (dokumentation-austauschen 'rassoc 'function "(rassoc objekt a-liste &key :test :test-not :key)
 RASSOC durchsucht die A-Liste nach einer Assoziation des Objekts. Hierbei können Prüfungen durch die Schlüsselwörter Einfluss nehmen. Der zurückgegebene Wert ist das erste Paar, dessen CDR-Wert dem von Objekt entspricht, oder aber NIL. 
 RASSOC verfügt über zwei Kind-Funktionen: RASSOC-IF und RASSOC-IF-NOT.
@@ -1075,6 +1096,25 @@ SETF nimmt Argumentpaare entgegen, so wie es auch SETQ tut. Jedes Wertepaar setz
 Beispiel: (defparameter *test* '(a b c d)) => *TEST*
  (setf (car *test*) 'n) => N
 *test* => (N B C D)")
+
+(dokumentation-austauschen 'setq 'function "(setq variable1 form1 {variable2 form2 {variableN formN}})
+Die Bedeutung des Mnemonics von SETQ ist die Abkürzung von SETQuote.
+SETQ nimmt Argumentpaare entgegen, wobei es den ersten Wert, ein Symbol, als Variable mit dem dazugehörigen ersten Wert einer zuvor evaluierten Form bindet. Somit entspricht SETQ für Programmierer, die von anderem Programmiersprachen aus kommen, dem klassischen Zuweisungsoperator.
+Beispiele: ;; Der einfachste Nutzen von SETQ ist es, als Seiteneffekt den Wert von evaulierten Formen in Variablen zu speichern.
+ (setq a 1 b 2 c 3) =>  3
+ a => 1
+ b => 2
+ c => 3
+ ;; Ebenso kann SETQ genutzt werden, um Werte in der Reihenfolge von links nach rechts durch Zuweisung zu aktualisieren.
+ (setq a (1+ b) b (1+ a) c (+ a b)) => 7
+ a => 3
+ b => 4
+ c => 7
+ ;; Dies stellt die Verwendung von SETQ in Bezug zu SYMBOL-MACROLET dar.
+ (let ((x (list 10 20 30)))
+   (symbol-macrolet ((y (first x)) (z (second x)))
+     (setq y (1+ z) z (1+ y))
+     (list x y z))) => ((21 22 30) 21 22)")
 
 (dokumentation-austauschen 'sublis 'function "(sublis a-liste baum &key :test :test-not :key)
 SUBLIS macht Ersetzungen an einem Baum, so wie es SUBST auch vornimmt, jedoch werden viele Ersetzungen auf einmal anhand einer Assoziations-Liste erstellt. Sublis berücksichtig bei der Suche alle Blätter und Zweige des Baumes. Die Suche kann zusätzlich durch Schlüsselbegriffe und Testmöglichkeiten beeinflusst werden.
