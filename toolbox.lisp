@@ -443,11 +443,12 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
  (palindrom-p 'otto) => T
  (palindrom-p 'otta) => NIL
  (palindrom-p \"Otto\") => T"
-       (cond ((null sequenz) nil)
-	     ((stringp sequenz) (string= sequenz (reverse sequenz)))
-	     ((symbolp sequenz) (string= (symbol-name sequenz) (reverse (symbol-name sequenz))))
-	     ((listp sequenz) (equal sequenz (reverse sequenz)))
-	     (t nil)))
+       (typecase sequenz
+	 (null nil)
+	 (string (string= sequenz (reverse sequenz)))
+	 (symbol (string= (symbol-name sequenz) (reverse (symbol-name sequenz))))
+	 (list (equal sequenz (reverse sequenz)))
+	 (otherwise nil)))
 
 (defun set-equal-p (a b)
   "(set-equal-p liste1 liste2)
