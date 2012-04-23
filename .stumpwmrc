@@ -59,17 +59,36 @@
 (setf *time-day-names*
       #("Montag" "Dienstag" "Mittwoch" "Donnerstag" "Freitag" "Samstag" "Sonntag"))
 
+;; =============================
+;; Das Verhalten des Mauszeigers
+;; =============================
 
-					; cat statt concat
+(setf *mouse-focus-policy* :click)
+
+;; =====================================
+;; Erst mal weg mit dem nervenden Cursor
+;; =====================================
+(banish-pointer)
+
+;; ===================
+;; Autostart-Programme
+;; ===================
+(run-or-raise "nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
+(run-or-raise "synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
+(run-or-raise "xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
+
+;; ============
+;; Neue Befehle
+;; ============
+
 (defun cat (&rest strings)
   "(cat &rest strings)
 CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
   (apply 'concatenate 'string strings))
 
 (defun starte (befehl klasse &optional (fg "lavender") (bg "maroon4"))
-  "(starte befehhl klasse &optional vordergrundfarbe hintergrundfarbe)
+  "(starte befehl klasse &optional vordergrundfarbe hintergrundfarbe)
 STARTE bietet einen befehl, um bequem neue Kommandos mittels defcommand zu erstellen."
-					;  (run-or-raise (cat "uxterm -fg " fg " -bg " bg " -class '" klasse "' -e " befehl)
   (run-or-raise (cat "uxterm -fg " fg " -bg " bg " -class '" klasse "' -e " befehl) '(:class klasse)))
 
 (defmacro neuerbefehl (name dokstring befehl klasse)
@@ -86,10 +105,6 @@ STARTE bietet einen befehl, um bequem neue Kommandos mittels defcommand zu erste
 		      (append (list 'tastenbindung keymap) k))
 		    tasten)))
     `(progn ,@ks)))
-
-;; ============
-;; Neue Befehle
-;; ============
 
 (defcommand abook () ()
 	    "Starte/wechsle zu Abook."
@@ -395,71 +410,71 @@ Beispiel: (echo-time) => 06:11:27"
   ((:string "Suche in Ask Ubuntu nach: "))
   "Dient zur Suche bei Ask Ubuntu per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
+  (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "http://askubuntu.com/search?q=" search)))
 
 (defcommand ddg (search)
   ((:string "Suche in DuckDuckGo nach: "))
   "Dient zur Suche bei DuckDuckGo per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://duckduckgo.com/?q=" search)))
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "https://duckduckgo.com/?q=" search)))
 
 (defcommand hackernews (search)
   ((:string "Suche bei Hackernews nach: "))
   "Dient zur Suche bei Hackernews per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
+  (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" search)))
 
 (defcommand ixquick (search)
   ((:string "Suche in IxQuick nach: "))
   "Dient zur Suche bei IxQuick per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
+  (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "http://ixquick.com/do/metasearch.pl?query=" search)))
 
 (defcommand nachrichten (search)
   ((:string "Suche in Google News nach: "))
   "Dient zur Suche bei Google News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
+  (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "http://news.google.com/news/search?q=" search)))
 
 (defcommand news-bbc (search)
   ((:string "Suche bei BBC News nach: "))
   "Dient zur Suche bei BBC News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
+  (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "http://www.bbc.co.uk/search/news/?q=" search)))
 
 (defcommand news-guardian (search)
   ((:string "Suche bei Guardian News nach: "))
   "Dient zur Suche bei Guardian News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
+  (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "http://www.guardian.co.uk/search?q=" search)))
 
 (defcommand news-register (search)
   ((:string "Suche bei The Register nach: "))
   "Dient zur Suche bei The Register per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
+  (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "http://search.theregister.co.uk/?q=" search)))
 
 (defcommand stackoverflow (search)
   ((:string "Suche in Stackoverflow nach: "))
   "Dient zur Suche bei Stackoverflow per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
+  (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "http://stackoverflow.com/search?q=" search)))
 
 (defcommand wikipedia (search)
   ((:string "Suche in der Wikipedia nach: "))
   "Dient zur Suche in der Wikipedia per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
   (check-type search string)
-  (substitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://de.wikipedia.org/wiki/" search)))
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "https://de.wikipedia.org/w/index.php?search=" search)))
 
 (defcommand open-selection-browser () ()
 	    "Öffnet die markierte Webadresse per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
@@ -764,7 +779,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-s-u" "unison-gtk")
 		  ("M-s-v" "vlc")
 		  ("M-s-V" "vym")
-		  ("M-s-w" "wicd-curses ")
+;		  ("M-s-w" "wicd-curses ")
 		  ("M-s-x" "xchat")
 		  ("M-s-X" "xarchiver")
 		  ("M-s-y" "exec synclient touchpadoff=1 ")
@@ -845,7 +860,7 @@ Beispiel: (echo-time) => 06:11:27"
     (define-key m (kbd "v")   "vlc")
     (define-key m (kbd "V")   "vym")
     (define-key m (kbd "C-v") "exec xvidcap")
-    (define-key m (kbd "w")   "wicd-curses")
+;    (define-key m (kbd "w")   "wicd-curses")
     (define-key m (kbd "x")   "xchat")
     (define-key m (kbd "X")   "xarchiver")
     (define-key m (kbd "y")   "exec synclient touchpadoff=1 ")
@@ -1069,7 +1084,7 @@ Beispiel: (echo-time) => 06:11:27"
      ("Touchpad EIN              prefix-x-Y"   "synclient touchpadoff=0")
      ("UnetBootin"                             "gksudo unetbootin")
      ("Unison                    prefix-x-u"   "unison-gtk")
-     ("WICD (curses)             prefix-x-w"   "wicd-curses")
+;     ("WICD (curses)             prefix-x-w"   "wicd-curses")
      ("XArchiver                 prefix-x-X"   "xarchiver")
      ("XFontSel"                               "xfontsel")
     )
@@ -1172,16 +1187,12 @@ Beispiel: (echo-time) => 06:11:27"
 (setf *screen-mode-line-format*
       (list '(:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W"))
 
-;; =============================
-;; Das Verhalten des Mauszeigers
-;; =============================
 
-(setf *mouse-focus-policy* :click)
+;; Die Modeline einschalten, wenn dies nicht schon der Fall ist
+(if (not (head-mode-line (current-head)))
+    (toggle-mode-line (current-screen) (current-head)))
 
-;; =====================================
-;; Erst mal weg mit dem nervenden Cursor
-;; =====================================
-(banish-pointer)
+
 
 ;; =========================================
 ;; für aktive Programmierzyklen - SWANK
@@ -1191,6 +1202,4 @@ Beispiel: (echo-time) => 06:11:27"
 ; (require 'swank)
 ; (swank:create-server :dont-close t)
 
-(run-or-raise "nitrogen --restore" '(:class "Nitrogen"))
-(run-or-raise "synclient touchpadoff=1" '(:class "Synclient"))
-(run-or-raise "xscreensaver -no-splash" '(:class "Xscreensaver"))
+
