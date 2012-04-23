@@ -27,6 +27,9 @@
 (defparameter *uxt* "uxterm -fg lavender -bg maroon4 "
   "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
 
+(defparameter *systerm* "exec uxterm -fg gainsboro -bg OrangeRed -class 'Admin-uxterm' -e 'sudo -i'"
+  "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
+
 ;; Ubuntu 12.04 LTS Thema
 (set-focus-color      "orange")
 (set-unfocus-color    "black")
@@ -109,6 +112,10 @@ STARTE bietet einen befehl, um bequem neue Kommandos mittels defcommand zu erste
 (defcommand abook () ()
 	    "Starte/wechsle zu Abook."
 	    (run-or-raise (cat *uxt* "-class 'Abook' -e abook") '(:class "Abook")))
+
+(defcommand adminterminal () ()
+	    "Starte/wechsle zum Adminterminal."
+	    (run-or-raise "uxterm -fg gainsboro -bg OrangeRed -class 'Adminterminal' -e 'sudo -i'" '(:class "Adminterminal")))
 
 (defcommand aliensrl () ()
 	    "Starte/wechsle zu AliensRL."
@@ -610,12 +617,13 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("Print" "exec scrot -d 5 -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
 		  ("RET" *uxthema*)
 		  ("S-RET" "fullscreen")
+		  ("C-RET" "adminterminal")
 		  ("DEL" "repack-window-numbers")
 		  ("I" "show-window-properties")
 		  ("P" "exec dmenu_run ")
 		  ("," "switch-modeline")
 		  ("c" *uxthema*)
-		  ("C-c" "exec st")
+		  ("C-c" "adminterminal")
 		  ;; Die fehlenden Features auch in der root-map anlegen
 		  ("C-SPC" "other")
 		  ("M-SPC" "gother")
@@ -664,6 +672,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ;; Nachbildung der vordefinierten StumpWM-Tasten als Direkttasten
 		  ("s-RET" *uxthema*)
 		  ("S-s-RET" "fullscreen")
+		  ("C-s-RET" "adminterminal")
 		  ("s-;" "colon")
 		  ("s-:" "eval")
 		  ("s-!" "exec")
@@ -678,6 +687,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("s-b" "banish")
 		  ("s-c" *uxthema*)
 		  ("s-C" "commands")
+		  ("C-s-c" "Adminterminal")
 		  ("s-e" "emacs")
 		  ("s-f" "fselect")
 		  ("s-F" "curframe")
