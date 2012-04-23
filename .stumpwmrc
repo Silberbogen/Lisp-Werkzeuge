@@ -137,6 +137,10 @@ STARTE bietet einen befehl, um bequem neue Kommandos mittels defcommand zu erste
 	     "Starte/wechsle zum ansprechenden B-Rogue."
 	     "brogue" "Brogue")
 
+(defcommand byobu () ()
+	    "Starte/wechsle zum Adminterminal."
+	    (run-or-raise "uxterm -fg gainsboro -bg DarkSlateGray -class 'Byobu' -e 'byobu'" '(:class "Byobu")))
+
 (neuerbefehl calibre
 	     "Starte/wechsle zur Calibre Ebook-Verwaltung."
 	     "calibre" "Calibre")
@@ -622,6 +626,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("I" "show-window-properties")
 		  ("P" "exec dmenu_run ")
 		  ("," "switch-modeline")
+		  ("C-b" "byobu")
 		  ("c" *uxthema*)
 		  ("C-c" "adminterminal")
 		  ;; Die fehlenden Features auch in der root-map anlegen
@@ -685,6 +690,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("s-a" "time")
 		  ("s-A" "title")
 		  ("s-b" "banish")
+		  ("C-s-b" "byobu")
 		  ("s-c" *uxthema*)
 		  ("s-C" "commands")
 		  ("C-s-c" "Adminterminal")
