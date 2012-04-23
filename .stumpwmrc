@@ -1,0 +1,1196 @@
+;-*-lisp-*-
+; mit loadrc im colon neu laden
+(in-package :stumpwm)
+
+(load "~/Entwicklung/fremd/stumpwm/contrib/sbclfix")
+(load "~/Entwicklung/fremd/stumpwm/contrib/net")
+(load "~/Entwicklung/fremd/stumpwm/contrib/cpu")
+(load "~/Entwicklung/fremd/stumpwm/contrib/mem")
+
+;; Statt C-t, ist doch die wirklich unbenützte Menütaste einfach nur am geilsten!?
+(set-prefix-key (kbd "Menu"))
+
+;;; Zeichensatz - der Standardfont:
+;;;(set-font "-*-terminus-*-*-*-*-*-*-*-*-*-*-*-*")
+;;;(set-font "-*-profont-*-*-*-*-10-*-*-*-*-*-*-*")
+(set-font "-*-terminus-medium-r-normal-*-12-*-*-*-*-*-*-1")
+
+;; Der Standardbrowser
+(defparameter *browser* "conkeror "
+  "*browser* enthält den aktuell genutzten Standardbrowser")
+
+;; Farben
+;; Die Farben wurden ausgesucht anhand von http://http://critical.ch/xterm/
+(defparameter *uxthema* "exec uxterm -fg lavender -bg maroon4"
+  "*uxthema* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
+
+(defparameter *uxt* "uxterm -fg lavender -bg maroon4 "
+  "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
+
+;; Ubuntu 12.04 LTS Thema
+(set-focus-color      "orange")
+(set-unfocus-color    "black")
+(set-win-bg-color     "gainsboro")
+(set-fg-color         "maroon4")
+(set-bg-color         "gainsboro")
+
+;; Grey-Blue Arch Thema
+					;(set-focus-color      "DodgerBlue")
+					;(set-unfocus-color    "black")
+					;(set-win-bg-color     "grey25")
+					;(set-fg-color         "DodgerBlue")
+					;(set-bg-color         "grey25")
+
+;; Lightblue-Thema
+					;(set-focus-color      "lightblue")
+					;(set-unfocus-color    "black")
+					;(set-win-bg-color     "darkblue")
+					;(set-fg-color         "lightblue")
+					;(set-bg-color         "darkblue")
+
+(setf *time-format-string-default* "%A %B %e %k:%M:%S")
+
+(setf *time-modeline-string* "%a %b %e %k:%M:%S")
+
+(setf *time-month-names*
+      #("Januar" "Februar" "März" "April" "Mai" "Juni" "Juli" "August"
+	"September" "Oktober" "November" "Dezember"))
+
+(setf *time-day-names*
+      #("Montag" "Dienstag" "Mittwoch" "Donnerstag" "Freitag" "Samstag" "Sonntag"))
+
+
+					; cat statt concat
+(defun cat (&rest strings)
+  "(cat &rest strings)
+CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
+  (apply 'concatenate 'string strings))
+
+(defun starte (befehl klasse &optional (fg "lavender") (bg "maroon4"))
+  "(starte befehhl klasse &optional vordergrundfarbe hintergrundfarbe)
+STARTE bietet einen befehl, um bequem neue Kommandos mittels defcommand zu erstellen."
+					;  (run-or-raise (cat "uxterm -fg " fg " -bg " bg " -class '" klasse "' -e " befehl)
+  (run-or-raise (cat "uxterm -fg " fg " -bg " bg " -class '" klasse "' -e " befehl) '(:class klasse)))
+
+(defmacro neuerbefehl (name dokstring befehl klasse)
+  `(defcommand ,name () () ,dokstring
+	       (run-or-raise ,befehl '(:class ,klasse))))
+
+(defmacro tastenbindung (keymap taste befehl)
+  "Kurzes Macro, um eine Tastenbindung zu definieren"
+  `(define-key, keymap (kbd, taste), befehl))
+
+(defmacro tastaturbelegung (keymap &rest tasten)
+  "Kurzes Macro, um mehrere Tastenbindungen an eine Keymap zu definieren, verwendet pro Taste die Funktion tastenbindung"
+  (let ((ks (mapcar (lambda (k)
+		      (append (list 'tastenbindung keymap) k))
+		    tasten)))
+    `(progn ,@ks)))
+
+;; ============
+;; Neue Befehle
+;; ============
+
+(defcommand abook () ()
+	    "Starte/wechsle zu Abook."
+	    (run-or-raise (cat *uxt* "-class 'Abook' -e abook") '(:class "Abook")))
+
+(defcommand aliensrl () ()
+	    "Starte/wechsle zu AliensRL."
+	    (run-or-raise (cat *uxt* "-class 'Aliensrl' -e aliensrl") '(:class "Aliensrl")))
+
+(defcommand alsamixer () ()
+	    "Starte/wechsle zu Alsa-Mixer."
+	    (run-or-raise (cat *uxt* "-class 'Alsamixer' -e alsamixer") '(:class "Alsamixer")))
+
+(neuerbefehl audacious
+	     "Starte/wechsle zu Audacious."
+	     "audacious" "Audacious")
+
+(neuerbefehl banshee
+	     "Starte/wechsle zum Banshee Medienabspieler."
+	     "banshee" "Banshee")
+
+(neuerbefehl brogue
+	     "Starte/wechsle zum ansprechenden B-Rogue."
+	     "brogue" "Brogue")
+
+(neuerbefehl calibre
+	     "Starte/wechsle zur Calibre Ebook-Verwaltung."
+	     "calibre" "Calibre")
+
+(neuerbefehl cherrytree
+	     "Starte/wechsle zum Cherrytree Wiki."
+	     "cherrytree" "Cherrytree")
+
+(neuerbefehl chromium-browser
+	     "Starte/wechsle zum Chromium Webbrowser."
+	     "chromium-browser" "Chromium-Browser")
+
+(neuerbefehl claws-mail
+	     "Starte/wechsle zu Claws-Mail."
+	     "claws-mail" "Claws-mail")
+
+(neuerbefehl conkeror
+	     "Starte/wechsle zum Conkeror Webbrowser."
+	     "conkeror" "Conkeror")
+
+(defcommand crawl () ()
+	    "Starte/wechsle zu Crawl."
+	    (run-or-raise (cat *uxt* "-class 'Crawl' -e crawl") '(:class "Crawl")))
+
+(neuerbefehl deluge
+	     "Starte/wechsle zu Deluge."
+	     "deluge" "Deluge")
+
+(defcommand doomrl () ()
+	    "Starte/wechsle zu DoomRL."
+	    (run-or-raise (cat *uxt* "-class 'Doomrl' -e doomrl") '(:class "Doomrl")))
+
+(neuerbefehl dwb
+	     "Starte/wechsle zum dwb Webbrowser."
+	     "dwb" "Dwb")	    
+
+(neuerbefehl emacs
+	     "Starte/wechsle zu Emacs."
+	     "emacs" "Emacs")
+
+(neuerbefehl evince
+	     "Starte/wechsle zu Evince."
+	     "evince" "Evince")
+
+(neuerbefehl file-roller
+	     "Starte/wechsle zu File-Roller."
+	     "file-roller" "File-roller")
+
+(neuerbefehl flare
+	     "Starte/wechsle zu Flare RPG."
+	     "flare" "Flare")
+
+(neuerbefehl firefox
+	     "Starte/wechsle zu Firefox."
+	     "firefox" "Firefox")
+
+(neuerbefehl focuswriter
+	     "Starte/wechsle zu Focuswriter."
+	     "focuswriter" "Focuswriter")
+
+(neuerbefehl geeqie
+	     "Starte/wechsle zum Geekie Bildbetrachter."
+	     "geeqie" "Geeqie")
+
+(neuerbefehl gimp
+	     "Starte/wechsle zu GIMP."
+	     "gimp" "Gimp")
+
+(defcommand htop () ()
+	    "Starte/wechsle zu Htop."
+	    (run-or-raise (cat *uxt* "-class 'Htop' -e htop") '(:class "Htop")))
+
+(neuerbefehl iceweasel
+	     "Starte/wechsle zum Iceweasel Webbrowser."
+	     "iceweasel" "Iceweasel")
+
+(neuerbefehl jumanji
+	     "Starte/wechsle zum Jumanji Webbrowser."
+	     "jumanji" "Jumanji")	    
+
+(neuerbefehl kaffeine
+	     "Starte/wechsle zu Kaffeine."
+	     "kaffeine" "Kaffeine")
+
+(neuerbefehl keepassx
+	     "Starte/wechsle zu KeePassX."
+	     "keepassx" "Keepassx")
+
+(defcommand man (man) ((:string "Manual: "))
+	    "Sucht nach einem Befehl in den Manual-Seiten"
+	    (run-shell-command (format nil "~A -e sh -c 'man ~A'" terminal man)))
+
+(defcommand mathomatic () ()
+	    "Starte/wechsle zu Mathomatic."
+	    (run-or-raise (cat *uxt* "-class 'Mathomatic' -e mathomatic") '(:class "Mathomatic")))
+
+(defcommand mc () ()
+	    "Starte/wechsle zum Midnight Commander."
+	    (run-or-raise (cat *uxt* "-class 'MidnightCommander' -e mc") '(:class "MidnightCommander")))
+
+(neuerbefehl comix
+	     "Starte/wechsle zu Comix."
+	     "comix" "Comix")
+
+(neuerbefehl minitube
+	     "Starte/wechsle zu Minitube."
+	     "minitube" "Minitube")
+
+(defcommand mocp () ()
+	    "Starte/wechsle zu Music on Console."
+	    (run-or-raise (cat *uxt* "-class 'Mocp' -e mocp") '(:class "Mocp")))
+
+(defcommand moria () ()
+	    "Starte/wechsle zu Moria."
+	    (run-or-raise (*uxt* "-class 'Moria' -e moria") '(:class "Moria")))
+
+(neuerbefehl nautilus
+	     "Starte/wechsle zum Nautilus Dateimanager."
+	     "nautilus --no-desktop" "Nautilus")
+
+(neuerbefehl nitrogen
+	     "Starte/wechsle zu Nitrogen."
+	     "nitrogen" "Nitrogen")
+
+(neuerbefehl okular
+	     "Starte/wechsle zum Okular PDF-Betrachter."
+	     "okular" "Okular")
+
+(neuerbefehl palapeli
+	     "Starte/wechsle zu Palapeli."
+	     "palapeli" "Palapeli")
+
+(neuerbefehl pouetChess
+	     "Starte/wechsle zu Pouetchess 3Dxp."
+	     "pouetChess" "pouetChess")
+
+(defcommand primerl () ()
+	    "Starte/wechsle zu PrimeRL."
+	    (run-or-raise (cat *uxt* "-class 'Primerl' -e primerl") '(:class "Primerl")))
+
+(neuerbefehl pychess
+	     "Starte/wechsle zu PyChess Staunton."
+	     "pychess" "pychess")
+
+(defcommand reinit () ()
+	    "Reinitialisierung des Systems"
+	    (run-commands "reload" "loadrc"))
+
+(neuerbefehl ristretto
+	     "Starte/wechsle zu Ristretto."
+	     "ristretto" "Ristretto")
+
+(defcommand rogue () ()
+	    "Starte/wechsle zu Rogue."
+	    (run-or-raise (cat *uxt* "-class 'Rogue' -e rogue") '(:class "Rogue")))
+
+(neuerbefehl scid
+	     "Starte/wechsle zu Scid vs. PC."
+	     "scid" "Scid")
+
+(neuerbefehl scribus
+	     "Starte/wechsle zu Scribus"
+	     "scribus" "Scribus")
+
+(neuerbefehl surf
+	     "Starte/wechsle zu Surf."
+	     "surf" "surf")
+
+(defcommand switch-modeline () ()
+	    "Schaltet die Modeline ein oder aus"
+	    (toggle-mode-line (current-screen) (current-head)))
+
+(defcommand telecomix () ()
+	    "Starte/wechsle zu Telecomix."
+	    (run-or-raise (cat *uxt* "-class 'Telecomix' -e telecomix") '(:class "Telecomix")))
+
+(neuerbefehl thunderbird
+	     "Starte/wechsle zu Thunderbird Emailclient."
+	     "thunderbird" "Thunderbird")
+
+(neuerbefehl turpial
+	     "Starte/wechsle zu Turpial."
+	     "turpial" "Turpial")
+
+(defcommand twitter () ()
+	    "Starte/wechsle zu Twitter."
+	    (run-or-raise (cat *uxt* "-class 'Twitter' -e twitter") '(:class "Twitter")))
+
+(neuerbefehl uzbl-browser
+	     "Starte/wechsle zu Uzbl."
+	     "uzbl-browser" "Uzbl-core")
+
+(neuerbefehl unison-gtk
+	     "Starte/wechsle zu Unison."
+	     "unison-gtk" "Unison-gtk")
+
+(neuerbefehl vlc
+	     "Starte/wechsle zu VideoLanClient."
+	     "vlc" "Vlc")
+
+(neuerbefehl vym
+	     "Starte/wechsle zu ViewYourMind."
+	     "vym" "Vym")
+
+(defcommand wicd-curses () ()
+	    "Starte/wechsle zu WICD (curses)."
+	    (run-or-raise (cat *uxt* "-class 'Wicdcurses' -e wicd-curses") '(:class "Wicdcurses")))
+
+(neuerbefehl worldofpadman
+	     "Starte/wechsle zu World of Padman."
+	     "worldofpadman" "Worldofpadman")
+
+(neuerbefehl xarchiver
+	     "Starte/wechsle zu X-Archiver."
+	     "xarchiver" "Xarchiver")
+
+(neuerbefehl xchat
+	     "Starte/wechsle zu X-Chat."
+	     "xchat" "Xchat")
+
+(defcommand xorcurses () ()
+	    "Starte/wechsle zu Xorcurses."
+	    (run-or-raise (cat *uxt* "uxterm -class 'Xorcurses' -e xorcurses") '(:class "Xorcurses")))
+
+(neuerbefehl zathura
+	     "Starte/wechsle zu Zathura."
+	     "zathura" "Zathura")
+
+(defcommand zork1 () ()
+	    "Starte/wechsle zu Zork 1."
+	    (run-or-raise (cat *uxt* "-class 'Zork1' -e zork1") '(:class "Zork1")))
+
+(defcommand zork2 () ()
+	    "Starte/wechsle zu Zork 2."
+	    (run-or-raise (cat *uxt* "-class 'Zork2' -e zork2") '(:class "Zork2")))
+
+(defcommand zork3 () ()
+	    "Starte/wechsle zu Zork 3."
+	    (run-or-raise (cat *uxt* "-class 'Zork3' -e zork3") '(:class "Zork3")))
+
+;;; ===============================================
+;;; Anpassung der Darstellung von Datum und Uhrzeit
+;;; ===============================================
+
+(defun uhrzeit () "Gibt die aktuelle Uhrzeit zurück"
+       (multiple-value-bind (sekunden minuten stunden) (get-decoded-time)
+	 (format nil "~2,1,0,'0@A:~2,1,0,'0@A:~2,1,0,'0@A" stunden minuten sekunden)))
+
+(defun datum-uhrzeit ()
+  "(datum-uhrzeit)
+DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurück."
+  (multiple-value-bind (sekunden minuten stunden tag monat jahr) (get-decoded-time)
+    (format nil "~2,'0D.~2,'0D.~4,'0D ~2,'0D:~2,'0D:~2,'0D" tag monat jahr stunden minuten sekunden)))
+
+(defcommand echo-date () ()
+	    "(echo-date)
+ECHO-DATE stellt das Datum und die Uhrzeit dar.
+Beispiel: (echo-date) => 11.01.2012 06:09:43"
+	    (message "~a" (datum-uhrzeit)))
+
+(defcommand echo-time () ()
+	    "(echo-date)
+ECHO-DATE stellt die Uhrzeit dar.
+Beispiel: (echo-time) => 06:11:27"
+	    (message "~a" (uhrzeit)))
+
+;; Bewege den Focus und anschließend die Maus in das Fenster
+;; ---------------------------------------------------------
+
+(defcommand move-focus-warp (dir) ((:direction "Direction:"))
+	    (move-focus-and-or-window dir)
+	    (banish-pointer :window))
+
+;; Such- und Auswahl-Befehle
+;; -------------------------
+
+(defcommand askubuntu (search)
+  ((:string "Suche in Ask Ubuntu nach: "))
+  "Dient zur Suche bei Ask Ubuntu per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://askubuntu.com/search?q=" search)))
+
+(defcommand ddg (search)
+  ((:string "Suche in DuckDuckGo nach: "))
+  "Dient zur Suche bei DuckDuckGo per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://duckduckgo.com/?q=" search)))
+
+(defcommand hackernews (search)
+  ((:string "Suche bei Hackernews nach: "))
+  "Dient zur Suche bei Hackernews per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" search)))
+
+(defcommand ixquick (search)
+  ((:string "Suche in IxQuick nach: "))
+  "Dient zur Suche bei IxQuick per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://ixquick.com/do/metasearch.pl?query=" search)))
+
+(defcommand nachrichten (search)
+  ((:string "Suche in Google News nach: "))
+  "Dient zur Suche bei Google News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://news.google.com/news/search?q=" search)))
+
+(defcommand news-bbc (search)
+  ((:string "Suche bei BBC News nach: "))
+  "Dient zur Suche bei BBC News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://www.bbc.co.uk/search/news/?q=" search)))
+
+(defcommand news-guardian (search)
+  ((:string "Suche bei Guardian News nach: "))
+  "Dient zur Suche bei Guardian News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://www.guardian.co.uk/search?q=" search)))
+
+(defcommand news-register (search)
+  ((:string "Suche bei The Register nach: "))
+  "Dient zur Suche bei The Register per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://search.theregister.co.uk/?q=" search)))
+
+(defcommand stackoverflow (search)
+  ((:string "Suche in Stackoverflow nach: "))
+  "Dient zur Suche bei Stackoverflow per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://stackoverflow.com/search?q=" search)))
+
+(defcommand wikipedia (search)
+  ((:string "Suche in der Wikipedia nach: "))
+  "Dient zur Suche in der Wikipedia per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (substitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://de.wikipedia.org/wiki/" search)))
+
+(defcommand open-selection-browser () ()
+	    "Öffnet die markierte Webadresse per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+	    (run-shell-command (cat *browser* (get-x-selection))))
+
+;; Clear rules
+(clear-window-placement-rules)
+
+
+;;; ===========================
+;;; GRUPPEN - für dwm-Umsteiger
+;;; ===========================
+
+;; Erzeuge Gruppen    
+;;----------------
+;; Ohne Gruppen geht es schneller, daher werden sie mal testweise für 7 Tage deaktiviert (reine Theorie)
+
+;(run-commands
+;      "grename Standard"
+;      "gnewbg Emacs"
+;      "gnewbg WWW"
+;      "gnewbg Arbeiten"
+;      "gnewbg Media"
+;      "gnewbg Erholung"
+;      "gnewbg System"
+;      )
+
+;(define-frame-preference "Standard"
+;  (0 t   t :instance "xterm")
+;  (0 t   t :class "UXTerm")
+;  (0 t   t :class "st-256color")
+;  (0 t   t :class "URxvt")
+;  )
+
+;(define-frame-preference "Emacs"
+;  (0 t   t :title "emacs")
+;  )
+
+;(define-frame-preference "WWW"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Claws-mail")  
+;  (0 t   t :class "Conkeror")
+;  (0 t   t :class "Deluge")
+;  (0 t   t :class "Firefox")
+;  (0 t   t :class "surf")
+;  (0 t   t :class "Turpial")
+;  (0 t   t :class "Uzbl-core")
+;  (0 t   t :class "Xchat")
+;  )
+
+;(define-frame-preference "Arbeiten"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Gvim")
+;  (0 t   t :class "Focuswriter")
+;  (0 t   t :class "libreoffice-startcenter")
+;  (0 t   t :class "libreoffice-writer")
+;  (0 t   t :class "libreoffice-calc")
+;  (0 t   t :class "libreoffice-impress")
+;  (0 t   t :class "libreoffice-draw")
+;  (0 t   t :class "libreoffice-math")
+;  (0 t   t :class "Okular")
+;  (0 t   t :class "Pyroom")
+;  (0 t   t :class "Zathura")
+;  )
+
+;(define-frame-preference "Media"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :instance "aumix")
+;  (0 t   t :class "Audacious")
+;  (0 t   t :class "Avidemux")  
+;  (0 t   t :class "Geeqie")
+;  (0 t   t :class "Gimp")
+;  (0 t   t :class "Iscan")
+;  (0 t   t :class "K3b")
+;  (0 t   t :class "Kaffeine")
+;  (0 t   t :class "Comixq")
+;  (0 t   t :class "Minitube")  
+;  (0 t   t :class "MPlayer")  
+;  (0 t   t :class "Ristretto") 
+;  (0 t   t :class "tvbrowser-TVBrowser")
+;  (0 t   t :class "Vlc")
+;  )
+
+;(define-frame-preference "Erholung"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Angband")
+;  (0 t   t :class "ASCIIpOrtal")
+;  (0 t   t :class "Desmume-glade")
+;  (0 t   t :class "Desmume")
+;  (0 t   t :class "Dwarf_Fortress")
+;  (0 t   t :class "Dwarftherapist")
+;  (0 t   t :class "flands-FLApp")
+;  (0 t   t :class "flare.bin")
+;  (0 t   t :class "Gvbam")
+;  (0 t   t :class "net-minecraft-MinecraftLauncher")
+;  (0 t   t :class "russotto-zplet-ZJApp")
+;  (0 t   t :class "Palapelli")
+;  (0 t   t :class "Scid")
+;  (0 t   t :title "SuperTuxKart")
+;  (0 t   t :title "t-engine")
+;  (0 t   t :title "tome")
+;  (0 t   t :class "warmux")
+;  (0 t   t :class "wesnoth")
+;  (0 t   t :class "widelands")
+;  )
+
+;(define-frame-preference "System"
+; ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Keepassx")
+;  (0 t   t :class "Gpg-crypter")
+;  (0 t   t :class "Nitrogen")
+;  (0 t   t :class "Thunar")
+;  (0 t   t :class "Unison-gtk2")
+;  (0 t   t :class "Xarchiver")
+;  )
+
+;; ======================================
+;; Neuere Tasten - nach eigenem Gutdünken
+;; ======================================
+
+;; Übersicht zu Zusatztasten
+;; M-s = ALT+SUPER
+;; s- = SUPER
+;; S- = SHIFT
+;; C- = Control/STRG
+;; H- = ALT-GR
+
+;; *******************************************************
+;; Zusätzliche Optionen über den StumpWM-like Escape-Modus
+;; *******************************************************
+
+(tastaturbelegung *root-map*
+		  ("Print" "exec scrot -d 5 -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
+		  ("RET" *uxthema*)
+		  ("S-RET" "fullscreen")
+		  ("DEL" "repack-window-numbers")
+		  ("I" "show-window-properties")
+		  ("P" "exec dmenu_run ")
+		  ("," "switch-modeline")
+		  ("c" *uxthema*)
+		  ("C-c" "exec st")
+		  ;; Die fehlenden Features auch in der root-map anlegen
+		  ("C-SPC" "other")
+		  ("M-SPC" "gother")
+		  ("S-SPC" "pull-marked")
+		  ("Pause" "windowlist")
+		  ("C-Pause" "grouplist")
+		  ("M-Left" "gprev")
+		  ("M-Right" "gnext")
+		  ("M-S-Left" "gprev-with-window")
+		  ("M-S-Right" "gnext-with-window")
+		  ;; Features umbiegen
+		  )
+
+;; **************************************************************************************
+;; Zusätzliche Optionen für einen Direktmodus, wie ihn viele andere Fenstermanager bieten
+;; **************************************************************************************
+
+(tastaturbelegung *top-map*
+		  ;;; Fenster-Verhalten dwm-like
+		  ("s-Left" "move-focus-warp left")
+		  ("s-S-Left" "move-window left")
+		  ("s-Right" "move-focus-warp right")
+		  ("s-S-Right" "move-window right")
+		  ("s-Up" "move-focus-warp up")
+		  ("s-S-Up" "move-window up")
+		  ("s-Down" "move-focus-warp down")
+		  ("s-S-Down" "move-window down")
+		  ("C-s-Left" "pull-hidden-previous")
+		  ("C-s-Right" "pull-hidden-next")
+		  ("C-s-Up" "mark")
+		  ("C-s-Down" "pull-marked")
+		  ;; Durch Fenster wechseln - dwm-like
+		  ("s-Tab" "next-in-frame")
+		  ("s-ISO_Left_Tab" "prev-in-frame")     ;; Erinnerung: Das ist  Shift-Tab
+		  ;; Gruppen-Verhalten ist dwm-like
+		  ("M-s-Left" "gprev")
+		  ("M-s-Right" "gnext")
+		  ("M-S-s-Left" "gprev-with-window")
+		  ("M-S-s-Right" "gnext-with-window")
+		  ("s-SPC" "pull-hidden-next")
+		  ("C-s-SPC" "other")
+		  ("M-s-SPC" "gother")
+		  ("S-s-SPC" "pull-marked")
+		  ("Pause" "windowlist")
+		  ("C-Pause" "grouplist")
+		  ;; Nachbildung der vordefinierten StumpWM-Tasten als Direkttasten
+		  ("s-RET" *uxthema*)
+		  ("S-s-RET" "fullscreen")
+		  ("s-;" "colon")
+		  ("s-:" "eval")
+		  ("s-!" "exec")
+		  ("s-#" "mark")
+		  ("s--" "fclear")
+		  ("s-+" "balance-frames")
+		  ("s-\"" "select")
+		  ("s-'" "windowlist")
+		  ("s-," "switch-modeline")
+		  ("s-a" "time")
+		  ("s-A" "title")
+		  ("s-b" "banish")
+		  ("s-c" *uxthema*)
+		  ("s-C" "commands")
+		  ("s-e" "emacs")
+		  ("s-f" "fselect")
+		  ("s-F" "curframe")
+		  ("s-g" *groups-map*)
+		  ("s-G" "vgroups")
+		  ("s-h" *help-map*)
+		  ("s-i" "info")
+		  ("s-I" "show-window-properties")
+		  ("s-k" "delete")
+		  ("s-K" "kill")
+		  ("s-l" "exec xflock4")
+		  ("s-L" "loadrc")
+		  ("s-m" "lastmsg")
+		  ("s-n" "pull-hidden-next")
+		  ("M-s-N" "next")
+		  ("C-s-n" "next-in-frame")
+		  ("C-s-N" "number")
+		  ("s-o" "fnext")
+		  ("s-p" "pull-hidden-previous")
+		  ("s-P" "prev")
+		  ("C-s-p" "prev-in-frame")
+		  ("s-Q" "only")
+		  ("s-r" "iresize")
+		  ("s-R" "remove")
+		  ("s-s" "vsplit")
+		  ("s-S" "hsplit")
+		  ("s-t" "send-escape")
+		  ("s-u" "next-urgent")
+		  ("s-v" "version")
+		  ("s-w" "windows")
+		  ("s-W" "place-existing-windows")
+		  ;; Wechseln zu einem anderen Fenster
+		  ("s-1" "select-window-by-number 1")
+		  ("s-2" "select-window-by-number 2")
+		  ("s-3" "select-window-by-number 3")
+		  ("s-4" "select-window-by-number 4")
+		  ("s-5" "select-window-by-number 5")
+		  ("s-6" "select-window-by-number 6")
+		  ("s-7" "select-window-by-number 7")
+		  ("s-8" "select-window-by-number 8")
+		  ("s-9" "select-window-by-number 9")
+		  ("s-0" "select-window-by-number 0")
+		  ;; Wechseln zu einer anderen Gruppe
+		  ("M-s-1" "gselect 1")
+		  ("M-s-2" "gselect 2")
+		  ("M-s-3" "gselect 3")
+		  ("M-s-4" "gselect 4")
+		  ("M-s-5" "gselect 5")
+		  ("M-s-6" "gselect 6")
+		  ("M-s-7" "gselect 7")
+		  ("M-s-8" "gselect 8")
+		  ("M-s-9" "gselect 9")
+		  ("M-s-0" "gselect 0")
+		  ;; Verschieben in eine andere Gruppe
+		  ("M-S-s-1" "gmove 1")
+		  ("M-S-s-2" "gmove 2")
+		  ("M-S-s-3" "gmove 3")
+		  ("M-S-s-4" "gmove 4")
+		  ("M-S-s-5" "gmove 5")
+		  ("M-S-s-6" "gmove 6")
+		  ("M-S-s-7" "gmove 7")
+		  ("M-S-s-8" "gmove 8")
+		  ("M-S-s-9" "gmove 9")
+		  ("M-S-s-0" "gmove 0")
+		  ;; Programme starten
+		  ("Print" "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
+		  ("XF86HomePage" "conkeror")
+		  ("XF86Mail" "thunderbird")
+		  ("XF86Calculator" "speedcrunch")
+		  ("XF86AudioRaiseVolume" "exec amixer set Master 5%+ unmute")
+		  ("XF86AudioLowerVolume" "exec amixer set Master 5%- unmute")
+		  ("XF86AudioMute" "exec amixer set Master toggle")
+		  ("M-s-a" "alsamixer ")
+		  ("M-s-A" "abook ")
+		  ("M-s-b" "banshee")
+		  ("M-s-c" "conkeror")
+		  ("M-s-C" "chromium-browser")
+		  ("M-s-d" "deluge")
+		  ("M-s-D" "dwb")
+		  ("M-s-e" "evince")
+		  ("M-s-f" "firefox")
+		  ("M-s-F" "focuswriter")
+		  ("M-s-g" "geeqie")
+		  ("M-s-G" "gimp")
+		  ("M-s-j" "jumanji")
+		  ("M-s-k" "keepassx")
+		  ("M-s-K" "kaffeine")
+		  ("M-s-m" "mc")
+		  ("M-s-M" "minitube")
+		  ("M-s-n" "nautilus")
+		  ("M-s-N" "nitrogen")
+		  ("M-s-o" "okular")
+		  ("M-s-p" "exec dmenu_run ")
+		  ("M-s-r" "ristretto")
+		  ("M-s-s" "scribus")
+		  ("M-s-S" "exec surf ")
+		  ("M-s-t" "thunderbird")
+		  ("M-s-T" "turpial")
+		  ("M-s-u" "unison-gtk")
+		  ("M-s-v" "vlc")
+		  ("M-s-V" "vym")
+		  ("M-s-w" "wicd-curses ")
+		  ("M-s-x" "xchat")
+		  ("M-s-X" "xarchiver")
+		  ("M-s-y" "exec synclient touchpadoff=1 ")
+		  ("M-s-Y" "exec synclient touchpadoff=0 ")
+		  ("M-s-z" "zathura")
+		  ;; Websuchen
+		  ("C-s-a" "askubuntu")
+		  ("C-s-b" "news-bbc")
+		  ("C-s-d" "ddg")
+		  ("C-s-g" "news-guardian")
+		  ("C-s-h" "hackernews")
+		  ("C-s-i" "ixquick")
+		  ("C-s-n" "nachrichten")
+		  ("C-s-o" "open-selection-browser") ;; öffnet den markierten Link im Webbrowser
+		  ("C-s-r" "news-register")
+		  ("C-s-s" "stackoverflow")
+		  ("C-s-w" "wikipedia")
+		  )
+
+;; ***********************************
+;; Fehlende Features in der groups-map
+;; ***********************************
+
+(tastaturbelegung *groups-map*
+		  ("C" "gnew-float")
+		  )
+
+;; ===========================================
+;; Ein neues Menü für Programme (stumpwm-like)
+;; ===========================================
+
+(defvar *programmstart-map*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "Print") "exec scrot -d 5 -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
+    (define-key m (kbd "a")   "alsamixer")
+    (define-key m (kbd "A")   "abook ")
+    (define-key m (kbd "C-a") "audacious")
+    (define-key m (kbd "C-A") "exec avidemux2_qt4")
+    (define-key m (kbd "b")   "banshee")
+    (define-key m (kbd "c")   "conkeror")
+    (define-key m (kbd "C")   "chromium-browser")
+    (define-key m (kbd "C-c") "cherrytree")
+    (define-key m (kbd "C-C") "calibre")
+    (define-key m (kbd "d")   "deluge")
+    (define-key m (kbd "D")   "dwb")
+    (define-key m (kbd "C-d") "exec dropbox start")
+    (define-key m (kbd "C-D") "exec dropbox stop")
+    (define-key m (kbd "e")   "evince")
+    (define-key m (kbd "f")   "firefox")
+    (define-key m (kbd "F")   "focuswriter")
+    (define-key m (kbd "g")   "geeqie")
+    (define-key m (kbd "G")   "gimp")
+    (define-key m (kbd "h")   "htop")
+    (define-key m (kbd "i")   "iceweasel")
+    (define-key m (kbd "I")   "exec iscan")
+    (define-key m (kbd "C-i") "exec i2prouter start")
+    (define-key m (kbd "C-I") "exec i2prouter stop")
+    (define-key m (kbd "j")   "jumanji")
+    (define-key m (kbd "k")   "keepassx")
+    (define-key m (kbd "K")   "kaffeine")
+    (define-key m (kbd "C-k") "exec k3b")
+    (define-key m (kbd "m")   "mc")
+    (define-key m (kbd "M")   "minitube")
+    (define-key m (kbd "C-m") "mocp")  
+    (define-key m (kbd "C-M") "mathomatic")
+    (define-key m (kbd "n")   "nautilus")
+    (define-key m (kbd "N")   "nitrogen")
+    (define-key m (kbd "o")   "okular")
+    (define-key m (kbd "p")   "exec dmenu_run")
+    (define-key m (kbd "P")   "exec pyroom")
+    (define-key m (kbd "r")   "ristretto")
+    (define-key m (kbd "R")   "reinit")
+    (define-key m (kbd "s")   "scribus")
+    (define-key m (kbd "S")   "surf")
+    (define-key m (kbd "t")   "thunderbird")
+    (define-key m (kbd "T")   "turpial")
+    (define-key m (kbd "u")   "unison-gtk")
+    (define-key m (kbd "v")   "vlc")
+    (define-key m (kbd "V")   "vym")
+    (define-key m (kbd "C-v") "exec xvidcap")
+    (define-key m (kbd "w")   "wicd-curses")
+    (define-key m (kbd "x")   "xchat")
+    (define-key m (kbd "X")   "xarchiver")
+    (define-key m (kbd "y")   "exec synclient touchpadoff=1 ")
+    (define-key m (kbd "Y")   "exec synclient touchpadoff=0 ")
+    (define-key m (kbd "z")   "zathura")
+    m))
+
+;; ===========================================
+;; Ein neues Menü für Websuchen (stumpwm-like)
+;; ===========================================
+
+(defvar *websuche-map*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "a") "askubuntu")
+    (define-key m (kbd "b") "news-bbc")
+    (define-key m (kbd "d") "ddg")
+    (define-key m (kbd "g") "news-guardian")
+    (define-key m (kbd "h") "hackernews")
+    (define-key m (kbd "i") "ixquick")
+    (define-key m (kbd "o") "open-selection-browser")
+    (define-key m (kbd "r") "news-register")
+    (define-key m (kbd "s") "stackoverflow")
+    (define-key m (kbd "t") "telecomix")
+    (define-key m (kbd "T") "twitter")
+    (define-key m (kbd "w") "wikipedia")
+    m))
+
+;; ===========================================
+;; Ein neues Menü zur Erholung (stumpwm-like)
+;; ===========================================
+
+(defvar *erholung-map*
+  (let ((m (make-sparse-keymap)))
+     (define-key m (kbd "a")   "exec adv770")
+     (define-key m (kbd "A")   "exec asciiportal")
+     (define-key m (kbd "C-a") "aliensrl")
+     (define-key m (kbd "b")   "exec wesnoth --smallgui")
+     (define-key m (kbd "B")   "brogue")
+     (define-key m (kbd "c")   "crawl")
+     (define-key m (kbd "d")   "exec desmume-glade")
+     (define-key m (kbd "D")   "exec dwarffortress-ih")
+     (define-key m (kbd "C-d") "exec dwarftherapist")
+     (define-key m (kbd "C-D") "doomrl")
+     (define-key m (kbd "f")   "exec flands")
+     (define-key m (kbd "F")   "exec flare")
+     (define-key m (kbd "C-f") "exec freedroidRPG")
+     (define-key m (kbd "h")   "exec hitchhikersguide")
+     (define-key m (kbd "l")   "exec scummvm")
+     (define-key m (kbd "m")   "exec java -jar minecraft.jar")
+     (define-key m (kbd "C-M") "moria")
+     (define-key m (kbd "C-m") "exec mangband")
+     (define-key m (kbd "M")   "exec MCEdit")
+     (define-key m (kbd "p")   "exec palapelli")
+     (define-key m (kbd "P")   "worldofpadman")
+     (define-key m (kbd "C-p") "exec pouetChess")
+     (define-key m (kbd "C-P") "exec pychess")
+     (define-key m (kbd "r")   "rogue")
+     (define-key m (kbd "s")   "exec scid")
+     (define-key m (kbd "C-S") "exec stella")
+     (define-key m (kbd "S")   "exec supertuxkart")
+     (define-key m (kbd "C-s") "exec scummvm")
+     (define-key m (kbd "t")   "exec tome")
+     (define-key m (kbd "T")   "exec tome4")
+     (define-key m (kbd "v")   "exec gvbam")
+     (define-key m (kbd "w")   "exec warmux")
+     (define-key m (kbd "W")   "exec widelands")
+     (define-key m (kbd "C-w") "exec worldofpadman")
+     (define-key m (kbd "x")   "xorcurses")
+     (define-key m (kbd "X")   "exec xskat")
+     (define-key m (kbd "z")   "exec zsnes")
+     (define-key m (kbd "1")   "zork1")
+     (define-key m (kbd "2")   "zork2")
+     (define-key m (kbd "3")   "zork3")
+     m))
+
+;; ==========================
+;; Ein Ersatz *help-map* Menü
+;; ==========================
+
+(setf *help-map*
+          (let ((m (make-sparse-keymap)))
+	    (define-key m (kbd "m") "man")
+	    (define-key m (kbd "c") "describe-command")
+	    (define-key m (kbd "f") "describe-function")
+	    (define-key m (kbd "k") "describe-key")
+            (define-key m (kbd "v") "describe-variable")
+	    (define-key m (kbd "w") "where-is")
+            m))
+
+;; ===========================================
+;; Ein grafisches Auswahl-Menü
+;; -------------------------------------------
+;; Die Struktur ist abgestimmt mit den Gruppen
+;; ===========================================
+
+(defparameter *start-menü*
+  '(
+
+    ("WWW"
+     ("Chromium     prefix-x-C"   "chromium-browser")
+     ("Claws-Mail   "             "claws-mail")
+     ("Conkeror     prefix-x-c"   "conkeror")
+     ("Deluge       prefix-x-d"   "deluge")
+     ("dwb          prefix-x-D"   "dwb")
+     ("Firefox      prefix-x-f"   "firefox")
+     ("Iceweasel    prefix-x-i"   "iceweasel")
+     ("Jumanji      prefix-x-j"   "jumanji")
+     ("MiniTube     prefix-x-M"   "minitube")
+     ("Mutt"                      "st -e mutt")
+     ("Surf         prefix-x-S"   "surf")
+     ("Telecomix    prefix-y-t"   "telecomix")
+     ("Thunderbird  prefix-x-t"   "thunderbird")
+     ("Turpial      prefix-x-T"   "turpial")
+     ("Twitter      prefix-y-T"   "twitter")
+     ("X-Chat       prefix-x-x"   "xchat")
+    )
+
+    ("Arbeiten"
+     ("Calibre                  prefix-x C-C" "calibre")
+     ("Cherrytree               prefix-x C-c" "cherrytree")
+     ("Evince                   prefix-x-e"   "evince")
+     ("Emacs                    prefix-e"     "emacs")
+     ("FocusWriter              prefix-x-F"   "focuswriter")
+     ("GIMP                     prefix-x-G"   "gimp")
+     ("LibreOffice-Startcenter"               "libreoffice")
+     ("LibreOffice-Writer"                    "lowriter")
+     ("LibreOffice-Calc"                      "localc")
+     ("LibreOffice-Impress"                   "loimpress")
+     ("LibreOffice-Draw"                      "lodraw")
+     ("LibreOffice-Math"                      "lomath")
+     ("Mathomatic               prefix-x C-M" "mathomatic")
+     ("Okular                   prefix-x-o"   "okular")
+     ("PyRoom                   prefix-x-P"   "pyroom")
+     ("Scribus                  prefix-x-s"   "scribus")
+     ("Scanner                  prefix-x-I"   "iscan")
+     ("ViewYourMind             prefix-x-V"   "vym")
+     ("Zathura                  prefix-x-z"   "zathura")
+    )
+    
+    ("Media"
+     ("Audacious           prefix-x C-a" "audacious")
+     ("AviDeMux            prefix-x C-A" "avidemux2_qt4")
+     ("Banshee             prefix-x-b"   "banshee")
+     ("Geeqie              prefix-x-g"   "geeqie")
+     ("K3b Burner          prefix-x C-k" "k3b")
+     ("Kaffeine            prefix-x-K"   "kaffeine")
+     ("Lautstärke          prefix-x-a"   "alsamixer")
+     ("MComix"                           "mcomix")
+     ("MiniTube            prefix-x-M"   "minitube")
+     ("Music on Console    prefix-x C-m" "mocp")
+     ("Ristretto           prefix-x-r"   "ristretto")
+     ("TV-Browser          "             "tvbrowser")
+     ("VideoLan-Client     prefix-x-v"   "vlc")
+     ("XVidCap Screencast  prefix-x C-v" "xvidcap")
+    )
+   
+    ("Erholung"
+     ("Adventure 770        prefix-X-a"   "adv770")
+     ("Aliens RL            prefix-X C-a" "aliensrl")
+     ("ASCII-Portal         prefix-X-A"   "asciiportal")
+     ("Battle for Wesnoth   prefix-X-b"   "wesnoth --smallgui")
+     ("B-Rogue              prefix-X-B"   "brogue")
+     ("Comix"                             "comix")
+     ("Crawl                prefix-X-c"   "crawl")
+     ("Desmume              prefix-X-d"   "desmume-glade")
+     ("Doom RL              prefix-X C-D" "doomrl")
+     ("Dwarffortress        prefix-X-D"   "dwarffortress-ih")
+     ("DwarfTherapist       prefix-X C-d" "dwarftherapist")
+     ("Fabled Lands App     prefix-X-f"   "flands")
+     ("Flare RPG            prefix-X-F"   "flare")
+     ("Freedroid-RPG        prefix-X C-f" "freedroidRPG")
+     ("Hitchhikers Guide    prefix-X-h"   "hitchhikersguide")
+     ("Minecraft            prefix-X-m"   "java -jar minecraft.jar")
+     ("Minecraft Editor     prefix-X-M"   "MCEdit")
+     ("MiniTube             prefix-x-M"   "minitube")
+     ("Moria                prefix-X C-M" "moria")
+     ("Multiplayer-Angband  prefix-X C-m" "mangband")
+     ("Palapelli            prefix-X-p"   "palapelli")
+     ("Pouet-Chess 3D       prefix-X C-p" "pouetChess")
+     ("Prime RL             prefix-X-P"   "primerl")
+     ("PyChess Staunton     prefix-X C-P" "pychess")
+     ("Rogue                prefix-X-r"   "rogue")
+     ("Scid vs. PC          prefix-X-s"   "scid")
+     ("S.C.U.M.M.-VM        prefix-X C-s" "scummvm")
+     ("STella               prefix-X C-S" "stella")
+     ("Supertux-Kart        prefix-X-S"   "supertuxkart")
+     ("T.O.M.E. 2           prefix-X-t"   "tome")
+     ("T.O.M.E. 4           prefix-X-T"   "tome4")
+     ("VisualBoy Advanced m prefix-X-v"   "gvbam")
+     ("Warmux               prefix-X-w"   "warmux")
+     ("Widelands            prefix-X-W"   "widelands")
+     ("World of Padman      prefix-X C-w" "wop")
+     ("XorCurses            prefix-X-x"   "xorcurses")
+     ("X-Skat               prefix-X-X"   "exec xskat")
+     ("Zork 1               prefix-X-1"   "zork1")
+     ("Zork 2               prefix-X-2"   "zork2")
+     ("Zork 3               prefix-X-3"   "zork3")
+     ("ZSNES                prefix-X-z"   "zsnes")
+    )
+    
+    ("System"
+     ("Adressbuch                prefix-x-A"   "abook")
+     ("Dateimanager              prefix-x-n"   "nautilus")
+     ("Dropbox starten           prefix-x C-d" "dropbox start")
+     ("Dropbox beenden           prefix-x C-D" "dropbox stop")
+     ("Event-Anzeiger XEV"                     "xev")
+     ("File-Roller"                            "file-roller")
+     ("GParted"                                "gksudo gparted")
+     ("GPG-Crypter"                            "gpg-crypter")
+     ("Htop                      prefix-x h"   "htop")
+     ("i2p starten               prefix-x C-i" "i2prouter start")
+     ("i2p beenden               prefix-x C-I" "i2prouter stop")
+     ("KeePassX                  prefix-x-k"   "keepassx")
+     ("Lautstärke                prefix-x-a"   "alsamixer")
+     ("Midnight Commander        prefix-x-m"   "mc")
+     ("Netzwerk                  prefix-x-w"   "wicd-curses")
+     ("Nitrogen                  prefix-x-N"   "nitrogen")
+     ("StumpWM reinitialisieren  prefix-x-R"   "reinit")
+     ("Taschenrechner            CALC-KEY"     "speedcrunch")
+     ("Touchpad AUS              prefix-x-y"   "synclient touchpadoff=1")
+     ("Touchpad EIN              prefix-x-Y"   "synclient touchpadoff=0")
+     ("UnetBootin"                             "gksudo unetbootin")
+     ("Unison                    prefix-x-u"   "unison-gtk")
+     ("WICD (curses)             prefix-x-w"   "wicd-curses")
+     ("XArchiver                 prefix-x-X"   "xarchiver")
+     ("XFontSel"                               "xfontsel")
+    )
+
+    ("Webseiten"
+     ("Arch Linux"                       "conkeror http://archlinux.org")
+     ("Ask Ubuntu           prefix-y-a"  "conkeror http://askubuntu.com")
+     ("BBC Nachrichten      prefix-y-b"  "conkeror http://bbc.co.uk/news")
+     ("Blottr Breaking-News"             "conkeror http://blottr.com")
+     ("Detektiv Conan"                   "conkeror http://detektiv-conan.ch")
+     ("Diaspora*"                        "conkeror http://joindiaspora.com/stream")
+     ("DuckDuckGo           prefix-y-d"  "ddg")
+     ("Dwarf Fortress Wiki"              "conkeror http://df.magmawiki.com")
+     ("FreshPorts"                       "conkeror http://freshports.org")
+     ("Gronkh"                           "conkeror http://gronkh.de")
+     ("Hackernews           prefix-y-h"  "conkeror http://news.ycombinator.com")
+     ("Heise"                            "conkeror http://heise.de")
+     ("i2p"                              "conkeror http://127.0.0.1:7657")
+     ("I.M.D.B."                         "conkeror http://imdb.com")
+     ("IxQuick              prefix-y-i"  "conkeror http://ixquick.com")
+     ("LEO EN-DE"                        "conkeror http://leo.org")
+     ("Lernu Esperanto"                  "conkeror http://lernu.net")
+     ("L1sp"                             "conkeror http://l1sp.org")
+     ("Memory Alpha"                     "conkeror http://memory-alpha.org")
+     ("Minecraft Wiki"                   "conkeror http://www.minecraftwiki.net")
+     ("OMG! Ubuntu"                      "conkeror http://omgubuntu.co.uk")
+     ("Planet LISP"                      "conkeror http://planet.lisp.org")
+     ("Planet SBCL"                      "conkeror http://planet.sbcl.org")
+     ("Revo Vortaro EO"                  "conkeror http://reta-vortaro.de")
+     ("Sonja Vortaro EO"                 "conkeror http://kisa.ca/vortaro")
+     ("Stackoverflow        prefix-y-s"  "conkeror http://stackoverflow.com")
+     ("StumpWM Homepage"                 "conkeror http://www.nongnu.org/stumpwm/")
+     ("StumpWM Wiki"                     "conkeror http://stumpwm.svkt.org/cgi-bin/wiki.pl")
+     ("SubCentral"                       "conkeror http://subcentral.de")
+     ("Telecomix"                        "conkeror https://status.telecomix.org")
+     ("Thalia"                           "conkeror http://thalia.de")
+     ("The Guardian         prefix-y-g"  "conkeror http://guardian.co.uk")
+     ("The Register         prefix-y-r"  "conkeror http://theregister.co.uk")
+     ("TOR check"                        "conkeror https://check.torproject.org")
+     ("Tumblr"                           "conkeror http://tumblr.com/dashboard")
+     ("Twitter"                          "conkeror https://twitter.com")
+     ("Ubuntu"                           "conkeror http://ubuntu.com")
+     ("Übersetzen"                       "conkeror http://translate.google.com")
+     ("Webupd8"                          "conkeror http://webupd8.org")
+     ("Wikipedia            prefix-y-w"  "conkeror http://de.wikipedia.org")
+     ("YouTube"                          "conkeror http://youtube.com")
+     ("ZenCast"                          "conkeror http://zencast.org")
+    )
+))
+
+(defcommand menü () ()
+  "menü dient der Abarbeitung der Optionen, die als Menüstruktur-Liste in *start-menü* hinterlegt sind."
+  (labels ((pick (options)
+                 (let ((selection (stumpwm::select-from-menu
+                                   (current-screen) options "")))
+                   (cond
+                    ((null selection)
+                     (throw 'stumpwm::error "Abbruch."))
+                    ((stringp (second selection))
+                     (second selection))
+                    (t
+                     (pick (cdr selection)))))))
+    (let ((choice (pick *start-menü*)))
+      (run-shell-command choice))))
+
+;; =================================
+;; Die Tastenanbindung für die Menüs
+;; =================================
+
+(tastaturbelegung *root-map*
+		  ("x" '*programmstart-map*)
+		  ("y" '*websuche-map*)
+		  ("X" '*erholung-map*)
+		  ("." "menü")
+		  )
+
+(tastaturbelegung *top-map*
+		  ("s-x" '*programmstart-map*)
+		  ("s-y" '*websuche-map*)
+		  ("s-X" '*erholung-map*)
+		  ("s-." "menü")
+		  )
+
+;; =======================
+;; Die angepasste Modeline
+;; =======================
+
+;; Vorbereitungen für das Modeline-Verhalten
+(setf *mode-line-background-color*      "OrangeRed" ; "Grey18"
+      *mode-line-foreground-color*      "gainsboro" ; "DodgerBlue"
+      *mode-line-border-color*          "gainsboro" ; "CornflowerBlue"
+      *mode-line-timeout*               1
+      *mode-line-position*              :top
+      *time-format-string-default*      "%a %d.%m.%Y %I:%M%p"
+      *time-modeline-string*            "%a %d.%m.%Y %I:%M%p"
+      *group-format*                    "%n%s%t"
+      *window-format*                   "«%n%s%m%10c»")
+
+;; Modeline zeigt Zeit in lokalem Format, CPU-Nutzung, Netzwerk-Verkehr, Gruppe, Notifikation und aktuellen Rahmen
+(setf *screen-mode-line-format*
+      (list '(:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W"))
+
+;; =============================
+;; Das Verhalten des Mauszeigers
+;; =============================
+
+(setf *mouse-focus-policy* :click)
+
+;; =====================================
+;; Erst mal weg mit dem nervenden Cursor
+;; =====================================
+(banish-pointer)
+
+;; =========================================
+;; für aktive Programmierzyklen - SWANK
+;; -----------------------------------------
+;; Aufruf mittels M-x slime-connect in Emacs
+;; =========================================
+; (require 'swank)
+; (swank:create-server :dont-close t)
+
+(run-or-raise "nitrogen --restore" '(:class "Nitrogen"))
+(run-or-raise "synclient touchpadoff=1" '(:class "Synclient"))
+(run-or-raise "xscreensaver -no-splash" '(:class "Xscreensaver"))

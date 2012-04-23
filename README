@@ -4,3 +4,6 @@ craps.lisp - eine Version des Würfelspiels Craps.
 dokumentation.lisp - enthält deutsche Dokumentationszeichenketten
 ssp.lisp - eine Version des Spiels Schere-Stein-Papier, samt der neuen Variante Schere-Stein-Papier-Echse-Spock.
 toolbox.lisp - eine Werkzeugbox mit deutschen Fassungen der gängigsten Funktionen für Lisp-Einsteiger.
+
+Die Einstellungsdatei .stumpwmrc für den StumpWM Fenstermanager - ein sehr gutes Stück Common Lisp. Das grafische Thema ist für Ubuntu 12.04 LTS angepasst. Die Einstellungsdatei enthält selbstverständlich ein paar nette Gimmicks, unter anderem Anpassungen, die es Nutzern von dwm ermöglichen, leichter umzusteigen.
+
