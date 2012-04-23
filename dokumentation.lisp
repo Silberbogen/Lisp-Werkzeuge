@@ -27,7 +27,7 @@
 ;;;; (compile-file "dokumentation")
 
 ;;;; Klärende Fragen wurden von den Nutzern des Kanals #lisp auf irc.freenode.net beantwortet.
-;;;; Mein Dank geht hier an:
+;;;; Mein Dank geht hier besonders an:
 ;;;; - pjb
 
 ;; ===================
@@ -375,6 +375,213 @@ Beispiele:  (gcd) => 0
 PI syombolisiert dargestellt als long-float Konstante die Ludolphsche Zahl.
 Beispiel: pi => 3.141592653589793d0 ; der genaue Wert ist implementationsabhängig
  (cos pi) => -1.0d0 ; oder -1.0L0 ... implementationsabhängig")
+
+(dokumentation-austauschen 'sin 'function "(sin radiant)
+SIN liefert den Sinus von radiant zurück.
+Beispiele: (sin 0) => 0.0
+ (sin 1) => 0.84147096")
+
+(dokumentation-austauschen 'cos 'function "(cos radiant)
+COS liefert den Kosinus von radiant zurück.
+Beispiele: (cos 0) => 1.0
+ (cos 1) => 0.5403023")
+
+(dokumentation-austauschen 'tan 'function "(tan radiant)
+TAN liefert die Tangente von radiant zurück.
+Beispiele: (tan 0) => 0.0
+ (tan 1) => 1.5574077")
+
+(dokumentation-austauschen 'asin 'function "(asin radiant)
+ASIN liefert den Arkussinus von radiant zurück.
+Beispiele: (asin 0) => 0.0
+ (asin 1) => 1.5707964")
+
+(dokumentation-austauschen 'acos 'function "(acos radiant)
+ACOS liefert den Arkuskosinus von radiant zurück.
+Beispiele: (acos 0) => 1.5707964
+ (acos 1) => 0.0")
+
+(dokumentation-austauschen 'atan 'function "(atan radiant)
+ATAN liefert die Arkustangente von radiant zurück.
+Beispiele: (atan 0) => 0.0
+(atan 1) => 0.7853982")
+
+(dokumentation-austauschen 'sinh 'function "(sinh radiant)
+SIN liefert den hyperbolischen Sinus von radiant zurück.
+Beispiele: (sinh 0) => 0.0
+ (sinh 1) => 1.1752012")
+
+(dokumentation-austauschen 'cosh 'function "(cosh radiant)
+COS liefert den hyperbolischen Kosinus von radiant zurück.
+Beispiele: (cosh 0) => 1.0
+ (cosh 1) => 1.5430807")
+
+(dokumentation-austauschen 'tanh 'function "(tanh radiant)
+TAN liefert die hyperbolische Tangente von radiant zurück.
+Beispiele: (tanh 0) => 0.0
+ (tanh 1) => 0.7615942")
+
+(dokumentation-austauschen 'asinh 'function "(asinh radiant)
+ASIN liefert den hyperbolischen Arkussinus von radiant zurück.
+Beispiele: (asinh 0) => 0.0
+ (asinh 1) => 0.8813736")
+
+(dokumentation-austauschen 'acosh 'function "(acosh radiant)
+ACOS liefert den hyperbolischen Arkuskosinus von radiant zurück.
+Beispiele: (acosh 0) => #C(0.0 1.5707964)
+CL-USER> (acosh 1) => 0.0")
+
+(dokumentation-austauschen 'atanh 'function "(atanh radiant)
+ATAN liefert die hyperbolische Arkustangente von radiant zurück.
+Beispiele: (atanh 0) => 0.0
+ (atanh 1) => FEHLER! Division durch 0!")
+
+(dokumentation-austauschen 'cis 'function "(cis radiant)
+CIS liefert den Wert von e^i* radiant zurück, eine Komplexzahl, deren reeller Teil dem Kosinus des Radianten und deren imaginärer Teil dem Sinus des radiant entspricht.
+Beispiele: (cis 0) => #C(1.0 0.0)
+CL-USER> (cis 1) => #C(0.5403023 0.84147096)")
+
+(dokumentation-austauschen 'conjugate 'function "(conjugate zahl)
+CONJUGATE liefert die konjugierte Komplexzahl einer Zahl zurück. Die Konjugation einer Realzahl ist die Zahl selber.
+Beispiele:  (conjugate #c(0 -1)) => #C(0 1)
+ (conjugate #c(1 1)) => #C(1 -1)
+ (conjugate 1.0) => 1.0
+ (conjugate #C(3/4 4/5)) => #C(3/4 -4/5)
+ (conjugate #C(0.0D0 -1.0D0)) => #C(0.0d0 1.0d0)")
+
+(dokumentation-austauschen 'max 'function "(max zahl &rest zahlen)
+MAX liefert die größte Zahl einer Liste von Zahlen zurück.
+Beispiele: (max 3 7 29 -11 3/2) => 29
+ (max -14 -27.245 -9.2 -13.5) => -9.2
+ (max 0) => 0")
+
+(dokumentation-austauschen 'min 'function "(min zahl &rest zahlen)
+MIN liefert die kleinste Zahl einer Liste von Zahlen zurück.
+ (max -7 19 22 -13.2 39) => -13.2
+ (min 2/3 1/2 29/5011) => 29/5011-13.2")
+
+(dokumentation-austauschen 'round 'function "(round zahl &optional (divisor 1))
+ROUND teilt die zahl durch den divisor und gibt das Ergebnis gerundet als quotient und rest zurück.
+Die Ergebnisse sind Ganzzahlen (Integerzahlen).
+zahl = quotient * divisor + rest
+Beispiel: (round 5.286) => 5 0.28599977
+ (round 7.649) => 8 -0.35099983")
+
+(dokumentation-austauschen 'floor 'function "(floor zahl &optional (divisor 1))
+FLOOR teilt die zahl durch den divisor und gibt das Ergebnis nach unten gerundet als quotient und rest zurück.
+Die Ergebnisse sind Ganzzahlen (Integerzahlen).
+zahl = quotient * divisor + rest
+Beispiel: (floor 5.286) => 5 0.28599977
+ (floor 7.649) => 7 0.64900017")
+
+(dokumentation-austauschen 'ceiling 'function "(ceiling zahl &optional (divisor 1))
+CEILING teilt die zahl durch den divisor und gibt das Ergebnis nach oben gerundet als quotient und rest zurück.
+Die Ergebnisse sind Ganzzahlen (Integerzahlen).
+zahl = quotient * divisor + rest
+Beispiel: (ceiling 5.286) => 6 -0.7140002
+ (ceiling 7.649) => 8 -0.35099983")
+
+(dokumentation-austauschen 'truncate 'function "(truncate zahl &optional (divisor 1))
+TRUNCATE teilt die zahl durch den divisor und gibt das Ergebnis am Komma abgeschnitten als quotient und rest zurück.
+Die Ergebnisse sind Ganzzahlen (Integerzahlen).
+zahl = quotient * divisor + rest
+Beispiel: (truncate 5.286) => 5 0.28599977
+ (truncate 7.649) => 7 0.64900017")
+
+(dokumentation-austauschen 'fround 'function "(fround zahl &optional (divisor 1))
+FROUND teilt die zahl durch den divisor und gibt das Ergebnis gerundet als quotient und rest zurück.
+Die Ergebnisse sind Fliesspunktzahlen.
+zahl = quotient * divisor + rest
+Beispiel: (fround 5.286) => 5.0 0.28599977
+ (fround 7.649) => 8.0 -0.35099983")
+
+(dokumentation-austauschen 'ffloor 'function "(ffloor zahl &optional (divisor 1))
+FFLOOR teilt die zahl durch den divisor und gibt das Ergebnis nach unten gerundet als quotient und rest zurück.
+Die Ergebnisse sind Fliesspunktzahlen.
+zahl = quotient * divisor + rest
+Beispiel: (ffloor 5.286) => 5.0 0.28599977
+ (ffloor 7.649) => 7.0 0.64900017")
+
+(dokumentation-austauschen 'fceiling 'function "(fceiling zahl &optional (divisor 1))
+FCEILING teilt die zahl durch den divisor und gibt das Ergebnis nach oben gerundet als quotient und rest zurück.
+Die Ergebnisse sind Fliesspunktzahlen.
+zahl = quotient * divisor + rest
+Beispiel: (fceiling 5.286) => 6.0 -0.7140002
+ (fceiling 7.649) => 8.0 -0.35099983")
+
+(dokumentation-austauschen 'ftruncate 'function "(ftruncate zahl &optional (divisor 1))
+FTRUNCATE teilt die zahl durch den divisor und gibt das Ergebnis am Komma abgeschnitten als quotient und rest zurück.
+Die Ergebnisse sind Fliesspunktzahlen.
+zahl = quotient * divisor + rest
+Beispiel: (ftruncate 5.286) => 5.0 0.28599977
+ (ftruncate 7.649) => 7.0 0.64900017")
+
+(dokumentation-austauschen 'mod 'function "(mod zahl divisor)
+MOD ist das Mnemonic für MODulo.
+MOD teilt die zahl durch den divisor und gibt das Ergebnis des Rests zurück.
+Die Berechnung selbst entspricht FLOOR.
+Beispiel: (mod 5.286 1) => 0.28599977
+ (mod 7.649 1) => 0.64900017
+ (mod -1 5) => 4
+ (mod 13 4) => 1
+ (mod -13 4) =>3
+ (mod 13 -4) => -3
+ (mod -13 -4) => -1
+ (mod 13.4 1) => 0.4
+ (mod -13.4 1) => 0.6")
+
+(dokumentation-austauschen 'rem 'function "(rem zahl divisor)
+REM ist das Mnemonic für REMainder.
+REM teilt die zahl durch den divisor und gibt das Ergebnis des Rests zurück.
+Die Berechnung selber entspricht TRUNCATE.
+Beispiel: (rem 5.286 1) => 0.28599977
+ (rem  7.649 1) => 0.64900017
+ (rem -1 5) => -1
+ (rem 13 4) => 1
+ (rem -13 4) => -1
+ (rem 13 -4) => 1
+ (rem -13 -4) => -1
+ (rem 13.4 1) => 0.4
+ (rem -13.4 1) => -0.4")
+
+(dokumentation-austauschen 'random 'function "(random limit &optional (zustand *random-state*))
+RANDOM liefert eine positive Zufallszahl zurück, die größer oder gleich 0 und kleiner als das Limit ist. Zusätzlich kann der Zufallszahlgenerator durch eine Übermittlung eines random-state beeinflusst werden.
+Beispiel: (random 5) => 4
+ (1+ (random 6)) => 6
+ (1+ (random 6)) => 3
+ (setf test *random-state*)
+ (1+ (random 6 test)) => 2")
+
+(dokumentation-austauschen 'make-random-state 'function "(make-random-state {status|nil|t})
+Erstellt ein frisches random-state Objekt, das durch status, NIL oder T beeinflusst werden kann. Vorgabe ist NIL.
+Beispiele: (let* ((randomstate1 (make-random-state nil))
+        (randomstate2 (make-random-state t))
+        (randomstate3 (make-random-state randomstate2))
+        (randomstate4 nil))
+   (list (loop for i from 1 to 10 
+               collect (random 100)
+               when (= i 5)
+                do (setq randomstate4 (make-random-state)))
+         (loop for i from 1 to 10 collect (random 100 randomstate1))
+         (loop for i from 1 to 10 collect (random 100 randomstate2))
+         (loop for i from 1 to 10 collect (random 100 randomstate3))
+         (loop for i from 1 to 10 collect (random 100 randomstate4))))
+((81 13 90 83 12 96 91 22 63 30) (81 13 90 83 12 96 91 22 63 30)
+ (83 15 51 97 71 13 82 2 0 30) (83 15 51 97 71 13 82 2 0 30)
+ (96 91 22 63 30 9 54 27 18 54))")
+
+(dokumentation-austauschen '*random-state* 'variable "*random-state*
+Der momentane Zustand des Zufallsgenerators, der z.B. für die Funktion RANDOM genutzt wird.
+Beispiel: *random-state* => #S(RANDOM-STATE :STATE #.(MAKE-ARRAY 627 :ELEMENT-TYPE '(UNSIGNED-BYTE 32)
+                                     :INITIAL-CONTENTS
+                                     '(0 2567483615 20 2601187879 3919438689
+                                       2270374771 3254473187 705526435
+                                       752899028 4259895275 1635503293
+                                       287311810 3348146311 587101971
+                                       1133963260 197444494 1569747226
+                                       2853653046 3654449492 3823320007
+                                       1939491435 191871982 2550916200))) ; sehr stark gekürzt!!!")
+
 
 ;;; 1.3 Zahlen, logische Funktionen
 ;;; 1.4 Zahlen, Ganzzahl-Funktionen / Integer-Funktionen
