@@ -96,21 +96,6 @@ DIFFERENZMENGE ist eine nicht-destruktive Funktion. Sie verfügt über eine dest
 Beispiel: (differenzmenge '(a b c d) '(c d e f)) => (B A)"
   `(set-difference ,liste1 ,liste2 ,@schlüssel))
 
-(defmacro dokumentation (symbol dokumentations-art)
-  "DOKUMENTATION ist die deutsche Fassung der Funktion DOCUMENTATION.
-DOKUMENTATION dient dazu, die Documentation zu einem Symbol der Art Dokumentations-Art anzuzeigen.
-Mit Hilfe von SETF kann allerdings auch die bereits vorhandene Dokumentation neu gesetzt werden.
-Beispiel: (dokumentation 'documentation 'function).
- (defparameter *test* 4) => *TEST*
- (setf (dokumentation '*test* 'variable) \"Nur eine Testvariable.\") => \"Nur eine Testvariable.\"
- (dokumentation '*test* 'variable) => \"Nur eine Testvariable.\""
-  `(documentation ,symbol ,dokumentations-art))
-
-(defmacro dokumentation-austauschen (objekt nutzung zeichenkette)
-  "(dokumentation-austauschen objekt nutzung zeichenkette)
-DOKUMENTATION-AUSTAUSCHEN dient dazu, die Dokumentationszeichenkette auszutauschen."
-  `(setf (documentation ,objekt ,nutzung) ,zeichenkette))
-
 (defmacro entferne (item &rest liste)
   "(entferne item liste)
 ENTFERNE entspricht der deutschen Fassung für remove.
@@ -464,8 +449,33 @@ Beispiel: (vorher-p 'alpha 'beta '(alpha beta gamma delta)) => (BETA GAMMA DELTA
   (member b (member a liste)))
 
 
+
+;;; =========================
+;;; Abschnitt 4 - Neue Macros
+;;; =========================
+
+(defmacro wert? (objekt &rest position)
+  `(elt ,objekt ,@position))
+
+(defmacro wert-array? (objekt &rest position)
+  `(aref ,objekt ,@position))
+
+(defmacro wert-liste? (objekt &rest position)
+  `(nth ,@position ,objekt))
+
+(defmacro wert-string? (objekt &rest position)
+  `(char ,objekt ,@position))
+
+(defmacro wert-vector? (objekt &rest position)
+  `(svref ,objekt ,@position))
+
+(defmacro wert! (objekt &rest neuwert)
+  `(setf ,objekt ,@neuwert))
+
+
+
 ;;; ===========================================
-;;; Abschnitt 4 - Es ist einfach nur Mathematik
+;;; Abschnitt 5 - Es ist einfach nur Mathematik
 ;;; ===========================================
 
 (defun durchschnitt (&rest liste)
@@ -644,9 +654,9 @@ Beispiel: (würfelwurf) => 4"
 
 
 
-;;; ================================
-;;; Abschnitt 5 - Listenverarbeitung
-;;; ================================
+;;; ===================================
+;;; Abschnitt 6 - Allgemeine Funktionen
+;;; ===================================
 
 (defun alle-permutationen (liste)
   "Alle Permutationen einer Liste erzeugen; Beispiel: (alle-permutationen (list 'a 'b 'c 'd 'e))"
@@ -766,7 +776,7 @@ Beispiel:  (zuletzt '((a b c) (d) (e (f (g h))))) => H
 
 
 ;;; ==========================
-;;; Abschnitt 6 - Ein-/Ausgabe
+;;; Abschnitt 7 - Ein-/Ausgabe
 ;;; ==========================
 
 (defun hole-zahl (string)
@@ -788,7 +798,7 @@ SICHERES-LESEN-AUS-STRING ermöglicht die Nutzung der Funktion read-from-string,
 
 
 ;;; =============================
-;;; Abschnitt 7 - Lernalgorithmen
+;;; Abschnitt 8 - Lernalgorithmen
 ;;; =============================
 ;;; Sie dienen um Techniken / Strukturen zu vermitteln
 
@@ -817,340 +827,4 @@ Beispiel: (mein-entferne-wenn #'oddp '(1 2 3 4 5 6)) => (2 4 6)"
 
 
 
-;;; ====================================================================
-;;; Abschnitt 8 - Deutsche Übersetzungen der Dokumentationszeichenketten
-;;; ====================================================================
 
-(dokumentation-austauschen 'append 'function "(append &rest liste{n})
-APPEND nimmt Listen entgegen und verkettet deren Elemente zu einer neuen Liste. Hierbei zeigt jeweils der CDR-Pointer des Vorgängers auf seinen Nachfolger in der Kette.
-Übergibt man keinerlei Argumente an APPEND, so wird NIL zurückgegeben.
-Ist das letzte Element keine Liste, so erhält man eine punktierte LISTE als Ergebnis.
-Ist ein anderes als das letzte Argument keine Liste, so ist dies ein Fehler.
-APPEND ist eine nicht-destruktive Funktion.
-Beispiele: (append '(1) '(2) '(3)) => (1 2 3)
- (append) => NIL
- (append '((a) (b)) '((c) (d e))) => ((A) (B) (C) (D E))
- (setf wer '(nur die guten)) => (NUR DIE GUTEN)
- (append wer '(sterben jung)) => (NUR DIE GUTEN STERBEN JUNG)
- (append '(w x y) 'z) => (W X Y . Z)
- (append 'z) => Z")
-
-(dokumentation-austauschen 'apply 'function "(apply funktion argument &rest mehr-argumente)
-APPLY wendet eine Funktion auf ein oder mehrere Argumente in der Art und Weise wie LIST* es ihr gleicht tut. Das bedeutet, das bedeutet, das aus allen Argumenten ausser dem letzten eine Liste gemacht wird, die vorangesetzt wird an das letzte Argument, das seinerseits bereits eine Liste sein muss.
-Beispiel: (apply #'+ '1 '2 '(3 4)) => 10")
-
-(dokumentation-austauschen 'assoc 'function "(assoc objekt a-liste &key :test :test-not :key)
-ASSOC durchsucht die A-Liste nach einer Assoziation des Objekts. Hierbei können Prüfungen durch die Schlüsselwörter Einfluss nehmen. Der zurückgegebene Wert ist das erste Paar, dessen CAR-Wert dem von Objekt entspricht, oder aber NIL. 
-ASSOC verfügt über zwei Kind-Funktionen: ASSOC-IF und ASSOC-IF-NOT.
-Beispiel: (assoc 'b '((a hubbel) (b dubbel) (c gubbel))) => (B DUBBEL)")
-
-(dokumentation-austauschen 'assoc-if 'function "(assoc-if prädikat a-liste &key :key)
-ASSOC-IF durchsucht die A-Liste nach einer Assoziation anhand des Prädikats. Hierbei können Prüfungen durch die Schlüsselwörter Einfluss nehmen. Der zurückgegebene Wert ist das erste Paar, dessen CAR-Wert die Prüfung von Prädikat erfolgreich besteht, oder aber NIL. 
-ASSOC-IF verfügt über eine Eltern-Funktion, ASSOC und eine Bruder-Funktionen, ASSOC-IF-NOT.
-Beispiel: (assoc-if #'oddp '((2 hubbel) (3 dubbel) (5 gubbel))) => (3 DUBBEL)")
-
-(dokumentation-austauschen 'assoc-if-not 'function "(assoc-if-not prädikat a-liste &key :key)
-ASSOC-IF-NOT durchsucht die A-Liste nach einer Assoziation anhand des Prädikats. Hierbei können Prüfungen durch die Schlüsselwörter Einfluss nehmen. Der zurückgegebene Wert ist das erste Paar, dessen CAR-Wert die Prüfung von Prädikat nicht besteht, oder aber NIL. 
-ASSOC-IF-NOT verfügt über eine Eltern-Funktion, ASSOC und eine Bruder-Funktionen, ASSOC-IF.
-ASSOC-IF-NOT gilt als veraltet. Stattdessen sollte in ASSOC-IF in Verbindung mit COMPLEMENT benutzt werden.
-Beispiel: (assoc-if-not #'oddp '((2 hubbel) (3 dubbel) (5 gubbel))) => (2 HUBBEL)")
-
-(dokumentation-austauschen 'atom 'function "(atom objekt)
-ATOM ist ein Prädikat, auch wenn das markante P am Ende fehlt. ATOM liefert T zurück, wenn OBJEKT ein ATOM ist, ansonsten NIL.
-Beispiele: (atom 'sss) =>  true
- (atom (cons 1 2)) =>  false
- (atom nil) =>  true
- (atom '()) =>  true
- (atom 3) =>  true")
-
-(dokumentation-austauschen 'boundp 'function "(boundp objekt)
-BOUNDP liefert T Wert zurück, wenn OBJEKT eine gebundene Variable ist, sonst NIL.
-Beispiele: (defparameter *test* 1) => 1
- (boundp '*test*) =>  T
- (makunbound '*test*) =>  *TEST*
- (boundp '*test*) =>  NIL")
-
-(dokumentation-austauschen 'car 'function "(car liste)
-Die Bedeutung des Mnemonics von CAR ist \"Contents of the Adress Register\" bei einer IBM 704.
-CAR gibt das erste Objekt eines CONStructs / einer Liste oder NIL zurück. Die Verwendung von CAR geht in die Ursprünge von Lisp zurück, einfacher zu lesen ist stattdessen die gleichwertige Verwendung des Befehls FIRST.
-Beispiel: (car '(a b)) => A")
-
-(dokumentation-austauschen 'cdr 'function "(cdr liste)
-Die Bedeutung des Mnemonics von CDR ist \"Contents of the Decrement Register\" bei einer IBM 704.
-CDR gibt eine Liste der Objekte nach dem ersten Objekt einer Liste oder NIL zurück.
-Die Verwendung von REST anstelle von CDR kann einen Quelltext sehr viel lesbarer machen, beide Funktionen sind Synonyme.
-Beispiel: (cdr '(a b c)) => (B C)")
-
-(dokumentation-austauschen 'cons 'function "(cons objekt1 objekt2)
-Die Bedeutung des Mnemonics von CONS ist die Abkürzung von CONStruct.
-CONS erzeugt eine neues Konstrukt, in CL auch CONS genannt, das sich zu einer Liste aus Objekt1 und Objekt2 zusammensetzt.
-CONS erzeugt genau eine neue CONS-Zelle. Es wird oftmals eingesetzt, um ein neues Element an den Anfang einer Liste zu setzen.
-Hinweis: Mit der selbgeschriebenen Funktion SNOC kann ein Element an das Ende einer Liste gesetzt werden.
-Beispiel: (cons 'a '(b)) => (A B)
- (cons 'a 'b) => (A . B)")
-
-(dokumentation-austauschen 'consp 'function "(consp objekt)
-CONSP gibt T zurück, wenn OBJEKT ein CONS - und somit eine nicht leere Liste ist, ansonsten NIL. Eine leere Liste / NIL ist kein CONS, daher gibt CONSP hier ebenfalls NIL zurück.
-Beispiele:  (consp nil) =>  false
- (consp (cons 1 2)) =>  true
- (consp '()) ==  (consp 'nil) =>  false")
-
-(dokumentation-austauschen 'endp 'function "(endp objekt)
-ENDP ist der empfohlene Weg um auf das Ende einer echten Liste hin zu testen. Ist OBJEKT NIL, wird T zurückgegeben. Ist OBJEKT ein CONS wird NIL zurückgegeben.Jeder andere Wert führt zu einem Fehler.
-Beispiele: (endp nil) =>  true
- (endp '(1 2)) =>  false
- (endp (cddr '(1 2))) =>  true")
-
-(dokumentation-austauschen 'intersection 'function "(intersection list1 list2 &key :test :test-not :key)
-INTERSECTION fasst alle Elemente, die in beiden Listen, list1 und list2 vorhanden sind und,  wenn angegeben :test oder :test-not, das Testkriterium bestehen, zu einer neuen Liste, also einer Schnittmenge (engl. intersection) zusammen. Die Reihenfolge der Elemente in der neuen Liste ist implementationsabhängig und gilt als nicht vorhersehbar. Wird eine bestimmte Reihenfolge benötigt, so muß das Ergebnis entsprechend noch mit Hilfer der SORT-Funktion sortiert werden.
-INTERSECTION ist eine nicht-destruktive Funktion, hat aber auch eine Geschwisterfunktion, NINTERSECTION, die unter Umständen liste1 zerstören würde - und daher einen destruktiven Seiteneffekt hat.
-Beispiel: (intersection '(a b c d) '(f a d s l)) => (A D)")
-
-(dokumentation-austauschen 'last 'function "(last liste &optional (n 1))
-LAST gibt die Verkettung der letzten N CONS-Werte zurück, nicht die letzen N Elemente.
-Ist die Liste eine leere Liste wird NIL zurückgegeben.
-Ist N Null, so wird das Atom zurückgeliefert, das die gesamte Liste beendet.
-Beispiele:  (last nil) =>  NIL
- (last '(1 2 3)) =>  (3)
- (last '(1 2 . 3)) =>  (2 . 3)
- (setq x (list 'a 'b 'c 'd)) =>  (A B C D)
- (last x) =>  (D)
- (last '(a b c))   =>  (C)
- (last '(a b c) 0) =>  ()
- (last '(a b c) 1) =>  (C)
- (last '(a b c) 2) =>  (B C)
- (last '(a b c) 3) =>  (A B C)
- (last '(a b c) 4) =>  (A B C)
- (last '(a . b) 0) =>  B
- (last '(a . b) 1) =>  (A . B)
- (last '(a . b) 2) =>  (A . B)")
-
-(dokumentation-austauschen 'list 'function "(list & rest argumente)
-LIST konstruiert eine Liste aus den der Funktion übergebenen Argumenten, wobei diese notfalls zuerst evaluiert werden - und gibt die so entstandene Liste zurück.
-LIST bildet Listen aus einer Serie von CONS-Zellen und beendet die neue Liste mit NIL. Das CAR jeder Zelle deutet auf das übergebene Argument hin.
-Beispiele: (list 'a 'b) => (A B)
- (list 1 2 'ö (car '(a . b)) (+ 7 -3)) => (1 2 Ö A 4)")
-
-(dokumentation-austauschen 'listp 'function "(listp objekt)
-LISTP gibt wahr zurück, wenn OBJEKT eine Liste ist, sonst NIL.
-Beispiele:(listp nil) =>  true
- (listp (cons 1 2)) =>  true
- (listp (make-array 6)) =>  false
- (listp t) =>  false")
-
-(dokumentation-austauschen 'member 'function "(member objekt liste &key :test :test-not :key)
-MEMBER überprüft anhand von :test (voreingestellt ist hier EQL) oder :test-not, ob ein Objekt ein Element der Liste ist. Das voreingestellte EQL prüft hierbei nur die oberste Hierarchie-Ebene.
-Ist die Suche erfolgreich, wird eine Unterliste, beginnend ab dem gefundenen Objekt bis zum Ende der Liste zurückgegeben, was auch als T betrachtet wird. Ist die Suche erfolglos, wird NIL zurückgeliefert.
-MEMBER hat zwei Abkömmlinge, MEMBER-IF und MEMBER-IF-NOT.
-Beispiele: (member 'nerd '(a b c d)) => NIL
- (member 'b '(a b c d)) => (B C D)")
-
-(dokumentation-austauschen 'member-if 'function "(member-if prädikat liste &key :key)
-MEMBER überprüft anhand von Prädikat, ob ein zutreffendes Objekt in der Liste vorkommt oder nicht.
-Ist die Suche erfolgreich, wird eine Unterliste, beginnend ab dem gefundenen Prädikattreffer bis zum Ende der Liste zurückgegeben, was auch als T betrachtet wird. Ist die Suche erfolglos, wird NIL zurückgeliefert.
-MEMBER hat eine Eltern-Funktion: MEMBER und eine Geschwister-Funktion: MEMBER-IF-NOT.
-Beispiel: (member-if  #'oddp '(2 3 4)) => (3 4)")
-
-(dokumentation-austauschen 'member-if-not 'function "(member-if-not prädikat liste &key :key)
-MEMBER überprüft anhand von Prädikat, ob ein zutreffendes Objekt in der Liste nicht vorkommt.
-Ist die Suche erfolgreich, wird eine Unterliste, beginnend ab dem gefundenen Prädikattreffer bis zum Ende der Liste zurückgegeben, was auch als T betrachtet wird. Ist die Suche erfolglos, wird NIL zurückgeliefert.
-MEMBER hat eine Eltern-Funktion: MEMBER und eine Geschwister-Funktion: MEMBER-IF.
-Beispiel: (member-if-not  #'oddp '(1 2 3 4)) => (2 3 4)")
-
-(dokumentation-austauschen 'nintersection 'function "(nintersection list1 list2 &key :test :test-not :key)
-NINTERSECTION fasst alle Elemente, die in beiden Listen, list1 und list2 vorhanden sind und,  wenn angegeben :test oder :test-not, das Testkriterium bestehen, zu einer neuen Liste, also einer Schnittmenge (engl. intersection) zusammen. Die Reihenfolge der Elemente in der neuen Liste ist implementationsabhängig und gilt als nicht vorhersehbar. Wird eine bestimmte Reihenfolge benötigt, so muß das Ergebnis entsprechend noch mit Hilfer der SORT-Funktion sortiert werden.
-NINTERSECTION ist eine nicht-destruktive Funktion, hat aber auch eine Geschwisterfunktion, NINTERSECTION, die unter Umständen liste1 zerstören würde - und daher einen destruktiven Seiteneffekt hat.
-Beispiel: (intersection '(a b c d) '(f a d s l)) => (A D)")
-
-(dokumentation-austauschen 'nset-difference 'function "(nset-difference liste1 liste2 &key :test :test-not :key)
-NSET-DIFFERENCE ermittelt die Differenzmenge von Liste1 zu Liste2. Die zurückgegebene Liste enthält also alle Elemente aus Liste1, die nicht in Liste2 vorhanden sind. Der Ausgang kann mit Hilfe der verschiedenen Schlüssel beeinflusst werden.
-NSET-DIFFERENCE ist eine destruktive Funktion, die vermutlich Liste1 zerstören wird. Sie verfügt auch über eine nicht-destruktive Bruderfunktion, SET-DIFFERENCE.
-Beispiel: (nset-difference '(a b c d) '(c d e f)) => (B A)")
-
-(dokumentation-austauschen 'nsubst 'function "(nsubst neu alt baum &key :test :test-not :key)
-NSUBST erstellt eine Kopie des Baumes, wobei ein Austausch von Alt gegen Neu erfolgt. Der Austausch kann zusätzlich durch die Schlüsselworte beeinflusst werden. Der Orginalbaum wird vermutlich zerstört, der neue Baum kann jedoch Teile des Originalbaums erhalten.
-NSUBST verfügt über zwei Kind-Funktionen, NSUBST-IF und NSUBST-IF-NOT.
-Von allen drei Funktionen gibt es zusätzlich eine nicht zerstörerische Version, die den Ursprungsbaum zerstören kann, SUBST, SUBST-IF und SUBST-IF-NOT.
-Die Funktionen SUBST-IF-NOT und NSUBST-IF-NOT gelten als veraltet und überflüssig.
-Beispiel: (nsubst 'tempest 'hurricane '(shakespeare wrote (the hurricane))) =>  (SHAKESPEARE WROTE (THE TEMPEST))")
-
-(dokumentation-austauschen 'nsubst-if 'function "(nsubst-if neu prädikat baum &key :key)
-NSUBST-IF erstellt eine Kopie des Baumes, wobei ein Austausch erfolgt, wenn ein Blatt oder Ast das Prädikat erfüllt. Der Austausch erfolgt gegen Neu, wobei dieser zusätzlich durch das Schlüsselwort beeinflusst werden kann. Der Orginalbaum wird vermutlich zerstört, der neue Baum kann jedoch Teile des Originalbaums erhalten.
-NSUBST-IF verfügt über eine Elternfunktion, NSUBST und eine Bruderfunktion, NSUBST-IF-NOT.
-Von allen drei Funktionen gibt es zusätzlich eine nicht zerstörerische Version, die den Ursprungsbaum nicht zerstören, SUBST, SUBST-IF und SUBST-IF-NOT.
-Die Funktionen SUBST-IF-NOT und NSUBST-IF-NOT gelten als veraltet und überflüssig.
-Beispiel: (setq tree1 '(1 (1 2) (1 2 3) (1 2 3 4))) =>  (1 (1 2) (1 2 3) (1 2 3 4))
- (nsubst-if 5 #'oddp tree1) =>  5")
-
-(dokumentation-austauschen 'nth 'function "(nth n liste)
-NTH gibt den CAR-Wet des Elements ab Position N zurück, wobei mit der Zählung beim nullten Element begonnen wird.
- (nth n liste) ist gleichwertig zu (car (nthcdr n liste)).
-Ist die übergebene Liste eine punktierte Liste, darf nicht über den letzten CAR-Wert hinaus abgefragt werden, ansonsten kommt es zu einem Fehler.
-Bei einer nicht punktierten Liste wird der Wert NIL zurückgeliefert, wenn über den letzen CAR-Wert hinaus eine Abfrage getroffen wird.
-Beispiele: (nth 0 '(a b . c)) => A
- (nth 1 '(a b . c)) => B
- (nth 2 '(a b . c)) => FEHLER
- (nth 3 '(a b c)) => NIL")
-
-(dokumentation-austauschen 'nthcdr 'function "(nthcdr n liste)
-NTHCDR gibt den CDR-Wert von Liste ab der der mit N angegeben Position zurück. Wird 0 für N eingegeben, wird die vollständige Liste zurückgegeben. Ist N größer oder gleich der Position des letzten Elements, so wird NIL zurückgegeben.
-Dies gilt nicht, wenn eine punktierte Liste übergeben wurde. Geht man hier über das abschließende Element hinaus, so kommt es zu einer Fehlermeldung.
-Beispiele: (nthcdr 1 '(a b c)) => (B C)
- (nthcdr 3 '(a b c)) => NIL
- (nthcdr 0 '(a b c)) => (A B C)
- (nthcdr 2 '(a b . c)) => C
- (nthcdr 3 '(a b . c)) => FEHLER")
-
-(dokumentation-austauschen 'numberp 'function "(numberp objekt)
-NUMBERP liefert T zurück, wenn OBJEKT eine Zahl ist, ansonsten NIL.
-Beispiele: (numberp 12) =>  true
- (numberp (expt 2 130)) =>  true
- (numberp #c(5/3 7.2)) =>  true
- (numberp nil) =>  false
- (numberp (cons 1 2)) =>  false")
-
-(dokumentation-austauschen 'quote 'function "(quote objekt)
-QUOTE ist eine besondere Funktion, die durch ihren Seiteneffekt die Evaluierung eines Objekts verhindert.
-QUOTE kann abgekürzt werden, in dem man vor ein Objekt ein Hochkommata ' setzt. Dieses Hochkommate ersetzt QUOTE sowie sein dazugehöriges Klammerpaar.
-Beispiele: (setq a 1) => 1
- (quote (setq a 3)) => (SETQ A 3)
- a => 1
- 'a => A
- ''a => (QUOTE A) oder 'A 
- '''a => (QUOTE (QUOTE A)) oder ''A
- (setq a 43) => 43
- (list a (cons a 3)) => (43 (43 . 3))
- (list (quote a) (quote (cons a 3))) => (A (CONS A 3)) 
- 1 => 1
- '1 => 1
- \"foo\" => \"foo\"
- '\"foo\" => \"foo\"
- (car '(a b)) => A
- '(car '(a b)) => (CAR (QUOTE (A B))) oder (CAR '(A B))
- #(car '(a b)) => #(CAR (QUOTE (A B))) oder #(CAR '(A B))
- '#(car '(a b)) => #(CAR (QUOTE (A B))) oder #(CAR '(A B))")
-
-(dokumentation-austauschen 'rassoc 'function "(rassoc objekt a-liste &key :test :test-not :key)
-RASSOC durchsucht die A-Liste nach einer Assoziation des Objekts. Hierbei können Prüfungen durch die Schlüsselwörter Einfluss nehmen. Der zurückgegebene Wert ist das erste Paar, dessen CDR-Wert dem von Objekt entspricht, oder aber NIL. 
-RASSOC verfügt über zwei Kind-Funktionen: RASSOC-IF und RASSOC-IF-NOT.
-RASSOC benötigt A-Listen, deren Objekte Paare aus gepunkteten Listen sind.
-Beispiel: (rassoc 'b '((a hubbel) (b dubbel) (c gubbel))) => NIL
- (rassoc 'dubbel '((a . hubbel) (b . dubbel) (c . gubbel))) => (B . DUBBEL)")
-
-(dokumentation-austauschen 'rassoc-if 'function "(rassoc-if prädikat a-liste &key :key)
-RASSOC-IF durchsucht die A-Liste nach einer Assoziation des Objekts. Hierbei können Prüfungen durch die Schlüsselwörter Einfluss nehmen. Der zurückgegebene Wert ist das erste Paar, dessen CDR-Wert dem Prädikat entspricht, oder aber NIL. 
-RASSOC-IF verfügt über eine Eltern-Funktion, RASSOC, und eine Bruderfunktion, RASSOC-IF-NOT.
-RASSOC-IF benötigt A-Listen, deren Objekte Paare aus gepunkteten Listen sind.
-Beispiel: (rassoc-if 'b '((a hubbel) (b dubbel) (c gubbel))) => NIL
- (rassoc-if #'oddp '((hubbel . 2) (dubbel . 3) (gubbel . 4))) => (DUBBEL . 3)")
-
-(dokumentation-austauschen 'rassoc-if-not 'function "(rassoc-if-not prädikat a-liste &key :key)
-RASSOC-IF-NOT durchsucht die A-Liste nach einer Assoziation des Objekts. Hierbei können Prüfungen durch die Schlüsselwörter Einfluss nehmen. Der zurückgegebene Wert ist das erste Paar, dessen CDR-Wert nicht dem Prädikat entspricht, oder aber NIL.
-RASSOC-IF-NOT verfügt über eine Eltern-Funktion, RASSOC, und eine Bruderfunktion, RASSOC-IF.
-RASSOC-IF-NOT benötigt A-Listen, deren Objekte Paare aus gepunkteten Listen sind.
-Beispiel: (rassoc-if-not 'b '((a hubbel) (b dubbel) (c gubbel))) => NIL
- (rassoc-if-not #'oddp '((hubbel . 2) (dubbel . 3) (gubbel . 4))) => (HUBBEL . 2)")
-
-(dokumentation-austauschen 'remove 'function "(remove objekt reihenfolge &key :from-end :test :test-not :start :end :count :key)
-REMOVE liefert eine Reihenfolge zurück, die weitestgehend der übergebenen Reihenfolge entspricht, jedoch wurden jene zwischen :start und :end herausgenommen, die dem :test entsprachen. Die Vorgabe für :test ist der Vergleich per EQL auf Objekt. Das :count Argument, wenn angegeben, sorgt dafür das nicht mehr Argumente als gewünscht entfernt werden. Ausschließlich wenn das :count Argument angegeben wurde. In diesem Fall arbeitet die Funktion vom Ende aus rückwerts die Liste ab.
-REMOVE ist nicht destruktiv, die Ursprungsliste wird nicht verändert.
-REMOVE hat zwei Abkömmlinge: REMOVE-IF und REMOVE-IF-NOT.
-Beispiele: (remove 4 '(1 3 4 5 9)) =>  (1 3 5 9)
- (remove 4 '(1 2 4 1 3 4 5)) =>  (1 2 1 3 5)
- (remove 4 '(1 2 4 1 3 4 5) :count 1) =>  (1 2 1 3 4 5)
- (remove 4 '(1 2 4 1 3 4 5) :count 1 :from-end t) =>  (1 2 4 1 3 5)
- (remove 3 '(1 2 4 1 3 4 5) :test #'>) =>  (4 3 4 5)")
-
-(dokumentation-austauschen 'remove-duplicates 'function "(remove-duplicates reihenfolge &key :from-end :test :start :end :key)
-REMOVE-DUPLICATES überprüft die Reihenfolge paarweise, und wenn zwei daraus übereinstimmend sind, wird das erste entfernt, es sei denn FROM-END ist wahr, dann wird das letztere entfernt. Andere Schlüsselworte können ebenfalls einen Einfluss auf die Überprüfung auswirken. Das Ergebnis wird zurückgeliefert.
-Die Funktion ist destruktiv, die Original-Reihenfolge wird vermutlich zerstört werden.
-Das Schlüsselwort :test-not gilt als veraltet.
-Beispiel: (remove-duplicates '(a b c b d d e)) => (a d b c e)")
-
-(dokumentation-austauschen 'remove-if 'function "(remove-if test reihenfolge &key :from-end :start :end :count :key)
-REMOVE-IF liefert eine Reihenfolge zurück, die weitestgehend der übergebenen Reihenfolge entspricht, jedoch wurden jene zwischen :start und :end herausgenommen, die dem test entsprachen. Das :count Argument, wenn angegeben, sorgt dafür das nicht mehr Argumente als gewünscht entfernt werden. Ausschließlich wenn das :count Argument angegeben wurde. In diesem Fall arbeitet die Funktion vom Ende aus rückwerts die Liste ab.
-REMOVE-IF ist nicht destruktiv, die Ursprungsliste wird nicht verändert.
-REMOVE-IF ist ein Abkömmling von REMOVE und hat REMOVE-IF-NOT als Bruder an seiner Seite.
-Beispiele: (remove-if #'oddp '(1 2 4 1 3 4 5)) => (2 4 4)
- (remove-if #'evenp '(1 2 4 1 3 4 5) :count 1 :from-end t) => (1 2 4 1 3 5)")
-
-(dokumentation-austauschen 'remove-if-not 'function "(remove-if-not test reihenfolge &key :from-end :start :end :count :key)
-REMOVE-IF-NOT liefert eine Reihenfolge zurück, die weitestgehend der übergebenen Reihenfolge entspricht, jedoch wurden jene zwischen :start und :end herausgenommen, die dem test nicht entsprachen. Das :count Argument, wenn angegeben, sorgt dafür das nicht mehr Argumente als gewünscht entfernt werden. Ausschließlich wenn das :count Argument angegeben wurde. In diesem Fall arbeitet die Funktion vom Ende aus rückwerts die Liste ab.
-REMOVE-IF-NOT ist nicht destruktiv, die Ursprungsliste wird nicht verändert.
-REMOVE-IF-NOT ist ein Abkömmling von REMOVE und hat REMOVE-IF als Bruder an seiner Seite.
-Beispiel: (remove-if-not #'evenp '(1 2 3 4 5 6 7 8 9) :count 2 :from-end t)
-=>  (1 2 3 4 5 6 8)")
-
-(dokumentation-austauschen 'reverse 'function "(reverse &rest reihenfolge)
-REVERSE nimmt eine Sequenz, eine Reihenfolge entgegen - und kehrt sie um. Hierbei wird jedoch ausschließlich eine Umkehrung der obersten Elementebene durchgeführt.
-Es wird eine Liste erzeugt, die ursprünglichen Werte werden nicht verändert, die Funktion ist also non-destruktiv.
-Beispiel: (reverse '(a b c d)) => (D C B A)")
-
-(dokumentation-austauschen 'set-difference 'function "(set-difference liste1 liste2 &key :test :test-not :key)
-SET-DIFFERENCE ermittelt die Differenzmenge von Liste1 zu Liste2. Die zurückgegebene Liste enthält also alle Elemente aus Liste1, die nicht in Liste2 vorhanden sind. Der Ausgang kann mit Hilfe der verschiedenen Schlüssel beeinflusst werden.
-SET-DIFFERENCE ist eine nicht-destruktive Funktion. Sie verfügt über eine destruktive Bruderfunktion, NSET-DIFFERENCE, die bei ihrer Anwendung vermutlich Liste1 zerstören wird.
-Beispiel: (set-difference '(a b c d) '(c d e f)) => (B A)")
-
-(dokumentation-austauschen 'setf 'function "(setf ort1 wert1 {ort2 wert2 {ortN wertN}})
-Die Bedeutung des Mnemonics von SETF ist die Abkürzung von SETForm.
-SETF nimmt Argumentpaare entgegen, so wie es auch SETQ tut. Jedes Wertepaar setzt sich aus einem Ort und einem Wert zusammen. Der Wert wird hierbei am vorgegebenen Ort gespeichert. Der letzte Wert wird zurückgegeben. Das Ortargument kann eine Variable oder eine Zugriffsform aus der folgenden Liste sein: AREF NTH ELT REST FIRST SECOND FIRST THIRD FOURTH FIFTH SIXTH SEVENTH EIGHTH NINTH TENTH CAR CDR Cxx{x{x}}R {x=A|D} SVREF GET GETF GETHASH DOCUMENTATION FILL-POINTER SYMBOL-VALUE SYMBOL-FUNCTION SYMBOL-PLIST MACRO-FUNCTION.
-Beispiel: (defparameter *test* '(a b c d)) => *TEST*
- (setf (car *test*) 'n) => N
-*test* => (N B C D)")
-
-(dokumentation-austauschen 'setq 'function "(setq variable1 form1 {variable2 form2 {variableN formN}})
-Die Bedeutung des Mnemonics von SETQ ist die Abkürzung von SETQuote.
-SETQ nimmt Argumentpaare entgegen, wobei es den ersten Wert, ein Symbol, als Variable mit dem dazugehörigen ersten Wert einer zuvor evaluierten Form bindet. Somit entspricht SETQ für Programmierer, die von anderem Programmiersprachen aus kommen, dem klassischen Zuweisungsoperator.
-Beispiele: ;; Der einfachste Nutzen von SETQ ist es, als Seiteneffekt den Wert von evaulierten Formen in Variablen zu speichern.
- (setq a 1 b 2 c 3) =>  3
- a => 1
- b => 2
- c => 3
- ;; Ebenso kann SETQ genutzt werden, um Werte in der Reihenfolge von links nach rechts durch Zuweisung zu aktualisieren.
- (setq a (1+ b) b (1+ a) c (+ a b)) => 7
- a => 3
- b => 4
- c => 7
- ;; Dies stellt die Verwendung von SETQ in Bezug zu SYMBOL-MACROLET dar.
- (let ((x (list 10 20 30)))
-   (symbol-macrolet ((y (first x)) (z (second x)))
-     (setq y (1+ z) z (1+ y))
-     (list x y z))) => ((21 22 30) 21 22)")
-
-(dokumentation-austauschen 'sublis 'function "(sublis a-liste baum &key :test :test-not :key)
-SUBLIS macht Ersetzungen an einem Baum, so wie es SUBST auch vornimmt, jedoch werden viele Ersetzungen auf einmal anhand einer Assoziations-Liste erstellt. Sublis berücksichtig bei der Suche alle Blätter und Zweige des Baumes. Die Suche kann zusätzlich durch Schlüsselbegriffe und Testmöglichkeiten beeinflusst werden.
-Beispiel: (sublis '((rosen . veilchen) (rot . blau)) '(rosen sind rot)) => VEILCHEN SIND BLAU.")
-
-(dokumentation-austauschen 'subsetp 'function "(subsetp liste1 liste2 &key :test :test-not :key)
-SUBSETP ist ein Prädikat, daß das Ergebnis zurückliefert, ob Liste1 eine Untermenge von Liste2 ist. Gegebenenfalls kann das Ergebnis mit Hilfe der Schlüsselwörter beeinflusst werden.
-Beispiel: (subsetp '(rot grün) '(rot grün blau gelb)) => T") 
-
-(dokumentation-austauschen 'subst 'function "(subst neu alt baum &key :test :test-not :key)
-SUBST erstellt eine Kopie des Baumes, wobei ein Austausch von Alt gegen Neu erfolgt. Der Austausch kann zusätzlich durch die Schlüsselworte beeinflusst werden. Der Orginalbaum bleibt unverändert, der neue Baum kann jedoch Teile des Originalbaums erhalten, er muss also keine unabhängige Kopie sein.
-SUBST verfügt über zwei Kind-Funktionen, SUBST-IF und SUBST-IF-NOT.
-Von allen drei Funktionen gibt es zusätzlich eine zerstörerische Version, die den Ursprungsbaum zerstören kann, NSUBST, NSUBST-IF und NSUBST-IF-NOT.
-Die Funktionen SUBST-IF-NOT und NSUBST-IF-NOT gelten als veraltet und überflüssig.
-Beispiel: (subst 'tempest 'hurricane '(shakespeare wrote (the hurricane))) =>  (SHAKESPEARE WROTE (THE TEMPEST))")
-
-(dokumentation-austauschen 'subst-if 'function "(subst-if neu prädikat baum &key :key)
-SUBST-IF erstellt eine Kopie des Baumes, wobei ein Austausch erfolgt, wenn ein Blatt oder Ast das Prädikat erfüllt. Der Austausch erfolgt gegen Neu, wobei dieser zusätzlich durch das Schlüsselwort beeinflusst werden kann. Der Orginalbaum bleibt unverändert, der neue Baum kann jedoch Teile des Originalbaums erhalten, er muss also keine unabhängige Kopie sein.
-SUBST verfügt über eine Elternfunktion, SUBST und eine Bruderfunktion, SUBST-IF-NOT.
-Von allen drei Funktionen gibt es zusätzlich eine zerstörerische Version, die den Ursprungsbaum zerstören kann, NSUBST, NSUBST-IF und NSUBST-IF-NOT.
-Die Funktionen SUBST-IF-NOT und NSUBST-IF-NOT gelten als veraltet und überflüssig.
-Beispiel: (setq tree1 '(1 (1 2) (1 2 3) (1 2 3 4))) =>  (1 (1 2) (1 2 3) (1 2 3 4))
- (subst-if 5 #'listp tree1) =>  5")
-
-(dokumentation-austauschen 'symbolp 'function "(symbolp objekt)
-SYMBOLP liefert T zurück, wenn OBJEKT ein Symbol ist, sonst NIL.
-Beispiele: (symbolp 'elephant) =>  true
- (symbolp 12) =>  false
- (symbolp nil) =>  true
- (symbolp '()) =>  true
- (symbolp :test) =>  true
- (symbolp \"hello\") =>  false")
-
-(dokumentation-austauschen 'union 'function "(union liste1 liste2 &key :test :test-not :key)
-UNION liefert die Vereinigungsmenge aus Liste1 und Liste2 zurück. Sind Schlüssel wie :test oder :test-not angegeben, werden die entsprechenden Prüfverfahren im Vorfeld herangezogen.
-Die Reihenfolge der Elemente in der Ergebnisliste sind Implementationsabhängig und gelten als nicht vorhersagbar. Wird eine bestimmte Reihenfolge im Ergebnis erwartet, so muß dieses per SORT-Funktion erzeugt werden.
-Beispiel: (union '(rot grün blau) '(gelb magenta blau)) => (ROT GRÜN GELB MAGENTA BLAU)
- (union '((x 5) (y 6)) '((z 2) (x 4)) :key #'first) => ((x 4) (z 2) (y 6))")

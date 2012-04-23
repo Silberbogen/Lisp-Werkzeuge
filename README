@@ -1,5 +1,6 @@
 Hier enthalten sind:
 binärsuche.lisp - eine Implementation einer binären Suche für Vektoren.
 craps.lisp - eine Version des Würfelspiels Craps.
+dokumentation.lisp - enthält deutsche Dokumentationszeichenketten
 ssp.lisp - eine Version des Spiels Schere-Stein-Papier, samt der neuen Variante Schere-Stein-Papier-Echse-Spock.
-toolbox.lisp - eine Werkzeugbox mit deutschen Dokumentationszeichenketten und deutschen Fassungen der gängigsten Funktionen für Lisp-Einsteiger.
+toolbox.lisp - eine Werkzeugbox mit deutschen Fassungen der gängigsten Funktionen für Lisp-Einsteiger.
