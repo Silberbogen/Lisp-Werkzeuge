@@ -80,9 +80,9 @@
 (run-or-raise "synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
 (run-or-raise "xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
 
-;; ============
-;; Neue Befehle
-;; ============
+;; ========================
+;; Neue Befehle - Vorarbeit
+;; ========================
 
 (defun cat (&rest strings)
   "(cat &rest strings)
@@ -98,6 +98,11 @@ STARTE bietet einen befehl, um bequem neue Kommandos mittels defcommand zu erste
   `(defcommand ,name () () ,dokstring
 	       (run-or-raise ,befehl '(:class ,klasse))))
 
+(defmacro neuerterminalbefehl (name dokstring befehl klasse &optional (fg "lavender") (bg "maroon4"))
+	    "Starte/wechsle zu Alsa-Mixer."
+	    `(neuerbefehl ,name ,dokstring (format nil "uxterm -fg ~A -bg ~A -class '~A' -e '~A'"
+					       ,fg ,bg ,klasse ,befehl) ,klasse))
+
 (defmacro tastenbindung (keymap taste befehl)
   "Kurzes Macro, um eine Tastenbindung zu definieren"
   `(define-key, keymap (kbd, taste), befehl))
@@ -109,277 +114,157 @@ STARTE bietet einen befehl, um bequem neue Kommandos mittels defcommand zu erste
 		    tasten)))
     `(progn ,@ks)))
 
-(defcommand abook () ()
-	    "Starte/wechsle zu Abook."
-	    (run-or-raise (cat *uxt* "-class 'Abook' -e abook") '(:class "Abook")))
+;; -------------------
+;; Grafische Programme
+;; -------------------
 
-(defcommand adminterminal () ()
-	    "Starte/wechsle zum Adminterminal."
-	    (run-or-raise "uxterm -fg gainsboro -bg OrangeRed -class 'Adminterminal' -e 'sudo -i'" '(:class "Adminterminal")))
+(neuerbefehl audacious "Starte/wechsle zu Audacious." "audacious" "Audacious")
 
-(defcommand aliensrl () ()
-	    "Starte/wechsle zu AliensRL."
-	    (run-or-raise (cat *uxt* "-class 'Aliensrl' -e aliensrl") '(:class "Aliensrl")))
+(neuerbefehl banshee "Starte/wechsle zum Banshee Medienabspieler." "banshee" "Banshee")
 
-(defcommand alsamixer () ()
-	    "Starte/wechsle zu Alsa-Mixer."
-	    (run-or-raise (cat *uxt* "-class 'Alsamixer' -e alsamixer") '(:class "Alsamixer")))
+(neuerbefehl brogue "Starte/wechsle zum ansprechenden B-Rogue." "brogue" "Brogue")
 
-(neuerbefehl audacious
-	     "Starte/wechsle zu Audacious."
-	     "audacious" "Audacious")
+(neuerbefehl calibre "Starte/wechsle zur Calibre Ebook-Verwaltung." "calibre" "Calibre")
 
-(neuerbefehl banshee
-	     "Starte/wechsle zum Banshee Medienabspieler."
-	     "banshee" "Banshee")
+(neuerbefehl cherrytree "Starte/wechsle zum Cherrytree Wiki." "cherrytree" "Cherrytree")
 
-(neuerbefehl brogue
-	     "Starte/wechsle zum ansprechenden B-Rogue."
-	     "brogue" "Brogue")
+(neuerbefehl chromium-browser "Starte/wechsle zum Chromium Webbrowser." "chromium-browser" "Chromium-Browser")
 
-(defcommand byobu () ()
-	    "Starte/wechsle zum Adminterminal."
-	    (run-or-raise "uxterm -fg gainsboro -bg DarkSlateGray -class 'Byobu' -e 'byobu'" '(:class "Byobu")))
+(neuerbefehl claws-mail "Starte/wechsle zu Claws-Mail." "claws-mail" "Claws-mail")
 
-(neuerbefehl calibre
-	     "Starte/wechsle zur Calibre Ebook-Verwaltung."
-	     "calibre" "Calibre")
+(neuerbefehl comix "Starte/wechsle zu Comix." "comix" "Comix")
 
-(neuerbefehl cherrytree
-	     "Starte/wechsle zum Cherrytree Wiki."
-	     "cherrytree" "Cherrytree")
+(neuerbefehl conkeror "Starte/wechsle zum Conkeror Webbrowser." "conkeror" "Conkeror")
 
-(neuerbefehl chromium-browser
-	     "Starte/wechsle zum Chromium Webbrowser."
-	     "chromium-browser" "Chromium-Browser")
+(neuerbefehl deluge "Starte/wechsle zu Deluge." "deluge" "Deluge")
 
-(neuerbefehl claws-mail
-	     "Starte/wechsle zu Claws-Mail."
-	     "claws-mail" "Claws-mail")
+(neuerbefehl dwb "Starte/wechsle zum dwb Webbrowser." "dwb" "Dwb")	    
 
-(neuerbefehl conkeror
-	     "Starte/wechsle zum Conkeror Webbrowser."
-	     "conkeror" "Conkeror")
+(neuerbefehl emacs "Starte/wechsle zu Emacs." "emacs" "Emacs")
 
-(defcommand crawl () ()
-	    "Starte/wechsle zu Crawl."
-	    (run-or-raise (cat *uxt* "-class 'Crawl' -e crawl") '(:class "Crawl")))
+(neuerbefehl evince "Starte/wechsle zu Evince." "evince" "Evince")
 
-(neuerbefehl deluge
-	     "Starte/wechsle zu Deluge."
-	     "deluge" "Deluge")
+(neuerbefehl file-roller "Starte/wechsle zu File-Roller." "file-roller" "File-roller")
 
-(defcommand doomrl () ()
-	    "Starte/wechsle zu DoomRL."
-	    (run-or-raise (cat *uxt* "-class 'Doomrl' -e doomrl") '(:class "Doomrl")))
+(neuerbefehl firefox "Starte/wechsle zu Firefox." "firefox" "Firefox")
 
-(neuerbefehl dwb
-	     "Starte/wechsle zum dwb Webbrowser."
-	     "dwb" "Dwb")	    
+(neuerbefehl flare "Starte/wechsle zu Flare RPG." "flare" "Flare")
 
-(neuerbefehl emacs
-	     "Starte/wechsle zu Emacs."
-	     "emacs" "Emacs")
+(neuerbefehl focuswriter "Starte/wechsle zu Focuswriter." "focuswriter" "Focuswriter")
 
-(neuerbefehl evince
-	     "Starte/wechsle zu Evince."
-	     "evince" "Evince")
+(neuerbefehl geeqie "Starte/wechsle zum Geekie Bildbetrachter." "geeqie" "Geeqie")
 
-(neuerbefehl file-roller
-	     "Starte/wechsle zu File-Roller."
-	     "file-roller" "File-roller")
+(neuerbefehl gimp "Starte/wechsle zu GIMP." "gimp" "Gimp")
 
-(neuerbefehl flare
-	     "Starte/wechsle zu Flare RPG."
-	     "flare" "Flare")
+(neuerbefehl iceweasel "Starte/wechsle zum Iceweasel Webbrowser." "iceweasel" "Iceweasel")
 
-(neuerbefehl firefox
-	     "Starte/wechsle zu Firefox."
-	     "firefox" "Firefox")
+(neuerbefehl jumanji "Starte/wechsle zum Jumanji Webbrowser." "jumanji" "Jumanji")	    
 
-(neuerbefehl focuswriter
-	     "Starte/wechsle zu Focuswriter."
-	     "focuswriter" "Focuswriter")
+(neuerbefehl kaffeine "Starte/wechsle zu Kaffeine." "kaffeine" "Kaffeine")
 
-(neuerbefehl geeqie
-	     "Starte/wechsle zum Geekie Bildbetrachter."
-	     "geeqie" "Geeqie")
-
-(neuerbefehl gimp
-	     "Starte/wechsle zu GIMP."
-	     "gimp" "Gimp")
-
-(defcommand htop () ()
-	    "Starte/wechsle zu Htop."
-	    (run-or-raise (cat *uxt* "-class 'Htop' -e htop") '(:class "Htop")))
-
-(neuerbefehl iceweasel
-	     "Starte/wechsle zum Iceweasel Webbrowser."
-	     "iceweasel" "Iceweasel")
-
-(neuerbefehl jumanji
-	     "Starte/wechsle zum Jumanji Webbrowser."
-	     "jumanji" "Jumanji")	    
-
-(neuerbefehl kaffeine
-	     "Starte/wechsle zu Kaffeine."
-	     "kaffeine" "Kaffeine")
-
-(neuerbefehl keepassx
-	     "Starte/wechsle zu KeePassX."
-	     "keepassx" "Keepassx")
+(neuerbefehl keepassx "Starte/wechsle zu KeePassX." "keepassx" "Keepassx")
 
 (defcommand man (man) ((:string "Manual: "))
 	    "Sucht nach einem Befehl in den Manual-Seiten"
 	    (run-shell-command (format nil "~A -e sh -c 'man ~A'" terminal man)))
 
-(defcommand mathomatic () ()
-	    "Starte/wechsle zu Mathomatic."
-	    (run-or-raise (cat *uxt* "-class 'Mathomatic' -e mathomatic") '(:class "Mathomatic")))
+(neuerbefehl minitube "Starte/wechsle zu Minitube." "minitube" "Minitube")
 
-(defcommand mc () ()
-	    "Starte/wechsle zum Midnight Commander."
-	    (run-or-raise (cat *uxt* "-class 'MidnightCommander' -e mc") '(:class "MidnightCommander")))
+(neuerbefehl nautilus "Starte/wechsle zum Nautilus Dateimanager." "nautilus --no-desktop" "Nautilus")
 
-(neuerbefehl comix
-	     "Starte/wechsle zu Comix."
-	     "comix" "Comix")
+(neuerbefehl nitrogen "Starte/wechsle zu Nitrogen." "nitrogen" "Nitrogen")
 
-(neuerbefehl minitube
-	     "Starte/wechsle zu Minitube."
-	     "minitube" "Minitube")
+(neuerbefehl okular "Starte/wechsle zum Okular PDF-Betrachter." "okular" "Okular")
 
-(defcommand mocp () ()
-	    "Starte/wechsle zu Music on Console."
-	    (run-or-raise (cat *uxt* "-class 'Mocp' -e mocp") '(:class "Mocp")))
+(neuerbefehl palapeli "Starte/wechsle zu Palapeli." "palapeli" "Palapeli")
 
-(defcommand moria () ()
-	    "Starte/wechsle zu Moria."
-	    (run-or-raise (*uxt* "-class 'Moria' -e moria") '(:class "Moria")))
+(neuerbefehl pouetChess "Starte/wechsle zu Pouetchess 3Dxp." "pouetChess" "pouetChess")
 
-(neuerbefehl nautilus
-	     "Starte/wechsle zum Nautilus Dateimanager."
-	     "nautilus --no-desktop" "Nautilus")
-
-(neuerbefehl nitrogen
-	     "Starte/wechsle zu Nitrogen."
-	     "nitrogen" "Nitrogen")
-
-(neuerbefehl okular
-	     "Starte/wechsle zum Okular PDF-Betrachter."
-	     "okular" "Okular")
-
-(neuerbefehl palapeli
-	     "Starte/wechsle zu Palapeli."
-	     "palapeli" "Palapeli")
-
-(neuerbefehl pouetChess
-	     "Starte/wechsle zu Pouetchess 3Dxp."
-	     "pouetChess" "pouetChess")
-
-(defcommand primerl () ()
-	    "Starte/wechsle zu PrimeRL."
-	    (run-or-raise (cat *uxt* "-class 'Primerl' -e primerl") '(:class "Primerl")))
-
-(neuerbefehl pychess
-	     "Starte/wechsle zu PyChess Staunton."
-	     "pychess" "pychess")
+(neuerbefehl pychess "Starte/wechsle zu PyChess Staunton." "pychess" "pychess")
 
 (defcommand reinit () ()
 	    "Reinitialisierung des Systems"
 	    (run-commands "reload" "loadrc"))
 
-(neuerbefehl ristretto
-	     "Starte/wechsle zu Ristretto."
-	     "ristretto" "Ristretto")
+(neuerbefehl ristretto "Starte/wechsle zu Ristretto." "ristretto" "Ristretto")
 
-(defcommand rogue () ()
-	    "Starte/wechsle zu Rogue."
-	    (run-or-raise (cat *uxt* "-class 'Rogue' -e rogue") '(:class "Rogue")))
+(neuerbefehl scid "Starte/wechsle zu Scid vs. PC." "scid" "Scid")
 
-(neuerbefehl scid
-	     "Starte/wechsle zu Scid vs. PC."
-	     "scid" "Scid")
+(neuerbefehl scribus "Starte/wechsle zu Scribus" "scribus" "Scribus")
 
-(neuerbefehl scribus
-	     "Starte/wechsle zu Scribus"
-	     "scribus" "Scribus")
-
-(neuerbefehl surf
-	     "Starte/wechsle zu Surf."
-	     "surf" "surf")
+(neuerbefehl surf "Starte/wechsle zu Surf." "surf" "surf")
 
 (defcommand switch-modeline () ()
 	    "Schaltet die Modeline ein oder aus"
 	    (toggle-mode-line (current-screen) (current-head)))
 
-(defcommand telecomix () ()
-	    "Starte/wechsle zu Telecomix."
-	    (run-or-raise (cat *uxt* "-class 'Telecomix' -e telecomix") '(:class "Telecomix")))
+(neuerbefehl thunderbird "Starte/wechsle zu Thunderbird Emailclient." "thunderbird" "Thunderbird")
 
-(neuerbefehl thunderbird
-	     "Starte/wechsle zu Thunderbird Emailclient."
-	     "thunderbird" "Thunderbird")
+(neuerbefehl turpial "Starte/wechsle zu Turpial." "turpial" "Turpial")
 
-(neuerbefehl turpial
-	     "Starte/wechsle zu Turpial."
-	     "turpial" "Turpial")
+(neuerbefehl uzbl-browser "Starte/wechsle zu Uzbl." "uzbl-browser" "Uzbl-core")
 
-(defcommand twitter () ()
-	    "Starte/wechsle zu Twitter."
-	    (run-or-raise (cat *uxt* "-class 'Twitter' -e twitter") '(:class "Twitter")))
+(neuerbefehl unison-gtk "Starte/wechsle zu Unison." "unison-gtk" "Unison-gtk")
 
-(neuerbefehl uzbl-browser
-	     "Starte/wechsle zu Uzbl."
-	     "uzbl-browser" "Uzbl-core")
+(neuerbefehl vlc "Starte/wechsle zu VideoLanClient." "vlc" "Vlc")
 
-(neuerbefehl unison-gtk
-	     "Starte/wechsle zu Unison."
-	     "unison-gtk" "Unison-gtk")
+(neuerbefehl vym "Starte/wechsle zu ViewYourMind." "vym" "Vym")
 
-(neuerbefehl vlc
-	     "Starte/wechsle zu VideoLanClient."
-	     "vlc" "Vlc")
+(neuerbefehl worldofpadman "Starte/wechsle zu World of Padman." "worldofpadman" "Worldofpadman")
 
-(neuerbefehl vym
-	     "Starte/wechsle zu ViewYourMind."
-	     "vym" "Vym")
+(neuerbefehl xarchiver "Starte/wechsle zu X-Archiver." "xarchiver" "Xarchiver")
 
-(defcommand wicd-curses () ()
-	    "Starte/wechsle zu WICD (curses)."
-	    (run-or-raise (cat *uxt* "-class 'Wicdcurses' -e wicd-curses") '(:class "Wicdcurses")))
+(neuerbefehl xchat "Starte/wechsle zu X-Chat." "xchat" "Xchat")
 
-(neuerbefehl worldofpadman
-	     "Starte/wechsle zu World of Padman."
-	     "worldofpadman" "Worldofpadman")
+(neuerbefehl zathura "Starte/wechsle zu Zathura." "zathura" "Zathura")
 
-(neuerbefehl xarchiver
-	     "Starte/wechsle zu X-Archiver."
-	     "xarchiver" "Xarchiver")
 
-(neuerbefehl xchat
-	     "Starte/wechsle zu X-Chat."
-	     "xchat" "Xchat")
 
-(defcommand xorcurses () ()
-	    "Starte/wechsle zu Xorcurses."
-	    (run-or-raise (cat *uxt* "uxterm -class 'Xorcurses' -e xorcurses") '(:class "Xorcurses")))
+;; --------------------------------
+;; Programme die im Terminal laufen
+;; --------------------------------
 
-(neuerbefehl zathura
-	     "Starte/wechsle zu Zathura."
-	     "zathura" "Zathura")
+(neuerterminalbefehl abook "Starte/wechsle zu Abook." "abook" "Abook")
 
-(defcommand zork1 () ()
-	    "Starte/wechsle zu Zork 1."
-	    (run-or-raise (cat *uxt* "-class 'Zork1' -e zork1") '(:class "Zork1")))
+(neuerterminalbefehl adminterminal "Starte/wechsle zum Adminterminal." "sudo -i" "Adminterminal" "gainsboro" "OrangeRed")
 
-(defcommand zork2 () ()
-	    "Starte/wechsle zu Zork 2."
-	    (run-or-raise (cat *uxt* "-class 'Zork2' -e zork2") '(:class "Zork2")))
+(neuerterminalbefehl aliensrl "Starte/wechsle zu AliensRL." "aliensrl" "Aliensrl")
 
-(defcommand zork3 () ()
-	    "Starte/wechsle zu Zork 3."
-	    (run-or-raise (cat *uxt* "-class 'Zork3' -e zork3") '(:class "Zork3")))
+(neuerterminalbefehl alsamixer "Starte/wechsle zum Alsa-Mixer." "alsamixer" "Alsamixer")
+
+(neuerterminalbefehl byobu "Starte/wechsle zum Byobu-Terminal." "byobu" "Byobu" "gainsboro" "DarkSlateGray")
+
+(neuerterminalbefehl crawl "Starte/wechsle zu Crawl." "crawl" "Crawl")
+
+(neuerterminalbefehl doomrl "Starte/wechsle zu DoomRL." "doomrl" "Doomrl")
+
+(neuerterminalbefehl htop "Starte/wechsle zu Htop." "htop" "Htop" "BlanchedAlmond" "MidnightBlue")
+
+(neuerterminalbefehl mathomatic "Starte/wechsle zu Mathomatic." "mathomatic" "Mathomatic")
+
+(neuerterminalbefehl mc "Starte/wechsle zum Midnight Commander." "mc" "Mc")
+
+(neuerterminalbefehl mocp "Starte/wechsle zu Music on Console." "mocp" "Mocp")
+
+(neuerterminalbefehl moria "Starte/wechsle zu Moria." "moria" "Moria")
+
+(neuerterminalbefehl primerl "Starte/wechsle zu PrimeRL." "primerl" "Primerl")
+
+(neuerterminalbefehl rogue "Starte/wechsle zu Rogue." "rogue" "Rogue")
+
+(neuerterminalbefehl telecomix "Starte/wechsle zu Telecomix." "telecomix" "Telecomix")
+
+(neuerterminalbefehl twitter "Starte/wechsle zu Twitter." "twitter" "Twitter")
+
+(neuerterminalbefehl wicd-curses "Starte/wechsle zu WICD (curses)." "wicd-curses" "Wicd")
+
+(neuerterminalbefehl xorcurses "Starte/wechsle zu Xorcurses." "xorcurses" "Xorcurses")
+
+(neuerterminalbefehl zork1 "Starte/wechsle zu Zork 1." "zork1" "Zork1")
+
+(neuerterminalbefehl zork2 "Starte/wechsle zu Zork 2." "zork2" "Zork2")
+
+(neuerterminalbefehl zork3 "Starte/wechsle zu Zork 3." "zork3" "Zork3")
 
 ;;; ===============================================
 ;;; Anpassung der Darstellung von Datum und Uhrzeit
