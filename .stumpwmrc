@@ -36,7 +36,7 @@
     (define-key m (kbd "a")   "alsamixer")
     (define-key m (kbd "A")   "abook ")
     (define-key m (kbd "C-a") "audacious")
-    (define-key m (kbd "C-A") "exec avidemux2_qt4")
+    (define-key m (kbd "C-A") "exec avidemux2_gtk")
     (define-key m (kbd "b")   "banshee")
     (define-key m (kbd "c")   "conkeror")
     (define-key m (kbd "C")   "chromium-browser")
@@ -75,6 +75,7 @@
     (define-key m (kbd "S")   "surf")
     (define-key m (kbd "t")   "thunderbird")
     (define-key m (kbd "T")   "turpial")
+    (define-key m (kbd "C-t")  "ttytter")
     (define-key m (kbd "u")   "unison-gtk")
     (define-key m (kbd "v")   "vlc")
     (define-key m (kbd "V")   "vym")
@@ -102,9 +103,10 @@
     (define-key m (kbd "o") "open-selection-browser")
     (define-key m (kbd "r") "news-register")
     (define-key m (kbd "s") "stackoverflow")
-    (define-key m (kbd "t") "telecomix")
-    (define-key m (kbd "T") "twitter")
+    (define-key m (kbd "T") "telecomix")
+    (define-key m (kbd "t") "ttytter")
     (define-key m (kbd "w") "wikipedia")
+    (define-key m (kbd "z") "zwitschere")
     m))
 
 ;; --------------------------------------------------------
@@ -160,24 +162,24 @@
 ;; ======================================================================================================
 
 (defparameter *start-menü*
-  '(
+  `(
 
     ("WWW"
      ("Chromium     prefix-x C"   "chromium-browser")
      ("Claws-Mail   "             "claws-mail")
      ("Conkeror     prefix-x c"   "conkeror")
      ("Deluge       prefix-x d"   "deluge")
-     ("dwb          prefix-x D"   "dwb")
+;     ("dwb          prefix-x D"   "dwb")
      ("Firefox      prefix-x f"   "firefox")
-     ("Iceweasel    prefix-x i"   "iceweasel")
-     ("Jumanji      prefix-x j"   "jumanji")
+;     ("Iceweasel    prefix-x i"   "iceweasel")
+;     ("Jumanji      prefix-x j"   "jumanji")
      ("MiniTube     prefix-x C-m" "minitube")
-     ("Mutt"                      "st -e mutt")
-     ("Surf         prefix-x S"   "surf")
+;     ("Mutt"                      "st -e mutt")
+;     ("Surf         prefix-x S"   "surf")
      ("Telecomix    prefix-y t"   "telecomix")
      ("Thunderbird  prefix-x t"   "thunderbird")
      ("Turpial      prefix-x T"   "turpial")
-     ("Twitter      prefix-y T"   "twitter")
+     ("Twitter      prefix-y t"   "ttytter")
      ("X-Chat       prefix-x x"   "xchat")
     )
 
@@ -202,22 +204,13 @@
      ("ViewYourMind             prefix-x V"   "vym")
      ("Zathura                  prefix-x z"   "zathura")
     )
-    
-    ("Media"
-     ("Audacious           prefix-x C-a" "audacious")
-     ("AviDeMux            prefix-x C-A" "avidemux2_qt4")
-     ("Banshee             prefix-x b"   "banshee")
-     ("Comix"                            "comix")     
-     ("Geeqie              prefix-x g"   "geeqie")
-     ("K3b Burner          prefix-x C-k" "k3b")
-     ("Kaffeine            prefix-x K"   "kaffeine")
-     ("Lautstärke          prefix-x a"   "alsamixer")
-     ("MiniTube            prefix-x C-m" "minitube")
-     ("Music on Console    prefix-x m"   "mocp")
-     ("Ristretto           prefix-x r"   "ristretto")
-     ("TV-Browser          "             "tvbrowser")
-     ("VideoLan-Client     prefix-x v"   "vlc")
-     ("XVidCap Screencast  prefix-x C-v" "xvidcap")
+
+    ("Clouddienste"
+     ("Dropbox starten           prefix-x C-d" "dropbox start")
+     ("Dropbox beenden           prefix-x C-D" "dropbox stop")
+     ("DropBox Webseite"                       ,(concatenate 'string *browser* "https://dropbox.com"))
+     ("UbuntuOne Steuerpult"             "ubuntuone-control-panel-qt")
+     ("UbuntuOne Webseite"                     ,(concatenate 'string *browser* "https://one.ubuntu.com"))
     )
    
     ("Erholung"
@@ -264,11 +257,55 @@
      ("ZSNES                prefix-X z"   "zsnes")
     )
     
+    ("Lisp & StumpWM"
+     ("Common Lisp"                                ,(concatenate 'string *browser* "http://common-lisp.net/"))
+     ("Common Lisp Hyperspec"                      ,(concatenate 'string *browser* "http://www.lispworks.com/documentation/HyperSpec/Front/index.htm"))
+     ("Common Lisp Wiki"                           ,(concatenate 'string *browser* "http://www.cliki.net/index"))
+     ("ELM-Art Lisp Tutor (Deutsch/English)"       ,(concatenate 'string *browser* "http://art2.ph-freiburg.de/art/login-d.html"))
+     ("Emacs                            prefix-e"  "emacs")
+     ("Graham's On Lisp"                           ,(concatenate 'string *browser* "http://www.paulgraham.com/onlisptext.html"))
+     ("L1sp"                                       ,(concatenate 'string *browser* "http://l1sp.org"))
+     ("Planet LISP"                                ,(concatenate 'string *browser* "http://planet.lisp.org"))
+     ("Planet SBCL"                                ,(concatenate 'string *browser* "http://planet.sbcl.org"))
+     ("Rosetta Code"                               ,(concatenate 'string *browser* "http://rosettacode.org/wiki/Category:Common_Lisp"))
+     ("Seibel's Practical Common Lisp"             ,(concatenate 'string *browser* "http://gigamonkeys.com/book/"))
+     ("StumpWM Homepage"                           ,(concatenate 'string *browser* "http://stumpwm.org"))
+     ("StumpWM Wiki"                               ,(concatenate 'string *browser* "http://stumpwm.svkt.org/cgi-bin/wiki.pl"))
+     ("Touretzky's Common Lisp Book"               ,(concatenate 'string *browser* "http://www.cs.cmu.edu/~dst/LispBook/"))
+    )
+    
+    ("Media"
+     ("Audacious           prefix-x C-a" "audacious")
+     ("AviDeMux            prefix-x C-A" "avidemux2_gtk")
+     ("Banshee             prefix-x b"   "banshee")
+     ("Comix"                            "comix")     
+     ("Geeqie              prefix-x g"   "geeqie")
+     ("K3b Burner          prefix-x C-k" "k3b")
+     ("Kaffeine            prefix-x K"   "kaffeine")
+     ("Lautstärke          prefix-x a"   "alsamixer")
+     ("MiniTube            prefix-x C-m" "minitube")
+     ("Music on Console    prefix-x m"   "mocp")
+     ("Ristretto           prefix-x r"   "ristretto")
+     ("TV-Browser          "             "tvbrowser")
+     ("VideoLan-Client     prefix-x v"   "vlc")
+     ("XVidCap Screencast  prefix-x C-v" "xvidcap")
+    )
+
+    ("Soziale Netzwerke"
+     ("Diaspora*"                        ,(concatenate 'string *browser* "https://joindiaspora.com/stream"))
+     ("Google+"                          ,(concatenate 'string *browser* "https://plus.google.com"))
+     ("i2p"                              ,(concatenate 'string *browser* "http://127.0.0.1:7657"))
+     ("identi.ca"                        ,(concatenate 'string *browser* "https://identi.ca"))
+     ("Telecomix"                        ,(concatenate 'string *browser* "https://status.telecomix.org"))
+     ("Twitter"                          ,(concatenate 'string *browser* "https://twitter.com"))
+     ("Thunderbird Email     prefix-x t" "thunderbird")
+     ("Turpial Twitterclient prefix-x T" "turpial")
+     ("X-Chat IRC-Netz       prefix-x x" "xchat")     
+    )
+    
     ("System"
      ("Adressbuch                prefix-x A"   "abook")
      ("Dateimanager              prefix-x n"   "nautilus")
-     ("Dropbox starten           prefix-x C-d" "dropbox start")
-     ("Dropbox beenden           prefix-x C-D" "dropbox stop")
      ("Event-Anzeiger XEV"                     "xev")
      ("File-Roller"                            "file-roller")
      ("GParted"                                "gksudo gparted")
@@ -293,48 +330,48 @@
     )
 
     ("Webseiten"
-     ("Arch Linux"                       "conkeror http://archlinux.org")
-     ("Ask Ubuntu           prefix-y a"  "conkeror http://askubuntu.com")
-     ("BBC Nachrichten      prefix-y b"  "conkeror http://bbc.co.uk/news")
-     ("Blottr Breaking-News"             "conkeror http://blottr.com")
-     ("Detektiv Conan"                   "conkeror http://detektiv-conan.ch")
-     ("Diaspora*"                        "conkeror http://joindiaspora.com/stream")
+     ("BBC Nachrichten      prefix-y b"  ,(concatenate 'string *browser* "http://bbc.co.uk/news"))
+     ("Blottr Breaking-News"             ,(concatenate 'string *browser* "http://blottr.com"))
+     ("Detektiv Conan"                   ,(concatenate 'string *browser* "http://detektiv-conan.ch"))
      ("DuckDuckGo           prefix-y d"  "ddg")
-     ("Dwarf Fortress Wiki"              "conkeror http://df.magmawiki.com")
-     ("FreshPorts"                       "conkeror http://freshports.org")
-     ("Gronkh"                           "conkeror http://gronkh.de")
-     ("Hackernews           prefix-y h"  "conkeror http://news.ycombinator.com")
-     ("Heise"                            "conkeror http://heise.de")
-     ("i2p"                              "conkeror http://127.0.0.1:7657")
-     ("I.M.D.B."                         "conkeror http://imdb.com")
-     ("IxQuick              prefix-y i"  "conkeror http://ixquick.com")
-     ("LEO EN-DE"                        "conkeror http://leo.org")
-     ("Lernu Esperanto"                  "conkeror http://lernu.net")
-     ("L1sp"                             "conkeror http://l1sp.org")
-     ("Memory Alpha"                     "conkeror http://memory-alpha.org")
-     ("Minecraft Wiki"                   "conkeror http://www.minecraftwiki.net")
-     ("OMG! Ubuntu"                      "conkeror http://omgubuntu.co.uk")
-     ("Planet LISP"                      "conkeror http://planet.lisp.org")
-     ("Planet SBCL"                      "conkeror http://planet.sbcl.org")
-     ("Revo Vortaro EO"                  "conkeror http://reta-vortaro.de")
-     ("Sonja Vortaro EO"                 "conkeror http://kisa.ca/vortaro")
-     ("Stackoverflow        prefix-y s"  "conkeror http://stackoverflow.com")
-     ("StumpWM Homepage"                 "conkeror http://www.nongnu.org/stumpwm/")
-     ("StumpWM Wiki"                     "conkeror http://stumpwm.svkt.org/cgi-bin/wiki.pl")
-     ("SubCentral"                       "conkeror http://subcentral.de")
-     ("Telecomix"                        "conkeror https://status.telecomix.org")
-     ("Thalia"                           "conkeror http://thalia.de")
-     ("The Guardian         prefix-y g"  "conkeror http://guardian.co.uk")
-     ("The Register         prefix-y r"  "conkeror http://theregister.co.uk")
-     ("TOR check"                        "conkeror https://check.torproject.org")
-     ("Tumblr"                           "conkeror http://tumblr.com/dashboard")
-     ("Twitter"                          "conkeror https://twitter.com")
-     ("Ubuntu"                           "conkeror http://ubuntu.com")
-     ("Übersetzen"                       "conkeror http://translate.google.com")
-     ("Webupd8"                          "conkeror http://webupd8.org")
-     ("Wikipedia            prefix-y w"  "conkeror http://de.wikipedia.org")
-     ("YouTube"                          "conkeror http://youtube.com")
-     ("ZenCast"                          "conkeror http://zencast.org")
+     ("Dwarf Fortress Wiki"              ,(concatenate 'string *browser* "http://df.magmawiki.com"))
+     ("FreshPorts"                       ,(concatenate 'string *browser* "http://freshports.org"))
+     ("GitHUB"                           ,(concatenate 'string *browser* "https://github.com"))
+     ("Gronkh"                           ,(concatenate 'string *browser* "http://gronkh.de"))
+     ("Hackernews           prefix-y h"  ,(concatenate 'string *browser* "http://news.ycombinator.com"))
+     ("Heise"                            ,(concatenate 'string *browser* "http://heise.de"))
+     ("I.M.D.B."                         ,(concatenate 'string *browser* "http://imdb.com"))
+     ("IxQuick              prefix-y i"  ,(concatenate 'string *browser* "https://ixquick.com"))
+     ("LEO EN-DE"                        ,(concatenate 'string *browser* "http://leo.org"))
+     ("Lernu Esperanto"                  ,(concatenate 'string *browser* "http://lernu.net"))
+     ("Memory Alpha"                     ,(concatenate 'string *browser* "http://memory-alpha.org"))
+     ("Minecraft Wiki"                   ,(concatenate 'string *browser* "http://www.minecraftwiki.net"))
+     ("OMG! Ubuntu"                      ,(concatenate 'string *browser* "http://omgubuntu.co.uk"))
+     ("Revo Vortaro EO"                  ,(concatenate 'string *browser* "http://reta-vortaro.de"))
+     ("Sonja Vortaro EO"                 ,(concatenate 'string *browser* "http://kisa.ca/vortaro"))
+     ("Stackoverflow        prefix-y s"  ,(concatenate 'string *browser* "http://stackoverflow.com"))
+     ("SubCentral"                       ,(concatenate 'string *browser* "http://subcentral.de"))
+     ("Thalia"                           ,(concatenate 'string *browser* "http://thalia.de"))
+     ("The Guardian         prefix-y g"  ,(concatenate 'string *browser* "http://guardian.co.uk"))
+     ("The Register         prefix-y r"  ,(concatenate 'string *browser* "http://theregister.co.uk"))
+     ("TOR check"                        ,(concatenate 'string *browser* "https://check.torproject.org"))
+     ("Webupd8"                          ,(concatenate 'string *browser* "http://webupd8.org"))
+     ("Wikipedia            prefix-y w"  ,(concatenate 'string *browser* "https://de.wikipedia.org"))
+     ("YouTube"                          ,(concatenate 'string *browser* "https://youtube.com"))
+     ("ZenCast"                          ,(concatenate 'string *browser* "http://zencast.org"))
+    )
+
+    ("Ubuntu"
+     ("Ask Ubuntu           prefix-y a"  ,(concatenate 'string *browser* "http://askubuntu.com"))
+     ("Full Circle Magazine"             ,(concatenate 'string *browser* "http://fullcirclemagazine.org"))
+     ("Launchpad"                        ,(concatenate 'string *browser* "https://launchpad.net"))
+     ("Netzwerkverbindung bearbeiten"    "nm-connection-editor")
+     ("Planet Ubuntu"                    ,(concatenate 'string *browser* "http://planet.ubuntu.com"))
+     ("Software aktualisieren"           "update-manager")
+     ("Ubuntu Software-Center"           "software-center")
+     ("Ubuntu Webseite"                  ,(concatenate 'string *browser* "http://ubuntu.com"))
+     ("UbuntuOne Steuerpult"             "ubuntuone-control-panel-qt")
+     ("Ubuntuusers Deutschland"          ,(concatenate 'string *browser* "http://ubuntuusers.de"))
     )
 ))
 
@@ -588,11 +625,19 @@ Beispiel: (echo-time) => 06:11:27"
   (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "https://de.wikipedia.org/w/index.php?search=" search)))
 
+(defcommand zwitschere (search)
+  ((:string "Die zu zwitschernde Mitteilung: "))
+  "Dient zum schnellen zwitschern per Twitter via ttytter"
+  (check-type search string)
+  (run-shell-command (cat "ttytter -status='" search "'")))
+
 ;; ========================================================
 ;; Grafische Programme aufrufen oder zu geöffneten wechseln
 ;; ========================================================
 
 (neuerbefehl audacious "Starte/wechsle zu Audacious." "audacious" "Audacious")
+
+(neuerbefehl avidemux2_gtk "Starte/wechsle zu Avidemux." "avidemux2_gtk" "Avidemux2_gtk")
 
 (neuerbefehl banshee "Starte/wechsle zum Banshee Medienabspieler." "banshee" "Banshee")
 
@@ -642,6 +687,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl nautilus "Starte/wechsle zum Nautilus Dateimanager." "nautilus --no-desktop" "Nautilus")
 
+(neuerbefehl nm-connection-editor "Starte/wechsle zum Networkmanager Verbindungseditor." "nm-connection-editor" "Nm-connection-editor")
+
 (neuerbefehl nitrogen "Starte/wechsle zu Nitrogen." "nitrogen" "Nitrogen")
 
 (neuerbefehl okular "Starte/wechsle zum Okular PDF-Betrachter." "okular" "Okular")
@@ -656,7 +703,9 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl scid "Starte/wechsle zu Scid vs. PC." "scid" "Scid")
 
-(neuerbefehl scribus "Starte/wechsle zu Scribus" "scribus" "Scribus")
+(neuerbefehl scribus "Starte/wechsle zu Scribus." "scribus" "Scribus")
+
+(neuerbefehl software-center "Starte/wechsle zum Ubuntu Software-Center." "software-center" "Software-center")
 
 (neuerbefehl surf "Starte/wechsle zu Surf." "surf" "surf")
 
@@ -664,13 +713,17 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl turpial "Starte/wechsle zu Turpial." "turpial" "Turpial")
 
+(neuerbefehl ubuntuone-control-panel-qt "Starte/wechsle zum UbuntuOne Steuerpult." "ubuntuone-control-panel-qt" "Ubuntuone-control-panel-qt")
+
+(neuerbefehl unison-gtk "Starte/wechsle zu Unison." "unison-gtk" "Unison-gtk")
+
+(neuerbefehl update-manager "Starte/wechsle zum Software Update-Manager" "update-manager" "Update-manager")
+
 (neuerbefehl userterminal "Starte/wechsle zum Userterminal." *uxt* "Userterminal")
 
 (neuerbefehl uxt-neu "Starte ein neues UXTerminal." *uxt-neu* "UXTerminal")
 
 (neuerbefehl uzbl-browser "Starte/wechsle zu Uzbl." "uzbl-browser" "Uzbl-core")
-
-(neuerbefehl unison-gtk "Starte/wechsle zu Unison." "unison-gtk" "Unison-gtk")
 
 (neuerbefehl vlc "Starte/wechsle zu VideoLanClient." "vlc" "Vlc")
 
@@ -718,7 +771,7 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerterminalbefehl telecomix "Starte/wechsle zu Telecomix." "telecomix" "Telecomix")
 
-(neuerterminalbefehl twitter "Starte/wechsle zu Twitter." "twitter" "Twitter")
+(neuerterminalbefehl ttytter "Starte/wechsle zu ttytter." "ttytter" "Ttytter" "lavender" "NavyBlue")
 
 (neuerterminalbefehl wicd-curses "Starte/wechsle zu WICD (curses)." "wicd-curses" "Wicd")
 
@@ -920,13 +973,13 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-S-s-0" "gmove 0")
 		  ;; Programme starten
 		  ("Print" "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
-		  ("XF86HomePage" "conkeror")
+		  ("XF86HomePage" *browser*)
 		  ("XF86Mail" "thunderbird")
 		  ("XF86Calculator" "speedcrunch")
 		  ("XF86AudioRaiseVolume" "exec amixer set Master 5%+ unmute")
 		  ("XF86AudioLowerVolume" "exec amixer set Master 5%- unmute")
 		  ("XF86AudioMute" "exec amixer set Master toggle")
-		  ("M-s-a" "alsamixer ")
+		  ("M-s-a" "alsamixer")
 		  ("M-s-A" "abook ")
 		  ("M-s-b" "banshee")
 		  ("M-s-c" "conkeror")
@@ -955,6 +1008,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-s-S" "surf")
 		  ("M-s-t" "thunderbird")
 		  ("M-s-T" "turpial")
+		  ("M-C-s-t" "ttytter")
 		  ("M-s-u" "unison-gtk")
 		  ("M-s-v" "vlc")
 		  ("M-s-V" "vym")
@@ -976,6 +1030,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("C-s-r" "news-register")
 		  ("C-s-s" "stackoverflow")
 		  ("C-s-w" "wikipedia")
+		  ("C-s-z" "zwitschere")
 		  )
 
 ;;; ==========================================================
