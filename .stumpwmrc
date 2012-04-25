@@ -7,22 +7,15 @@
 (load "~/Entwicklung/fremd/stumpwm/contrib/cpu")
 (load "~/Entwicklung/fremd/stumpwm/contrib/mem")
 
-;; Statt C-t, ist doch die wirklich unbenützte Menütaste einfach nur am geilsten!?
-(set-prefix-key (kbd "Menu"))
+;; ======================================
+;; Initialisierung der globalen Variablen
+;; ======================================
 
-;;; Zeichensatz - der Standardfont:
-;;;(set-font "-*-terminus-*-*-*-*-*-*-*-*-*-*-*-*")
-;;;(set-font "-*-profont-*-*-*-*-10-*-*-*-*-*-*-*")
-(set-font "-*-terminus-medium-r-normal-*-12-*-*-*-*-*-*-1")
-
-;; Der Standardbrowser
 (defparameter *browser* "conkeror "
   "*browser* enthält den aktuell genutzten Standardbrowser")
 
-;; Farben
-;; Die Farben wurden ausgesucht anhand von http://http://critical.ch/xterm/
 (defparameter *uxthema* "exec uxterm -fg lavender -bg maroon4"
-  "*uxthema* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
+  "*uxthema* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS. Die Farben wurden ausgesucht anhand von http://http://critical.ch/xterm/")
 
 (defparameter *uxt* "uxterm -fg lavender -bg maroon4 -class 'Userterminal'"
   "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
@@ -33,693 +26,11 @@
 (defparameter *systerm* "exec uxterm -fg gainsboro -bg OrangeRed -class 'Admin-uxterm' -e 'sudo -i'"
   "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
 
-;; Ubuntu 12.04 LTS Thema
-(set-focus-color      "orange")
-(set-unfocus-color    "black")
-(set-win-bg-color     "gainsboro")
-(set-fg-color         "maroon4")
-(set-bg-color         "gainsboro")
-
-;; Grey-Blue Arch Thema
-					;(set-focus-color      "DodgerBlue")
-					;(set-unfocus-color    "black")
-					;(set-win-bg-color     "grey25")
-					;(set-fg-color         "DodgerBlue")
-					;(set-bg-color         "grey25")
-
-;; Lightblue-Thema
-					;(set-focus-color      "lightblue")
-					;(set-unfocus-color    "black")
-					;(set-win-bg-color     "darkblue")
-					;(set-fg-color         "lightblue")
-					;(set-bg-color         "darkblue")
-
-(setf *time-format-string-default* "%A %B %e %k:%M:%S")
-
-(setf *time-modeline-string* "%a %b %e %k:%M:%S")
-
-(setf *time-month-names*
-      #("Januar" "Februar" "März" "April" "Mai" "Juni" "Juli" "August"
-	"September" "Oktober" "November" "Dezember"))
-
-(setf *time-day-names*
-      #("Montag" "Dienstag" "Mittwoch" "Donnerstag" "Freitag" "Samstag" "Sonntag"))
-
-;; =============================
-;; Das Verhalten des Mauszeigers
-;; =============================
-
-(setf *mouse-focus-policy* :click)
-
-;; ===================
-;; Autostart-Programme
-;; ===================
-(run-or-raise "nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
-(run-or-raise "synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
-(run-or-raise "xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
-(run-or-raise "nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
-(banish-pointer)
-
-;; ========================
-;; Neue Befehle - Vorarbeit
-;; ========================
-
-(defun cat (&rest strings)
-  "(cat &rest strings)
-CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
-  (apply 'concatenate 'string strings))
-
-(defmacro neuerbefehl (name dokstring befehl klasse)
-  `(defcommand ,name () () ,dokstring
-	       (run-or-raise ,befehl '(:class ,klasse))))
-
-(defmacro neuerterminalbefehl (name dokstring befehl klasse &optional (fg "lavender") (bg "maroon4"))
-	    "Starte/wechsle zu Alsa-Mixer."
-	    `(neuerbefehl ,name ,dokstring (format nil "uxterm -fg ~A -bg ~A -class '~A' -e '~A'"
-					       ,fg ,bg ,klasse ,befehl) ,klasse))
-
-(defmacro tastenbindung (keymap taste befehl)
-  "Kurzes Macro, um eine Tastenbindung zu definieren"
-  `(define-key, keymap (kbd, taste), befehl))
-
-(defmacro tastaturbelegung (keymap &rest tasten)
-  "Kurzes Macro, um mehrere Tastenbindungen an eine Keymap zu definieren, verwendet pro Taste die Funktion tastenbindung"
-  (let ((ks (mapcar (lambda (k)
-		      (append (list 'tastenbindung keymap) k))
-		    tasten)))
-    `(progn ,@ks)))
-
-;; -----------------------------------------------
-;; Anpassung der Darstellung von Datum und Uhrzeit
-;; -----------------------------------------------
-
-(defun uhrzeit () "Gibt die aktuelle Uhrzeit zurück"
-       (multiple-value-bind (sekunden minuten stunden) (get-decoded-time)
-	 (format nil "~2,1,0,'0@A:~2,1,0,'0@A:~2,1,0,'0@A" stunden minuten sekunden)))
-
-(defun datum-uhrzeit ()
-  "(datum-uhrzeit)
-DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurück."
-  (multiple-value-bind (sekunden minuten stunden tag monat jahr) (get-decoded-time)
-    (format nil "~2,'0D.~2,'0D.~4,'0D ~2,'0D:~2,'0D:~2,'0D" tag monat jahr stunden minuten sekunden)))
-
-(defcommand echo-date () ()
-	    "(echo-date)
-ECHO-DATE stellt das Datum und die Uhrzeit dar.
-Beispiel: (echo-date) => 11.01.2012 06:09:43"
-	    (message "~a" (datum-uhrzeit)))
-
-(defcommand echo-time () ()
-	    "(echo-date)
-ECHO-DATE stellt die Uhrzeit dar.
-Beispiel: (echo-time) => 06:11:27"
-	    (message "~a" (uhrzeit)))
-
-;; ---------------------------------------------------------
-;; Bewege den Focus und anschließend die Maus in das Fenster
-;; ---------------------------------------------------------
-
-(defcommand move-focus-warp (dir) ((:direction "Direction:"))
-	    (move-focus-and-or-window dir)
-	    (banish-pointer :window))
-
-;; -------------------
-;; Grafische Programme
-;; -------------------
-
-(neuerbefehl audacious "Starte/wechsle zu Audacious." "audacious" "Audacious")
-
-(neuerbefehl banshee "Starte/wechsle zum Banshee Medienabspieler." "banshee" "Banshee")
-
-(neuerbefehl brogue "Starte/wechsle zum ansprechenden B-Rogue." "brogue" "Brogue")
-
-(neuerbefehl calibre "Starte/wechsle zur Calibre Ebook-Verwaltung." "calibre" "Calibre")
-
-(neuerbefehl cherrytree "Starte/wechsle zum Cherrytree Wiki." "cherrytree" "Cherrytree")
-
-(neuerbefehl chromium-browser "Starte/wechsle zum Chromium Webbrowser." "chromium-browser" "Chromium-Browser")
-
-(neuerbefehl claws-mail "Starte/wechsle zu Claws-Mail." "claws-mail" "Claws-mail")
-
-(neuerbefehl comix "Starte/wechsle zu Comix." "comix" "Comix")
-
-(neuerbefehl conkeror "Starte/wechsle zum Conkeror Webbrowser." "conkeror" "Conkeror")
-
-(neuerbefehl deluge "Starte/wechsle zu Deluge." "deluge" "Deluge")
-
-(neuerbefehl dwb "Starte/wechsle zum dwb Webbrowser." "dwb" "Dwb")	    
-
-(neuerbefehl emacs "Starte/wechsle zu Emacs." "emacs" "Emacs")
-
-(neuerbefehl evince "Starte/wechsle zu Evince." "evince" "Evince")
-
-(neuerbefehl file-roller "Starte/wechsle zu File-Roller." "file-roller" "File-roller")
-
-(neuerbefehl firefox "Starte/wechsle zu Firefox." "firefox" "Firefox")
-
-(neuerbefehl flare "Starte/wechsle zu Flare RPG." "flare" "Flare")
-
-(neuerbefehl focuswriter "Starte/wechsle zu Focuswriter." "focuswriter" "Focuswriter")
-
-(neuerbefehl geeqie "Starte/wechsle zum Geekie Bildbetrachter." "geeqie" "Geeqie")
-
-(neuerbefehl gimp "Starte/wechsle zu GIMP." "gimp" "Gimp")
-
-(neuerbefehl iceweasel "Starte/wechsle zum Iceweasel Webbrowser." "iceweasel" "Iceweasel")
-
-(neuerbefehl jumanji "Starte/wechsle zum Jumanji Webbrowser." "jumanji" "Jumanji")	    
-
-(neuerbefehl kaffeine "Starte/wechsle zu Kaffeine." "kaffeine" "Kaffeine")
-
-(neuerbefehl keepassx "Starte/wechsle zu KeePassX." "keepassx" "Keepassx")
-
-(defcommand man (man) ((:string "Manual: "))
-	    "Sucht nach einem Befehl in den Manual-Seiten"
-	    (run-shell-command (format nil "~A -e sh -c 'man ~A'" terminal man)))
-
-(neuerbefehl minitube "Starte/wechsle zu Minitube." "minitube" "Minitube")
-
-(neuerbefehl nautilus "Starte/wechsle zum Nautilus Dateimanager." "nautilus --no-desktop" "Nautilus")
-
-(neuerbefehl nitrogen "Starte/wechsle zu Nitrogen." "nitrogen" "Nitrogen")
-
-(neuerbefehl okular "Starte/wechsle zum Okular PDF-Betrachter." "okular" "Okular")
-
-(neuerbefehl palapeli "Starte/wechsle zu Palapeli." "palapeli" "Palapeli")
-
-(neuerbefehl pouetChess "Starte/wechsle zu Pouetchess 3Dxp." "pouetChess" "pouetChess")
-
-(neuerbefehl pychess "Starte/wechsle zu PyChess Staunton." "pychess" "pychess")
-
-(defcommand reinit () ()
-	    "Reinitialisierung des Systems"
-	    (run-commands "reload" "loadrc"))
-
-(neuerbefehl ristretto "Starte/wechsle zu Ristretto." "ristretto" "Ristretto")
-
-(neuerbefehl scid "Starte/wechsle zu Scid vs. PC." "scid" "Scid")
-
-(neuerbefehl scribus "Starte/wechsle zu Scribus" "scribus" "Scribus")
-
-(neuerbefehl surf "Starte/wechsle zu Surf." "surf" "surf")
-
-(defcommand switch-modeline () ()
-	    "Schaltet die Modeline ein oder aus"
-	    (toggle-mode-line (current-screen) (current-head)))
-
-(neuerbefehl thunderbird "Starte/wechsle zu Thunderbird Emailclient." "thunderbird" "Thunderbird")
-
-(neuerbefehl turpial "Starte/wechsle zu Turpial." "turpial" "Turpial")
-
-(neuerbefehl userterminal "Starte/wechsle zum Userterminal." *uxt* "Userterminal")
-
-(neuerbefehl uxt-neu "Starte ein neues UXTerminal." *uxt-neu* "UXTerminal")
-
-(neuerbefehl uzbl-browser "Starte/wechsle zu Uzbl." "uzbl-browser" "Uzbl-core")
-
-(neuerbefehl unison-gtk "Starte/wechsle zu Unison." "unison-gtk" "Unison-gtk")
-
-(neuerbefehl vlc "Starte/wechsle zu VideoLanClient." "vlc" "Vlc")
-
-(neuerbefehl vym "Starte/wechsle zu ViewYourMind." "vym" "Vym")
-
-(neuerbefehl worldofpadman "Starte/wechsle zu World of Padman." "worldofpadman" "Worldofpadman")
-
-(neuerbefehl xarchiver "Starte/wechsle zu X-Archiver." "xarchiver" "Xarchiver")
-
-(neuerbefehl xchat "Starte/wechsle zu X-Chat." "xchat" "Xchat")
-
-(neuerbefehl zathura "Starte/wechsle zu Zathura." "zathura" "Zathura")
-
-;; --------------------------------
-;; Programme die im Terminal laufen
-;; --------------------------------
-
-(neuerterminalbefehl abook "Starte/wechsle zu Abook." "abook" "Abook")
-
-(neuerterminalbefehl adminterminal "Starte/wechsle zum Adminterminal." "sudo -i" "Adminterminal" "gainsboro" "OrangeRed")
-
-(neuerterminalbefehl aliensrl "Starte/wechsle zu AliensRL." "aliensrl" "Aliensrl")
-
-(neuerterminalbefehl alsamixer "Starte/wechsle zum Alsa-Mixer." "alsamixer" "Alsamixer")
-
-(neuerterminalbefehl byobu "Starte/wechsle zum Byobu-Terminal." "byobu" "Byobu" "gainsboro" "DarkSlateGray")
-
-(neuerterminalbefehl crawl "Starte/wechsle zu Crawl." "crawl" "Crawl")
-
-(neuerterminalbefehl doomrl "Starte/wechsle zu DoomRL." "doomrl" "Doomrl")
-
-(neuerterminalbefehl htop "Starte/wechsle zu Htop." "htop" "Htop" "BlanchedAlmond" "MidnightBlue")
-
-(neuerterminalbefehl mathomatic "Starte/wechsle zu Mathomatic." "mathomatic" "Mathomatic")
-
-(neuerterminalbefehl mc "Starte/wechsle zum Midnight Commander." "mc" "Mc")
-
-(neuerterminalbefehl mocp "Starte/wechsle zu Music on Console." "mocp" "Mocp")
-
-(neuerterminalbefehl moria "Starte/wechsle zu Moria." "moria" "Moria")
-
-(neuerterminalbefehl primerl "Starte/wechsle zu PrimeRL." "primerl" "Primerl")
-
-(neuerterminalbefehl rogue "Starte/wechsle zu Rogue." "rogue" "Rogue")
-
-(neuerterminalbefehl telecomix "Starte/wechsle zu Telecomix." "telecomix" "Telecomix")
-
-(neuerterminalbefehl twitter "Starte/wechsle zu Twitter." "twitter" "Twitter")
-
-(neuerterminalbefehl wicd-curses "Starte/wechsle zu WICD (curses)." "wicd-curses" "Wicd")
-
-(neuerterminalbefehl xorcurses "Starte/wechsle zu Xorcurses." "xorcurses" "Xorcurses")
-
-(neuerterminalbefehl zork1 "Starte/wechsle zu Zork 1." "zork1" "Zork1")
-
-(neuerterminalbefehl zork2 "Starte/wechsle zu Zork 2." "zork2" "Zork2")
-
-(neuerterminalbefehl zork3 "Starte/wechsle zu Zork 3." "zork3" "Zork3")
-
-;; --------------
-;; Browserbefehle
-;; --------------
-
-(defcommand askubuntu (search)
-  ((:string "Suche in Ask Ubuntu nach: "))
-  "Dient zur Suche bei Ask Ubuntu per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://askubuntu.com/search?q=" search)))
-
-(defcommand ddg (search)
-  ((:string "Suche in DuckDuckGo nach: "))
-  "Dient zur Suche bei DuckDuckGo per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "https://duckduckgo.com/?q=" search)))
-
-(defcommand hackernews (search)
-  ((:string "Suche bei Hackernews nach: "))
-  "Dient zur Suche bei Hackernews per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" search)))
-
-(defcommand ixquick (search)
-  ((:string "Suche in IxQuick nach: "))
-  "Dient zur Suche bei IxQuick per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://ixquick.com/do/metasearch.pl?query=" search)))
-
-(defcommand nachrichten (search)
-  ((:string "Suche in Google News nach: "))
-  "Dient zur Suche bei Google News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://news.google.com/news/search?q=" search)))
-
-(defcommand news-bbc (search)
-  ((:string "Suche bei BBC News nach: "))
-  "Dient zur Suche bei BBC News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://www.bbc.co.uk/search/news/?q=" search)))
-
-(defcommand news-guardian (search)
-  ((:string "Suche bei Guardian News nach: "))
-  "Dient zur Suche bei Guardian News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://www.guardian.co.uk/search?q=" search)))
-
-(defcommand news-register (search)
-  ((:string "Suche bei The Register nach: "))
-  "Dient zur Suche bei The Register per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://search.theregister.co.uk/?q=" search)))
-
-(defcommand stackoverflow (search)
-  ((:string "Suche in Stackoverflow nach: "))
-  "Dient zur Suche bei Stackoverflow per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://stackoverflow.com/search?q=" search)))
-
-(defcommand wikipedia (search)
-  ((:string "Suche in der Wikipedia nach: "))
-  "Dient zur Suche in der Wikipedia per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "https://de.wikipedia.org/w/index.php?search=" search)))
-
-(defcommand open-selection-browser () ()
-	    "Öffnet die markierte Webadresse per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-	    (run-shell-command (cat *browser* (get-x-selection))))
-
-;; Clear rules
-(clear-window-placement-rules)
-
-
-;;; ===========================
-;;; GRUPPEN - für dwm-Umsteiger
-;;; ===========================
-
-;; VORSICHT! Der Gruppenteil ist seit einem Jahr nicht mehr gepflegt worden!
-
-;; Erzeuge Gruppen    
-;;----------------
-;; Ohne Gruppen geht es schneller, daher werden sie mal testweise für 7 Tage deaktiviert (reine Theorie)
-
-;(run-commands
-;      "grename Standard"
-;      "gnewbg Emacs"
-;      "gnewbg WWW"
-;      "gnewbg Arbeiten"
-;      "gnewbg Media"
-;      "gnewbg Erholung"
-;      "gnewbg System"
-;      )
-
-;(define-frame-preference "Standard"
-;  (0 t   t :instance "xterm")
-;  (0 t   t :class "UXTerm")
-;  (0 t   t :class "st-256color")
-;  (0 t   t :class "URxvt")
-;  )
-
-;(define-frame-preference "Emacs"
-;  (0 t   t :title "emacs")
-;  )
-
-;(define-frame-preference "WWW"
-;  ;; frame raise lock (lock AND raise == jumpto)
-;  (0 t   t :class "Claws-mail")  
-;  (0 t   t :class "Conkeror")
-;  (0 t   t :class "Deluge")
-;  (0 t   t :class "Firefox")
-;  (0 t   t :class "surf")
-;  (0 t   t :class "Turpial")
-;  (0 t   t :class "Uzbl-core")
-;  (0 t   t :class "Xchat")
-;  )
-
-;(define-frame-preference "Arbeiten"
-;  ;; frame raise lock (lock AND raise == jumpto)
-;  (0 t   t :class "Gvim")
-;  (0 t   t :class "Focuswriter")
-;  (0 t   t :class "libreoffice-startcenter")
-;  (0 t   t :class "libreoffice-writer")
-;  (0 t   t :class "libreoffice-calc")
-;  (0 t   t :class "libreoffice-impress")
-;  (0 t   t :class "libreoffice-draw")
-;  (0 t   t :class "libreoffice-math")
-;  (0 t   t :class "Okular")
-;  (0 t   t :class "Pyroom")
-;  (0 t   t :class "Zathura")
-;  )
-
-;(define-frame-preference "Media"
-;  ;; frame raise lock (lock AND raise == jumpto)
-;  (0 t   t :instance "aumix")
-;  (0 t   t :class "Audacious")
-;  (0 t   t :class "Avidemux")  
-;  (0 t   t :class "Geeqie")
-;  (0 t   t :class "Gimp")
-;  (0 t   t :class "Iscan")
-;  (0 t   t :class "K3b")
-;  (0 t   t :class "Kaffeine")
-;  (0 t   t :class "Comixq")
-;  (0 t   t :class "Minitube")  
-;  (0 t   t :class "MPlayer")  
-;  (0 t   t :class "Ristretto") 
-;  (0 t   t :class "tvbrowser-TVBrowser")
-;  (0 t   t :class "Vlc")
-;  )
-
-;(define-frame-preference "Erholung"
-;  ;; frame raise lock (lock AND raise == jumpto)
-;  (0 t   t :class "Angband")
-;  (0 t   t :class "ASCIIpOrtal")
-;  (0 t   t :class "Desmume-glade")
-;  (0 t   t :class "Desmume")
-;  (0 t   t :class "Dwarf_Fortress")
-;  (0 t   t :class "Dwarftherapist")
-;  (0 t   t :class "flands-FLApp")
-;  (0 t   t :class "flare.bin")
-;  (0 t   t :class "Gvbam")
-;  (0 t   t :class "net-minecraft-MinecraftLauncher")
-;  (0 t   t :class "russotto-zplet-ZJApp")
-;  (0 t   t :class "Palapelli")
-;  (0 t   t :class "Scid")
-;  (0 t   t :title "SuperTuxKart")
-;  (0 t   t :title "t-engine")
-;  (0 t   t :title "tome")
-;  (0 t   t :class "warmux")
-;  (0 t   t :class "wesnoth")
-;  (0 t   t :class "widelands")
-;  )
-
-;(define-frame-preference "System"
-; ;; frame raise lock (lock AND raise == jumpto)
-;  (0 t   t :class "Keepassx")
-;  (0 t   t :class "Gpg-crypter")
-;  (0 t   t :class "Nitrogen")
-;  (0 t   t :class "Thunar")
-;  (0 t   t :class "Unison-gtk2")
-;  (0 t   t :class "Xarchiver")
-;  )
-
-;; ======================================
-;; Neuere Tasten - nach eigenem Gutdünken
-;; ======================================
-
-;; Übersicht zu Zusatztasten
-;; M-s = ALT+SUPER
-;; s- = SUPER
-;; S- = SHIFT
-;; C- = Control/STRG
-;; H- = ALT-GR
-
-;; *******************************************************
-;; Zusätzliche Optionen über den StumpWM-like Escape-Modus
-;; *******************************************************
-
-(tastaturbelegung *root-map*
-		  ("Print" "exec scrot -d 5 -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
-		  ("RET" "userterminal")
-		  ("S-RET" "uxt-neu")
-		  ("M-RET" "fullscreen")
-		  ("C-RET" "adminterminal")
-		  ("DEL" "repack-window-numbers")
-		  ("I" "show-window-properties")
-		  ("P" "exec dmenu_run ")
-		  ("," "switch-modeline")
-		  ("C-b" "byobu")
-		  ("c" "userterminal")
-		  ("C" "uxt-neu")
-		  ("C-c" "adminterminal")
-		  ;; Die fehlenden Features auch in der root-map anlegen
-		  ("C-SPC" "other")
-		  ("M-SPC" "gother")
-		  ("S-SPC" "pull-marked")
-		  ("Pause" "windowlist")
-		  ("C-Pause" "grouplist")
-		  ("M-Left" "gprev")
-		  ("M-Right" "gnext")
-		  ("M-S-Left" "gprev-with-window")
-		  ("M-S-Right" "gnext-with-window")
-		  ;; Features umbiegen
-		  )
-
-;; **************************************************************************************
-;; Zusätzliche Optionen für einen Direktmodus, wie ihn viele andere Fenstermanager bieten
-;; **************************************************************************************
-
-(tastaturbelegung *top-map*
-		  ;;; Fenster-Verhalten dwm-like
-		  ("s-Left" "move-focus-warp left")
-		  ("s-S-Left" "move-window left")
-		  ("s-Right" "move-focus-warp right")
-		  ("s-S-Right" "move-window right")
-		  ("s-Up" "move-focus-warp up")
-		  ("s-S-Up" "move-window up")
-		  ("s-Down" "move-focus-warp down")
-		  ("s-S-Down" "move-window down")
-		  ("C-s-Left" "pull-hidden-previous")
-		  ("C-s-Right" "pull-hidden-next")
-		  ("C-s-Up" "mark")
-		  ("C-s-Down" "pull-marked")
-		  ;; Durch Fenster wechseln - dwm-like
-		  ("s-Tab" "next-in-frame")
-		  ("s-ISO_Left_Tab" "prev-in-frame")     ;; Erinnerung: Das ist  Shift-Tab
-		  ;; Gruppen-Verhalten ist dwm-like
-		  ("M-s-Left" "gprev")
-		  ("M-s-Right" "gnext")
-		  ("M-S-s-Left" "gprev-with-window")
-		  ("M-S-s-Right" "gnext-with-window")
-		  ("s-SPC" "pull-hidden-next")
-		  ("C-s-SPC" "other")
-		  ("M-s-SPC" "gother")
-		  ("S-s-SPC" "pull-marked")
-		  ("Pause" "windowlist")
-		  ("C-Pause" "grouplist")
-		  ;; Nachbildung der vordefinierten StumpWM-Tasten als Direkttasten
-		  ("s-RET" "userterminal")
-		  ("S-RET" "uxt-neu")
-		  ("M-s-RET" "fullscreen")
-		  ("C-s-RET" "adminterminal")
-		  ("s-;" "colon")
-		  ("s-:" "eval")
-		  ("s-!" "exec")
-		  ("s-#" "mark")
-		  ("s--" "fclear")
-		  ("s-+" "balance-frames")
-		  ("s-\"" "select")
-		  ("s-'" "windowlist")
-		  ("s-," "switch-modeline")
-		  ("s-a" "time")
-		  ("s-A" "title")
-		  ("s-b" "banish")
-		  ("C-s-b" "byobu")
-		  ("s-c" "userterminal")
-		  ("s-C" "commands")
-		  ("C-s-c" "Adminterminal")
-		  ("s-e" "emacs")
-		  ("s-f" "fselect")
-		  ("s-F" "curframe")
-		  ("s-g" *groups-map*)
-		  ("s-G" "vgroups")
-		  ("s-h" *help-map*)
-		  ("s-i" "info")
-		  ("s-I" "show-window-properties")
-		  ("s-k" "delete")
-		  ("s-K" "kill")
-		  ("s-l" "exec xflock4")
-		  ("s-L" "loadrc")
-		  ("s-m" "lastmsg")
-		  ("s-n" "pull-hidden-next")
-		  ("M-s-N" "next")
-		  ("C-s-n" "next-in-frame")
-		  ("C-s-N" "number")
-		  ("s-o" "fnext")
-		  ("s-p" "pull-hidden-previous")
-		  ("s-P" "prev")
-		  ("C-s-p" "prev-in-frame")
-		  ("s-Q" "only")
-		  ("s-r" "iresize")
-		  ("s-R" "remove")
-		  ("s-s" "vsplit")
-		  ("s-S" "hsplit")
-		  ("s-t" "send-escape")
-		  ("s-u" "next-urgent")
-		  ("s-v" "version")
-		  ("s-w" "windows")
-		  ("s-W" "place-existing-windows")
-		  ;; Wechseln zu einem anderen Fenster
-		  ("s-1" "select-window-by-number 1")
-		  ("s-2" "select-window-by-number 2")
-		  ("s-3" "select-window-by-number 3")
-		  ("s-4" "select-window-by-number 4")
-		  ("s-5" "select-window-by-number 5")
-		  ("s-6" "select-window-by-number 6")
-		  ("s-7" "select-window-by-number 7")
-		  ("s-8" "select-window-by-number 8")
-		  ("s-9" "select-window-by-number 9")
-		  ("s-0" "select-window-by-number 0")
-		  ;; Wechseln zu einer anderen Gruppe
-		  ("M-s-1" "gselect 1")
-		  ("M-s-2" "gselect 2")
-		  ("M-s-3" "gselect 3")
-		  ("M-s-4" "gselect 4")
-		  ("M-s-5" "gselect 5")
-		  ("M-s-6" "gselect 6")
-		  ("M-s-7" "gselect 7")
-		  ("M-s-8" "gselect 8")
-		  ("M-s-9" "gselect 9")
-		  ("M-s-0" "gselect 0")
-		  ;; Verschieben in eine andere Gruppe
-		  ("M-S-s-1" "gmove 1")
-		  ("M-S-s-2" "gmove 2")
-		  ("M-S-s-3" "gmove 3")
-		  ("M-S-s-4" "gmove 4")
-		  ("M-S-s-5" "gmove 5")
-		  ("M-S-s-6" "gmove 6")
-		  ("M-S-s-7" "gmove 7")
-		  ("M-S-s-8" "gmove 8")
-		  ("M-S-s-9" "gmove 9")
-		  ("M-S-s-0" "gmove 0")
-		  ;; Programme starten
-		  ("Print" "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
-		  ("XF86HomePage" "conkeror")
-		  ("XF86Mail" "thunderbird")
-		  ("XF86Calculator" "speedcrunch")
-		  ("XF86AudioRaiseVolume" "exec amixer set Master 5%+ unmute")
-		  ("XF86AudioLowerVolume" "exec amixer set Master 5%- unmute")
-		  ("XF86AudioMute" "exec amixer set Master toggle")
-		  ("M-s-a" "alsamixer ")
-		  ("M-s-A" "abook ")
-		  ("M-s-b" "banshee")
-		  ("M-s-c" "conkeror")
-		  ("M-s-C" "chromium-browser")
-		  ("M-s-d" "deluge")
-		  ("M-s-D" "dwb")
-		  ("M-s-e" "evince")
-		  ("M-s-f" "firefox")
-		  ("M-s-F" "focuswriter")
-		  ("M-s-g" "geeqie")
-		  ("M-s-G" "gimp")
-		  ("M-s-j" "jumanji")
-		  ("M-s-k" "keepassx")
-		  ("M-s-K" "kaffeine")
-		  ("M-s-m" "mc")
-		  ("M-s-M" "mocp")
-		  ("C-s-m" "minitube")
-		  ("C-s-M" "mathomatic")
-		  ("M-s-n" "nautilus")
-		  ("M-s-N" "nitrogen")
-		  ("M-s-o" "okular")
-		  ("M-s-p" "exec dmenu_run ")
-		  ("M-s-r" "ristretto")
-		  ("M-s-R" "reinit")
-		  ("M-s-s" "scribus")
-		  ("M-s-S" "surf")
-		  ("M-s-t" "thunderbird")
-		  ("M-s-T" "turpial")
-		  ("M-s-u" "unison-gtk")
-		  ("M-s-v" "vlc")
-		  ("M-s-V" "vym")
-;		  ("M-s-w" "wicd-curses ")
-		  ("M-s-x" "xchat")
-		  ("M-s-X" "xarchiver")
-		  ("M-s-y" "exec synclient touchpadoff=1 ")
-		  ("M-s-Y" "exec synclient touchpadoff=0 ")
-		  ("M-s-z" "zathura")
-		  ;; Websuchen
-		  ("C-s-a" "askubuntu")
-		  ("C-s-b" "news-bbc")
-		  ("C-s-d" "ddg")
-		  ("C-s-g" "news-guardian")
-		  ("C-s-h" "hackernews")
-		  ("C-s-i" "ixquick")
-		  ("C-s-n" "nachrichten")
-		  ("C-s-o" "open-selection-browser") ;; öffnet den markierten Link im Webbrowser
-		  ("C-s-r" "news-register")
-		  ("C-s-s" "stackoverflow")
-		  ("C-s-w" "wikipedia")
-		  )
-
-;; ***********************************
-;; Fehlende Features in der groups-map
-;; ***********************************
-
-(tastaturbelegung *groups-map*
-		  ("C" "gnew-float")
-		  )
-
-;; ===========================================
-;; Ein neues Menü für Programme (stumpwm-like)
-;; ===========================================
-
-(defvar *programmstart-map*
+;; -------------------------------------------------------------
+;; emacs-artige Tastenbedienung mit Präfix - *programmstart-map*
+;; -------------------------------------------------------------
+
+(defparameter *programmstart-map*
   (let ((m (make-sparse-keymap)))
     (define-key m (kbd "Print") "exec scrot -d 5 -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
     (define-key m (kbd "a")   "alsamixer")
@@ -776,11 +87,11 @@ Beispiel: (echo-time) => 06:11:27"
     (define-key m (kbd "z")   "zathura")
     m))
 
-;; ===========================================
-;; Ein neues Menü für Websuchen (stumpwm-like)
-;; ===========================================
+;; --------------------------------------------------------
+;; emacs-artige Tastenbedienung mit Präfix - *websuche-map*
+;; --------------------------------------------------------
 
-(defvar *websuche-map*
+(defparameter *websuche-map*
   (let ((m (make-sparse-keymap)))
     (define-key m (kbd "a") "askubuntu")
     (define-key m (kbd "b") "news-bbc")
@@ -796,11 +107,11 @@ Beispiel: (echo-time) => 06:11:27"
     (define-key m (kbd "w") "wikipedia")
     m))
 
-;; ===========================================
-;; Ein neues Menü zur Erholung (stumpwm-like)
-;; ===========================================
+;; --------------------------------------------------------
+;; emacs-artige Tastenbedienung mit Präfix - *erholung-map*
+;; --------------------------------------------------------
 
-(defvar *erholung-map*
+(defparameter *erholung-map*
   (let ((m (make-sparse-keymap)))
      (define-key m (kbd "a")   "exec adv770")
      (define-key m (kbd "A")   "exec asciiportal")
@@ -844,25 +155,9 @@ Beispiel: (echo-time) => 06:11:27"
      (define-key m (kbd "3")   "zork3")
      m))
 
-;; ==========================
-;; Ein Ersatz *help-map* Menü
-;; ==========================
-
-(setf *help-map*
-          (let ((m (make-sparse-keymap)))
-	    (define-key m (kbd "m") "man")
-	    (define-key m (kbd "c") "describe-command")
-	    (define-key m (kbd "f") "describe-function")
-	    (define-key m (kbd "k") "describe-key")
-            (define-key m (kbd "v") "describe-variable")
-	    (define-key m (kbd "w") "where-is")
-            m))
-
-;; ===========================================
-;; Ein grafisches Auswahl-Menü
-;; -------------------------------------------
-;; Die Struktur ist abgestimmt mit den Gruppen
-;; ===========================================
+;; ======================================================================================================
+;; *start-menü* - ein grafisches Auswahl-Menü; die Struktur hatte ehemals eine Abstimmung mit den Gruppen
+;; ======================================================================================================
 
 (defparameter *start-menü*
   '(
@@ -1043,42 +338,65 @@ Beispiel: (echo-time) => 06:11:27"
     )
 ))
 
-(defcommand menü () ()
-  "menü dient der Abarbeitung der Optionen, die als Menüstruktur-Liste in *start-menü* hinterlegt sind."
-  (labels ((pick (options)
-                 (let ((selection (stumpwm::select-from-menu
-                                   (current-screen) options "")))
-                   (cond
-                    ((null selection)
-                     (throw 'stumpwm::error "Abbruch."))
-                    ((stringp (second selection))
-                     (second selection))
-                    (t
-                     (pick (cdr selection)))))))
-    (let ((choice (pick *start-menü*)))
-      (run-shell-command choice))))
+;; ======================================
+;; Neubesetzung von vorhandenen Variablen
+;; ======================================
 
-;; =================================
-;; Die Tastenanbindung für die Menüs
-;; =================================
+(set-prefix-key (kbd "Menu")) ; set-prefix-key stellt die Präfix-Taste um. Statt C-t, wird nun die Menütaste benutzt.
 
-(tastaturbelegung *root-map*
-		  ("x" '*programmstart-map*)
-		  ("y" '*websuche-map*)
-		  ("X" '*erholung-map*)
-		  ("." "menü")
-		  )
+(set-font "-*-terminus-medium-r-normal-*-12-*-*-*-*-*-*-1") ; set-font stellt den Standardzeichensatz ein.
 
-(tastaturbelegung *top-map*
-		  ("s-x" '*programmstart-map*)
-		  ("s-y" '*websuche-map*)
-		  ("s-X" '*erholung-map*)
-		  ("s-." "menü")
-		  )
+;; Ubuntu 12.04 LTS Thema
+(set-focus-color      "orange")
+(set-unfocus-color    "black")
+(set-win-bg-color     "gainsboro")
+(set-fg-color         "maroon4")
+(set-bg-color         "gainsboro")
 
-;; =======================
+;; Grey-Blue Arch Linux Thema
+					;(set-focus-color      "DodgerBlue")
+					;(set-unfocus-color    "black")
+					;(set-win-bg-color     "grey25")
+					;(set-fg-color         "DodgerBlue")
+					;(set-bg-color         "grey25")
+
+;; Lightblue Fedora Thema
+					;(set-focus-color      "lightblue")
+					;(set-unfocus-color    "black")
+					;(set-win-bg-color     "darkblue")
+					;(set-fg-color         "lightblue")
+					;(set-bg-color         "darkblue")
+
+(setf *time-format-string-default* "%A %B %e %k:%M:%S")
+
+(setf *time-modeline-string* "%a %b %e %k:%M:%S")
+
+(setf *time-month-names*
+      #("Januar" "Februar" "März" "April" "Mai" "Juni" "Juli" "August"
+	"September" "Oktober" "November" "Dezember"))
+
+(setf *time-day-names*
+      #("Montag" "Dienstag" "Mittwoch" "Donnerstag" "Freitag" "Samstag" "Sonntag"))
+
+(setf *mouse-focus-policy* :click) ; Ändert das Verhalten des Mauszeigers
+
+;; --------------------------
+;; Ein Ersatz *help-map* Menü
+;; --------------------------
+
+(setf *help-map*
+          (let ((m (make-sparse-keymap)))
+	    (define-key m (kbd "m") "man")
+	    (define-key m (kbd "c") "describe-command")
+	    (define-key m (kbd "f") "describe-function")
+	    (define-key m (kbd "k") "describe-key")
+            (define-key m (kbd "v") "describe-variable")
+	    (define-key m (kbd "w") "where-is")
+            m))
+
+;; -----------------------
 ;; Die angepasste Modeline
-;; =======================
+;; -----------------------
 
 ;; Vorbereitungen für das Modeline-Verhalten
 (setf *mode-line-background-color*      "OrangeRed" ; "Grey18"
@@ -1095,12 +413,675 @@ Beispiel: (echo-time) => 06:11:27"
 (setf *screen-mode-line-format*
       (list '(:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W"))
 
-
-;; Die Modeline einschalten, wenn dies nicht schon der Fall ist
-(if (not (head-mode-line (current-head)))
+;; ===================
+;; Autostart-Programme
+;; ===================
+(run-or-raise "nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
+(run-or-raise "synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
+(run-or-raise "xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
+(run-or-raise "nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
+(run-or-raise "ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
+(run-or-raise "dropbox start" '(:class "Dropbox")) ; Dropbox starten
+(banish-pointer) ; Mauszeiger verbannen
+(clear-window-placement-rules)
+(if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
     (toggle-mode-line (current-screen) (current-head)))
 
+;; ========================
+;; Neue Befehle - Vorarbeit
+;; ========================
 
+(defun cat (&rest strings)
+  "(cat &rest strings)
+CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
+  (apply 'concatenate 'string strings))
+
+(defmacro neuerbefehl (name dokstring befehl klasse)
+  `(defcommand ,name () () ,dokstring
+	       (run-or-raise ,befehl '(:class ,klasse))))
+
+(defmacro neuerterminalbefehl (name dokstring befehl klasse &optional (fg "lavender") (bg "maroon4"))
+	    "Starte/wechsle zu Alsa-Mixer."
+	    `(neuerbefehl ,name ,dokstring (format nil "uxterm -fg ~A -bg ~A -class '~A' -e '~A'"
+					       ,fg ,bg ,klasse ,befehl) ,klasse))
+
+(defmacro tastenbindung (keymap taste befehl)
+  "Kurzes Macro, um eine Tastenbindung zu definieren"
+  `(define-key, keymap (kbd, taste), befehl))
+
+(defmacro tastaturbelegung (keymap &rest tasten)
+  "Kurzes Macro, um mehrere Tastenbindungen an eine Keymap zu definieren, verwendet pro Taste die Funktion tastenbindung"
+  (let ((ks (mapcar (lambda (k)
+		      (append (list 'tastenbindung keymap) k))
+		    tasten)))
+    `(progn ,@ks)))
+
+(defun uhrzeit () "Gibt die aktuelle Uhrzeit zurück"
+       (multiple-value-bind (sekunden minuten stunden) (get-decoded-time)
+	 (format nil "~2,1,0,'0@A:~2,1,0,'0@A:~2,1,0,'0@A" stunden minuten sekunden)))
+
+(defun datum-uhrzeit ()
+  "(datum-uhrzeit)
+DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurück."
+  (multiple-value-bind (sekunden minuten stunden tag monat jahr) (get-decoded-time)
+    (format nil "~2,'0D.~2,'0D.~4,'0D ~2,'0D:~2,'0D:~2,'0D" tag monat jahr stunden minuten sekunden)))
+
+;; ===========================================
+;; Spezialisierte defcommands / Ausgabebefehle
+;; ===========================================
+
+(defcommand askubuntu (search)
+  ((:string "Suche in Ask Ubuntu nach: "))
+  "Dient zur Suche bei Ask Ubuntu per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://askubuntu.com/search?q=" search)))
+
+(defcommand ddg (search)
+  ((:string "Suche in DuckDuckGo nach: "))
+  "Dient zur Suche bei DuckDuckGo per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "https://duckduckgo.com/?q=" search)))
+
+(defcommand echo-date () ()
+	    "(echo-date)
+ECHO-DATE stellt das Datum und die Uhrzeit dar.
+Beispiel: (echo-date) => 11.01.2012 06:09:43"
+	    (message "~a" (datum-uhrzeit)))
+
+(defcommand echo-time () ()
+	    "(echo-date)
+ECHO-DATE stellt die Uhrzeit dar.
+Beispiel: (echo-time) => 06:11:27"
+	    (message "~a" (uhrzeit)))
+
+(defcommand hackernews (search)
+  ((:string "Suche bei Hackernews nach: "))
+  "Dient zur Suche bei Hackernews per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" search)))
+
+(defcommand ixquick (search)
+  ((:string "Suche in IxQuick nach: "))
+  "Dient zur Suche bei IxQuick per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://ixquick.com/do/metasearch.pl?query=" search)))
+
+(defcommand man (man) ((:string "Manual: "))
+	    "Sucht nach einem Befehl in den Manual-Seiten"
+	    (run-shell-command (format nil "~A -e sh -c 'man ~A'" terminal man)))
+
+(defcommand menü () ()
+  "menü dient der Abarbeitung der Optionen, die als Menüstruktur-Liste in *start-menü* hinterlegt sind."
+  (labels ((pick (options)
+                 (let ((selection (stumpwm::select-from-menu
+                                   (current-screen) options "")))
+                   (cond
+                    ((null selection)
+                     (throw 'stumpwm::error "Abbruch."))
+                    ((stringp (second selection))
+                     (second selection))
+                    (t
+                     (pick (cdr selection)))))))
+    (let ((choice (pick *start-menü*)))
+      (run-shell-command choice))))
+
+(defcommand move-focus-warp (dir) ((:direction "Direction:"))
+	    "Bewege den Fokus und anschließend die Maus in das Fenster."
+	    (move-focus-and-or-window dir)
+	    (banish-pointer :window))
+
+(defcommand nachrichten (search)
+  ((:string "Suche in Google News nach: "))
+  "Dient zur Suche bei Google News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://news.google.com/news/search?q=" search)))
+
+(defcommand news-bbc (search)
+  ((:string "Suche bei BBC News nach: "))
+  "Dient zur Suche bei BBC News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://www.bbc.co.uk/search/news/?q=" search)))
+
+(defcommand news-guardian (search)
+  ((:string "Suche bei Guardian News nach: "))
+  "Dient zur Suche bei Guardian News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://www.guardian.co.uk/search?q=" search)))
+
+(defcommand news-register (search)
+  ((:string "Suche bei The Register nach: "))
+  "Dient zur Suche bei The Register per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://search.theregister.co.uk/?q=" search)))
+
+(defcommand open-selection-browser () ()
+	    "Öffnet die markierte Webadresse per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+	    (run-shell-command (cat *browser* (get-x-selection))))
+
+(defcommand reinit () ()
+	    "Reinitialisierung des Systems"
+	    (run-commands "reload" "loadrc"))
+
+(defcommand stackoverflow (search)
+  ((:string "Suche in Stackoverflow nach: "))
+  "Dient zur Suche bei Stackoverflow per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "http://stackoverflow.com/search?q=" search)))
+
+(defcommand switch-modeline () ()
+	    "Schaltet die Modeline ein oder aus"
+	    (toggle-mode-line (current-screen) (current-head)))
+
+(defcommand wikipedia (search)
+  ((:string "Suche in der Wikipedia nach: "))
+  "Dient zur Suche in der Wikipedia per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type search string)
+  (nsubstitute #\+ #\Space search)
+  (run-shell-command (cat *browser* "https://de.wikipedia.org/w/index.php?search=" search)))
+
+;; ========================================================
+;; Grafische Programme aufrufen oder zu geöffneten wechseln
+;; ========================================================
+
+(neuerbefehl audacious "Starte/wechsle zu Audacious." "audacious" "Audacious")
+
+(neuerbefehl banshee "Starte/wechsle zum Banshee Medienabspieler." "banshee" "Banshee")
+
+(neuerbefehl brogue "Starte/wechsle zum ansprechenden B-Rogue." "brogue" "Brogue")
+
+(neuerbefehl calibre "Starte/wechsle zur Calibre Ebook-Verwaltung." "calibre" "Calibre")
+
+(neuerbefehl cherrytree "Starte/wechsle zum Cherrytree Wiki." "cherrytree" "Cherrytree")
+
+(neuerbefehl chromium-browser "Starte/wechsle zum Chromium Webbrowser." "chromium-browser" "Chromium-Browser")
+
+(neuerbefehl claws-mail "Starte/wechsle zu Claws-Mail." "claws-mail" "Claws-mail")
+
+(neuerbefehl comix "Starte/wechsle zu Comix." "comix" "Comix")
+
+(neuerbefehl conkeror "Starte/wechsle zum Conkeror Webbrowser." "conkeror" "Conkeror")
+
+(neuerbefehl deluge "Starte/wechsle zu Deluge." "deluge" "Deluge")
+
+(neuerbefehl dwb "Starte/wechsle zum dwb Webbrowser." "dwb" "Dwb")	    
+
+(neuerbefehl emacs "Starte/wechsle zu Emacs." "emacs" "Emacs")
+
+(neuerbefehl evince "Starte/wechsle zu Evince." "evince" "Evince")
+
+(neuerbefehl file-roller "Starte/wechsle zu File-Roller." "file-roller" "File-roller")
+
+(neuerbefehl firefox "Starte/wechsle zu Firefox." "firefox" "Firefox")
+
+(neuerbefehl flare "Starte/wechsle zu Flare RPG." "flare" "Flare")
+
+(neuerbefehl focuswriter "Starte/wechsle zu Focuswriter." "focuswriter" "Focuswriter")
+
+(neuerbefehl geeqie "Starte/wechsle zum Geekie Bildbetrachter." "geeqie" "Geeqie")
+
+(neuerbefehl gimp "Starte/wechsle zu GIMP." "gimp" "Gimp")
+
+(neuerbefehl iceweasel "Starte/wechsle zum Iceweasel Webbrowser." "iceweasel" "Iceweasel")
+
+(neuerbefehl jumanji "Starte/wechsle zum Jumanji Webbrowser." "jumanji" "Jumanji")	    
+
+(neuerbefehl kaffeine "Starte/wechsle zu Kaffeine." "kaffeine" "Kaffeine")
+
+(neuerbefehl keepassx "Starte/wechsle zu KeePassX." "keepassx" "Keepassx")
+
+(neuerbefehl minitube "Starte/wechsle zu Minitube." "minitube" "Minitube")
+
+(neuerbefehl nautilus "Starte/wechsle zum Nautilus Dateimanager." "nautilus --no-desktop" "Nautilus")
+
+(neuerbefehl nitrogen "Starte/wechsle zu Nitrogen." "nitrogen" "Nitrogen")
+
+(neuerbefehl okular "Starte/wechsle zum Okular PDF-Betrachter." "okular" "Okular")
+
+(neuerbefehl palapeli "Starte/wechsle zu Palapeli." "palapeli" "Palapeli")
+
+(neuerbefehl pouetChess "Starte/wechsle zu Pouetchess 3Dxp." "pouetChess" "pouetChess")
+
+(neuerbefehl pychess "Starte/wechsle zu PyChess Staunton." "pychess" "pychess")
+
+(neuerbefehl ristretto "Starte/wechsle zu Ristretto." "ristretto" "Ristretto")
+
+(neuerbefehl scid "Starte/wechsle zu Scid vs. PC." "scid" "Scid")
+
+(neuerbefehl scribus "Starte/wechsle zu Scribus" "scribus" "Scribus")
+
+(neuerbefehl surf "Starte/wechsle zu Surf." "surf" "surf")
+
+(neuerbefehl thunderbird "Starte/wechsle zu Thunderbird Emailclient." "thunderbird" "Thunderbird")
+
+(neuerbefehl turpial "Starte/wechsle zu Turpial." "turpial" "Turpial")
+
+(neuerbefehl userterminal "Starte/wechsle zum Userterminal." *uxt* "Userterminal")
+
+(neuerbefehl uxt-neu "Starte ein neues UXTerminal." *uxt-neu* "UXTerminal")
+
+(neuerbefehl uzbl-browser "Starte/wechsle zu Uzbl." "uzbl-browser" "Uzbl-core")
+
+(neuerbefehl unison-gtk "Starte/wechsle zu Unison." "unison-gtk" "Unison-gtk")
+
+(neuerbefehl vlc "Starte/wechsle zu VideoLanClient." "vlc" "Vlc")
+
+(neuerbefehl vym "Starte/wechsle zu ViewYourMind." "vym" "Vym")
+
+(neuerbefehl worldofpadman "Starte/wechsle zu World of Padman." "worldofpadman" "Worldofpadman")
+
+(neuerbefehl xarchiver "Starte/wechsle zu X-Archiver." "xarchiver" "Xarchiver")
+
+(neuerbefehl xchat "Starte/wechsle zu X-Chat." "xchat" "Xchat")
+
+(neuerbefehl zathura "Starte/wechsle zu Zathura." "zathura" "Zathura")
+
+;; ===================================================================
+;; Programme in einem eigenen Terminal starten oder zu diesem wechseln
+;; ===================================================================
+
+(neuerterminalbefehl abook "Starte/wechsle zu Abook." "abook" "Abook")
+
+(neuerterminalbefehl adminterminal "Starte/wechsle zum Adminterminal." "sudo -i" "Adminterminal" "gainsboro" "OrangeRed")
+
+(neuerterminalbefehl aliensrl "Starte/wechsle zu AliensRL." "aliensrl" "Aliensrl")
+
+(neuerterminalbefehl alsamixer "Starte/wechsle zum Alsa-Mixer." "alsamixer" "Alsamixer")
+
+(neuerterminalbefehl byobu "Starte/wechsle zum Byobu-Terminal." "byobu" "Byobu" "gainsboro" "DarkSlateGray")
+
+(neuerterminalbefehl crawl "Starte/wechsle zu Crawl." "crawl" "Crawl")
+
+(neuerterminalbefehl doomrl "Starte/wechsle zu DoomRL." "doomrl" "Doomrl")
+
+(neuerterminalbefehl htop "Starte/wechsle zu Htop." "htop" "Htop" "BlanchedAlmond" "MidnightBlue")
+
+(neuerterminalbefehl mathomatic "Starte/wechsle zu Mathomatic." "mathomatic" "Mathomatic")
+
+(neuerterminalbefehl mc "Starte/wechsle zum Midnight Commander." "mc" "Mc")
+
+(neuerterminalbefehl mocp "Starte/wechsle zu Music on Console." "mocp" "Mocp")
+
+(neuerterminalbefehl moria "Starte/wechsle zu Moria." "moria" "Moria")
+
+(neuerterminalbefehl primerl "Starte/wechsle zu PrimeRL." "primerl" "Primerl")
+
+(neuerterminalbefehl rogue "Starte/wechsle zu Rogue." "rogue" "Rogue")
+
+(neuerterminalbefehl telecomix "Starte/wechsle zu Telecomix." "telecomix" "Telecomix")
+
+(neuerterminalbefehl twitter "Starte/wechsle zu Twitter." "twitter" "Twitter")
+
+(neuerterminalbefehl wicd-curses "Starte/wechsle zu WICD (curses)." "wicd-curses" "Wicd")
+
+(neuerterminalbefehl xorcurses "Starte/wechsle zu Xorcurses." "xorcurses" "Xorcurses")
+
+(neuerterminalbefehl zork1 "Starte/wechsle zu Zork 1." "zork1" "Zork1")
+
+(neuerterminalbefehl zork2 "Starte/wechsle zu Zork 2." "zork2" "Zork2")
+
+(neuerterminalbefehl zork3 "Starte/wechsle zu Zork 3." "zork3" "Zork3")
+
+;; ======================================
+;; Neuere Tasten - nach eigenem Gutdünken
+;; ======================================
+;; Übersicht zu den Zusatztasten:
+;; M-s = ALT+SUPER
+;; s- = SUPER
+;; S- = SHIFT
+;; C- = Control/STRG
+;; H- = ALT-GR
+;; ======================================
+
+;; --------------------------------------------------------------------
+;; Zusätzliche Optionen für die emacs-artige Tastenbedienung mit Präfix
+;; --------------------------------------------------------------------
+
+(tastaturbelegung *root-map*
+		  ("Print" "exec scrot -d 5 -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
+		  ("RET" "userterminal")
+		  ("S-RET" "uxt-neu")
+		  ("M-RET" "fullscreen")
+		  ("C-RET" "adminterminal")
+		  ("DEL" "repack-window-numbers")
+		  ("I" "show-window-properties")
+		  ("P" "exec dmenu_run ")
+		  ("," "switch-modeline")
+		  ("C-b" "byobu")
+		  ("c" "userterminal")
+		  ("C" "uxt-neu")
+		  ("C-c" "adminterminal")
+		  ;; Die fehlenden Features auch in der root-map anlegen
+		  ("C-SPC" "other")
+		  ("M-SPC" "gother")
+		  ("S-SPC" "pull-marked")
+		  ("Pause" "windowlist")
+		  ("C-Pause" "grouplist")
+		  ("M-Left" "gprev")
+		  ("M-Right" "gnext")
+		  ("M-S-Left" "gprev-with-window")
+		  ("M-S-Right" "gnext-with-window")
+		  ;; Features umbiegen
+		  )
+
+;; --------------------------------------------------------------------
+;; Zusätzliche Optionen für die emacs-artige Tastenbedienung mit Präfix
+;; - Fehlende Features in der groups-map                              -
+;; --------------------------------------------------------------------
+
+(tastaturbelegung *groups-map*
+		  ("C" "gnew-float")
+		  )
+
+;; ---------------------------------------------------------------------
+;; Zusätzliche Optionen für die emacs-artige Tastenbedienung mit Präfix
+;; - Die Tastenanbindung für meine Zusatzmenüs                         -
+;; ---------------------------------------------------------------------
+
+(tastaturbelegung *root-map*
+		  ("x" '*programmstart-map*)
+		  ("y" '*websuche-map*)
+		  ("X" '*erholung-map*)
+		  ("." "menü")
+		  )
+
+(tastaturbelegung *top-map*
+		  ("s-x" '*programmstart-map*)
+		  ("s-y" '*websuche-map*)
+		  ("s-X" '*erholung-map*)
+		  ("s-." "menü")
+		  )
+
+;; --------------------------------------------------------------------------------------
+;; Zusätzliche Optionen für einen Direkttastenmodus, wie ihn andere Fenstermanager nutzen
+;; - wird von mir nicht mehr genutzt, jedoch gepflegt                                   -                                                    -
+;; --------------------------------------------------------------------------------------
+
+(tastaturbelegung *top-map*
+		  ;;; Fenster-Verhalten dwm-like
+		  ("s-Left" "move-focus-warp left")
+		  ("s-S-Left" "move-window left")
+		  ("s-Right" "move-focus-warp right")
+		  ("s-S-Right" "move-window right")
+		  ("s-Up" "move-focus-warp up")
+		  ("s-S-Up" "move-window up")
+		  ("s-Down" "move-focus-warp down")
+		  ("s-S-Down" "move-window down")
+		  ("C-s-Left" "pull-hidden-previous")
+		  ("C-s-Right" "pull-hidden-next")
+		  ("C-s-Up" "mark")
+		  ("C-s-Down" "pull-marked")
+		  ;; Durch Fenster wechseln - dwm-like
+		  ("s-Tab" "next-in-frame")
+		  ("s-ISO_Left_Tab" "prev-in-frame")     ;; Erinnerung: Das ist  Shift-Tab
+		  ;; Gruppen-Verhalten ist dwm-like
+		  ("M-s-Left" "gprev")
+		  ("M-s-Right" "gnext")
+		  ("M-S-s-Left" "gprev-with-window")
+		  ("M-S-s-Right" "gnext-with-window")
+		  ("s-SPC" "pull-hidden-next")
+		  ("C-s-SPC" "other")
+		  ("M-s-SPC" "gother")
+		  ("S-s-SPC" "pull-marked")
+		  ("Pause" "windowlist")
+		  ("C-Pause" "grouplist")
+		  ;; Nachbildung der vordefinierten StumpWM-Tasten als Direkttasten
+		  ("s-RET" "userterminal")
+		  ("S-RET" "uxt-neu")
+		  ("M-s-RET" "fullscreen")
+		  ("C-s-RET" "adminterminal")
+		  ("s-;" "colon")
+		  ("s-:" "eval")
+		  ("s-!" "exec")
+		  ("s-#" "mark")
+		  ("s--" "fclear")
+		  ("s-+" "balance-frames")
+		  ("s-\"" "select")
+		  ("s-'" "windowlist")
+		  ("s-," "switch-modeline")
+		  ("s-a" "time")
+		  ("s-A" "title")
+		  ("s-b" "banish")
+		  ("C-s-b" "byobu")
+		  ("s-c" "userterminal")
+		  ("s-C" "commands")
+		  ("C-s-c" "Adminterminal")
+		  ("s-e" "emacs")
+		  ("s-f" "fselect")
+		  ("s-F" "curframe")
+		  ("s-g" *groups-map*)
+		  ("s-G" "vgroups")
+		  ("s-h" *help-map*)
+		  ("s-i" "info")
+		  ("s-I" "show-window-properties")
+		  ("s-k" "delete")
+		  ("s-K" "kill")
+		  ("s-l" "exec xflock4")
+		  ("s-L" "loadrc")
+		  ("s-m" "lastmsg")
+		  ("s-n" "pull-hidden-next")
+		  ("M-s-N" "next")
+		  ("C-s-n" "next-in-frame")
+		  ("C-s-N" "number")
+		  ("s-o" "fnext")
+		  ("s-p" "pull-hidden-previous")
+		  ("s-P" "prev")
+		  ("C-s-p" "prev-in-frame")
+		  ("s-Q" "only")
+		  ("s-r" "iresize")
+		  ("s-R" "remove")
+		  ("s-s" "vsplit")
+		  ("s-S" "hsplit")
+		  ("s-t" "send-escape")
+		  ("s-u" "next-urgent")
+		  ("s-v" "version")
+		  ("s-w" "windows")
+		  ("s-W" "place-existing-windows")
+		  ;; Wechseln zu einem anderen Fenster
+		  ("s-1" "select-window-by-number 1")
+		  ("s-2" "select-window-by-number 2")
+		  ("s-3" "select-window-by-number 3")
+		  ("s-4" "select-window-by-number 4")
+		  ("s-5" "select-window-by-number 5")
+		  ("s-6" "select-window-by-number 6")
+		  ("s-7" "select-window-by-number 7")
+		  ("s-8" "select-window-by-number 8")
+		  ("s-9" "select-window-by-number 9")
+		  ("s-0" "select-window-by-number 0")
+		  ;; Wechseln zu einer anderen Gruppe
+		  ("M-s-1" "gselect 1")
+		  ("M-s-2" "gselect 2")
+		  ("M-s-3" "gselect 3")
+		  ("M-s-4" "gselect 4")
+		  ("M-s-5" "gselect 5")
+		  ("M-s-6" "gselect 6")
+		  ("M-s-7" "gselect 7")
+		  ("M-s-8" "gselect 8")
+		  ("M-s-9" "gselect 9")
+		  ("M-s-0" "gselect 0")
+		  ;; Verschieben in eine andere Gruppe
+		  ("M-S-s-1" "gmove 1")
+		  ("M-S-s-2" "gmove 2")
+		  ("M-S-s-3" "gmove 3")
+		  ("M-S-s-4" "gmove 4")
+		  ("M-S-s-5" "gmove 5")
+		  ("M-S-s-6" "gmove 6")
+		  ("M-S-s-7" "gmove 7")
+		  ("M-S-s-8" "gmove 8")
+		  ("M-S-s-9" "gmove 9")
+		  ("M-S-s-0" "gmove 0")
+		  ;; Programme starten
+		  ("Print" "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
+		  ("XF86HomePage" "conkeror")
+		  ("XF86Mail" "thunderbird")
+		  ("XF86Calculator" "speedcrunch")
+		  ("XF86AudioRaiseVolume" "exec amixer set Master 5%+ unmute")
+		  ("XF86AudioLowerVolume" "exec amixer set Master 5%- unmute")
+		  ("XF86AudioMute" "exec amixer set Master toggle")
+		  ("M-s-a" "alsamixer ")
+		  ("M-s-A" "abook ")
+		  ("M-s-b" "banshee")
+		  ("M-s-c" "conkeror")
+		  ("M-s-C" "chromium-browser")
+		  ("M-s-d" "deluge")
+		  ("M-s-D" "dwb")
+		  ("M-s-e" "evince")
+		  ("M-s-f" "firefox")
+		  ("M-s-F" "focuswriter")
+		  ("M-s-g" "geeqie")
+		  ("M-s-G" "gimp")
+		  ("M-s-j" "jumanji")
+		  ("M-s-k" "keepassx")
+		  ("M-s-K" "kaffeine")
+		  ("M-s-m" "mc")
+		  ("M-s-M" "mocp")
+		  ("C-s-m" "minitube")
+		  ("C-s-M" "mathomatic")
+		  ("M-s-n" "nautilus")
+		  ("M-s-N" "nitrogen")
+		  ("M-s-o" "okular")
+		  ("M-s-p" "exec dmenu_run ")
+		  ("M-s-r" "ristretto")
+		  ("M-s-R" "reinit")
+		  ("M-s-s" "scribus")
+		  ("M-s-S" "surf")
+		  ("M-s-t" "thunderbird")
+		  ("M-s-T" "turpial")
+		  ("M-s-u" "unison-gtk")
+		  ("M-s-v" "vlc")
+		  ("M-s-V" "vym")
+;		  ("M-s-w" "wicd-curses ")
+		  ("M-s-x" "xchat")
+		  ("M-s-X" "xarchiver")
+		  ("M-s-y" "exec synclient touchpadoff=1 ")
+		  ("M-s-Y" "exec synclient touchpadoff=0 ")
+		  ("M-s-z" "zathura")
+		  ;; Websuchen
+		  ("C-s-a" "askubuntu")
+		  ("C-s-b" "news-bbc")
+		  ("C-s-d" "ddg")
+		  ("C-s-g" "news-guardian")
+		  ("C-s-h" "hackernews")
+		  ("C-s-i" "ixquick")
+		  ("C-s-n" "nachrichten")
+		  ("C-s-o" "open-selection-browser") ;; öffnet den markierten Link im Webbrowser
+		  ("C-s-r" "news-register")
+		  ("C-s-s" "stackoverflow")
+		  ("C-s-w" "wikipedia")
+		  )
+
+;;; ==========================================================
+;;; GRUPPEN - für Umsteiger von anderen Tiling Fenstermanagern
+;;; ==========================================================
+
+;; VORSICHT! Der Gruppenteil ist seit einem Jahr nicht mehr gepflegt worden!
+
+;(run-commands ; Erzeugt die Gruppen
+;      "grename Standard"
+;      "gnewbg Emacs"
+;      "gnewbg WWW"
+;      "gnewbg Arbeiten"
+;      "gnewbg Media"
+;      "gnewbg Erholung"
+;      "gnewbg System"
+;      )
+
+;(define-frame-preference "Standard"
+;  (0 t   t :instance "xterm")
+;  (0 t   t :class "UXTerm")
+;  (0 t   t :class "st-256color")
+;  (0 t   t :class "URxvt")
+;  )
+
+;(define-frame-preference "Emacs"
+;  (0 t   t :title "emacs")
+;  )
+
+;(define-frame-preference "WWW"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Claws-mail")  
+;  (0 t   t :class "Conkeror")
+;  (0 t   t :class "Deluge")
+;  (0 t   t :class "Firefox")
+;  (0 t   t :class "surf")
+;  (0 t   t :class "Turpial")
+;  (0 t   t :class "Uzbl-core")
+;  (0 t   t :class "Xchat")
+;  )
+
+;(define-frame-preference "Arbeiten"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Gvim")
+;  (0 t   t :class "Focuswriter")
+;  (0 t   t :class "libreoffice-startcenter")
+;  (0 t   t :class "libreoffice-writer")
+;  (0 t   t :class "libreoffice-calc")
+;  (0 t   t :class "libreoffice-impress")
+;  (0 t   t :class "libreoffice-draw")
+;  (0 t   t :class "libreoffice-math")
+;  (0 t   t :class "Okular")
+;  (0 t   t :class "Pyroom")
+;  (0 t   t :class "Zathura")
+;  )
+
+;(define-frame-preference "Media"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :instance "aumix")
+;  (0 t   t :class "Audacious")
+;  (0 t   t :class "Avidemux")  
+;  (0 t   t :class "Geeqie")
+;  (0 t   t :class "Gimp")
+;  (0 t   t :class "Iscan")
+;  (0 t   t :class "K3b")
+;  (0 t   t :class "Kaffeine")
+;  (0 t   t :class "Comixq")
+;  (0 t   t :class "Minitube")  
+;  (0 t   t :class "MPlayer")  
+;  (0 t   t :class "Ristretto") 
+;  (0 t   t :class "tvbrowser-TVBrowser")
+;  (0 t   t :class "Vlc")
+;  )
+
+;(define-frame-preference "Erholung"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Angband")
+;  (0 t   t :class "ASCIIpOrtal")
+;  (0 t   t :class "Desmume-glade")
+;  (0 t   t :class "Desmume")
+;  (0 t   t :class "Dwarf_Fortress")
+;  (0 t   t :class "Dwarftherapist")
+;  (0 t   t :class "flands-FLApp")
+;  (0 t   t :class "flare.bin")
+;  (0 t   t :class "Gvbam")
+;  (0 t   t :class "net-minecraft-MinecraftLauncher")
+;  (0 t   t :class "russotto-zplet-ZJApp")
+;  (0 t   t :class "Palapelli")
+;  (0 t   t :class "Scid")
+;  (0 t   t :title "SuperTuxKart")
+;  (0 t   t :title "t-engine")
+;  (0 t   t :title "tome")
+;  (0 t   t :class "warmux")
+;  (0 t   t :class "wesnoth")
+;  (0 t   t :class "widelands")
+;  )
+
+;(define-frame-preference "System"
+; ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Keepassx")
+;  (0 t   t :class "Gpg-crypter")
+;  (0 t   t :class "Nitrogen")
+;  (0 t   t :class "Thunar")
+;  (0 t   t :class "Unison-gtk2")
+;  (0 t   t :class "Xarchiver")
+;  )
 
 ;; =========================================
 ;; für aktive Programmierzyklen - SWANK
