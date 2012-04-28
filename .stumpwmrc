@@ -459,14 +459,16 @@
 ;; ===================
 ;; Autostart-Programme
 ;; ===================
-(run-or-raise "nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
-(run-or-raise "synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
-(run-or-raise "xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
-(run-or-raise "nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
-(run-or-raise "ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
-(run-or-raise "dropbox start" '(:class "Dropbox")) ; Dropbox starten
-(banish-pointer) ; Mauszeiger verbannen
-(clear-window-placement-rules)
+(when *initializing*
+  (run-or-raise "nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
+  (run-or-raise "synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
+  (run-or-raise "xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
+  (run-or-raise "nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
+  (run-or-raise "ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
+  (run-or-raise "dropbox start" '(:class "Dropbox")) ; Dropbox starten
+  (banish-pointer) ; Mauszeiger verbannen
+  (clear-window-placement-rules))
+
 (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
     (toggle-mode-line (current-screen) (current-head)))
 
@@ -479,6 +481,21 @@
 CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
   (apply 'concatenate 'string strings))
 
+(defun ersetze-teilstring (string alt neu &key (test #'char=))
+  "(ersetze-teilsting string alt neu)
+ERSETZTE-TEILSTRING ersetzt das Teilstück ALT durch NEU."
+  (with-output-to-string (ausgabe)
+    (loop with alt-länge = (length alt)
+       for alte-position = 0 then (+ position alt-länge)
+       for position = (search alt string
+                              :start2 alte-position
+                              :test test)
+       do (write-string string ausgabe
+			:start alte-position
+			:end (or position (length string)))
+       when position do (write-string neu ausgabe)
+       while position))) 
+
 (defmacro neuerbefehl (name dokstring befehl klasse)
   `(defcommand ,name () () ,dokstring
 	       (message ,dokstring)
@@ -488,6 +505,9 @@ CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
 	    "Starte/wechsle zu Alsa-Mixer."
 	    `(neuerbefehl ,name ,dokstring (format nil "uxterm -fg ~A -bg ~A -class '~A' -e '~A'"
 					       ,fg ,bg ,klasse ,befehl) ,klasse))
+
+(defun string->liste (string)
+  (read-from-string (concatenate 'string "(" string ")")))
 
 (defmacro tastenbindung (keymap taste befehl)
   "Kurzes Macro, um eine Tastenbindung zu definieren"
@@ -612,7 +632,7 @@ Beispiel: (echo-time) => 06:11:27"
 
 (defcommand reinit () ()
 	    "Reinitialisierung des Systems"
-	    (run-commands "reload" "loadrc")
+	    (run-commands "loadrc")
 	    (message "Reinitialisierung abgeschlossen"))
 
 (defcommand stackoverflow (search)
@@ -633,11 +653,11 @@ Beispiel: (echo-time) => 06:11:27"
   (nsubstitute #\+ #\Space search)
   (run-shell-command (cat *browser* "https://de.wikipedia.org/w/index.php?search=" search)))
 
-(defcommand zwitschere (search)
+(defcommand zwitschere (nachricht)
   ((:string "Die zu zwitschernde Mitteilung: "))
   "Dient zum schnellen zwitschern per Twitter via ttytter"
-  (check-type search string)
-  (run-shell-command (cat "ttytter -status='" search "'")))
+  (check-type nachricht string)
+  (run-shell-command (cat "ttytter -status='" (ersetze-teilstring nachricht "<at>" "@") "'")))
 
 ;; ========================================================
 ;; Grafische Programme aufrufen oder zu geöffneten wechseln
@@ -1152,6 +1172,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 
 (defun echo-urgent-window (target)
+  "(echo-urgent-window (target)
+ECHO-URGENDT-WINDOW teilt mit, welches Fenster uns dringend benötigt."
   (message-no-timeout "~a hat eine Nachricht für dich." (window-title target)))
 
 ;;; =====
@@ -1165,7 +1187,8 @@ Beispiel: (echo-time) => 06:11:27"
 ;; -----------------------------------------
 ;; Aufruf mittels M-x slime-connect in Emacs
 ;; =========================================
-(require 'swank)
-(swank:create-server :dont-close t)
+(when *initializing*
+  (require 'swank)
+  (swank:create-server :dont-close t))
 
 
