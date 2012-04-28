@@ -1,5 +1,6 @@
 ;-*-lisp-*-
-; mit loadrc im colon neu laden
+;-*- coding: utf-8 -*-
+;mit loadrc im colon neu laden
 (in-package :stumpwm)
 
 (load "~/Entwicklung/fremd/stumpwm/contrib/sbclfix")
@@ -188,8 +189,10 @@
      ("Cherrytree               prefix-x C-c" "cherrytree")
      ("Evince                   prefix-x e"   "evince")
      ("Emacs                    prefix-e"     "emacs")
+     ("FB-Reader"                             "fbreader")
      ("FocusWriter              prefix-x F"   "focuswriter")
      ("GIMP                     prefix-x G"   "gimp")
+     ("Idle - Python 3.2"                     "idle-python3.2")
      ("LibreOffice-Startcenter"               "libreoffice")
      ("LibreOffice-Writer"                    "lowriter")
      ("LibreOffice-Calc"                      "localc")
@@ -261,17 +264,20 @@
      ("Common Lisp"                                ,(concatenate 'string *browser* "http://common-lisp.net/"))
      ("Common Lisp Hyperspec"                      ,(concatenate 'string *browser* "http://www.lispworks.com/documentation/HyperSpec/Front/index.htm"))
      ("Common Lisp Wiki"                           ,(concatenate 'string *browser* "http://www.cliki.net/index"))
+     ("Denksport: 99 Lisp Probleme"                ,(concatenate 'string *browser* "http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html"))
      ("ELM-Art Lisp Tutor (Deutsch/English)"       ,(concatenate 'string *browser* "http://art2.ph-freiburg.de/art/login-d.html"))
      ("Emacs                            prefix-e"  "emacs")
-     ("Graham's On Lisp"                           ,(concatenate 'string *browser* "http://www.paulgraham.com/onlisptext.html"))
+     ("Graham's On Lisp Book"                      ,(concatenate 'string *browser* "http://www.paulgraham.com/onlisptext.html"))
      ("L1sp"                                       ,(concatenate 'string *browser* "http://l1sp.org"))
+     ("Lambkins Successful Lisp Book"              ,(concatenate 'string *browser* "http://psg.com/~dlamkins/sl/cover.html"))
      ("Planet LISP"                                ,(concatenate 'string *browser* "http://planet.lisp.org"))
      ("Planet SBCL"                                ,(concatenate 'string *browser* "http://planet.sbcl.org"))
      ("Rosetta Code"                               ,(concatenate 'string *browser* "http://rosettacode.org/wiki/Category:Common_Lisp"))
-     ("Seibel's Practical Common Lisp"             ,(concatenate 'string *browser* "http://gigamonkeys.com/book/"))
+     ("Seibel's Practical Common Lisp Book"        ,(concatenate 'string *browser* "http://gigamonkeys.com/book/"))
      ("StumpWM Homepage"                           ,(concatenate 'string *browser* "http://stumpwm.org"))
      ("StumpWM Wiki"                               ,(concatenate 'string *browser* "http://stumpwm.svkt.org/cgi-bin/wiki.pl"))
      ("Touretzky's Common Lisp Book"               ,(concatenate 'string *browser* "http://www.cs.cmu.edu/~dst/LispBook/"))
+     ("Wikibook: Common Lisp"                      ,(concatenate 'string *browser* "https://en.wikibooks.org/wiki/Common_Lisp"))
     )
     
     ("Media"
@@ -475,6 +481,7 @@ CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
 
 (defmacro neuerbefehl (name dokstring befehl klasse)
   `(defcommand ,name () () ,dokstring
+	       (message ,dokstring)
 	       (run-or-raise ,befehl '(:class ,klasse))))
 
 (defmacro neuerterminalbefehl (name dokstring befehl klasse &optional (fg "lavender") (bg "maroon4"))
@@ -605,7 +612,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 (defcommand reinit () ()
 	    "Reinitialisierung des Systems"
-	    (run-commands "reload" "loadrc"))
+	    (run-commands "reload" "loadrc")
+	    (message "Reinitialisierung abgeschlossen"))
 
 (defcommand stackoverflow (search)
   ((:string "Suche in Stackoverflow nach: "))
@@ -663,6 +671,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl evince "Starte/wechsle zu Evince." "evince" "Evince")
 
+(neuerbefehl fbreader "Starte/wechsle zum FBreader." "fbreader" "Fbreader")
+
 (neuerbefehl file-roller "Starte/wechsle zu File-Roller." "file-roller" "File-roller")
 
 (neuerbefehl firefox "Starte/wechsle zu Firefox." "firefox" "Firefox")
@@ -676,6 +686,8 @@ Beispiel: (echo-time) => 06:11:27"
 (neuerbefehl gimp "Starte/wechsle zu GIMP." "gimp" "Gimp")
 
 (neuerbefehl iceweasel "Starte/wechsle zum Iceweasel Webbrowser." "iceweasel" "Iceweasel")
+
+(neuerbefehl idle-python3.2 "Starte/wechsle zu Idle in der Python 3.2 Fassung." "idle-python3.2" "Idle-python3.2")
 
 (neuerbefehl jumanji "Starte/wechsle zum Jumanji Webbrowser." "jumanji" "Jumanji")	    
 
@@ -771,7 +783,7 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerterminalbefehl telecomix "Starte/wechsle zu Telecomix." "telecomix" "Telecomix")
 
-(neuerterminalbefehl ttytter "Starte/wechsle zu ttytter." "ttytter" "Ttytter" "lavender" "NavyBlue")
+(neuerterminalbefehl ttytter "Starte/wechsle zu ttytter." "ttytter -ansi" "Ttytter" "lavender" "NavyBlue")
 
 (neuerterminalbefehl wicd-curses "Starte/wechsle zu WICD (curses)." "wicd-curses" "Wicd")
 
@@ -1138,12 +1150,22 @@ Beispiel: (echo-time) => 06:11:27"
 ;  (0 t   t :class "Xarchiver")
 ;  )
 
+
+(defun echo-urgent-window (target)
+  (message-no-timeout "~a hat eine Nachricht für dich." (window-title target)))
+
+;;; =====
+;;; Hooks
+;;; =====
+
+(add-hook *urgent-window-hook* 'echo-urgent-window)
+
 ;; =========================================
 ;; für aktive Programmierzyklen - SWANK
 ;; -----------------------------------------
 ;; Aufruf mittels M-x slime-connect in Emacs
 ;; =========================================
-; (require 'swank)
-; (swank:create-server :dont-close t)
+(require 'swank)
+(swank:create-server :dont-close t)
 
 

@@ -930,7 +930,7 @@ Beispiel: (defparameter *test* '(a b c d)) => *TEST*
 *test* => (N B C D)")
 
 (dokumentation-austauschen 'setq 'function "(setq variable1 form1 {variable2 form2 {variableN formN}})
-Die Bedeutung des Mnemonics von SETQ ist die Abkürzung von SETQuote.
+Die Bedeutung des Mnemonics von SETQ ist die Abkürzung von SETQuote. Die Bedeutung rührt daher, das jedes Argumentpaar mit einem Symbol beginnt, das nicht evaluiert wird.
 SETQ nimmt Argumentpaare entgegen, wobei es den ersten Wert, ein Symbol, als Variable mit dem dazugehörigen ersten Wert einer zuvor evaluierten Form bindet. Somit entspricht SETQ für Programmierer, die von anderem Programmiersprachen aus kommen, dem klassischen Zuweisungsoperator.
 Beispiele: ;; Der einfachste Nutzen von SETQ ist es, als Seiteneffekt den Wert von evaulierten Formen in Variablen zu speichern.
  (setq a 1 b 2 c 3) =>  3
