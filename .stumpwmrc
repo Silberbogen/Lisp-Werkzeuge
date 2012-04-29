@@ -98,10 +98,14 @@
     (define-key m (kbd "a") "askubuntu")
     (define-key m (kbd "b") "news-bbc")
     (define-key m (kbd "d") "ddg")
-    (define-key m (kbd "g") "news-guardian")
+    (define-key m (kbd "g") "google")
+    (define-key m (kbd "G") "news-guardian")
     (define-key m (kbd "h") "hackernews")
     (define-key m (kbd "i") "ixquick")
+    (define-key m (kbd "n") "nachrichten")
     (define-key m (kbd "o") "open-selection-browser")
+    (define-key m (kbd "p") "google+mitteilungen")
+    (define-key m (kbd "P") "google+profile")
     (define-key m (kbd "r") "news-register")
     (define-key m (kbd "s") "stackoverflow")
     (define-key m (kbd "T") "telecomix")
@@ -274,6 +278,7 @@
      ("Planet SBCL"                                ,(concatenate 'string *browser* "http://planet.sbcl.org"))
      ("Rosetta Code"                               ,(concatenate 'string *browser* "http://rosettacode.org/wiki/Category:Common_Lisp"))
      ("Seibel's Practical Common Lisp Book"        ,(concatenate 'string *browser* "http://gigamonkeys.com/book/"))
+     ("Steele's CL the Language, 2nd Ed. Book"     ,(concatenate 'string *browser* "http://www.cs.cmu.edu/Groups/AI/html/cltl/cltl2.html"))
      ("StumpWM Homepage"                           ,(concatenate 'string *browser* "http://stumpwm.org"))
      ("StumpWM Wiki"                               ,(concatenate 'string *browser* "http://stumpwm.svkt.org/cgi-bin/wiki.pl"))
      ("Touretzky's Common Lisp Book"               ,(concatenate 'string *browser* "http://www.cs.cmu.edu/~dst/LispBook/"))
@@ -343,6 +348,7 @@
      ("Dwarf Fortress Wiki"              ,(concatenate 'string *browser* "http://df.magmawiki.com"))
      ("FreshPorts"                       ,(concatenate 'string *browser* "http://freshports.org"))
      ("GitHUB"                           ,(concatenate 'string *browser* "https://github.com"))
+     ("Google               prefix-y g"  ,(concatenate 'string *browser* "https://www.google.de"))
      ("Gronkh"                           ,(concatenate 'string *browser* "http://gronkh.de"))
      ("Hackernews           prefix-y h"  ,(concatenate 'string *browser* "http://news.ycombinator.com"))
      ("Heise"                            ,(concatenate 'string *browser* "http://heise.de"))
@@ -358,7 +364,7 @@
      ("Stackoverflow        prefix-y s"  ,(concatenate 'string *browser* "http://stackoverflow.com"))
      ("SubCentral"                       ,(concatenate 'string *browser* "http://subcentral.de"))
      ("Thalia"                           ,(concatenate 'string *browser* "http://thalia.de"))
-     ("The Guardian         prefix-y g"  ,(concatenate 'string *browser* "http://guardian.co.uk"))
+     ("The Guardian         prefix-y G"  ,(concatenate 'string *browser* "http://guardian.co.uk"))
      ("The Register         prefix-y r"  ,(concatenate 'string *browser* "http://theregister.co.uk"))
      ("TOR check"                        ,(concatenate 'string *browser* "https://check.torproject.org"))
      ("Webupd8"                          ,(concatenate 'string *browser* "http://webupd8.org"))
@@ -534,19 +540,19 @@ DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurüc
 ;; Spezialisierte defcommands / Ausgabebefehle
 ;; ===========================================
 
-(defcommand askubuntu (search)
+(defcommand askubuntu (suche)
   ((:string "Suche in Ask Ubuntu nach: "))
   "Dient zur Suche bei Ask Ubuntu per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://askubuntu.com/search?q=" search)))
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://askubuntu.com/search?q=" suche)))
 
-(defcommand ddg (search)
+(defcommand ddg (suche)
   ((:string "Suche in DuckDuckGo nach: "))
-  "Dient zur Suche bei DuckDuckGo per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "https://duckduckgo.com/?q=" search)))
+  "Dient zur Suche bei DuckDuckGo per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "https://duckduckgo.com/?q=" suche)))
 
 (defcommand echo-date () ()
 	    "(echo-date)
@@ -560,19 +566,40 @@ ECHO-DATE stellt die Uhrzeit dar.
 Beispiel: (echo-time) => 06:11:27"
 	    (message "~a" (uhrzeit)))
 
-(defcommand hackernews (search)
-  ((:string "Suche bei Hackernews nach: "))
-  "Dient zur Suche bei Hackernews per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" search)))
+(defcommand google (suche)
+  ((:string "Suche in Google nach: "))
+  "Dient zur Suche in Google per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "https://www.google.de/search?q=" suche)))
 
-(defcommand ixquick (search)
+(defcommand google+mitteilungen (suche)
+  ((:string "Suche in Google+ Mitteilungen nach: "))
+  "Dient zur Suche in Google+ Mitteilungen per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "'https://www.google.de/search?q=site:plus.google.com inurl:posts/* " suche "'" )))
+
+(defcommand google+profile (suche)
+  ((:string "Suche in Google+ Profilen nach: "))
+  "Dient zur Suche in Google+ Profilen per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "'https://www.google.de/search?q=" suche "&tbs=prfl:e'")))
+
+(defcommand hackernews (suche)
+  ((:string "Suche bei Hackernews nach: "))
+  "Dient zur Suche bei Hackernews per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" suche)))
+
+(defcommand ixquick (suche)
   ((:string "Suche in IxQuick nach: "))
-  "Dient zur Suche bei IxQuick per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://ixquick.com/do/metasearch.pl?query=" search)))
+  "Dient zur Suche bei IxQuick per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://ixquick.com/do/metasearch.pl?query=" suche)))
 
 (defcommand man (man) ((:string "Manual: "))
 	    "Sucht nach einem Befehl in den Manual-Seiten"
@@ -598,36 +625,36 @@ Beispiel: (echo-time) => 06:11:27"
 	    (move-focus-and-or-window dir)
 	    (banish-pointer :window))
 
-(defcommand nachrichten (search)
+(defcommand nachrichten (suche)
   ((:string "Suche in Google News nach: "))
-  "Dient zur Suche bei Google News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://news.google.com/news/search?q=" search)))
+  "Dient zur Suche bei Google News per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://news.google.com/news/search?q=" suche)))
 
-(defcommand news-bbc (search)
+(defcommand news-bbc (suche)
   ((:string "Suche bei BBC News nach: "))
-  "Dient zur Suche bei BBC News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://www.bbc.co.uk/search/news/?q=" search)))
+  "Dient zur Suche bei BBC News per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.bbc.co.uk/search/news/?q=" suche)))
 
-(defcommand news-guardian (search)
+(defcommand news-guardian (suche)
   ((:string "Suche bei Guardian News nach: "))
   "Dient zur Suche bei Guardian News per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://www.guardian.co.uk/search?q=" search)))
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.guardian.co.uk/search?q=" suche)))
 
-(defcommand news-register (search)
+(defcommand news-register (suche)
   ((:string "Suche bei The Register nach: "))
-  "Dient zur Suche bei The Register per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://search.theregister.co.uk/?q=" search)))
+  "Dient zur Suche bei The Register per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://search.theregister.co.uk/?q=" suche)))
 
 (defcommand open-selection-browser () ()
-	    "Öffnet die markierte Webadresse per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
+	    "Öffnet die markierte Webadresse per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
 	    (run-shell-command (cat *browser* (get-x-selection))))
 
 (defcommand reinit () ()
@@ -635,23 +662,23 @@ Beispiel: (echo-time) => 06:11:27"
 	    (run-commands "loadrc")
 	    (message "Reinitialisierung abgeschlossen"))
 
-(defcommand stackoverflow (search)
+(defcommand stackoverflow (suche)
   ((:string "Suche in Stackoverflow nach: "))
-  "Dient zur Suche bei Stackoverflow per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "http://stackoverflow.com/search?q=" search)))
+  "Dient zur Suche bei Stackoverflow per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://stackoverflow.com/search?q=" suche)))
 
 (defcommand switch-modeline () ()
 	    "Schaltet die Modeline ein oder aus"
 	    (toggle-mode-line (current-screen) (current-head)))
 
-(defcommand wikipedia (search)
+(defcommand wikipedia (suche)
   ((:string "Suche in der Wikipedia nach: "))
-  "Dient zur Suche in der Wikipedia per Conkeror. Ist dieser bereits geöffnet, so in einem neuen Tab."
-  (check-type search string)
-  (nsubstitute #\+ #\Space search)
-  (run-shell-command (cat *browser* "https://de.wikipedia.org/w/index.php?search=" search)))
+  "Dient zur Suche in der Wikipedia per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "https://de.wikipedia.org/w/index.php?search=" suche)))
 
 (defcommand zwitschere (nachricht)
   ((:string "Die zu zwitschernde Mitteilung: "))
@@ -1054,11 +1081,14 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("C-s-a" "askubuntu")
 		  ("C-s-b" "news-bbc")
 		  ("C-s-d" "ddg")
-		  ("C-s-g" "news-guardian")
+		  ("C-s-g" "google")
+		  ("C-s-G" "news-guardian")
 		  ("C-s-h" "hackernews")
 		  ("C-s-i" "ixquick")
 		  ("C-s-n" "nachrichten")
 		  ("C-s-o" "open-selection-browser") ;; öffnet den markierten Link im Webbrowser
+		  ("C-s-p" "google+mitteilungen")
+		  ("C-s-P" "google+profile")
 		  ("C-s-r" "news-register")
 		  ("C-s-s" "stackoverflow")
 		  ("C-s-w" "wikipedia")
@@ -1187,8 +1217,8 @@ ECHO-URGENDT-WINDOW teilt mit, welches Fenster uns dringend benötigt."
 ;; -----------------------------------------
 ;; Aufruf mittels M-x slime-connect in Emacs
 ;; =========================================
-(when *initializing*
-  (require 'swank)
-  (swank:create-server :dont-close t))
+;(when *initializing*
+;  (require 'swank)
+;  (swank:create-server :dont-close t))
 
 
