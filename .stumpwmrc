@@ -3,7 +3,7 @@
 ;mit loadrc im colon neu laden
 (in-package :stumpwm)
 
-(load "~/Entwicklung/fremd/stumpwm/contrib/sbclfix")
+;(load "~/Entwicklung/fremd/stumpwm/contrib/sbclfix")
 (load "~/Entwicklung/fremd/stumpwm/contrib/net")
 (load "~/Entwicklung/fremd/stumpwm/contrib/cpu")
 (load "~/Entwicklung/fremd/stumpwm/contrib/mem")
@@ -26,6 +26,8 @@
 
 (defparameter *systerm* "exec uxterm -fg gainsboro -bg OrangeRed -class 'Admin-uxterm' -e 'sudo -i'"
   "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
+
+(defvar *touchpad-zustand* 'ausgeschaltet)
 
 ;; -------------------------------------------------------------
 ;; emacs-artige Tastenbedienung mit Präfix - *programmstart-map*
@@ -84,8 +86,7 @@
 ;    (define-key m (kbd "w")   "wicd-curses")
     (define-key m (kbd "x")   "xchat")
     (define-key m (kbd "X")   "xarchiver")
-    (define-key m (kbd "y")   "exec synclient touchpadoff=1 ")
-    (define-key m (kbd "Y")   "exec synclient touchpadoff=0 ")
+    (define-key m (kbd "y")   "touchpad-umschalten")
     (define-key m (kbd "z")   "zathura")
     m))
 
@@ -110,6 +111,7 @@
     (define-key m (kbd "s") "stackoverflow")
     (define-key m (kbd "T") "telecomix")
     (define-key m (kbd "t") "ttytter")
+    (define-key m (kbd "u") "browse-url")
     (define-key m (kbd "w") "wikipedia")
     (define-key m (kbd "z") "zwitschere")
     m))
@@ -204,7 +206,7 @@
      ("LibreOffice-Draw"                      "lodraw")
      ("LibreOffice-Math"                      "lomath")
      ("Mathomatic               prefix-x C-M" "mathomatic")
-     ("Okular                   prefix-x o"   "okular")
+;     ("Okular                   prefix-x o"   "okular")
      ("PyRoom                   prefix-x P"   "pyroom")
      ("Scribus                  prefix-x s"   "scribus")
      ("Scanner                  prefix-x I"   "iscan")
@@ -216,7 +218,7 @@
      ("Dropbox starten           prefix-x C-d" "dropbox start")
      ("Dropbox beenden           prefix-x C-D" "dropbox stop")
      ("DropBox Webseite"                       ,(concatenate 'string *browser* "https://dropbox.com"))
-     ("UbuntuOne Steuerpult"             "ubuntuone-control-panel-qt")
+     ("UbuntuOne Steuerpult"                   "ubuntuone-control-panel-qt")
      ("UbuntuOne Webseite"                     ,(concatenate 'string *browser* "https://one.ubuntu.com"))
     )
    
@@ -329,10 +331,7 @@
      ("Midnight Commander        prefix-x m"   "mc")
      ("Netzwerk                  prefix-x w"   "wicd-curses")
      ("Nitrogen                  prefix-x N"   "nitrogen")
-     ("StumpWM reinitialisieren  prefix-x R"   "reinit")
      ("Taschenrechner            CALC-KEY"     "speedcrunch")
-     ("Touchpad AUS              prefix-x y"   "synclient touchpadoff=1")
-     ("Touchpad EIN              prefix-x Y"   "synclient touchpadoff=0")
      ("UnetBootin"                             "gksudo unetbootin")
      ("Unison                    prefix-x u"   "unison-gtk")
 ;     ("WICD (curses)             prefix-x w"   "wicd-curses")
@@ -547,6 +546,12 @@ DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurüc
   (nsubstitute #\+ #\Space suche)
   (run-shell-command (cat *browser* "http://askubuntu.com/search?q=" suche)))
 
+(defcommand browse-url (url)
+  ((:string "Wie lautet die gewünschte URL? "))
+  "Dient zum ansurfen einer beliebigen URL."
+  (check-type url string)
+  (run-shell-command (cat *browser* url)))
+
 (defcommand ddg (suche)
   ((:string "Suche in DuckDuckGo nach: "))
   "Dient zur Suche bei DuckDuckGo per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
@@ -673,6 +678,19 @@ Beispiel: (echo-time) => 06:11:27"
 	    "Schaltet die Modeline ein oder aus"
 	    (toggle-mode-line (current-screen) (current-head)))
 
+(defcommand touchpad-umschalten () ()
+	    "Schaltet das Touchpad um zwischen eingeschaltet und ausgeschaltet"
+	    (case *touchpad-zustand*
+	      ((eingeschaltet)
+	       (setq *touchpad-zustand* 'ausgeschaltet)
+	       (run-shell-command "synclient touchpadoff=1")
+	       (banish-pointer)
+	       (message "Touchpad ist ausgeschaltet worden."))
+	      (otherwise
+	       (setq *touchpad-zustand* 'eingeschaltet)
+	       (run-shell-command "synclient touchpadoff=0")
+	       (message "Touchpad ist eingeschaltet worden."))))
+
 (defcommand wikipedia (suche)
   ((:string "Suche in der Wikipedia nach: "))
   "Dient zur Suche in der Wikipedia per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
@@ -714,7 +732,7 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl dwb "Starte/wechsle zum dwb Webbrowser." "dwb" "Dwb")	    
 
-(neuerbefehl emacs "Starte/wechsle zu Emacs." "emacs" "Emacs")
+(neuerbefehl emacs "Starte/wechsle zu Emacs." "emacsclient -c -a ''" "Emacs")
 
 (neuerbefehl evince "Starte/wechsle zu Evince." "evince" "Evince")
 
@@ -1074,8 +1092,7 @@ Beispiel: (echo-time) => 06:11:27"
 ;		  ("M-s-w" "wicd-curses ")
 		  ("M-s-x" "xchat")
 		  ("M-s-X" "xarchiver")
-		  ("M-s-y" "exec synclient touchpadoff=1 ")
-		  ("M-s-Y" "exec synclient touchpadoff=0 ")
+		  ("M-s-y" "touchpad-umschalten")
 		  ("M-s-z" "zathura")
 		  ;; Websuchen
 		  ("C-s-a" "askubuntu")
@@ -1091,6 +1108,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("C-s-P" "google+profile")
 		  ("C-s-r" "news-register")
 		  ("C-s-s" "stackoverflow")
+		  ("C-s-u" "browse-url")
 		  ("C-s-w" "wikipedia")
 		  ("C-s-z" "zwitschere")
 		  )
