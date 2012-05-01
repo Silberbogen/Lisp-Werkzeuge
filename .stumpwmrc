@@ -886,8 +886,10 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("P" "exec dmenu_run ")
 		  ("," "switch-modeline")
 		  ("C-b" "byobu")
-		  ("c" "userterminal")
-		  ("C" "uxt-neu")
+		  ("c" "byobu")
+		  ("C" "commands")
+		  ("M-c" "userterminal")
+		  ("M-C" "uxt-neu")
 		  ("C-c" "adminterminal")
 		  ;; Die fehlenden Features auch in der root-map anlegen
 		  ("C-SPC" "other")
