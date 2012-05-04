@@ -3,10 +3,10 @@
 ;mit loadrc im colon neu laden
 (in-package :stumpwm)
 
-;(load "~/Entwicklung/fremd/stumpwm/contrib/sbclfix")
-(load "~/Entwicklung/fremd/stumpwm/contrib/net")
-(load "~/Entwicklung/fremd/stumpwm/contrib/cpu")
-(load "~/Entwicklung/fremd/stumpwm/contrib/mem")
+(load "~/Entwicklung/lisp/stumpwm/contrib/sbclfix")
+(load "~/Entwicklung/lisp/stumpwm/contrib/net")
+(load "~/Entwicklung/lisp/stumpwm/contrib/cpu")
+(load "~/Entwicklung/lisp/stumpwm/contrib/mem")
 
 ;; ======================================
 ;; Initialisierung der globalen Variablen
@@ -27,7 +27,11 @@
 (defparameter *systerm* "exec uxterm -fg gainsboro -bg OrangeRed -class 'Admin-uxterm' -e 'sudo -i'"
   "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
 
-(defvar *touchpad-zustand* 'ausgeschaltet)
+(defvar *i2p-zustand* 'ausgeschaltet
+  "*i2p-zustand* enthält die Information, ob i2p momentan genutzt wird oder nicht.")
+
+(defvar *touchpad-zustand* 'ausgeschaltet
+  "*touchpad-zustand* enthält die Information, ob das Touchpad eingeschaltet ist oder nicht.")
 
 ;; -------------------------------------------------------------
 ;; emacs-artige Tastenbedienung mit Präfix - *programmstart-map*
@@ -55,10 +59,8 @@
     (define-key m (kbd "g")   "geeqie")
     (define-key m (kbd "G")   "gimp")
     (define-key m (kbd "h")   "htop")
-    (define-key m (kbd "i")   "iceweasel")
-    (define-key m (kbd "I")   "exec iscan")
-    (define-key m (kbd "C-i") "exec i2prouter start")
-    (define-key m (kbd "C-I") "exec i2prouter stop")
+    (define-key m (kbd "i")   "exec iscan")
+    (define-key m (kbd "I")   "i2p-umschalten")
     (define-key m (kbd "j")   "jumanji")
     (define-key m (kbd "k")   "keepassx")
     (define-key m (kbd "K")   "kaffeine")
@@ -129,7 +131,7 @@
      (define-key m (kbd "B")   "brogue")
      (define-key m (kbd "c")   "crawl")
      (define-key m (kbd "d")   "exec desmume-glade")
-     (define-key m (kbd "D")   "exec dwarffortress-ih")
+     (define-key m (kbd "D")   "dwarffortress")
      (define-key m (kbd "C-d") "exec dwarftherapist")
      (define-key m (kbd "C-D") "doomrl")
      (define-key m (kbd "f")   "flands")
@@ -209,7 +211,7 @@
 ;     ("Okular                   prefix-x o"   "okular")
      ("PyRoom                   prefix-x P"   "pyroom")
      ("Scribus                  prefix-x s"   "scribus")
-     ("Scanner                  prefix-x I"   "iscan")
+     ("Scanner                  prefix-x i"   "iscan")
      ("ViewYourMind             prefix-x V"   "vym")
      ("Zathura                  prefix-x z"   "zathura")
     )
@@ -232,7 +234,7 @@
      ("Crawl                prefix-X c"   "crawl")
      ("Desmume              prefix-X d"   "desmume-glade")
      ("Doom RL              prefix-X C-D" "doomrl")
-     ("Dwarffortress        prefix-X D"   "dwarffortress-ih")
+     ("Dwarffortress        prefix-X D"   "dwarffortress")
      ("DwarfTherapist       prefix-X C-d" "dwarftherapist")
      ("Fabled Lands App     prefix-X f"   "flands")
      ("Flare RPG            prefix-X F"   "flare")
@@ -267,6 +269,7 @@
     )
     
     ("Lisp & StumpWM"
+     ("CL User"                                    ,(concatenate 'string *browser* "http://www.cl-user.net"))
      ("Common Lisp"                                ,(concatenate 'string *browser* "http://common-lisp.net/"))
      ("Common Lisp Hyperspec"                      ,(concatenate 'string *browser* "http://www.lispworks.com/documentation/HyperSpec/Front/index.htm"))
      ("Common Lisp Wiki"                           ,(concatenate 'string *browser* "http://www.cliki.net/index"))
@@ -276,6 +279,7 @@
      ("Graham's On Lisp Book"                      ,(concatenate 'string *browser* "http://www.paulgraham.com/onlisptext.html"))
      ("L1sp"                                       ,(concatenate 'string *browser* "http://l1sp.org"))
      ("Lambkins Successful Lisp Book"              ,(concatenate 'string *browser* "http://psg.com/~dlamkins/sl/cover.html"))
+     ("Lisp-Forum"                                 ,(concatenate 'string *browser* "http://www.lispforum.com"))
      ("Planet LISP"                                ,(concatenate 'string *browser* "http://planet.lisp.org"))
      ("Planet SBCL"                                ,(concatenate 'string *browser* "http://planet.sbcl.org"))
      ("Rosetta Code"                               ,(concatenate 'string *browser* "http://rosettacode.org/wiki/Category:Common_Lisp"))
@@ -324,8 +328,7 @@
      ("GParted"                                "gksudo gparted")
      ("GPG-Crypter"                            "gpg-crypter")
      ("Htop                      prefix-x h"   "htop")
-     ("i2p starten               prefix-x C-i" "i2prouter start")
-     ("i2p beenden               prefix-x C-I" "i2prouter stop")
+     ("i2p starten               prefix-x I"   "i2p-umschalten")
      ("KeePassX                  prefix-x k"   "keepassx")
      ("Lautstärke                prefix-x a"   "alsamixer")
      ("Midnight Commander        prefix-x m"   "mc")
@@ -599,6 +602,20 @@ Beispiel: (echo-time) => 06:11:27"
   (nsubstitute #\+ #\Space suche)
   (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" suche)))
 
+(defcommand i2p-umschalten () ()
+	    "Schaltet das Touchpad um zwischen eingeschaltet und ausgeschaltet"
+	    (case *i2p-zustand*
+	      ((eingeschaltet)
+	       (or (and (y-or-n-p "Soll i2p ausgeschaltet werden? ")
+			(setq *i2p-zustand* 'ausgeschaltet)
+			(run-shell-command "i2prouter stop")
+			(message "i2p ist ausgeschaltet worden."))
+		   (message "i2p ist NICHT ausgeschaltet worden.")))
+	      (otherwise
+	       (setq *i2p-zustand* 'eingeschaltet)
+	       (run-shell-command "i2prouter start")
+	       (message "i2p ist eingeschaltet worden."))))
+
 (defcommand ixquick (suche)
   ((:string "Suche in IxQuick nach: "))
   "Dient zur Suche bei IxQuick per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
@@ -729,6 +746,8 @@ Beispiel: (echo-time) => 06:11:27"
 (neuerbefehl conkeror "Starte/wechsle zum Conkeror Webbrowser." "conkeror" "Conkeror")
 
 (neuerbefehl deluge "Starte/wechsle zu Deluge." "deluge" "Deluge")
+
+(neuerbefehl dwarffortress "Starte/wechsle zu Dwarf Fortress." "/opt/df_linux/df" "Dwarffortress")
 
 (neuerbefehl dwb "Starte/wechsle zum dwb Webbrowser." "dwb" "Dwb")	    
 
@@ -1070,6 +1089,8 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-s-F" "focuswriter")
 		  ("M-s-g" "geeqie")
 		  ("M-s-G" "gimp")
+		  ("M-s-i" "exec iscan")
+		  ("M-s-I" "i2p-umschalten")
 		  ("M-s-j" "jumanji")
 		  ("M-s-k" "keepassx")
 		  ("M-s-K" "kaffeine")
