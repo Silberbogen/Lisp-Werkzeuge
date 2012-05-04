@@ -362,6 +362,8 @@
      ("URL direkt ansteuern     prefix-y u"  "browse-url")
      ("BBC Nachrichten          prefix-y b"  "news-bbc")
      ("Blottr Breaking-News"                 ,(concatenate 'string "exec " *browser* "http://blottr.com"))
+     ("Conkeror für Debian"                  ,(concatenate 'string "exec " *browser* "http://noone.org/conkeror-nightly-debs/"))
+     ("Conkeror Homepage"                    ,(concatenate 'string "exec " *browser* "http://conkeror.org"))
      ("Detektiv Conan"                       ,(concatenate 'string "exec " *browser* "http://detektiv-conan.ch"))
      ("DuckDuckGo               prefix-y d"  "ddg")
      ("Dwarf Fortress Wiki"                  ,(concatenate 'string "exec " *browser* "http://df.magmawiki.com"))
