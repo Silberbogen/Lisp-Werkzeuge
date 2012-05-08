@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.20
+;;;; Version 0.22
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -214,7 +214,7 @@
      ("FocusWriter              prefix-x F"   "focuswriter")
      ("GIMP                     prefix-x G"   "gimp")
      ("Idle - Python 3.2"                     "idle-python3.2")
-     ("LibreOffice-Startcenter"               "libreoffice")
+     ("LibreOffice-Startcenter"               "loffice")
      ("LibreOffice-Writer"                    "lowriter")
      ("LibreOffice-Calc"                      "localc")
      ("LibreOffice-Impress"                   "loimpress")
@@ -286,7 +286,7 @@
      ("Common Lisp"                                ,(concatenate 'string "exec " *browser* "http://common-lisp.net/"))
      ("Common Lisp Hyperspec"                      ,(concatenate 'string "exec " *browser* "http://www.lispworks.com/documentation/HyperSpec/Front/index.htm"))
      ("Common Lisp Wiki"                           ,(concatenate 'string "exec " *browser* "http://www.cliki.net/index"))
-     (,(concatenate 'string "Debugstufe: "(format nil "~A" *debug-level*) " (0=deaktiviert)           prefix-x C-d")   "debuggen-umschalten")
+     ("Debugstufe umschalten                   prefix-x C-d"   "debuggen-umschalten")
      ("Denksport: 99 Lisp Probleme"                ,(concatenate 'string "exec " *browser* "http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html"))
      ("ELM-Art Lisp Tutor (Deutsch/English)"       ,(concatenate 'string "exec " *browser* "http://art2.ph-freiburg.de/art/login-d.html"))
      ("Emacs                                   prefix-e"  "emacs")
@@ -296,6 +296,7 @@
      ("Lisp-Forum"                                 ,(concatenate 'string "exec " *browser* "http://www.lispforum.com"))
      ("Planet LISP"                                ,(concatenate 'string "exec " *browser* "http://planet.lisp.org"))
      ("Planet SBCL"                                ,(concatenate 'string "exec " *browser* "http://planet.sbcl.org"))
+     ("Quicklisp Blog & News"                      ,(concatenate 'string "exec " *browser* "http://blog.quicklisp.org/"))
      ("Rosetta Code"                               ,(concatenate 'string "exec " *browser* "http://rosettacode.org/wiki/Category:Common_Lisp"))
      ("Seibel's Practical Common Lisp Book"        ,(concatenate 'string "exec " *browser* "http://gigamonkeys.com/book/"))
      ("Steele's CL the Language, 2nd Ed. Book"     ,(concatenate 'string "exec " *browser* "http://www.cs.cmu.edu/Groups/AI/html/cltl/cltl2.html"))
@@ -325,7 +326,7 @@
     ("Soziale Netzwerke"
      ("Diaspora*"                          ,(concatenate 'string "exec " *browser* "https://joindiaspora.com/stream"))
      ("Google+                 prefix-y m" "google+mitteilungen")
-     (,(concatenate 'string "i2p: "(format nil "~A" *i2p-zustand*) "        prefix-x I")   ,(concatenate 'string "exec " *browser* "http://127.0.0.1:7657"))
+     ("i2p-Netzwerk ein/aus    prefix-x I" ,(concatenate 'string "exec " *browser* "http://127.0.0.1:7657"))
      ("identi.ca"                          ,(concatenate 'string "exec " *browser* "https://identi.ca"))
      ("Mitteilung zwitschern   prefix-y z" "zwitschern")
      ("Telecomix"                          ,(concatenate 'string "exec " *browser* "https://status.telecomix.org"))
@@ -343,14 +344,14 @@
      ("GParted"                                "gksudo gparted")
      ("GPG-Crypter"                            "gpg-crypter")
      ("Htop                      prefix-x h"   "htop")
-     (,(concatenate 'string "i2p: "(format nil "~A" *i2p-zustand*) "        prefix-x I")   "i2p-umschalten")
+     ("i2p-Netzwerk ein/aus      prefix-x I"   ,(concatenate 'string "exec " *browser* "http://127.0.0.1:7657"))
      ("KeePassX                  prefix-x k"   "keepassx")
      ("Lautstärke                prefix-x a"   "alsamixer")
      ("Midnight Commander        prefix-x m"   "mc")
      ("Netzwerk                  prefix-x w"   "wicd-curses")
      ("Nitrogen                  prefix-x N"   "nitrogen")
      ("Taschenrechner            CALC-KEY"     "speedcrunch")
-     (,(concatenate 'string "Touchpad: " (format nil "~A" *touchpad-zustand*)  "   prefix-x y") "touchpad-umschalten")
+     ("Touchpad ein/aus          prefix-x y"   "touchpad-umschalten")
      ("UnetBootin"                             "gksudo unetbootin")
      ("Unison                    prefix-x u"   "unison-gtk")
 ;     ("WICD (curses)             prefix-x w"   "wicd-curses")
@@ -368,6 +369,9 @@
      ("DuckDuckGo               prefix-y d"  "ddg")
      ("Dwarf Fortress Wiki"                  ,(concatenate 'string "exec " *browser* "http://df.magmawiki.com"))
      ("EDXonline Lernplattform"              ,(concatenate 'string "exec " *browser* "http://www.edxonline.org"))
+     ("Fabled Lands App"                     ,(concatenate 'string "exec " *browser* "http://flapp.sourceforge.net/"))
+     ("Fighting Fantasy"                     ,(concatenate 'string "exec " *browser* "http://fightingfantasy.com/"))
+     ("Fighting Fantasy Project"             ,(concatenate 'string "exec " *browser* "http://www.ffproject.com/"))
      ("FreshPorts"                           ,(concatenate 'string "exec " *browser* "http://freshports.org"))
      ("GitHUB"                               ,(concatenate 'string "exec " *browser* "https://github.com"))
      ("Google                   prefix-y g"  "google")
@@ -389,6 +393,7 @@
      ("Thalia"                               ,(concatenate 'string "exec " *browser* "http://thalia.de"))
      ("The Guardian             prefix-y G"  "news-guardian")
      ("The Register             prefix-y r"  "news-register")
+     ("Titannica - FF wiki"                  ,(concatenate 'string "exec " *browser* "http://fightingfantasy.wikia.com/wiki/Fighting_Fantasy"))
      ("TOR check"                            ,(concatenate 'string "exec " *browser* "https://check.torproject.org"))
      ("Webupd8"                              ,(concatenate 'string "exec " *browser* "http://webupd8.org"))
      ("Wikipedia                prefix-y w"  "wikipedia")
@@ -396,17 +401,28 @@
      ("ZenCast"                              ,(concatenate 'string "exec " *browser* "http://zencast.org"))
     )
 
-    ("Ubuntu"
-     
+    ("Ubuntu"    
      ("Admin-Terminal                  prefix C-c"   "adminterminal")
+     ("Archiv-Manager"                               "file-roller")
      ("Ask Ubuntu                      prefix-y a"   ,(concatenate 'string "exec " *browser* "http://askubuntu.com"))
      ("Benutzer-Terminal               prefix M-c"   "userterminal")
+     ("Browser starten                 Browsertaste" ,(concatenate 'string "exec " *browser*))
      ("Byobu-Terminal                  prefix c"     "byobu")
+     ("Dateimanager                    prefix-x n"   "nautilus")
+     ("Email                           Emailtaste"   "thunderbird")
      ("Full Circle Magazine"                         ,(concatenate 'string "exec " *browser* "http://fullcirclemagazine.org"))
      ("GetDeb"                                       ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
      ("Hintergrundbild ändern          prefix-x N"   "nitrogen")
+     ("Kurzmitteilungsdienste"                       "gwibber")
      ("Launchpad"                                    ,(concatenate 'string "exec " *browser* "https://launchpad.net"))
      ("Lautstärke regeln               prefix-x a"   "alsamixer")
+     ("LibreOffice-Calc"                             "localc")
+     ("LibreOffice-Draw"                             "lodraw")
+     ("LibreOffice-Impress"                          "loimpress")
+     ("LibreOffice-Math"                             "lomath")
+     ("LibreOffice-Writer"                           "lowriter")
+     ("Medienabspieler"                              "rhythmbox")
+     ("Nachrichtendienste"                           "empathy")
      ("Netzwerkverbindung bearbeiten"                "nm-connection-editor")
      ("Planet Ubuntu"                                ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
      ("PlayDeb"                                      ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
@@ -414,7 +430,7 @@
      ("StumpWM beenden"                              "quit")
      ("StumpWM-Konfiguration neu laden"              "reinit")
      ("Synaptic Paketmanager"                        "exec gksudo synaptic")
-     (,(concatenate 'string "Touchpad: " (format nil "~A" *touchpad-zustand*)  "          prefix-x y") "touchpad-umschalten")
+     ("Touchpad ein/aus                 prefix-x y"  "touchpad-umschalten")
      ("Ubuntu Software-Center"                       "software-center")
      ("Ubuntu Webseite"                              ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
      ("UbuntuOne Steuerpult"                         "ubuntuone-control-panel-qt")
@@ -588,6 +604,9 @@ DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurüc
   (nsubstitute #\+ #\Space suche)
   (run-shell-command (cat *browser* "http://askubuntu.com/search?q=" suche)))
 
+(defcommand ausführen-im-terminal (befehl) ((:string "Befehl: "))
+  (run-shell-command (format nil "~A -e ~A" *uxt-neu* befehl)))
+
 (defcommand browse-url (url)
   ((:string "Wie lautet die gewünschte URL? "))
   "Dient zum ansurfen einer beliebigen URL."
@@ -643,6 +662,15 @@ Beispiel: (echo-time) => 06:11:27"
   (nsubstitute #\+ #\Space suche)
   (run-shell-command (cat *browser* "'https://www.google.de/search?q=" suche "&tbs=prfl:e'")))
 
+(defcommand gselect-oder-gnew (gruppen-nummer) ((:number "Gruppen-Nummer: "))
+  (gselect
+   (or (select-group (current-screen) (format nil "~A" gruppen-nummer) )
+       ; Die Auswahl der Gruppe schlug fehl, da sie nicht existiert, also erschaffen wir sie
+       (let ((gruppe (add-group (current-screen)
+			       (format nil "unbenannt~A" gruppen-nummer))))
+	 (setf (group-number gruppe) gruppen-nummer)
+	 gruppe))))
+
 (defcommand hackernews (suche)
   ((:string "Suche bei Hackernews nach: "))
   "Dient zur Suche bei Hackernews per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
@@ -653,14 +681,14 @@ Beispiel: (echo-time) => 06:11:27"
 (defcommand i2p-umschalten () ()
 	    "Schaltet das Touchpad um zwischen eingeschaltet und ausgeschaltet"
 	    (case *i2p-zustand*
-	      ((ein)
+	      ((eingeschaltet)
 	       (or (and (y-or-n-p "Soll i2p ausgeschaltet werden? ")
-			(setq *i2p-zustand* 'ausschalten)
+			(setq *i2p-zustand* 'ausgeschaltet)
 			(run-shell-command "i2prouter stop")
 			(message "i2p ist ausgeschaltet worden."))
 		   (message "i2p ist NICHT ausgeschaltet worden.")))
 	      (otherwise
-	       (setq *i2p-zustand* 'einschalten)
+	       (setq *i2p-zustand* 'eingeschaltet)
 	       (run-shell-command "i2prouter start")
 	       (message "i2p ist eingeschaltet worden."))))
 
@@ -822,6 +850,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl emacs "Starte/wechsle zu Emacs." "emacsclient -c -a ''" "Emacs")
 
+(neuerbefehl empathy "Starte/wechsle zu Empathy." "empathy" "Empathy")
+
 (neuerbefehl evince "Starte/wechsle zu Evince." "evince" "Evince")
 
 (neuerbefehl fbreader "Starte/wechsle zum FBreader." "fbreader" "Fbreader")
@@ -837,6 +867,8 @@ Beispiel: (echo-time) => 06:11:27"
 (neuerbefehl geeqie "Starte/wechsle zum Geekie Bildbetrachter." "geeqie" "Geeqie")
 
 (neuerbefehl gimp "Starte/wechsle zu GIMP." "gimp" "Gimp")
+
+(neuerbefehl gwibber "Starte/wechsle zu Gwibber." "gwibber" "Gwibber")
 
 (neuerbefehl iceweasel "Starte/wechsle zum Iceweasel Webbrowser." "iceweasel" "Iceweasel")
 
@@ -865,6 +897,8 @@ Beispiel: (echo-time) => 06:11:27"
 (neuerbefehl pychess "Starte/wechsle zu PyChess Staunton." "pychess" "pychess")
 
 (neuerbefehl ristretto "Starte/wechsle zu Ristretto." "ristretto" "Ristretto")
+
+(neuerbefehl rhythmbox "Starte/wechsle zu Rhythmbox." "rhythmobox" "Rhythmbox")
 
 (neuerbefehl scid "Starte/wechsle zu Scid vs. PC." "scid" "Scid")
 
@@ -970,6 +1004,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-RET" "fullscreen")
 		  ("C-RET" "adminterminal")
 		  ("DEL" "repack-window-numbers")
+		  ("C-!" "ausführen-im-terminal")
 		  ("I" "show-window-properties")
 		  ("P" "exec dmenu_run ")
 		  ("," "switch-modeline")
@@ -1001,6 +1036,9 @@ Beispiel: (echo-time) => 06:11:27"
 (tastaturbelegung *groups-map*
 		  ("C" "gnew-float")
 		  )
+(dotimes (i 9)
+  (define-key *groups-map* (kbd (format nil "~A" (1+ i)))
+    (format nil "gselect-oder-gnew ~A" (1+ i))))
 
 ;; ---------------------------------------------------------------------
 ;; Zusätzliche Optionen für die emacs-artige Tastenbedienung mit Präfix
@@ -1062,6 +1100,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("s-;" "colon")
 		  ("s-:" "eval")
 		  ("s-!" "exec")
+		  ("s-C-!" "ausführen-im-terminal")
 		  ("s-#" "mark")
 		  ("s--" "fclear")
 		  ("s-+" "balance-frames")
@@ -1107,39 +1146,6 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("s-v" "version")
 		  ("s-w" "windows")
 		  ("s-W" "place-existing-windows")
-		  ;; Wechseln zu einem anderen Fenster
-		  ("s-1" "select-window-by-number 1")
-		  ("s-2" "select-window-by-number 2")
-		  ("s-3" "select-window-by-number 3")
-		  ("s-4" "select-window-by-number 4")
-		  ("s-5" "select-window-by-number 5")
-		  ("s-6" "select-window-by-number 6")
-		  ("s-7" "select-window-by-number 7")
-		  ("s-8" "select-window-by-number 8")
-		  ("s-9" "select-window-by-number 9")
-		  ("s-0" "select-window-by-number 0")
-		  ;; Wechseln zu einer anderen Gruppe
-		  ("M-s-1" "gselect 1")
-		  ("M-s-2" "gselect 2")
-		  ("M-s-3" "gselect 3")
-		  ("M-s-4" "gselect 4")
-		  ("M-s-5" "gselect 5")
-		  ("M-s-6" "gselect 6")
-		  ("M-s-7" "gselect 7")
-		  ("M-s-8" "gselect 8")
-		  ("M-s-9" "gselect 9")
-		  ("M-s-0" "gselect 0")
-		  ;; Verschieben in eine andere Gruppe
-		  ("M-S-s-1" "gmove 1")
-		  ("M-S-s-2" "gmove 2")
-		  ("M-S-s-3" "gmove 3")
-		  ("M-S-s-4" "gmove 4")
-		  ("M-S-s-5" "gmove 5")
-		  ("M-S-s-6" "gmove 6")
-		  ("M-S-s-7" "gmove 7")
-		  ("M-S-s-8" "gmove 8")
-		  ("M-S-s-9" "gmove 9")
-		  ("M-S-s-0" "gmove 0")
 		  ;; Programme starten
 		  ("Print" "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
 		  ("XF86HomePage" *browser*)
@@ -1209,6 +1215,16 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("C-s-y" "youtube-suche")
 		  ("C-s-z" "zwitschere")
 		  )
+
+;; Zu einer anderen Gruppe wechseln, erschaffen wenn sie nicht vorhanden ist
+(dotimes (i 9)
+  (define-key *top-map* (kbd (format nil "M-s-~A" (1+ i)))
+    (format nil "gselect-oder-gnew ~A" (1+ i))))
+
+;; Fenster anhand seiner Nummer auswählen
+(dotimes (i 10)
+  (define-key *top-map* (kbd (format nil "M-S-s-~A" i))
+    (format nil "select-window-by-number ~A" i)))
 
 ;;; ==========================================================
 ;;; GRUPPEN - für Umsteiger von anderen Tiling Fenstermanagern
