@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.23
+;;;; Version 0.24
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -63,10 +63,11 @@
     (define-key m (kbd "C-C") "calibre")
     (define-key m (kbd "d")   "deluge")
     (define-key m (kbd "D")   "dropbox-umschalten")
-    (define-key m (kbd "e")   "evince")
+    (define-key m (kbd "e")   "empathy")
+    (define-key m (kbd "E")   "evince")
     (define-key m (kbd "f")   "firefox")
     (define-key m (kbd "F")   "focuswriter")
-    (define-key m (kbd "g")   "geeqie")
+    (define-key m (kbd "g")   "gwibber")
     (define-key m (kbd "G")   "gimp")
     (define-key m (kbd "h")   "htop")
     (define-key m (kbd "i")   "exec iscan")
@@ -84,6 +85,7 @@
     (define-key m (kbd "o")   "okular")
     (define-key m (kbd "p")   "exec dmenu_run")
     (define-key m (kbd "P")   "exec pyroom")
+    (define-key m (kbd "q")   "geeqie")
     (define-key m (kbd "r")   "ristretto")
     (define-key m (kbd "R")   "reinit")
     (define-key m (kbd "s")   "scribus")
@@ -129,7 +131,8 @@
     (define-key m (kbd "u") "browse-url")
     (define-key m (kbd "w") "wikipedia")
     (define-key m (kbd "y") "youtube-suche")
-    (define-key m (kbd "z") "zwitschere")
+    (define-key m (kbd "z") "gwibber-poster")
+    (define-key m (kbd "Z") "zwitschere")
     m))
 
 ;; --------------------------------------------------------
@@ -186,19 +189,22 @@
 
 (defparameter *start-menü*
   `(
-
     ("Arbeiten"
      ("Adressbuch               prefix-x A"   "abook")
      ("Calibre                  prefix-x C-C" "calibre")
      ("Cherrytree               prefix-x C-c" "cherrytree")
-     ("Evince                   prefix-x e"   "evince")
+     ("Evince                   prefix-x E"   "evince")
      ("Emacs                    prefix-e"     "emacs")
      ("FB-Reader"                             "fbreader")
      ("FocusWriter              prefix-x F"   "focuswriter")
      ("GIMP                     prefix-x G"   "gimp")
      ("Idle - Python 3.2"                     "idle-python3.2")
-     ("LibreOffice-Startcenter"               "loffice")
+     ("LibreOffice-Calc"                      "localc")
+     ("LibreOffice-Draw"                      "lodraw")
+     ("LibreOffice-Impress"                   "loimpress")
      ("LibreOffice-Math"                      "lomath")
+     ("LibreOffice-Startcenter"               "loffice")
+     ("LibreOffice-Writer"                    "lowriter")
      ("Mathomatic               prefix-x C-M" "mathomatic")
      ("Okular                   prefix-x o"   "okular")
      ("PyRoom                   prefix-x P"   "pyroom")
@@ -288,7 +294,7 @@
      ("AviDeMux            prefix-x C-A" "avidemux2_gtk")
      ("Banshee             prefix-x b"   "banshee")
      ("Comix"                            "comix")     
-     ("Geeqie              prefix-x g"   "geeqie")
+     ("Geeqie              prefix-x q"   "geeqie")
      ("K3b Burner          prefix-x C-k" "k3b")
      ("Kaffeine            prefix-x K"   "kaffeine")
      ("MiniTube            prefix-x C-m" "minitube")
@@ -300,15 +306,17 @@
     )
 
     ("Soziale Netzwerke"
-     ("Diaspora*"                          ,(concatenate 'string "exec " *browser* "https://joindiaspora.com/stream"))
-     ("Google+                 prefix-y m" "google+mitteilungen")
-     ("i2p-Netzwerk ein/aus    prefix-x I" ,(concatenate 'string "exec " *browser* "http://127.0.0.1:7657"))
-     ("identi.ca"                          ,(concatenate 'string "exec " *browser* "https://identi.ca"))
-     ("Mitteilung zwitschern   prefix-y z" "zwitschern")
-     ("Telecomix"                          ,(concatenate 'string "exec " *browser* "https://status.telecomix.org"))
-     ("Twitter"                            ,(concatenate 'string "exec " *browser* "https://twitter.com"))
-     ("Turpial Twitterclient   prefix-x T" "turpial")
-     ("X-Chat IRC-Netz         prefix-x x" "xchat")     
+     ("Diaspora*"                                         ,(concatenate 'string "exec " *browser* "https://joindiaspora.com/stream"))
+     ("Google+                 prefix-y m"                "google+mitteilungen")
+     ("i2p-Netzwerk ein/aus    prefix-x I"                ,(concatenate 'string "exec " *browser* "http://127.0.0.1:7657"))
+     ("identi.ca"                                         ,(concatenate 'string "exec " *browser* "https://identi.ca"))
+     ("Kurzmitteilungsdienst-Einstellungen"               "gwibber-preferences")
+     ("Kurzmitteilungsdienst-Konteneinstellungen"         "gwibber-accounts")
+     ("Nachrichtendienst-Kontoeinstellungen"              "empathy-accounts")
+     ("Telecomix"                                         ,(concatenate 'string "exec " *browser* "https://status.telecomix.org"))
+     ("Twitter"                                           ,(concatenate 'string "exec " *browser* "https://twitter.com"))
+     ("Turpial Twitterclient   prefix-x T"                "turpial")
+     ("X-Chat IRC-Netz         prefix-x x"                "xchat")     
     )
     
     ("System"
@@ -398,15 +406,12 @@
     ("Email                           EMAIL-Taste"   "thunderbird")
     ("GetDeb"                                        ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
     ("Hintergrundbild ändern          prefix-x N"    "nitrogen")
-    ("Kurzmitteilungsdienste"                        "gwibber")
+    ("Kurzmitteilungsdienst           prefix-x g"    "gwibber")
+    ("Kurzmitteilung posten           prefix-y z"    "gwibber-poster")
     ("Launchpad"                                     ,(concatenate 'string "exec " *browser* "https://launchpad.net"))
     ("Lautstärke regeln               prefix-x a"    "alsamixer")
-    ("LibreOffice-Calc"                              "localc")
-    ("LibreOffice-Draw"                              "lodraw")
-    ("LibreOffice-Impress"                           "loimpress")
-    ("LibreOffice-Writer"                            "lowriter")
     ("Medienabspieler"                               "rhythmbox")
-    ("Nachrichtendienste"                            "empathy")
+    ("Nachrichtendienste              prefix-x e"    "empathy")
     ("Netzwerkverbindung bearbeiten"                 "nm-connection-editor")
     ("Planet Ubuntu"                                 ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
     ("PlayDeb"                                       ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
@@ -513,6 +518,7 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (run-or-raise "nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
   (run-or-raise "ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
   (run-or-raise "dropbox start" '(:class "Dropbox")) ; Dropbox starten
+  (run-or-raise "gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
   (banish-pointer) ; Mauszeiger verbannen
   (clear-window-placement-rules))
 
@@ -850,6 +856,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl empathy "Starte/wechsle zu Empathy." "empathy" "Empathy")
 
+(neuerbefehl empathy-accounts "Starte/wechsle zu den Empathy Kontoeinstellungen." "empathy-accounts" "Empathy-accounts")
+
 (neuerbefehl evince "Starte/wechsle zu Evince." "evince" "Evince")
 
 (neuerbefehl fbreader "Starte/wechsle zum FBreader." "fbreader" "Fbreader")
@@ -867,6 +875,14 @@ Beispiel: (echo-time) => 06:11:27"
 (neuerbefehl gimp "Starte/wechsle zu GIMP." "gimp" "Gimp")
 
 (neuerbefehl gwibber "Starte/wechsle zu Gwibber." "gwibber" "Gwibber")
+
+(neuerbefehl gwibber-accounts "Starte/wechsle zu den Gwibber Kontoeinstellungen." "gwibber-accounts" "Gwibber-accounts")
+
+(neuerbefehl gwibber-poster "Starte/wechsle zur Gwibber Mitteilungsversand." "gwibber-poster" "Gwibber-poster")
+
+(neuerbefehl gwibber-preferences "Starte/wechsle zu den Gwibber-Einstellungen." "gwibber-preferences" "Gwibber-preferences")
+
+(neuerbefehl gwibber-service "Starte/wechsle den Gwibber-Hintergrunddienst." "gwibber-service" "Gwibber-service")
 
 (neuerbefehl iceweasel "Starte/wechsle zum Iceweasel Webbrowser." "iceweasel" "Iceweasel")
 
@@ -1163,10 +1179,11 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-s-C" "chromium-browser")
 		  ("M-s-d" "deluge")
 		  ("M-s-D" "dropbox-umschalten")
-		  ("M-s-e" "evince")
+		  ("M-s-e" "empathy")
+		  ("M-s-E" "evince")
 		  ("M-s-f" "firefox")
 		  ("M-s-F" "focuswriter")
-		  ("M-s-g" "geeqie")
+		  ("M-s-g" "gwibber")
 		  ("M-s-G" "gimp")
 		  ("M-s-i" "exec iscan")
 		  ("M-s-I" "i2p-umschalten")
@@ -1181,6 +1198,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-s-N" "nitrogen")
 		  ("M-s-o" "okular")
 		  ("M-s-p" "exec dmenu_run ")
+		  ("M-s-q" "geeqie")
 		  ("M-s-r" "ristretto")
 		  ("M-s-R" "reinit")
 		  ("M-s-s" "scribus")
@@ -1215,7 +1233,8 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("C-s-u" "browse-url")
 		  ("C-s-w" "wikipedia")
 		  ("C-s-y" "youtube-suche")
-		  ("C-s-z" "zwitschere")
+		  ("C-s-z" "gwibber-poster")
+		  ("C-s-Z" "zwitschere")
 		  )
 
 ;; Zu einer anderen Gruppe wechseln, erschaffen wenn sie nicht vorhanden ist
