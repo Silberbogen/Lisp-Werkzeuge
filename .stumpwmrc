@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.22
+;;;; Version 0.23
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -36,6 +36,9 @@
 (defparameter *systerm* "exec uxterm -fg gainsboro -bg OrangeRed -class 'Admin-uxterm' -e 'sudo -i'"
   "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
 
+(defvar *dropbox-zustand* 'eingeschaltet
+  "*dropbox-zustand* enthält den Betriebszustand des DropBox-Dienstes")
+
 (defvar *i2p-zustand* 'unbestimmt
   "*i2p-zustand* enthält den Zustand ob i2p betrieben wird")
 
@@ -59,9 +62,7 @@
     (define-key m (kbd "C-c") "cherrytree")
     (define-key m (kbd "C-C") "calibre")
     (define-key m (kbd "d")   "deluge")
-    (define-key m (kbd "D")   "dwb")
-    (define-key m (kbd "C-d") "exec dropbox start")
-    (define-key m (kbd "C-D") "exec dropbox stop")
+    (define-key m (kbd "D")   "dropbox-umschalten")
     (define-key m (kbd "e")   "evince")
     (define-key m (kbd "f")   "firefox")
     (define-key m (kbd "F")   "focuswriter")
@@ -186,28 +187,10 @@
 (defparameter *start-menü*
   `(
 
-    ("WWW"
-     ("Chromium     prefix-x C"   "chromium-browser")
-     ("Claws-Mail   "             "claws-mail")
-     ("Conkeror     prefix-x c"   "conkeror")
-     ("Deluge       prefix-x d"   "deluge")
-;     ("dwb          prefix-x D"   "dwb")
-     ("Firefox      prefix-x f"   "firefox")
-;     ("Iceweasel    prefix-x i"   "iceweasel")
-;     ("Jumanji      prefix-x j"   "jumanji")
-     ("MiniTube     prefix-x C-m" "minitube")
-;     ("Mutt"                      "st -e mutt")
-;     ("Surf         prefix-x S"   "surf")
-     ("Telecomix    prefix-y t"   "telecomix")
-     ("Thunderbird  prefix-x t"   "thunderbird")
-     ("Turpial      prefix-x T"   "turpial")
-     ("Twitter      prefix-y t"   "ttytter")
-     ("X-Chat       prefix-x x"   "xchat")
-    )
-
     ("Arbeiten"
+     ("Adressbuch               prefix-x A"   "abook")
      ("Calibre                  prefix-x C-C" "calibre")
-;     ("Cherrytree               prefix-x C-c" "cherrytree")
+     ("Cherrytree               prefix-x C-c" "cherrytree")
      ("Evince                   prefix-x e"   "evince")
      ("Emacs                    prefix-e"     "emacs")
      ("FB-Reader"                             "fbreader")
@@ -215,26 +198,21 @@
      ("GIMP                     prefix-x G"   "gimp")
      ("Idle - Python 3.2"                     "idle-python3.2")
      ("LibreOffice-Startcenter"               "loffice")
-     ("LibreOffice-Writer"                    "lowriter")
-     ("LibreOffice-Calc"                      "localc")
-     ("LibreOffice-Impress"                   "loimpress")
-     ("LibreOffice-Draw"                      "lodraw")
      ("LibreOffice-Math"                      "lomath")
-;     ("Mathomatic               prefix-x C-M" "mathomatic")
-;     ("Okular                   prefix-x o"   "okular")
+     ("Mathomatic               prefix-x C-M" "mathomatic")
+     ("Okular                   prefix-x o"   "okular")
      ("PyRoom                   prefix-x P"   "pyroom")
      ("Scribus                  prefix-x s"   "scribus")
      ("Scanner                  prefix-x i"   "iscan")
-;     ("ViewYourMind             prefix-x V"   "vym")
+     ("ViewYourMind             prefix-x V"   "vym")
      ("Zathura                  prefix-x z"   "zathura")
     )
 
     ("Clouddienste"
-     ("Dropbox starten           prefix-x C-d" "dropbox start")
-     ("Dropbox beenden           prefix-x C-D" "dropbox stop")
-     ("DropBox Webseite"                       ,(concatenate 'string "exec " *browser* "https://dropbox.com"))
-     ("UbuntuOne Steuerpult"                   "ubuntuone-control-panel-qt")
-     ("UbuntuOne Webseite"                     ,(concatenate 'string "exec " *browser* "https://one.ubuntu.com"))
+     ("Dropbox ein-/ausschalten   prefix-x D" "dropbox-umschalten")
+     ("DropBox Webseite"                      ,(concatenate 'string "exec " *browser* "https://dropbox.com"))
+     ("UbuntuOne Steuerpult"                  "ubuntuone-control-panel-qt")
+     ("UbuntuOne Webseite"                    ,(concatenate 'string "exec " *browser* "https://one.ubuntu.com"))
     )
    
     ("Erholung"
@@ -289,7 +267,6 @@
      ("Debugstufe umschalten                   prefix-x C-d"   "debuggen-umschalten")
      ("Denksport: 99 Lisp Probleme"                ,(concatenate 'string "exec " *browser* "http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html"))
      ("ELM-Art Lisp Tutor (Deutsch/English)"       ,(concatenate 'string "exec " *browser* "http://art2.ph-freiburg.de/art/login-d.html"))
-     ("Emacs                                   prefix-e"  "emacs")
      ("Graham's On Lisp Book"                      ,(concatenate 'string "exec " *browser* "http://www.paulgraham.com/onlisptext.html"))
      ("L1sp"                                       ,(concatenate 'string "exec " *browser* "http://l1sp.org"))
      ("Lambkins Successful Lisp Book"              ,(concatenate 'string "exec " *browser* "http://psg.com/~dlamkins/sl/cover.html"))
@@ -314,7 +291,6 @@
      ("Geeqie              prefix-x g"   "geeqie")
      ("K3b Burner          prefix-x C-k" "k3b")
      ("Kaffeine            prefix-x K"   "kaffeine")
-     ("Lautstärke          prefix-x a"   "alsamixer")
      ("MiniTube            prefix-x C-m" "minitube")
      ("Music on Console    prefix-x m"   "mocp")
      ("Ristretto           prefix-x r"   "ristretto")
@@ -331,30 +307,20 @@
      ("Mitteilung zwitschern   prefix-y z" "zwitschern")
      ("Telecomix"                          ,(concatenate 'string "exec " *browser* "https://status.telecomix.org"))
      ("Twitter"                            ,(concatenate 'string "exec " *browser* "https://twitter.com"))
-     ("Thunderbird Email       prefix-x t" "thunderbird")
      ("Turpial Twitterclient   prefix-x T" "turpial")
      ("X-Chat IRC-Netz         prefix-x x" "xchat")     
     )
     
     ("System"
-     ("Adressbuch                prefix-x A"   "abook")
-     ("Dateimanager              prefix-x n"   "nautilus")
      ("Event-Anzeiger XEV"                     "xev")
-     ("File-Roller"                            "file-roller")
      ("GParted"                                "gksudo gparted")
      ("GPG-Crypter"                            "gpg-crypter")
      ("Htop                      prefix-x h"   "htop")
-     ("i2p-Netzwerk ein/aus      prefix-x I"   ,(concatenate 'string "exec " *browser* "http://127.0.0.1:7657"))
      ("KeePassX                  prefix-x k"   "keepassx")
-     ("Lautstärke                prefix-x a"   "alsamixer")
      ("Midnight Commander        prefix-x m"   "mc")
-     ("Netzwerk                  prefix-x w"   "wicd-curses")
-     ("Nitrogen                  prefix-x N"   "nitrogen")
-     ("Taschenrechner            CALC-KEY"     "speedcrunch")
-     ("Touchpad ein/aus          prefix-x y"   "touchpad-umschalten")
      ("UnetBootin"                             "gksudo unetbootin")
      ("Unison                    prefix-x u"   "unison-gtk")
-;     ("WICD (curses)             prefix-x w"   "wicd-curses")
+     ("WICD (curses)             prefix-x w"   "wicd-curses")
      ("XArchiver                 prefix-x X"   "xarchiver")
      ("XFontSel"                               "xfontsel")
     )
@@ -373,6 +339,7 @@
      ("Fighting Fantasy"                     ,(concatenate 'string "exec " *browser* "http://fightingfantasy.com/"))
      ("Fighting Fantasy Project"             ,(concatenate 'string "exec " *browser* "http://www.ffproject.com/"))
      ("FreshPorts"                           ,(concatenate 'string "exec " *browser* "http://freshports.org"))
+     ("Full Circle Magazine"                 ,(concatenate 'string "exec " *browser* "http://fullcirclemagazine.org"))
      ("GitHUB"                               ,(concatenate 'string "exec " *browser* "https://github.com"))
      ("Google                   prefix-y g"  "google")
      ("Gronkh"                               ,(concatenate 'string "exec " *browser* "http://gronkh.de"))
@@ -401,44 +368,61 @@
      ("ZenCast"                              ,(concatenate 'string "exec " *browser* "http://zencast.org"))
     )
 
-    ("Ubuntu"    
-     ("Admin-Terminal                  prefix C-c"   "adminterminal")
-     ("Archiv-Manager"                               "file-roller")
-     ("Ask Ubuntu                      prefix-y a"   ,(concatenate 'string "exec " *browser* "http://askubuntu.com"))
-     ("Benutzer-Terminal               prefix M-c"   "userterminal")
-     ("Browser starten                 Browsertaste" ,(concatenate 'string "exec " *browser*))
-     ("Byobu-Terminal                  prefix c"     "byobu")
-     ("Dateimanager                    prefix-x n"   "nautilus")
-     ("Email                           Emailtaste"   "thunderbird")
-     ("Full Circle Magazine"                         ,(concatenate 'string "exec " *browser* "http://fullcirclemagazine.org"))
-     ("GetDeb"                                       ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
-     ("Hintergrundbild ändern          prefix-x N"   "nitrogen")
-     ("Kurzmitteilungsdienste"                       "gwibber")
-     ("Launchpad"                                    ,(concatenate 'string "exec " *browser* "https://launchpad.net"))
-     ("Lautstärke regeln               prefix-x a"   "alsamixer")
-     ("LibreOffice-Calc"                             "localc")
-     ("LibreOffice-Draw"                             "lodraw")
-     ("LibreOffice-Impress"                          "loimpress")
-     ("LibreOffice-Math"                             "lomath")
-     ("LibreOffice-Writer"                           "lowriter")
-     ("Medienabspieler"                              "rhythmbox")
-     ("Nachrichtendienste"                           "empathy")
-     ("Netzwerkverbindung bearbeiten"                "nm-connection-editor")
-     ("Planet Ubuntu"                                ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
-     ("PlayDeb"                                      ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
-     ("Software aktualisieren"                       "update-manager")
-     ("StumpWM beenden"                              "quit")
-     ("StumpWM-Konfiguration neu laden"              "reinit")
-     ("Synaptic Paketmanager"                        "exec gksudo synaptic")
-     ("Touchpad ein/aus                 prefix-x y"  "touchpad-umschalten")
-     ("Ubuntu Software-Center"                       "software-center")
-     ("Ubuntu Webseite"                              ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
-     ("UbuntuOne Steuerpult"                         "ubuntuone-control-panel-qt")
-     ("Ubuntuusers Deutschland"                      ,(concatenate 'string "exec " *browser* "http://ubuntuusers.de"))
-     ("Ubuntu-Tweak"                                 "exec ubuntu-tweak")
-     ("Ubuntu-Tweak Webseite"                        ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
-     ("Übersicht aller Kommandos        prefix C"    "commands")
+    ("WWW-Programme"
+     ("Chromium     prefix-x C"   "chromium-browser")
+     ("Claws-Mail"                "claws-mail")
+     ("Conkeror     prefix-x c"   "conkeror")
+     ("Deluge       prefix-x d"   "deluge")
+     ("dwb"                       "dwb")
+     ("Firefox      prefix-x f"   "firefox")
+     ("Iceweasel    prefix-x i"   "iceweasel")
+     ("Jumanji      prefix-x j"   "jumanji")
+     ("MiniTube     prefix-x C-m" "minitube")
+     ("Mutt"                      "mutt")
+     ("Surf         prefix-x S"   "surf")
+     ("Telecomix    prefix-y t"   "telecomix")
+     ("Thunderbird  prefix-x t"   "thunderbird")
+     ("Turpial      prefix-x T"   "turpial")
+     ("Twitter      prefix-y t"   "ttytter")
+     ("X-Chat       prefix-x x"   "xchat")
     )
+    
+    ("Admin-Terminal                  prefix C-c"    "adminterminal")
+    ("Archiv-Manager"                                "file-roller")
+    ("Ask Ubuntu                      prefix-y a"    ,(concatenate 'string "exec " *browser* "http://askubuntu.com"))
+    ("Benutzer-Terminal               prefix M-c"    "userterminal")
+    ("Browser starten                 BROWSER-Taste" ,(concatenate 'string "exec " *browser*))
+    ("Byobu-Terminal                  prefix c"      "byobu")
+    ("Dateimanager                    prefix-x n"    "nautilus")
+    ("Emacs                           prefix-e"      "emacs")
+    ("Email                           EMAIL-Taste"   "thunderbird")
+    ("GetDeb"                                        ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
+    ("Hintergrundbild ändern          prefix-x N"    "nitrogen")
+    ("Kurzmitteilungsdienste"                        "gwibber")
+    ("Launchpad"                                     ,(concatenate 'string "exec " *browser* "https://launchpad.net"))
+    ("Lautstärke regeln               prefix-x a"    "alsamixer")
+    ("LibreOffice-Calc"                              "localc")
+    ("LibreOffice-Draw"                              "lodraw")
+    ("LibreOffice-Impress"                           "loimpress")
+    ("LibreOffice-Writer"                            "lowriter")
+    ("Medienabspieler"                               "rhythmbox")
+    ("Nachrichtendienste"                            "empathy")
+    ("Netzwerkverbindung bearbeiten"                 "nm-connection-editor")
+    ("Planet Ubuntu"                                 ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
+    ("PlayDeb"                                       ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
+    ("Software aktualisieren"                        "update-manager")
+    ("StumpWM beenden"                               "quit")
+    ("StumpWM-Konfiguration neu laden"               "reinit")
+    ("Synaptic Paketmanager"                         "exec gksudo synaptic")
+    ("Taschenrechner                  CALC-Taste"    "speedcrunch")
+    ("Touchpad ein/aus                prefix-x y"    "touchpad-umschalten")
+    ("Ubuntu Software-Center"                        "software-center")
+    ("Ubuntu Webseite"                               ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
+    ("UbuntuOne Steuerpult"                          "ubuntuone-control-panel-qt")
+    ("Ubuntuusers Deutschland"                       ,(concatenate 'string "exec " *browser* "http://ubuntuusers.de"))
+    ("Ubuntu-Tweak"                                  "exec ubuntu-tweak")
+    ("Ubuntu-Tweak Webseite"                         ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
+    ("Übersicht aller Kommandos       prefix C"      "commands")
 ))
 
 ;; ======================================
@@ -629,6 +613,20 @@ DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurüc
 		  (t (setq *debug-level* 0)
 		     (message "Debugging wurde ausgeschaltet."))))
 
+(defcommand dropbox-umschalten () ()
+	    "Schaltet den Dropbox-Dienst um zwischen eingeschaltet und ausgeschaltet"
+	    (case *dropbox-zustand*
+	      ((eingeschaltet)
+	       (or (and (y-or-n-p "Soll Dropbox ausgeschaltet werden? ")
+			(setq *dropbox-zustand* 'ausgeschaltet)
+			(run-shell-command "dropbox stop")
+			(message "Dropbox ist ausgeschaltet worden."))
+		   (message "Dropbox ist NICHT ausgeschaltet worden.")))
+	      (otherwise
+	       (setq *dropbox-zustand* 'eingeschaltet)
+	       (run-shell-command "dropbox start")
+	       (message "Dropbox ist eingeschaltet worden."))))
+
 (defcommand echo-date () ()
 	    "(echo-date)
 ECHO-DATE stellt das Datum und die Uhrzeit dar.
@@ -679,7 +677,7 @@ Beispiel: (echo-time) => 06:11:27"
   (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" suche)))
 
 (defcommand i2p-umschalten () ()
-	    "Schaltet das Touchpad um zwischen eingeschaltet und ausgeschaltet"
+	    "Schaltet den i2p-Dienst um zwischen eingeschaltet und ausgeschaltet"
 	    (case *i2p-zustand*
 	      ((eingeschaltet)
 	       (or (and (y-or-n-p "Soll i2p ausgeschaltet werden? ")
@@ -796,7 +794,7 @@ Beispiel: (echo-time) => 06:11:27"
 	      (otherwise
 	       (setq *touchpad-zustand* 'eingeschaltet)
 	       (run-shell-command "synclient touchpadoff=0")
-	       (message "Touchpad ist eingeschaltet worden."))))
+	       (message "Touchpad ist eingeschaltet worden.")))) 
 
 (defcommand wikipedia (suche)
   ((:string "Suche in der Wikipedia nach: "))
@@ -964,6 +962,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerterminalbefehl moria "Starte/wechsle zu Moria." "moria" "Moria")
 
+(neuerterminalbefehl mutt "Starte/wechsle zu mutt." "mutt" "Mutt")
+
 (neuerterminalbefehl primerl "Starte/wechsle zu PrimeRL." "primerl" "Primerl")
 
 (neuerterminalbefehl rogue "Starte/wechsle zu Rogue." "rogue" "Rogue")
@@ -1046,6 +1046,7 @@ Beispiel: (echo-time) => 06:11:27"
 ;; ---------------------------------------------------------------------
 
 (tastaturbelegung *root-map*
+		  ("u" "menü")
 		  ("x" '*programmstart-map*)
 		  ("y" '*websuche-map*)
 		  ("X" '*erholung-map*)
@@ -1053,6 +1054,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  )
 
 (tastaturbelegung *top-map*
+		  ("s-u" "menü")
 		  ("s-x" '*programmstart-map*)
 		  ("s-y" '*websuche-map*)
 		  ("s-X" '*erholung-map*)
@@ -1160,7 +1162,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-s-c" "conkeror")
 		  ("M-s-C" "chromium-browser")
 		  ("M-s-d" "deluge")
-		  ("M-s-D" "dwb")
+		  ("M-s-D" "dropbox-umschalten")
 		  ("M-s-e" "evince")
 		  ("M-s-f" "firefox")
 		  ("M-s-F" "focuswriter")
