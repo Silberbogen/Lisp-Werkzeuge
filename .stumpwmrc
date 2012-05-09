@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.26
+;;;; Version 0.27
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -192,7 +192,41 @@
 
 (defparameter *start-menü*
   `(
-    ("Arbeiten"
+    ("Admin-Terminal                  präfix C-c"    "adminterminal")
+    ("Archiv-Manager                  präfix-x a"    "file-roller")
+    ("Ask Ubuntu                      präfix-y a"    ,(concatenate 'string "exec " *browser* "http://askubuntu.com"))
+    ("Benutzer-Terminal               präfix M-c"    "userterminal")
+    ("Browser starten                 BROWSER-Taste" ,(concatenate 'string "exec " *browser*))
+    ("Byobu-Terminal                  präfix c"      "byobu")
+    ("Dateimanager                    präfix-x n"    "nautilus")
+    ("Emacs                           präfix-e"      "emacs")
+    ("Email                           EMAIL-Taste"   "thunderbird")
+    ("GetDeb"                                        ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
+    ("Hintergrundbild ändern          präfix-x h"    "nitrogen")
+    ("Kurzmitteilungsdienst           präfix-x g"    "gwibber")
+    ("Kurzmitteilung posten           präfix-y z"    "gwibber-poster")
+    ("Launchpad"                                     ,(concatenate 'string "exec " *browser* "https://launchpad.net"))
+    ("Lautstärke regeln               präfix-x l"    "alsamixer")
+    ("Medienabspieler                 präfix-x r"    "rhythmbox")
+    ("Nachrichtendienste              präfix-x e"    "empathy")
+    ("Netzwerkverbindung bearbeiten   präfix-x N"    "nm-connection-editor")
+    ("Planet Ubuntu"                                 ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
+    ("PlayDeb"                                       ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
+    ("Software aktualisieren          präfix-x C-s"  "update-manager")
+    ("StumpWM beenden"                               "quit")
+    ("StumpWM-Konfiguration neu laden präfix-x R"    "reinit")
+    ("Synaptic Paketmanager"                         "exec gksudo synaptic")
+    ("Taschenrechner                  CALC-Taste"    "speedcrunch")
+    ("Touchpad ein/aus                präfix-x y"    "touchpad-umschalten")
+    ("Ubuntu Software-Center          präfix-x s"    "software-center")
+    ("Ubuntu Webseite"                               ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
+    ("UbuntuOne Steuerpult            präfix-x o"    "ubuntuone-control-panel-qt")
+    ("Ubuntuusers Deutschland"                       ,(concatenate 'string "exec " *browser* "http://ubuntuusers.de"))
+    ("Ubuntu-Tweak                    präfix-x T"    "exec ubuntu-tweak")
+    ("Ubuntu-Tweak Webseite"                         ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
+    ("Übersicht aller Kommandos       präfix C"      "commands")
+    
+    ("+ Untermenü: Arbeiten"
      ("Adressbuch               präfix-x A"   "abook")
      ("Calibre                  präfix-x C-C" "calibre")
      ("Cherrytree               präfix-x C-c" "cherrytree")
@@ -217,14 +251,14 @@
      ("Zathura                  präfix-x z"   "zathura")
     )
 
-    ("Clouddienste"
+    ("+ Untermenü: Clouddienste"
      ("Dropbox ein-/ausschalten   präfix-x D" "dropbox-umschalten")
      ("DropBox Webseite"                      ,(concatenate 'string "exec " *browser* "https://dropbox.com"))
      ("UbuntuOne Steuerpult"                  "ubuntuone-control-panel-qt")
      ("UbuntuOne Webseite"                    ,(concatenate 'string "exec " *browser* "https://one.ubuntu.com"))
     )
    
-    ("Erholung"
+    ("+ Untermenü: Erholung"
      ("Adventure 770        präfix-X a"   "adv770")
      ("Aliens RL            präfix-X C-a" "aliensrl")
      ("ASCII-Portal         präfix-X A"   "asciiportal")
@@ -268,7 +302,7 @@
      ("ZSNES                präfix-X z"   "zsnes")
     )
     
-    ("Lisp & StumpWM"
+    ("+ Untermenü: Lisp & StumpWM"
      ("CL User"                                                ,(concatenate 'string "exec " *browser* "http://www.cl-user.net"))
      ("Common Lisp"                                            ,(concatenate 'string "exec " *browser* "http://common-lisp.net/"))
      ("Common Lisp Hyperspec"                                  ,(concatenate 'string "exec " *browser* "http://www.lispworks.com/documentation/HyperSpec/Front/index.htm"))
@@ -292,7 +326,7 @@
      ("Wikibook: Common Lisp"                                  ,(concatenate 'string "exec " *browser* "https://en.wikibooks.org/wiki/Common_Lisp"))
     )
     
-    ("Media"
+    ("+ Untermenü: Media"
      ("Audacious           präfix-x C-a" "audacious")
      ("AviDeMux            präfix-x C-A" "avidemux2_gtk")
      ("Banshee             präfix-x b"   "banshee")
@@ -308,10 +342,10 @@
      ("XVidCap Screencast  präfix-x C-v" "xvidcap")
     )
 
-    ("Soziale Netzwerke"
+    ("+ Untermenü: Soziale Netzwerke"
      ("Diaspora*"                                             ,(concatenate 'string "exec " *browser* "https://joindiaspora.com/stream"))
      ("Google+                                    präfix-y m" "google+mitteilungen")
-     ("i2p-Netzwerk ein/aus                       präfix-x I" ,(concatenate 'string "exec " *browser* "http://127.0.0.1:7657"))
+     ("i2p-Netzwerk ein/aus                       präfix-x I" "i2p-umschalten")
      ("identi.ca"                                             ,(concatenate 'string "exec " *browser* "https://identi.ca"))
      ("Kurzmitteilungsdienst-Einstellungen"                   "gwibber-preferences")
      ("Kurzmitteilungsdienst-Konteneinstellungen"             "gwibber-accounts")
@@ -322,7 +356,7 @@
      ("X-Chat IRC-Netz                            präfix-x x" "xchat")     
     )
     
-    ("System"
+    ("+ Untermenü: System"
      ("Event-Anzeiger XEV"                     "xev")
      ("GParted"                                "gksudo gparted")
      ("GPG-Crypter"                            "gpg-crypter")
@@ -336,11 +370,11 @@
      ("XFontSel"                               "xfontsel")
     )
 
-    ("Webseiten"
+    ("+ Untermenü: Webseiten"
      ("URL direkt ansteuern     präfix-y u"  "browse-url")
      ("BBC Nachrichten          präfix-y b"  "news-bbc")
      ("Blottr Breaking-News"                 ,(concatenate 'string "exec " *browser* "http://blottr.com"))
-     ("Conkeror für Debian"                  ,(concatenate 'string "exec " *browser* "http://noone.org/conkeror-nightly-debs/"))
+     ("Conkeror für Debian/Ubuntu"           ,(concatenate 'string "exec " *browser* "http://noone.org/conkeror-nightly-debs/"))
      ("Conkeror Homepage"                    ,(concatenate 'string "exec " *browser* "http://conkeror.org"))
      ("Detektiv Conan"                       ,(concatenate 'string "exec " *browser* "http://detektiv-conan.ch"))
      ("DuckDuckGo               präfix-y d"  "ddg")
@@ -379,7 +413,7 @@
      ("ZenCast"                              ,(concatenate 'string "exec " *browser* "http://zencast.org"))
     )
 
-    ("WWW-Programme"
+    ("+ Untermenü: WWW-Programme"
      ("Chromium     präfix-x C"   "chromium-browser")
      ("Claws-Mail"                "claws-mail")
      ("Conkeror     präfix-x c"   "conkeror")
@@ -396,41 +430,7 @@
      ("Turpial      präfix-x T"   "turpial")
      ("Twitter      präfix-y t"   "ttytter")
      ("X-Chat       präfix-x x"   "xchat")
-    )
-    
-    ("Admin-Terminal                  präfix C-c"    "adminterminal")
-    ("Archiv-Manager                  präfix-x a"    "file-roller")
-    ("Ask Ubuntu                      präfix-y a"    ,(concatenate 'string "exec " *browser* "http://askubuntu.com"))
-    ("Benutzer-Terminal               präfix M-c"    "userterminal")
-    ("Browser starten                 BROWSER-Taste" ,(concatenate 'string "exec " *browser*))
-    ("Byobu-Terminal                  präfix c"      "byobu")
-    ("Dateimanager                    präfix-x n"    "nautilus")
-    ("Emacs                           präfix-e"      "emacs")
-    ("Email                           EMAIL-Taste"   "thunderbird")
-    ("GetDeb"                                        ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
-    ("Hintergrundbild ändern          präfix-x h"    "nitrogen")
-    ("Kurzmitteilungsdienst           präfix-x g"    "gwibber")
-    ("Kurzmitteilung posten           präfix-y z"    "gwibber-poster")
-    ("Launchpad"                                     ,(concatenate 'string "exec " *browser* "https://launchpad.net"))
-    ("Lautstärke regeln               präfix-x l"    "alsamixer")
-    ("Medienabspieler                 präfix-x r"    "rhythmbox")
-    ("Nachrichtendienste              präfix-x e"    "empathy")
-    ("Netzwerkverbindung bearbeiten   präfix-x N"    "nm-connection-editor")
-    ("Planet Ubuntu"                                 ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
-    ("PlayDeb"                                       ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
-    ("Software aktualisieren          präfix-x C-s"  "update-manager")
-    ("StumpWM beenden"                               "quit")
-    ("StumpWM-Konfiguration neu laden präfix-x R"    "reinit")
-    ("Synaptic Paketmanager"                         "exec gksudo synaptic")
-    ("Taschenrechner                  CALC-Taste"    "speedcrunch")
-    ("Touchpad ein/aus                präfix-x y"    "touchpad-umschalten")
-    ("Ubuntu Software-Center          präfix-x s"    "software-center")
-    ("Ubuntu Webseite"                               ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
-    ("UbuntuOne Steuerpult            präfix-x o"    "ubuntuone-control-panel-qt")
-    ("Ubuntuusers Deutschland"                       ,(concatenate 'string "exec " *browser* "http://ubuntuusers.de"))
-    ("Ubuntu-Tweak                    präfix-x T"    "exec ubuntu-tweak")
-    ("Ubuntu-Tweak Webseite"                         ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
-    ("Übersicht aller Kommandos       präfix C"      "commands")
+    )    
 ))
 
 ;; ======================================
@@ -509,7 +509,7 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 
 ;; Modeline zeigt Zeit in lokalem Format, CPU-Nutzung, Netzwerk-Verkehr, Gruppe, Notifikation und aktuellen Rahmen
 (setf *screen-mode-line-format*
-      (list '(:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W"))
+      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W"))
 
 ;; ===================
 ;; Autostart-Programme
@@ -522,6 +522,7 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (run-or-raise "ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
   (run-or-raise "dropbox start" '(:class "Dropbox")) ; Dropbox starten
   (run-or-raise "gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
+  (run-or-raise "setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
   (banish-pointer) ; Mauszeiger verbannen
   (clear-window-placement-rules))
 
@@ -532,10 +533,10 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 ;; Neue Befehle - Vorarbeit
 ;; ========================
 
-(defun cat (&rest strings)
+(defmacro cat (&rest strings)
   "(cat &rest strings)
 CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
-  (apply 'concatenate 'string strings))
+  `(concatenate 'string ,strings))
 
 (defun ersetze-teilstring (string alt neu &key (test #'char=))
   "(ersetze-teilsting string alt neu)
@@ -563,7 +564,7 @@ ERSETZTE-TEILSTRING ersetzt das Teilstück ALT durch NEU."
 					       ,fg ,bg ,klasse ,befehl) ,klasse))
 
 (defun string->liste (string)
-  (read-from-string (concatenate 'string "(" string ")")))
+  (read-from-string (cat "(" string ")")))
 
 (defmacro tastenbindung (keymap taste befehl)
   "Kurzes Macro, um eine Tastenbindung zu definieren"
@@ -602,7 +603,7 @@ DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurüc
 
 (defcommand browse-url (url)
   ((:string "Wie lautet die gewünschte URL? "))
-  "Dient zum ansurfen einer beliebigen URL."
+  "Dient zum Ansurfen einer beliebigen URL."
   (check-type url string)
   (run-shell-command (cat *browser* url)))
 
@@ -626,10 +627,11 @@ DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurüc
 	    "Schaltet den Dropbox-Dienst um zwischen eingeschaltet und ausgeschaltet"
 	    (case *dropbox-zustand*
 	      ((eingeschaltet)
-	       (or (and (y-or-n-p "Soll Dropbox ausgeschaltet werden? ")
-			(setq *dropbox-zustand* 'ausgeschaltet)
-			(run-shell-command "dropbox stop")
-			(message "Dropbox ist ausgeschaltet worden."))
+	       (if (y-or-n-p "Soll Dropbox ausgeschaltet werden? ")
+		   (progn
+		     (setq *dropbox-zustand* 'ausgeschaltet)
+		     (run-shell-command "dropbox stop")
+		     (message "Dropbox ist ausgeschaltet worden."))
 		   (message "Dropbox ist NICHT ausgeschaltet worden.")))
 	      (otherwise
 	       (setq *dropbox-zustand* 'eingeschaltet)
