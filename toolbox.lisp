@@ -448,7 +448,13 @@ VORHER-P ist ein Prädikat und prüft, ob sich a vor b in der Liste befindet. Al
 Beispiel: (vorher-p 'alpha 'beta '(alpha beta gamma delta)) => (BETA GAMMA DELTA)"
   (member b (member a liste)))
 
-
+(defun über-dieses-symbol (x)
+  (format t "symbol-name: ~A~%" (symbol-name x))
+  (format t "symbol-package: ~A~%" (symbol-package x))
+  (format t "symbol-plist: ~A~%" (symbol-plist x))
+  (format t "symbol-value: ~A~%" (symbol-value x))
+  (when (functionp x)
+    (format t "~&symbol-function: ~A~%" (symbol-function x))))
 
 ;;; =========================
 ;;; Abschnitt 4 - Neue Macros

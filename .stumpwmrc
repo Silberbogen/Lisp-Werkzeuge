@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.28
+;;;; Version 0.29
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -11,10 +11,13 @@
 ;; ----------------------------------------------------------
 ;; DIESE 4 ZEILEN ANPASSEN!!!
 ;; Mein Pfad zu den Contrib-Dateien kann von eurem abweichen!
-(load "~/Entwicklung/lisp/stumpwm/contrib/sbclfix")
-(load "~/Entwicklung/lisp/stumpwm/contrib/net")
-(load "~/Entwicklung/lisp/stumpwm/contrib/cpu")
-(load "~/Entwicklung/lisp/stumpwm/contrib/mem")
+;; Die Dateien müssen nur einmal eingelesen werden bei einer
+;; Sitzung, schließlich verändern wir sie ja nicht.
+(when *initializing*
+  (load "~/Entwicklung/lisp/stumpwm/contrib/sbclfix")
+  (load "~/Entwicklung/lisp/stumpwm/contrib/net")
+  (load "~/Entwicklung/lisp/stumpwm/contrib/cpu")
+  (load "~/Entwicklung/lisp/stumpwm/contrib/mem"))
 ;; ----------------------------------------------------------
 
 ;; ======================================
@@ -122,8 +125,8 @@
     (define-key m (kbd "g") "google")
     (define-key m (kbd "G") "news-guardian")
     (define-key m (kbd "h") "hackernews")
-    (define-key m (kbd "i") "ixquick")
-    (define-key m (kbd "I") "imdb-suche")
+    (define-key m (kbd "i") "imdb-suche")
+    (define-key m (kbd "I") "ixquick")
     (define-key m (kbd "m") "google+mitteilungen")
     (define-key m (kbd "M") "memory-alpha")
     (define-key m (kbd "n") "nachrichten")
@@ -365,7 +368,7 @@
     ("+ Untermenü: System"
      ("Bildschirmschoner einstellen"                           "xscreensaver-demo")
      ("Event-Anzeiger XEV"                                     "xev")
-     ("GParted"                                                "gksudo gparted")
+     ("GNOME-Partitions-Editor"                                "gparted")
      ("GPG-Crypter"                                            "gpg-crypter")
      ("Htop                                       präfix-x H"  "htop")
      ("KeePassX                                   präfix-x k"  "keepassx")
@@ -373,53 +376,57 @@
      ("Kurzmitteilungsdienst-Konteneinstellungen"              "gwibber-accounts")
      ("Midnight Commander                         präfix-x m"  "mc")
      ("Nachrichtendienst-Kontoeinstellungen"                   "empathy-accounts")
-     ("UnetBootin"                                             "gksudo unetbootin")
-     ("Unison                                     präfix-x u"  "unison-gtk")
+     ("UnetBootin Starmedienersteller"                         "gksudo unetbootin")
+     ("Unison Synchronisationsdienste             präfix-x u"  "unison-gtk")
+     ("USB-Startmedienersteller"                               "usb-creator-gtk")
      ("WICD (curses)                              präfix-x w"  "wicd-curses")
      ("XArchiver                                  präfix-x X"  "xarchiver")
      ("XFontSel"                                               "xfontsel")
+     ("Zustände der globalen Variablen anzeigen"               "zustände-anzeigen")
     )
 
     ("+ Untermenü: Webseiten"
-     ("URL direkt ansteuern     präfix-y u"  "browse-url")
-     ("BBC Nachrichten          präfix-y b"  "news-bbc")
-     ("Blottr Breaking-News"                 ,(concatenate 'string "exec " *browser* "http://blottr.com"))
-     ("Conkeror für Debian/Ubuntu"           ,(concatenate 'string "exec " *browser* "http://noone.org/conkeror-nightly-debs/"))
-     ("Conkeror Homepage"                    ,(concatenate 'string "exec " *browser* "http://conkeror.org"))
-     ("Detektiv Conan"                       ,(concatenate 'string "exec " *browser* "http://detektiv-conan.ch"))
-     ("DuckDuckGo               präfix-y d"  "ddg")
-     ("EDXonline Lernplattform"              ,(concatenate 'string "exec " *browser* "http://www.edxonline.org"))
-     ("Fabled Lands App"                     ,(concatenate 'string "exec " *browser* "http://flapp.sourceforge.net/"))
-     ("Fighting Fantasy"                     ,(concatenate 'string "exec " *browser* "http://fightingfantasy.com/"))
-     ("Fighting Fantasy Project"             ,(concatenate 'string "exec " *browser* "http://www.ffproject.com/"))
-     ("FreshPorts"                           ,(concatenate 'string "exec " *browser* "http://freshports.org"))
-     ("Full Circle Magazine"                 ,(concatenate 'string "exec " *browser* "http://fullcirclemagazine.org"))
-     ("GetDeb"                               ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
-     ("Google                   präfix-y g"  "google")
-     ("Gronkh"                               ,(concatenate 'string "exec " *browser* "http://gronkh.de"))
-     ("Hackernews               präfix-y h"  "hackernews")
-     ("Heise"                                ,(concatenate 'string "exec " *browser* "http://heise.de"))
-     ("I.M.D.B.                 präfix-y I"  "imdb-suche")
-     ("IxQuick                  präfix-y i"  "ixquick")
-     ("LEO EN-DE"                            ,(concatenate 'string "exec " *browser* "http://leo.org"))
-     ("Nachrichten              präfix-y n"  "nachrichten")
-     ("OMG! Ubuntu"                          ,(concatenate 'string "exec " *browser* "http://omgubuntu.co.uk"))
-     ("Planet Ubuntu"                        ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
-     ("PlayDeb"                              ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
-     ("Revo Vortaro EO"                      ,(concatenate 'string "exec " *browser* "http://reta-vortaro.de"))
-     ("Sonja Vortaro EO"                     ,(concatenate 'string "exec " *browser* "http://kisa.ca/vortaro"))
-     ("Thalia"                               ,(concatenate 'string "exec " *browser* "http://thalia.de"))
-     ("The Guardian             präfix-y G"  "news-guardian")
-     ("The Pirate Bay           präfix-y p"  "piratebay")
-     ("The Register             präfix-y r"  "news-register")
-     ("Titannica - FF wiki"                  ,(concatenate 'string "exec " *browser* "http://fightingfantasy.wikia.com/wiki/Fighting_Fantasy"))
-     ("TOR check"                            ,(concatenate 'string "exec " *browser* "https://check.torproject.org"))
-     ("Ubuntu Webseite"                      ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
-     ("Ubuntu-Tweak Webseite"                ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
-     ("Webupd8"                              ,(concatenate 'string "exec " *browser* "http://webupd8.org"))
-     ("Wikipedia                präfix-y w"  "wikipedia")
-     ("YouTube                  präfix-y y"  "youtube-suche")
-     ("ZenCast"                              ,(concatenate 'string "exec " *browser* "http://zencast.org"))
+     ("URL direkt ansteuern            präfix-y u"  "browse-url")
+     ("BBC Nachrichten                 präfix-y b"  "news-bbc")
+     ("Blottr Breaking-News"                        ,(concatenate 'string "exec " *browser* "http://blottr.com"))
+     ("Conkeror für Debian/Ubuntu"                  ,(concatenate 'string "exec " *browser* "http://noone.org/conkeror-nightly-debs/"))
+     ("Conkeror Homepage"                           ,(concatenate 'string "exec " *browser* "http://conkeror.org"))
+     ("Detektiv Conan"                              ,(concatenate 'string "exec " *browser* "http://detektiv-conan.ch"))
+     ("Dictionary of Imaginary Places"              ,(concatenate 'string "exec " *browser* "http://urbangeek.net/dictionary/"))
+     ("DuckDuckGo                      präfix-y d"  "ddg")
+     ("EDXonline Lernplattform"                     ,(concatenate 'string "exec " *browser* "http://www.edxonline.org"))
+     ("Fabled Lands App"                            ,(concatenate 'string "exec " *browser* "http://flapp.sourceforge.net/"))
+     ("Farben für das XTerminal"                    ,(concatenate 'string "exec " *browser* "http://http://critical.ch/xterm/"))
+     ("Fighting Fantasy"                            ,(concatenate 'string "exec " *browser* "http://fightingfantasy.com/"))
+     ("Fighting Fantasy Project"                    ,(concatenate 'string "exec " *browser* "http://www.ffproject.com/"))
+     ("FreshPorts"                                  ,(concatenate 'string "exec " *browser* "http://freshports.org"))
+     ("Full Circle Magazine"                        ,(concatenate 'string "exec " *browser* "http://fullcirclemagazine.org"))
+     ("GetDeb"                                      ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
+     ("Google                          präfix-y g"  "google")
+     ("Gronkh"                                      ,(concatenate 'string "exec " *browser* "http://gronkh.de"))
+     ("Hackernews                      präfix-y h"  "hackernews")
+     ("Heise"                                       ,(concatenate 'string "exec " *browser* "http://heise.de"))
+     ("I.M.D.B.                        präfix-y i"  "imdb-suche")
+     ("IxQuick                         präfix-y I"  "ixquick")
+     ("LEO EN-DE"                                   ,(concatenate 'string "exec " *browser* "http://leo.org"))
+     ("Nachrichten                     präfix-y n"  "nachrichten")
+     ("OMG! Ubuntu"                                 ,(concatenate 'string "exec " *browser* "http://omgubuntu.co.uk"))
+     ("Planet Ubuntu"                               ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
+     ("PlayDeb"                                     ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
+     ("Revo Vortaro EO"                             ,(concatenate 'string "exec " *browser* "http://reta-vortaro.de"))
+     ("Sonja Vortaro EO"                            ,(concatenate 'string "exec " *browser* "http://kisa.ca/vortaro"))
+     ("Thalia"                                      ,(concatenate 'string "exec " *browser* "http://thalia.de"))
+     ("The Guardian                    präfix-y G"  "news-guardian")
+     ("The Pirate Bay                  präfix-y p"  "piratebay")
+     ("The Register                    präfix-y r"  "news-register")
+     ("Titannica - FF wiki"                         ,(concatenate 'string "exec " *browser* "http://fightingfantasy.wikia.com/wiki/Fighting_Fantasy"))
+     ("TOR check"                                   ,(concatenate 'string "exec " *browser* "https://check.torproject.org"))
+     ("Ubuntu Webseite"                             ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
+     ("Ubuntu-Tweak Webseite"                       ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
+     ("Webupd8"                                     ,(concatenate 'string "exec " *browser* "http://webupd8.org"))
+     ("Wikipedia                       präfix-y w"  "wikipedia")
+     ("YouTube                         präfix-y y"  "youtube-suche")
+     ("ZenCast"                                     ,(concatenate 'string "exec " *browser* "http://zencast.org"))
     )
 
     ("+ Untermenü: WWW-Programme"
@@ -643,12 +650,9 @@ DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurüc
 	    "Schaltet den Dropbox-Dienst um zwischen eingeschaltet und ausgeschaltet"
 	    (case *dropbox-zustand*
 	      ((eingeschaltet)
-	       (if (y-or-n-p "Soll Dropbox ausgeschaltet werden? ")
-		   (progn
-		     (setq *dropbox-zustand* 'ausgeschaltet)
-		     (run-shell-command "dropbox stop")
-		     (message "Dropbox ist ausgeschaltet worden."))
-		   (message "Dropbox ist NICHT ausgeschaltet worden.")))
+	       (setq *dropbox-zustand* 'ausgeschaltet)
+	       (run-shell-command "dropbox stop")
+	       (message "Dropbox ist ausgeschaltet worden."))
 	      (otherwise
 	       (setq *dropbox-zustand* 'eingeschaltet)
 	       (run-shell-command "dropbox start")
@@ -707,11 +711,9 @@ Beispiel: (echo-time) => 06:11:27"
 	    "Schaltet den i2p-Dienst um zwischen eingeschaltet und ausgeschaltet"
 	    (case *i2p-zustand*
 	      ((eingeschaltet)
-	       (or (and (y-or-n-p "Soll i2p ausgeschaltet werden? ")
-			(setq *i2p-zustand* 'ausgeschaltet)
-			(run-shell-command "i2prouter stop")
-			(message "i2p ist ausgeschaltet worden."))
-		   (message "i2p ist NICHT ausgeschaltet worden.")))
+	       (setq *i2p-zustand* 'ausgeschaltet)
+	       (run-shell-command "i2prouter stop")
+	       (message "i2p ist ausgeschaltet worden."))
 	      (otherwise
 	       (setq *i2p-zustand* 'eingeschaltet)
 	       (run-shell-command "i2prouter start")
@@ -719,14 +721,14 @@ Beispiel: (echo-time) => 06:11:27"
 
 (defcommand imdb-suche (suche)
   ((:string "Suche in der Internet Movie Database nach: "))
-  "Dient zur Suche in der IMDB per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  "Dient zur Suche in der IMDB per Browser."
   (check-type suche string)
   (nsubstitute #\+ #\Space suche)
   (run-shell-command (cat *browser* "http://imdb.com/find?q=" suche)))
 
 (defcommand ixquick (suche)
   ((:string "Suche in IxQuick nach: "))
-  "Dient zur Suche bei IxQuick per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  "Dient zur Suche bei IxQuick per Browser."
   (check-type suche string)
   (nsubstitute #\+ #\Space suche)
   (run-shell-command (cat *browser* "http://ixquick.com/do/metasearch.pl?query=" suche)))
@@ -851,6 +853,10 @@ Beispiel: (echo-time) => 06:11:27"
   (nsubstitute #\+ #\Space suche)
   (run-shell-command (cat *browser* "http://www.youtube.com/results?search_query=" suche "&search=Search")))
 
+(defcommand zustände-anzeigen () ()
+  "Dient der Darstellung der globalen Zustandsvariablen"
+  (message " Dropbox: ~A~%     i2p: ~A~%Touchpad: ~A~%" *dropbox-zustand* *i2p-zustand* *touchpad-zustand*))
+
 (defcommand zwitschere (nachricht)
   ((:string "Die zu zwitschernde Mitteilung: "))
   "Dient zum schnellen zwitschern per Twitter via ttytter"
@@ -861,55 +867,57 @@ Beispiel: (echo-time) => 06:11:27"
 ;; Grafische Programme aufrufen oder zu geöffneten wechseln
 ;; ========================================================
 
-(neuerbefehl audacious "Starte/wechsle zu Audacious." "audacious" "Audacious")
+(neuerbefehl audacious "Starte/wechsle zur Audacious Audiobearbeitung." "audacious" "Audacious")
 
-(neuerbefehl avidemux2_gtk "Starte/wechsle zu Avidemux." "avidemux2_gtk" "Avidemux2_gtk")
+(neuerbefehl avidemux2_gtk "Starte/wechsle zur AviDemux Videobearbeitung." "avidemux2_gtk" "Avidemux2_gtk")
 
 (neuerbefehl banshee "Starte/wechsle zum Banshee Medienabspieler." "banshee" "Banshee")
 
-(neuerbefehl brogue "Starte/wechsle zum ansprechenden B-Rogue." "brogue" "Brogue")
+(neuerbefehl brogue "Starte/wechsle zum ansprechenden B-Rogue Spiel." "brogue" "Brogue")
 
 (neuerbefehl calibre "Starte/wechsle zur Calibre Ebook-Verwaltung." "calibre" "Calibre")
 
-(neuerbefehl cherrytree "Starte/wechsle zum Cherrytree Wiki." "cherrytree" "Cherrytree")
+(neuerbefehl cherrytree "Starte/wechsle zur Cherrytree Wiki-Notiz-Verwaltung." "cherrytree" "Cherrytree")
 
 (neuerbefehl chromium-browser "Starte/wechsle zum Chromium Webbrowser." "chromium-browser" "Chromium-Browser")
 
-(neuerbefehl claws-mail "Starte/wechsle zu Claws-Mail." "claws-mail" "Claws-mail")
+(neuerbefehl claws-mail "Starte/wechsle zum Claws-Mail Emailprogramm." "claws-mail" "Claws-mail")
 
-(neuerbefehl comix "Starte/wechsle zu Comix." "comix" "Comix")
+(neuerbefehl comix "Starte/wechsle zum Comix Leseprogramm für elektronische Comics." "comix" "Comix")
 
 (neuerbefehl conkeror "Starte/wechsle zum Conkeror Webbrowser." "conkeror" "Conkeror")
 
-(neuerbefehl deluge "Starte/wechsle zu Deluge." "deluge" "Deluge")
+(neuerbefehl deluge "Starte/wechsle zum Deluge BitTorrent-Klienten." "deluge" "Deluge")
 
-(neuerbefehl dwarffortress "Starte/wechsle zu Dwarf Fortress." "/opt/df_linux/df" "Dwarffortress")
+(neuerbefehl dwarffortress "Starte/wechsle zum Sandkastenspiel Dwarf Fortress." "/opt/df_linux/df" "Dwarffortress")
 
-(neuerbefehl dwb "Starte/wechsle zum dwb Webbrowser." "dwb" "Dwb")	    
+(neuerbefehl dwb "Starte/wechsle zum Dwb Webbrowser." "dwb" "Dwb")	    
 
-(neuerbefehl emacs "Starte/wechsle zu Emacs." "emacsclient -c -a ''" "Emacs")
+(neuerbefehl emacs "Starte/wechsle zu Emacs Lisp-System für Textbearbeitung und mehr." "emacsclient -c -a ''" "Emacs")
 
-(neuerbefehl empathy "Starte/wechsle zu Empathy." "empathy" "Empathy")
+(neuerbefehl empathy "Starte/wechsle zum Empathy Mitteilungsdienst." "empathy" "Empathy")
 
 (neuerbefehl empathy-accounts "Starte/wechsle zu den Empathy Kontoeinstellungen." "empathy-accounts" "Empathy-accounts")
 
-(neuerbefehl evince "Starte/wechsle zu Evince." "evince" "Evince")
+(neuerbefehl evince "Starte/wechsle zum Evince Leseprogramm für elektronische Bücher." "evince" "Evince")
 
-(neuerbefehl fbreader "Starte/wechsle zum FBreader." "fbreader" "Fbreader")
+(neuerbefehl fbreader "Starte/wechsle zum FBreader Leseprogramm für elektronische Bücher." "fbreader" "Fbreader")
 
-(neuerbefehl file-roller "Starte/wechsle zu File-Roller." "file-roller" "File-roller")
+(neuerbefehl file-roller "Starte/wechsle zum File-Roller Archivverwalter und -ersteller." "file-roller" "File-roller")
 
-(neuerbefehl firefox "Starte/wechsle zu Firefox." "firefox" "Firefox")
+(neuerbefehl firefox "Starte/wechsle zum Firefox Webbrowser." "firefox" "Firefox")
 
-(neuerbefehl flare "Starte/wechsle zu Flare RPG." "flare" "Flare")
+(neuerbefehl flare "Starte/wechsle zum Flare RPG Rollenspiel." "flare" "Flare")
 
-(neuerbefehl focuswriter "Starte/wechsle zu Focuswriter." "focuswriter" "Focuswriter")
+(neuerbefehl focuswriter "Starte/wechsle zur FocusWriter Textverarbeitung." "focuswriter" "Focuswriter")
 
 (neuerbefehl geeqie "Starte/wechsle zum Geekie Bildbetrachter." "geeqie" "Geeqie")
 
-(neuerbefehl gimp "Starte/wechsle zu GIMP." "gimp" "Gimp")
+(neuerbefehl gimp "Starte/wechsle zu GIMP Grafikbeareitungsprogramm." "gimp" "Gimp")
 
-(neuerbefehl gwibber "Starte/wechsle zu Gwibber." "gwibber" "Gwibber")
+(neuerbefehl gparted "Starte/wechsle zu GNOME-Partitions-Editor." "exec gksudo gparted" "Gparted")
+
+(neuerbefehl gwibber "Starte/wechsle zum Gwibber Kurznachrichtendienst." "gwibber" "Gwibber")
 
 (neuerbefehl gwibber-accounts "Starte/wechsle zu den Gwibber Kontoeinstellungen." "gwibber-accounts" "Gwibber-accounts")
 
@@ -925,33 +933,33 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl jumanji "Starte/wechsle zum Jumanji Webbrowser." "jumanji" "Jumanji")	    
 
-(neuerbefehl kaffeine "Starte/wechsle zu Kaffeine." "kaffeine" "Kaffeine")
+(neuerbefehl kaffeine "Starte/wechsle zum Kaffeine Medienabspieler." "kaffeine" "Kaffeine")
 
-(neuerbefehl keepassx "Starte/wechsle zu KeePassX." "keepassx" "Keepassx")
+(neuerbefehl keepassx "Starte/wechsle zur KeePassX Passwortverwaltung." "keepassx" "Keepassx")
 
-(neuerbefehl minitube "Starte/wechsle zu Minitube." "minitube" "Minitube")
+(neuerbefehl minitube "Starte/wechsle zu Minitube Medienabspieler für YouTube-Videos." "minitube" "Minitube")
 
 (neuerbefehl nautilus "Starte/wechsle zum Nautilus Dateimanager." "nautilus --no-desktop" "Nautilus")
 
 (neuerbefehl nm-connection-editor "Starte/wechsle zum Networkmanager Verbindungseditor." "nm-connection-editor" "Nm-connection-editor")
 
-(neuerbefehl nitrogen "Starte/wechsle zu Nitrogen." "nitrogen" "Nitrogen")
+(neuerbefehl nitrogen "Starte/wechsle zu Nitrogen Hintergrundbild-Wechsler." "nitrogen" "Nitrogen")
 
 (neuerbefehl okular "Starte/wechsle zum Okular PDF-Betrachter." "okular" "Okular")
 
-(neuerbefehl palapeli "Starte/wechsle zu Palapeli." "palapeli" "Palapeli")
+(neuerbefehl palapeli "Starte/wechsle zu Palapeli Puzzle-Spiel." "palapeli" "Palapeli")
 
-(neuerbefehl pouetChess "Starte/wechsle zu Pouetchess 3Dxp." "pouetChess" "pouetChess")
+(neuerbefehl pouetChess "Starte/wechsle zu Pouetchess." "pouetChess" "pouetChess")
 
 (neuerbefehl pychess "Starte/wechsle zu PyChess Staunton." "pychess" "pychess")
 
-(neuerbefehl ristretto "Starte/wechsle zu Ristretto." "ristretto" "Ristretto")
+(neuerbefehl ristretto "Starte/wechsle zum Ristretto Bildbetrachter." "ristretto" "Ristretto")
 
-(neuerbefehl rhythmbox "Starte/wechsle zu Rhythmbox." "rhythmobox" "Rhythmbox")
+(neuerbefehl rhythmbox "Starte/wechsle zu Rhythmbox Medienabspieler." "rhythmobox" "Rhythmbox")
 
-(neuerbefehl scid "Starte/wechsle zu Scid vs. PC." "scid" "Scid")
+(neuerbefehl scid "Starte/wechsle zum Schachprogramm Scid vs. PC." "scid" "Scid")
 
-(neuerbefehl scribus "Starte/wechsle zu Scribus." "scribus" "Scribus")
+(neuerbefehl scribus "Starte/wechsle zum Scribus DTP-Programm." "scribus" "Scribus")
 
 (neuerbefehl simple-scan "Starte/wechsle zu Simple-Scan." "simple-scan" "Simple-scan")
 
@@ -959,17 +967,19 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl speedcrunch "Starte/wechsle zum Speedcrunch Taschenrechner." "speedcrunch" "Speedcrunch")
 
-(neuerbefehl surf "Starte/wechsle zu Surf." "surf" "surf")
+(neuerbefehl surf "Starte/wechsle zum Surf Webbrowser." "surf" "surf")
 
-(neuerbefehl synaptic "Starte/wechsle zu Synaptic." "exec gksudo synaptic" "Synaptic")
+(neuerbefehl synaptic "Starte/wechsle zur Synaptic Paketverwaltung." "exec gksudo synaptic" "Synaptic")
 
-(neuerbefehl thunderbird "Starte/wechsle zu Thunderbird Emailclient." "thunderbird" "Thunderbird")
+(neuerbefehl thunderbird "Starte/wechsle zu Thunderbird Emailklienten." "thunderbird" "Thunderbird")
 
-(neuerbefehl turpial "Starte/wechsle zu Turpial." "turpial" "Turpial")
+(neuerbefehl turpial "Starte/wechsle zum Turpial Kurzmitteilungsprogramm." "turpial" "Turpial")
 
 (neuerbefehl ubuntuone-control-panel-qt "Starte/wechsle zum UbuntuOne Steuerpult." "ubuntuone-control-panel-qt" "Ubuntuone-control-panel-qt")
 
-(neuerbefehl unison-gtk "Starte/wechsle zu Unison." "unison-gtk" "Unison-gtk")
+(neuerbefehl unison-gtk "Starte/wechsle zum Unison Synchronisationsprogramm." "unison-gtk" "Unison-gtk")
+
+(neuerbefehl usb-creator-gtk "Starte/wechsle zum USB-Startmedienersteller." "exec gksudo usb-creator-gtk" "Usb-creator-gtk")
 
 (neuerbefehl update-manager "Starte/wechsle zum Software Update-Manager" "update-manager" "Update-manager")
 
@@ -997,49 +1007,49 @@ Beispiel: (echo-time) => 06:11:27"
 ;; Programme in einem eigenen Terminal starten oder zu diesem wechseln
 ;; ===================================================================
 
-(neuerterminalbefehl abook "Starte/wechsle zu Abook." "abook" "Abook")
+(neuerterminalbefehl abook "Starte/wechsle zu Abook Adressbuch." "abook" "Abook")
 
-(neuerterminalbefehl adminterminal "Starte/wechsle zum Adminterminal." "sudo -i" "Adminterminal" "gainsboro" "OrangeRed")
+(neuerterminalbefehl adminterminal "Starte/wechsle zum Administrator-Terminal." "sudo -i" "Adminterminal" "gainsboro" "OrangeRed")
 
-(neuerterminalbefehl aliensrl "Starte/wechsle zu AliensRL." "aliensrl" "Aliensrl")
+(neuerterminalbefehl aliensrl "Starte/wechsle zu AliensRL Rollenspiel." "aliensrl" "Aliensrl")
 
-(neuerterminalbefehl alsamixer "Starte/wechsle zum Alsa-Mixer." "alsamixer" "Alsamixer")
+(neuerterminalbefehl alsamixer "Starte/wechsle zur Alsa-Mixer-Lautstärkeregelung." "alsamixer" "Alsamixer")
 
 (neuerterminalbefehl byobu "Starte/wechsle zum Byobu-Terminal." "byobu" "Byobu" "gainsboro" "DarkSlateGray")
 
-(neuerterminalbefehl crawl "Starte/wechsle zu Crawl." "crawl" "Crawl")
+(neuerterminalbefehl crawl "Starte/wechsle zu Crawl Hack'n'Slay Rollenspiel." "crawl" "Crawl")
 
 (neuerterminalbefehl doomrl "Starte/wechsle zu DoomRL." "doomrl" "Doomrl")
 
-(neuerterminalbefehl htop "Starte/wechsle zu Htop." "htop" "Htop" "BlanchedAlmond" "MidnightBlue")
+(neuerterminalbefehl htop "Starte/wechsle zur Htop Systemressourcen-Darstellung." "htop" "Htop" "BlanchedAlmond" "MidnightBlue")
 
-(neuerterminalbefehl mathomatic "Starte/wechsle zu Mathomatic." "mathomatic" "Mathomatic")
+(neuerterminalbefehl mathomatic "Starte/wechsle zu Mathomatic Rechenprogramm." "mathomatic" "Mathomatic")
 
-(neuerterminalbefehl mc "Starte/wechsle zum Midnight Commander." "mc" "Mc")
+(neuerterminalbefehl mc "Starte/wechsle zum Dateimanager Midnight Commander." "mc" "Mc")
 
-(neuerterminalbefehl mocp "Starte/wechsle zu Music on Console." "mocp" "Mocp")
+(neuerterminalbefehl mocp "Starte/wechsle zum Music on Console Medienabspieler." "mocp" "Mocp")
 
-(neuerterminalbefehl moria "Starte/wechsle zu Moria." "moria" "Moria")
+(neuerterminalbefehl moria "Starte/wechsle zum Moria Rollenspiel." "moria" "Moria")
 
-(neuerterminalbefehl mutt "Starte/wechsle zu mutt." "mutt" "Mutt")
+(neuerterminalbefehl mutt "Starte/wechsle zum Mutt Emailprogramm." "mutt" "Mutt")
 
-(neuerterminalbefehl primerl "Starte/wechsle zu PrimeRL." "primerl" "Primerl")
+(neuerterminalbefehl primerl "Starte/wechsle zum PrimeRL Rollenspiel." "primerl" "Primerl")
 
-(neuerterminalbefehl rogue "Starte/wechsle zu Rogue." "rogue" "Rogue")
+(neuerterminalbefehl rogue "Starte/wechsle zum Rogue Rollenspiel." "rogue" "Rogue")
 
-(neuerterminalbefehl telecomix "Starte/wechsle zu Telecomix." "telecomix" "Telecomix")
+(neuerterminalbefehl telecomix "Starte/wechsle zur Telecomix Kurzmitteilungskonsole." "telecomix" "Telecomix")
 
-(neuerterminalbefehl ttytter "Starte/wechsle zu ttytter." "ttytter -ansi" "Ttytter" "lavender" "NavyBlue")
+(neuerterminalbefehl ttytter "Starte/wechsle zu Ttytter Kurzmitteilungskonsole." "ttytter -ansi" "Ttytter" "lavender" "NavyBlue")
 
-(neuerterminalbefehl wicd-curses "Starte/wechsle zu WICD (curses)." "wicd-curses" "Wicd")
+(neuerterminalbefehl wicd-curses "Starte/wechsle zum WICD (curses) Netzwerk-Verbindungseditor." "wicd-curses" "Wicd")
 
-(neuerterminalbefehl xorcurses "Starte/wechsle zu Xorcurses." "xorcurses" "Xorcurses")
+(neuerterminalbefehl xorcurses "Starte/wechsle zum Abstraktionsspiel Xorcurses." "xorcurses" "Xorcurses")
 
-(neuerterminalbefehl zork1 "Starte/wechsle zu Zork 1." "zork1" "Zork1")
+(neuerterminalbefehl zork1 "Starte/wechsle zum Zork 1 Textabenteuer." "zork1" "Zork1")
 
-(neuerterminalbefehl zork2 "Starte/wechsle zu Zork 2." "zork2" "Zork2")
+(neuerterminalbefehl zork2 "Starte/wechsle zum Zork 2 Textabenteuer." "zork2" "Zork2")
 
-(neuerterminalbefehl zork3 "Starte/wechsle zu Zork 3." "zork3" "Zork3")
+(neuerterminalbefehl zork3 "Starte/wechsle zum Zork 3 Textabenteuer." "zork3" "Zork3")
 
 ;; ======================================
 ;; Neuere Tasten - nach eigenem Gutdünken
@@ -1272,8 +1282,8 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("C-s-g" "google")
 		  ("C-s-G" "news-guardian")
 		  ("C-s-h" "hackernews")
-		  ("C-s-i" "ixquick")
-		  ("C-s-I" "imdb-suche")
+		  ("C-s-i" "imdb-suche")
+		  ("C-s-I" "ixquick")
 		  ("C-s-m" "google+mitteilungen")
 		  ("C-s-M" "memory-alpha")
 		  ("C-s-n" "nachrichten")
