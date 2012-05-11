@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.29
+;;;; Version 0.30
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -73,8 +73,9 @@
     (define-key m (kbd "G")   "gimp")
     (define-key m (kbd "h")   "nitrogen")
     (define-key m (kbd "H")   "htop")
-    (define-key m (kbd "i")   "exec iscan")
+    (define-key m (kbd "i")   "idle-python3.2")
     (define-key m (kbd "I")   "i2p-umschalten")
+    (define-key m (kbd "C-i")   "exec iscan")
     (define-key m (kbd "j")   "jumanji")
     (define-key m (kbd "k")   "keepassx")
     (define-key m (kbd "K")   "kaffeine")
@@ -105,11 +106,12 @@
     (define-key m (kbd "v")   "vlc")
     (define-key m (kbd "V")   "vym")
     (define-key m (kbd "C-v") "exec xvidcap")
-;    (define-key m (kbd "w")   "wicd-curses")
+    (define-key m (kbd "w")   "wicd-curses")
     (define-key m (kbd "x")   "xchat")
     (define-key m (kbd "X")   "xarchiver")
     (define-key m (kbd "y")   "touchpad-umschalten")
-    (define-key m (kbd "z")   "zathura")
+    (define-key m (kbd "z")   "gnome-control-center")
+    (define-key m (kbd "Z")   "zathura")
     m))
 
 ;; --------------------------------------------------------
@@ -209,6 +211,7 @@
     ("Emacs                           präfix-e"      "emacs")
     ("Email                           EMAIL-Taste"   "thunderbird")
     ("Hintergrundbild ändern          präfix-x h"    "nitrogen")
+    ("Kontrollzentrum                 präfix-x z"    "gnome-control-center")
     ("Kurzmitteilungsdienst           präfix-x g"    "gwibber")
     ("Kurzmitteilung posten           präfix-y z"    "gwibber-poster")
     ("Lautstärke regeln               präfix-x l"    "alsamixer")
@@ -235,8 +238,8 @@
      ("FB-Reader"                             "fbreader")
      ("FocusWriter              präfix-x F"   "focuswriter")
      ("GIMP                     präfix-x G"   "gimp")
-     ("Idle - Python 3.2"                     "idle-python3.2")
-     ("iScan                    präfix-x i"   "iscan")
+     ("Idle - Python 3.2        präfix-x i"   "idle-python3.2")
+     ("iScan                    präfix-x C-i" "iscan")
      ("LibreOffice-Calc"                      "localc")
      ("LibreOffice-Draw"                      "lodraw")
      ("LibreOffice-Impress"                   "loimpress")
@@ -249,7 +252,7 @@
      ("Scribus                  präfix-x S"   "scribus")
      ("Simple-Scan"                           "simple-scan")
      ("ViewYourMind             präfix-x V"   "vym")
-     ("Zathura                  präfix-x z"   "zathura")
+     ("Zathura                  präfix-x Z"   "zathura")
     )
 
     ("+ Untermenü: Clouddienste"
@@ -307,6 +310,7 @@
      ("CCL - Clozure Common Lisp"                              ,(concatenate 'string "exec " *browser* "http://clozure.com"))
      ("CL User"                                                ,(concatenate 'string "exec " *browser* "http://www.cl-user.net"))
      ("Common Lisp"                                            ,(concatenate 'string "exec " *browser* "http://common-lisp.net/"))
+     ("Common Lisp Coobbook"                                   ,(concatenate 'string "exec " *browser* "http://cl-cookbook.sourceforge.net/"))
      ("Common Lisp HyperSpec                   präfix-y c"     ,(concatenate 'string "exec " *browser* "http://www.lispworks.com/documentation/HyperSpec/Front/index.htm"))
      ("Common Lisp Wiki"                                       ,(concatenate 'string "exec " *browser* "http://www.cliki.net/index"))
      ("Debugstufe umschalten                   präfix-x C-d"   "debuggen-umschalten")
@@ -316,12 +320,14 @@
      ("L1sp"                                                   ,(concatenate 'string "exec " *browser* "http://l1sp.org"))
      ("Lambkins Successful Lisp Book"                          ,(concatenate 'string "exec " *browser* "http://psg.com/~dlamkins/sl/cover.html"))
      ("Lisp-Forum"                                             ,(concatenate 'string "exec " *browser* "http://www.lispforum.com"))
+     ("Lisptips"                                               ,(concatenate 'string "exec " *browser* "http://lisptips.com/"))
      ("Planet LISP"                                            ,(concatenate 'string "exec " *browser* "http://planet.lisp.org"))
      ("Planet SBCL"                                            ,(concatenate 'string "exec " *browser* "http://planet.sbcl.org"))
      ("Quicklisp Blog & News"                                  ,(concatenate 'string "exec " *browser* "http://blog.quicklisp.org/"))
      ("Rosetta Code"                                           ,(concatenate 'string "exec " *browser* "http://rosettacode.org/wiki/Category:Common_Lisp"))
      ("Seibel's Practical Common Lisp Book"                    ,(concatenate 'string "exec " *browser* "http://gigamonkeys.com/book/"))
      ("SBCL - Steelbank Common Lisp"                           ,(concatenate 'string "exec " *browser* "http://sbcl.org"))
+     ("Slime Tips"                                             ,(concatenate 'string "exec " *browser* "http://slime-tips.tumblr.com/"))
      ("Steele's CL the Language, 2nd Ed. Book"                 ,(concatenate 'string "exec " *browser* "http://www.cs.cmu.edu/Groups/AI/html/cltl/cltl2.html"))
      ("StumpWM Homepage"                                       ,(concatenate 'string "exec " *browser* "http://stumpwm.org"))
      ("StumpWM Wiki"                                           ,(concatenate 'string "exec " *browser* "http://stumpwm.svkt.org/cgi-bin/wiki.pl"))
@@ -424,6 +430,7 @@
      ("Ubuntu Webseite"                             ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
      ("Ubuntu-Tweak Webseite"                       ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
      ("Webupd8"                                     ,(concatenate 'string "exec " *browser* "http://webupd8.org"))
+     ("Wetter"                                      "wetter")
      ("Wikipedia                       präfix-y w"  "wikipedia")
      ("YouTube                         präfix-y y"  "youtube-suche")
      ("ZenCast"                                     ,(concatenate 'string "exec " *browser* "http://zencast.org"))
@@ -549,10 +556,29 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 ;; Neue Befehle - Vorarbeit
 ;; ========================
 
+(defun buchstaben-austauschen (satz)
+  "(buchstaben-austauschen string)
+BUCHSTABEN-AUSTAUSCHEN entfernt deutsche Sonderzeichen und ersetzt sie durch lateinische Standardzeichen."
+  (cond ((null satz) nil)
+	((equal (car satz) #\LATIN_SMALL_LETTER_A_WITH_DIAERESIS)
+	 (cons #\a (cons #\e (buchstaben-austauschen (cdr satz)))))
+	((equal (car satz) #\LATIN_SMALL_LETTER_O_WITH_DIAERESIS)
+	 (cons #\o (cons #\e (buchstaben-austauschen (cdr satz)))))
+	((equal (car satz) #\LATIN_SMALL_LETTER_U_WITH_DIAERESIS)
+	 (cons #\u (cons #\e (buchstaben-austauschen (cdr satz)))))
+	((equal (car satz) #\LATIN_CAPITAL_LETTER_A_WITH_DIAERESIS)
+	 (cons  #\A (cons #\E (buchstaben-austauschen (cdr satz)))))
+	((equal (car satz) #\LATIN_CAPITAL_LETTER_O_WITH_DIAERESIS)
+	 (cons #\O (cons #\E (buchstaben-austauschen (cdr satz)))))
+	((equal (car satz) #\LATIN_CAPITAL_LETTER_U_WITH_DIAERESIS)
+	 (cons #\U (cons #\E (buchstaben-austauschen (cdr satz)))))
+	(t (cons (car satz) (buchstaben-austauschen (cdr satz))))))
+
 (defun cat (&rest strings)
   "(cat &rest strings)
 CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
   (apply 'concatenate 'string strings))
+
 
 (defun ersetze-teilstring (string alt neu &key (test #'char=))
   "(ersetze-teilsting string alt neu)
@@ -578,6 +604,11 @@ ERSETZTE-TEILSTRING ersetzt das Teilstück ALT durch NEU."
 	    "Starte/wechsle zu Alsa-Mixer."
 	    `(neuerbefehl ,name ,dokstring (format nil "uxterm -fg ~A -bg ~A -class '~A' -e '~A'"
 					       ,fg ,bg ,klasse ,befehl) ,klasse))
+
+(defun satz-umformatieren (satz)
+  "(satz-umformatieren string)
+SATZ-UMFORMATIEREN entfernt alle deutschen Sonderzeichen aus einer übergebenen Zeichenkette und ersetzt sie durch lateinische Standardzeichen."
+  (coerce (buchstaben-austauschen (coerce satz 'list)) 'string))
 
 (defun string->liste (string)
   (read-from-string (cat "(" string ")")))
@@ -832,6 +863,13 @@ Beispiel: (echo-time) => 06:11:27"
 	       (run-shell-command "synclient touchpadoff=0")
 	       (message "Touchpad ist eingeschaltet worden.")))) 
 
+(defcommand wetter (suche)
+  ((:string "Suche das Wetter der Stadt: "))
+  "Dient zur Suche bei wetter.net nach einer Stadt, um deren Wetter anzuzeigen."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.wetter.net/cgi-bin/wetter-net3/wetter-stadt.pl?NAME=" (satz-umformatieren suche))))
+
 (defcommand wikipedia (suche)
   ((:string "Suche in der deutschsprachigen Wikipedia nach: "))
   "Dient zur Suche in der deutschsprachigen Wikipedia per Browser."
@@ -915,6 +953,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl gimp "Starte/wechsle zu GIMP Grafikbeareitungsprogramm." "gimp" "Gimp")
 
+(neuerbefehl gnome-control-center "Starte/wechsle zum Kontrollzentrum." "gnome-control-center" "Gnome-control-center")
+
 (neuerbefehl gparted "Starte/wechsle zu GNOME-Partitions-Editor." "exec gksudo gparted" "Gparted")
 
 (neuerbefehl gwibber "Starte/wechsle zum Gwibber Kurznachrichtendienst." "gwibber" "Gwibber")
@@ -971,7 +1011,7 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl synaptic "Starte/wechsle zur Synaptic Paketverwaltung." "exec gksudo synaptic" "Synaptic")
 
-(neuerbefehl thunderbird "Starte/wechsle zu Thunderbird Emailklienten." "thunderbird" "Thunderbird")
+(neuerbefehl thunderbird "Starte/wechsle zum Thunderbird Email-Klienten." "thunderbird" "Thunderbird")
 
 (neuerbefehl turpial "Starte/wechsle zum Turpial Kurzmitteilungsprogramm." "turpial" "Turpial")
 
@@ -1241,8 +1281,9 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-s-G"   "gimp")
 		  ("M-s-h"   "nitrogen")
 		  ("M-s-H"   "htop")
-		  ("M-s-i"   "exec iscan")
+		  ("M-s-i"   "idle-python3.2")
 		  ("M-s-I"   "i2p-umschalten")
+		  ("C-M-s-i"   "exec iscan")
 		  ("M-s-j"   "jumanji")
 		  ("M-s-k"   "keepassx")
 		  ("M-s-K"   "kaffeine")
@@ -1273,7 +1314,8 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-s-x"   "xchat")
 		  ("M-s-X"   "xarchiver")
 		  ("M-s-y"   "touchpad-umschalten")
-		  ("M-s-z"   "zathura")
+		  ("M-s-z"   "gnome-control-center")
+		  ("M-s-Z"   "zathura")
 		  ;; Websuchen
 		  ("C-s-a" "askubuntu")
 		  ("C-s-b" "news-bbc")
