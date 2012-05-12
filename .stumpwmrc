@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.30
+;;;; Version 0.31
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -80,6 +80,7 @@
     (define-key m (kbd "k")   "keepassx")
     (define-key m (kbd "K")   "kaffeine")
     (define-key m (kbd "l")   "alsamixer")
+    (define-key m (kbd "L")   "lxappearance")
     (define-key m (kbd "C-k") "exec k3b")
     (define-key m (kbd "m")   "mc")
     (define-key m (kbd "M")   "mocp")
@@ -115,40 +116,6 @@
     m))
 
 ;; --------------------------------------------------------
-;; emacs-artige Tastenbedienung mit Präfix - *websuche-map*
-;; --------------------------------------------------------
-
-(defparameter *websuche-map*
-  (let ((m (make-sparse-keymap)))
-    (define-key m (kbd "a") "askubuntu")
-    (define-key m (kbd "b") "news-bbc")
-    (define-key m (kbd "c") "clhs")
-    (define-key m (kbd "d") "ddg")
-    (define-key m (kbd "g") "google")
-    (define-key m (kbd "G") "news-guardian")
-    (define-key m (kbd "h") "hackernews")
-    (define-key m (kbd "i") "imdb-suche")
-    (define-key m (kbd "I") "ixquick")
-    (define-key m (kbd "m") "google+mitteilungen")
-    (define-key m (kbd "M") "memory-alpha")
-    (define-key m (kbd "n") "nachrichten")
-    (define-key m (kbd "o") "open-selection-browser")
-    (define-key m (kbd "m") "google+mitteilungen")
-    (define-key m (kbd "p") "piratebay")
-    (define-key m (kbd "P") "google+profile")
-    (define-key m (kbd "r") "news-register")
-    (define-key m (kbd "s") "stackoverflow")
-    (define-key m (kbd "T") "telecomix")
-    (define-key m (kbd "t") "ttytter")
-    (define-key m (kbd "u") "browse-url")
-    (define-key m (kbd "w") "wikipedia")
-    (define-key m (kbd "W") "wikipedia-en")
-    (define-key m (kbd "y") "youtube-suche")
-    (define-key m (kbd "z") "gwibber-poster")
-    (define-key m (kbd "Z") "zwitschere")
-    m))
-
-;; --------------------------------------------------------
 ;; emacs-artige Tastenbedienung mit Präfix - *erholung-map*
 ;; --------------------------------------------------------
 
@@ -159,8 +126,9 @@
      (define-key m (kbd "C-a") "aliensrl")
      (define-key m (kbd "b")   "exec wesnoth --smallgui")
      (define-key m (kbd "B")   "brogue")
-     (define-key m (kbd "c")   "crawl")
-     (define-key m (kbd "d")   "exec desmume-glade")
+     (define-key m (kbd "c")   "comix")
+     (define-key m (kbd "C")   "crawl")
+     (define-key m (kbd "d")   "desmume-glade")
      (define-key m (kbd "D")   "dwarffortress")
      (define-key m (kbd "C-d") "exec dwarftherapist")
      (define-key m (kbd "C-D") "doomrl")
@@ -196,6 +164,41 @@
      (define-key m (kbd "3")   "zork3")
      m))
 
+;; --------------------------------------------------------
+;; emacs-artige Tastenbedienung mit Präfix - *websuche-map*
+;; --------------------------------------------------------
+
+(defparameter *websuche-map*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "a") "askubuntu")
+    (define-key m (kbd "b") "news-bbc")
+    (define-key m (kbd "c") "clhs")
+    (define-key m (kbd "d") "ddg")
+    (define-key m (kbd "g") "google")
+    (define-key m (kbd "G") "news-guardian")
+    (define-key m (kbd "h") "hackernews")
+    (define-key m (kbd "i") "imdb-suche")
+    (define-key m (kbd "I") "ixquick")
+    (define-key m (kbd "m") "google+mitteilungen")
+    (define-key m (kbd "M") "memory-alpha")
+    (define-key m (kbd "n") "nachrichten")
+    (define-key m (kbd "o") "open-selection-browser")
+    (define-key m (kbd "m") "google+mitteilungen")
+    (define-key m (kbd "p") "piratebay")
+    (define-key m (kbd "P") "google+profile")
+    (define-key m (kbd "r") "news-register")
+    (define-key m (kbd "s") "stackoverflow")
+    (define-key m (kbd "T") "telecomix")
+    (define-key m (kbd "t") "ttytter")
+    (define-key m (kbd "u") "browse-url")
+    (define-key m (kbd "w") "wikipedia")
+    (define-key m (kbd "W") "wikipedia-en")
+    (define-key m (kbd "C-w") "wetter")
+    (define-key m (kbd "y") "youtube-suche")
+    (define-key m (kbd "z") "gwibber-poster")
+    (define-key m (kbd "Z") "zwitschere")
+    m))
+
 ;; ======================================================================================================
 ;; *start-menü* - ein grafisches Auswahl-Menü; die Struktur hatte ehemals eine Abstimmung mit den Gruppen
 ;; ======================================================================================================
@@ -208,6 +211,7 @@
     ("Browser starten                 BROWSER-Taste" ,(concatenate 'string "exec " *browser*))
     ("Byobu-Terminal                  präfix c"      "byobu")
     ("Dateimanager                    präfix-x n"    "nautilus")
+    ("Erscheinungsbild ändern         präfix-x L"    "lxappearance")
     ("Emacs                           präfix-e"      "emacs")
     ("Email                           EMAIL-Taste"   "thunderbird")
     ("Hintergrundbild ändern          präfix-x h"    "nitrogen")
@@ -268,8 +272,8 @@
      ("ASCII-Portal         präfix-X A"   "asciiportal")
      ("Battle for Wesnoth   präfix-X b"   "wesnoth --smallgui")
      ("B-Rogue              präfix-X B"   "brogue")
-     ("Comix"                             "comix")
-     ("Crawl                präfix-X c"   "crawl")
+     ("Comix                präfix-X c"   "comix")
+     ("Crawl                präfix-X C"   "crawl")
      ("Desmume              präfix-X d"   "desmume-glade")
      ("Doom RL              präfix-X C-D" "doomrl")
      ("Dwarffortress        präfix-X D"   "dwarffortress")
@@ -307,6 +311,7 @@
     )
     
     ("+ Untermenü: Lisp & StumpWM"
+     ("An interactive Guide to GNU Emacs CL package"           ,(concatenate 'string "exec " *browser* "http://dto.github.com/notebook/require-cl.html"))
      ("CCL - Clozure Common Lisp"                              ,(concatenate 'string "exec " *browser* "http://clozure.com"))
      ("CL User"                                                ,(concatenate 'string "exec " *browser* "http://www.cl-user.net"))
      ("Common Lisp"                                            ,(concatenate 'string "exec " *browser* "http://common-lisp.net/"))
@@ -392,48 +397,48 @@
     )
 
     ("+ Untermenü: Webseiten"
-     ("URL direkt ansteuern            präfix-y u"  "browse-url")
-     ("BBC Nachrichten                 präfix-y b"  "news-bbc")
-     ("Blottr Breaking-News"                        ,(concatenate 'string "exec " *browser* "http://blottr.com"))
-     ("Conkeror für Debian/Ubuntu"                  ,(concatenate 'string "exec " *browser* "http://noone.org/conkeror-nightly-debs/"))
-     ("Conkeror Homepage"                           ,(concatenate 'string "exec " *browser* "http://conkeror.org"))
-     ("Detektiv Conan"                              ,(concatenate 'string "exec " *browser* "http://detektiv-conan.ch"))
-     ("Dictionary of Imaginary Places"              ,(concatenate 'string "exec " *browser* "http://urbangeek.net/dictionary/"))
-     ("DuckDuckGo                      präfix-y d"  "ddg")
-     ("EDXonline Lernplattform"                     ,(concatenate 'string "exec " *browser* "http://www.edxonline.org"))
-     ("Fabled Lands App"                            ,(concatenate 'string "exec " *browser* "http://flapp.sourceforge.net/"))
-     ("Farben für das XTerminal"                    ,(concatenate 'string "exec " *browser* "http://http://critical.ch/xterm/"))
-     ("Fighting Fantasy"                            ,(concatenate 'string "exec " *browser* "http://fightingfantasy.com/"))
-     ("Fighting Fantasy Project"                    ,(concatenate 'string "exec " *browser* "http://www.ffproject.com/"))
-     ("FreshPorts"                                  ,(concatenate 'string "exec " *browser* "http://freshports.org"))
-     ("Full Circle Magazine"                        ,(concatenate 'string "exec " *browser* "http://fullcirclemagazine.org"))
-     ("GetDeb"                                      ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
-     ("Google                          präfix-y g"  "google")
-     ("Gronkh"                                      ,(concatenate 'string "exec " *browser* "http://gronkh.de"))
-     ("Hackernews                      präfix-y h"  "hackernews")
-     ("Heise"                                       ,(concatenate 'string "exec " *browser* "http://heise.de"))
-     ("I.M.D.B.                        präfix-y i"  "imdb-suche")
-     ("IxQuick                         präfix-y I"  "ixquick")
-     ("LEO EN-DE"                                   ,(concatenate 'string "exec " *browser* "http://leo.org"))
-     ("Nachrichten                     präfix-y n"  "nachrichten")
-     ("OMG! Ubuntu"                                 ,(concatenate 'string "exec " *browser* "http://omgubuntu.co.uk"))
-     ("Planet Ubuntu"                               ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
-     ("PlayDeb"                                     ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
-     ("Revo Vortaro EO"                             ,(concatenate 'string "exec " *browser* "http://reta-vortaro.de"))
-     ("Sonja Vortaro EO"                            ,(concatenate 'string "exec " *browser* "http://kisa.ca/vortaro"))
-     ("Thalia"                                      ,(concatenate 'string "exec " *browser* "http://thalia.de"))
-     ("The Guardian                    präfix-y G"  "news-guardian")
-     ("The Pirate Bay                  präfix-y p"  "piratebay")
-     ("The Register                    präfix-y r"  "news-register")
-     ("Titannica - FF wiki"                         ,(concatenate 'string "exec " *browser* "http://fightingfantasy.wikia.com/wiki/Fighting_Fantasy"))
-     ("TOR check"                                   ,(concatenate 'string "exec " *browser* "https://check.torproject.org"))
-     ("Ubuntu Webseite"                             ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
-     ("Ubuntu-Tweak Webseite"                       ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
-     ("Webupd8"                                     ,(concatenate 'string "exec " *browser* "http://webupd8.org"))
-     ("Wetter"                                      "wetter")
-     ("Wikipedia                       präfix-y w"  "wikipedia")
-     ("YouTube                         präfix-y y"  "youtube-suche")
-     ("ZenCast"                                     ,(concatenate 'string "exec " *browser* "http://zencast.org"))
+     ("URL direkt ansteuern            präfix-y u"   "browse-url")
+     ("BBC Nachrichten                 präfix-y b"   "news-bbc")
+     ("Blottr Breaking-News"                         ,(concatenate 'string "exec " *browser* "http://blottr.com"))
+     ("Conkeror für Debian/Ubuntu"                   ,(concatenate 'string "exec " *browser* "http://noone.org/conkeror-nightly-debs/"))
+     ("Conkeror Homepage"                            ,(concatenate 'string "exec " *browser* "http://conkeror.org"))
+     ("Detektiv Conan"                               ,(concatenate 'string "exec " *browser* "http://detektiv-conan.ch"))
+     ("Dictionary of Imaginary Places"               ,(concatenate 'string "exec " *browser* "http://urbangeek.net/dictionary/"))
+     ("DuckDuckGo                      präfix-y d"   "ddg")
+     ("EDXonline Lernplattform"                      ,(concatenate 'string "exec " *browser* "http://www.edxonline.org"))
+     ("Fabled Lands App"                             ,(concatenate 'string "exec " *browser* "http://flapp.sourceforge.net/"))
+     ("Farben für das XTerminal"                     ,(concatenate 'string "exec " *browser* "http://http://critical.ch/xterm/"))
+     ("Fighting Fantasy"                             ,(concatenate 'string "exec " *browser* "http://fightingfantasy.com/"))
+     ("Fighting Fantasy Project"                     ,(concatenate 'string "exec " *browser* "http://www.ffproject.com/"))
+     ("FreshPorts"                                   ,(concatenate 'string "exec " *browser* "http://freshports.org"))
+     ("Full Circle Magazine"                         ,(concatenate 'string "exec " *browser* "http://fullcirclemagazine.org"))
+     ("GetDeb"                                       ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
+     ("Google                          präfix-y g"   "google")
+     ("Gronkh"                                       ,(concatenate 'string "exec " *browser* "http://gronkh.de"))
+     ("Hackernews                      präfix-y h"   "hackernews")
+     ("Heise"                                        ,(concatenate 'string "exec " *browser* "http://heise.de"))
+     ("I.M.D.B.                        präfix-y i"   "imdb-suche")
+     ("IxQuick                         präfix-y I"   "ixquick")
+     ("LEO EN-DE"                                    ,(concatenate 'string "exec " *browser* "http://leo.org"))
+     ("Nachrichten                     präfix-y n"   "nachrichten")
+     ("OMG! Ubuntu"                                  ,(concatenate 'string "exec " *browser* "http://omgubuntu.co.uk"))
+     ("Planet Ubuntu"                                ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
+     ("PlayDeb"                                      ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
+     ("Revo Vortaro EO"                              ,(concatenate 'string "exec " *browser* "http://reta-vortaro.de"))
+     ("Sonja Vortaro EO"                             ,(concatenate 'string "exec " *browser* "http://kisa.ca/vortaro"))
+     ("Thalia"                                       ,(concatenate 'string "exec " *browser* "http://thalia.de"))
+     ("The Guardian                    präfix-y G"   "news-guardian")
+     ("The Pirate Bay                  präfix-y p"   "piratebay")
+     ("The Register                    präfix-y r"   "news-register")
+     ("Titannica - FF wiki"                          ,(concatenate 'string "exec " *browser* "http://fightingfantasy.wikia.com/wiki/Fighting_Fantasy"))
+     ("TOR check"                                    ,(concatenate 'string "exec " *browser* "https://check.torproject.org"))
+     ("Ubuntu Webseite"                              ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
+     ("Ubuntu-Tweak Webseite"                        ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
+     ("Webupd8"                                      ,(concatenate 'string "exec " *browser* "http://webupd8.org"))
+     ("Wetter                          präfix-y C-w" "wetter")
+     ("Wikipedia                       präfix-y w"   "wikipedia")
+     ("YouTube                         präfix-y y"   "youtube-suche")
+     ("ZenCast"                                      ,(concatenate 'string "exec " *browser* "http://zencast.org"))
     )
 
     ("+ Untermenü: WWW-Programme"
@@ -549,8 +554,8 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (banish-pointer) ; Mauszeiger verbannen
   (clear-window-placement-rules))
 
-(if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
-    (toggle-mode-line (current-screen) (current-head)))
+;(if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
+;    (toggle-mode-line (current-screen) (current-head)))
 
 ;; ========================
 ;; Neue Befehle - Vorarbeit
@@ -927,6 +932,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl deluge "Starte/wechsle zum Deluge BitTorrent-Klienten." "deluge" "Deluge")
 
+(neuerbefehl desmume-glade "Starte/wechsle zum Desmume-Emulator." "desmume-glade" "Desmume-glade")
+
 (neuerbefehl dwarffortress "Starte/wechsle zum Sandkastenspiel Dwarf Fortress." "/opt/df_linux/df" "Dwarffortress")
 
 (neuerbefehl dwb "Starte/wechsle zum Dwb Webbrowser." "dwb" "Dwb")	    
@@ -977,6 +984,8 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl keepassx "Starte/wechsle zur KeePassX Passwortverwaltung." "keepassx" "Keepassx")
 
+(neuerbefehl lxappearance "Starte/wechsle zum LxAppearance Einstellungsmanager." "lxappearance" "Lxappearance")
+
 (neuerbefehl minitube "Starte/wechsle zu Minitube Medienabspieler für YouTube-Videos." "minitube" "Minitube")
 
 (neuerbefehl nautilus "Starte/wechsle zum Nautilus Dateimanager." "nautilus --no-desktop" "Nautilus")
@@ -995,7 +1004,7 @@ Beispiel: (echo-time) => 06:11:27"
 
 (neuerbefehl ristretto "Starte/wechsle zum Ristretto Bildbetrachter." "ristretto" "Ristretto")
 
-(neuerbefehl rhythmbox "Starte/wechsle zu Rhythmbox Medienabspieler." "rhythmobox" "Rhythmbox")
+(neuerbefehl rhythmbox "Starte/wechsle zu Rhythmbox Medienabspieler." "rhythmbox-client" "Rhythmbox")
 
 (neuerbefehl scid "Starte/wechsle zum Schachprogramm Scid vs. PC." "scid" "Scid")
 
@@ -1288,6 +1297,7 @@ Beispiel: (echo-time) => 06:11:27"
 		  ("M-s-k"   "keepassx")
 		  ("M-s-K"   "kaffeine")
 		  ("M-s-l"   "alsamixer")
+		  ("M-s-L"   "lxappearance")
 		  ("M-s-m"   "mc")
 		  ("M-s-M"   "mocp")
 		  ("C-s-m"   "minitube")
