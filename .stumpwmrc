@@ -2,30 +2,24 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.32
+;;;; Version 0.33
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
 (in-package :stumpwm)
 
-;; ----------------------------------------------------------
-;; DIESE 4 ZEILEN ANPASSEN!!!
-;; Mein Pfad zu den Contrib-Dateien kann von eurem abweichen!
-;; Die Dateien müssen nur einmal eingelesen werden bei einer
-;; Sitzung, schließlich verändern wir sie ja nicht.
-(when *initializing*
-  (load "~/Entwicklung/lisp/stumpwm/contrib/sbclfix")
-  (load "~/Entwicklung/lisp/stumpwm/contrib/net")
-  (load "~/Entwicklung/lisp/stumpwm/contrib/cpu")
-  (load "~/Entwicklung/lisp/stumpwm/contrib/mem"))
-;; ----------------------------------------------------------
-
 ;; ======================================
 ;; Initialisierung der globalen Variablen
 ;; ======================================
 
-(defparameter *browser* "conkeror "
+(defparameter *contrib-pfad* "~/Entwicklung/lisp/stumpwm/contrib/"
+  "*contrib-pfad* enthält den Pfad, der zum /contrib/-Verzeichnis von StumpWM führt")
+
+(defparameter *browser* (cat "conkeror" " ")
   "*browser* enthält den aktuell genutzten Standardbrowser")
+
+(defparameter *systerm* "exec uxterm -fg gainsboro -bg OrangeRed -class 'Admin-uxterm' -e 'sudo -i'"
+  "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
 
 (defparameter *uxthema* "exec uxterm -fg lavender -bg maroon4"
   "*uxthema* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS. Die Farben wurden ausgesucht anhand von http://http://critical.ch/xterm/")
@@ -35,9 +29,6 @@
 
 (defparameter *uxt-neu* "uxterm -fg lavender -bg maroon4"
   "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
-
-(defparameter *systerm* "exec uxterm -fg gainsboro -bg OrangeRed -class 'Admin-uxterm' -e 'sudo -i'"
-  "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
 
 (defvar *dropbox-zustand* 'eingeschaltet
   "*dropbox-zustand* enthält den Betriebszustand des DropBox-Dienstes")
@@ -480,20 +471,6 @@
 (set-fg-color         "maroon4")
 (set-bg-color         "gainsboro")
 
-;; Grey-Blue Arch Linux Thema
-					;(set-focus-color      "DodgerBlue")
-					;(set-unfocus-color    "black")
-					;(set-win-bg-color     "grey25")
-					;(set-fg-color         "DodgerBlue")
-					;(set-bg-color         "grey25")
-
-;; Lightblue Fedora Thema
-					;(set-focus-color      "lightblue")
-					;(set-unfocus-color    "black")
-					;(set-win-bg-color     "darkblue")
-					;(set-fg-color         "lightblue")
-					;(set-bg-color         "darkblue")
-
 (setq *time-format-string-default* "%A %B %e %k:%M:%S")
 
 (setq *time-modeline-string* "%a %b %e %k:%M:%S")
@@ -543,10 +520,15 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 (setf *screen-mode-line-format*
       '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W"))
 
-;; ===================
-;; Autostart-Programme
-;; ===================
+;; ================================
+;; Beim Erstart einmal zu erledigen
+;; ================================
+
 (when *initializing*
+  (load (cat *contrib-pfad* "sbclfix"))
+  (load (cat *contrib-pfad* "net"))
+  (load (cat *contrib-pfad* "cpu"))
+  (load (cat *contrib-pfad* "mem"))
   (run-or-raise "exec nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
   (run-or-raise "exec synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
   (run-or-raise "exec xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
@@ -555,15 +537,39 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
   (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
   (run-or-raise "exec setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
+  (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
+      (toggle-mode-line (current-screen) (current-head)))
   (banish-pointer) ; Mauszeiger verbannen
   (clear-window-placement-rules))
 
-;(if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
-;    (toggle-mode-line (current-screen) (current-head)))
+;; ==============
+;; Neue defmacros
+;; ==============
 
-;; ========================
-;; Neue Befehle - Vorarbeit
-;; ========================
+(defmacro neuerbefehl (name dokstring befehl klasse)
+  "Kurzes Macro, um einen neuen grafischen Befehl bereitzustellen"
+  `(defcommand ,name () () ,dokstring
+	       (message ,dokstring)
+	       (run-or-raise ,befehl '(:class ,klasse))))
+
+(defmacro neuerterminalbefehl (name dokstring befehl klasse &optional (fg "lavender") (bg "maroon4"))
+  "Kurzes Macro, um einen neuen Terminalbefehl bereitzustellen"
+  `(neuerbefehl ,name ,dokstring (format nil "uxterm -fg ~A -bg ~A -class '~A' -e '~A'" ,fg ,bg ,klasse ,befehl) ,klasse))
+
+(defmacro tastenbindung (keymap taste befehl)
+  "Kurzes Macro, um eine Tastenbindung zu definieren"
+  `(define-key, keymap (kbd, taste), befehl))
+
+(defmacro tastaturbelegung (keymap &rest tasten)
+  "Kurzes Macro, um mehrere Tastenbindungen an eine Keymap zu definieren, verwendet pro Taste die Funktion tastenbindung"
+  (let ((ks (mapcar (lambda (k)
+		      (append (list 'tastenbindung keymap) k))
+		    tasten)))
+    `(progn ,@ks)))
+
+;; ===============
+;; Neue Funktionen
+;; ===============
 
 (defun buchstaben-austauschen (satz)
   "(buchstaben-austauschen string)
@@ -582,6 +588,16 @@ BUCHSTABEN-AUSTAUSCHEN entfernt deutsche Sonderzeichen und ersetzt sie durch lat
 CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
   (apply 'concatenate 'string strings))
 
+(defun datum-uhrzeit ()
+  "(datum-uhrzeit)
+DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurück."
+  (multiple-value-bind (sekunden minuten stunden tag monat jahr) (get-decoded-time)
+    (format nil "~2,'0D.~2,'0D.~4,'0D ~2,'0D:~2,'0D:~2,'0D" tag monat jahr stunden minuten sekunden)))
+
+(defun echo-urgent-window (target)
+  "(echo-urgent-window (target)
+ECHO-URGENDT-WINDOW teilt mit, welches Fenster uns dringend benötigt."
+  (message-no-timeout "~a hat eine Nachricht für dich." (window-title target)))
 
 (defun ersetze-teilstring (string alt neu &key (test #'char=))
   "(ersetze-teilsting string alt neu)
@@ -598,16 +614,6 @@ ERSETZTE-TEILSTRING ersetzt das Teilstück ALT durch NEU."
        when position do (write-string neu ausgabe)
        while position))) 
 
-(defmacro neuerbefehl (name dokstring befehl klasse)
-  `(defcommand ,name () () ,dokstring
-	       (message ,dokstring)
-	       (run-or-raise ,befehl '(:class ,klasse))))
-
-(defmacro neuerterminalbefehl (name dokstring befehl klasse &optional (fg "lavender") (bg "maroon4"))
-	    "Starte/wechsle zu Alsa-Mixer."
-	    `(neuerbefehl ,name ,dokstring (format nil "uxterm -fg ~A -bg ~A -class '~A' -e '~A'"
-					       ,fg ,bg ,klasse ,befehl) ,klasse))
-
 (defun satz-umformatieren (satz)
   "(satz-umformatieren string)
 SATZ-UMFORMATIEREN entfernt alle deutschen Sonderzeichen aus einer übergebenen Zeichenkette und ersetzt sie durch lateinische Standardzeichen."
@@ -616,26 +622,9 @@ SATZ-UMFORMATIEREN entfernt alle deutschen Sonderzeichen aus einer übergebenen 
 (defun string->liste (string)
   (read-from-string (cat "(" string ")")))
 
-(defmacro tastenbindung (keymap taste befehl)
-  "Kurzes Macro, um eine Tastenbindung zu definieren"
-  `(define-key, keymap (kbd, taste), befehl))
-
-(defmacro tastaturbelegung (keymap &rest tasten)
-  "Kurzes Macro, um mehrere Tastenbindungen an eine Keymap zu definieren, verwendet pro Taste die Funktion tastenbindung"
-  (let ((ks (mapcar (lambda (k)
-		      (append (list 'tastenbindung keymap) k))
-		    tasten)))
-    `(progn ,@ks)))
-
 (defun uhrzeit () "Gibt die aktuelle Uhrzeit zurück"
        (multiple-value-bind (sekunden minuten stunden) (get-decoded-time)
 	 (format nil "~2,1,0,'0@A:~2,1,0,'0@A:~2,1,0,'0@A" stunden minuten sekunden)))
-
-(defun datum-uhrzeit ()
-  "(datum-uhrzeit)
-DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurück."
-  (multiple-value-bind (sekunden minuten stunden tag monat jahr) (get-decoded-time)
-    (format nil "~2,'0D.~2,'0D.~4,'0D ~2,'0D:~2,'0D:~2,'0D" tag monat jahr stunden minuten sekunden)))
 
 ;; ===========================================
 ;; Spezialisierte defcommands / Ausgabebefehle
@@ -726,6 +715,8 @@ Beispiel: (echo-time) => 06:11:27"
   (run-shell-command (cat *browser* "'https://www.google.de/search?q=" suche "&tbs=prfl:e'")))
 
 (defcommand gselect-oder-gnew (gruppen-nummer) ((:number "Gruppen-Nummer: "))
+	    "(gselect-oder-gnew gruppen-nr)
+GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstellt worden, legt die Funktion die Gruppe an, bevor hinübergewechselt wird."
   (gselect
    (or (select-group (current-screen) (format nil "~A" gruppen-nummer) )
        ; Die Auswahl der Gruppe schlug fehl, da sie nicht existiert, also erschaffen wir sie
@@ -1465,12 +1456,6 @@ Beispiel: (echo-time) => 06:11:27"
 ;  (0 t   t :class "Xarchiver")
 ;  )
 
-
-(defun echo-urgent-window (target)
-  "(echo-urgent-window (target)
-ECHO-URGENDT-WINDOW teilt mit, welches Fenster uns dringend benötigt."
-  (message-no-timeout "~a hat eine Nachricht für dich." (window-title target)))
-
 ;;; =====
 ;;; Hooks
 ;;; =====
@@ -1485,5 +1470,3 @@ ECHO-URGENDT-WINDOW teilt mit, welches Fenster uns dringend benötigt."
 ;(when *initializing*
 ;  (require 'swank)
 ;  (swank:create-server :dont-close t))
-
-
