@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.31
+;;;; Version 0.32
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -422,6 +422,10 @@
      ("LEO EN-DE"                                    ,(concatenate 'string "exec " *browser* "http://leo.org"))
      ("Nachrichten                     präfix-y n"   "nachrichten")
      ("OMG! Ubuntu"                                  ,(concatenate 'string "exec " *browser* "http://omgubuntu.co.uk"))
+     ("Pirate Parties International"                 ,(concatenate 'string "exec " *browser* "http://www.pp-international.net/"))
+     ("Piratenpartei Deutschland"                    ,(concatenate 'string "exec " *browser* "http://www.piratenpartei.de/"))
+     ("Piratenpartei Krefeld"                        ,(concatenate 'string "exec " *browser* "http://www.seidenstadt-piraten.de/"))
+     ("Piratenpartei NRW"                            ,(concatenate 'string "exec " *browser* "http://www.piratenpartei-nrw.de/"))
      ("Planet Ubuntu"                                ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
      ("PlayDeb"                                      ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
      ("Revo Vortaro EO"                              ,(concatenate 'string "exec " *browser* "http://reta-vortaro.de"))
@@ -543,14 +547,14 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 ;; Autostart-Programme
 ;; ===================
 (when *initializing*
-  (run-or-raise "nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
-  (run-or-raise "synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
-  (run-or-raise "xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
-  (run-or-raise "nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
-  (run-or-raise "ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
-  (run-or-raise "dropbox start" '(:class "Dropbox")) ; Dropbox starten
-  (run-or-raise "gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
-  (run-or-raise "setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
+  (run-or-raise "exec nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
+  (run-or-raise "exec synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
+  (run-or-raise "exec xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
+  (run-or-raise "exec nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
+  (run-or-raise "exec ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
+  (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
+  (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
+  (run-or-raise "exec setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
   (banish-pointer) ; Mauszeiger verbannen
   (clear-window-placement-rules))
 
@@ -565,18 +569,12 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   "(buchstaben-austauschen string)
 BUCHSTABEN-AUSTAUSCHEN entfernt deutsche Sonderzeichen und ersetzt sie durch lateinische Standardzeichen."
   (cond ((null satz) nil)
-	((equal (car satz) #\LATIN_SMALL_LETTER_A_WITH_DIAERESIS)
+	((char-equal (car satz) #\LATIN_SMALL_LETTER_A_WITH_DIAERESIS)
 	 (cons #\a (cons #\e (buchstaben-austauschen (cdr satz)))))
-	((equal (car satz) #\LATIN_SMALL_LETTER_O_WITH_DIAERESIS)
+	((char-equal (car satz) #\LATIN_SMALL_LETTER_O_WITH_DIAERESIS)
 	 (cons #\o (cons #\e (buchstaben-austauschen (cdr satz)))))
-	((equal (car satz) #\LATIN_SMALL_LETTER_U_WITH_DIAERESIS)
+	((char-equal (car satz) #\LATIN_SMALL_LETTER_U_WITH_DIAERESIS)
 	 (cons #\u (cons #\e (buchstaben-austauschen (cdr satz)))))
-	((equal (car satz) #\LATIN_CAPITAL_LETTER_A_WITH_DIAERESIS)
-	 (cons  #\A (cons #\E (buchstaben-austauschen (cdr satz)))))
-	((equal (car satz) #\LATIN_CAPITAL_LETTER_O_WITH_DIAERESIS)
-	 (cons #\O (cons #\E (buchstaben-austauschen (cdr satz)))))
-	((equal (car satz) #\LATIN_CAPITAL_LETTER_U_WITH_DIAERESIS)
-	 (cons #\U (cons #\E (buchstaben-austauschen (cdr satz)))))
 	(t (cons (car satz) (buchstaben-austauschen (cdr satz))))))
 
 (defun cat (&rest strings)
