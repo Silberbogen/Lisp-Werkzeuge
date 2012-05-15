@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.34
+;;;; Version 0.35
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -18,16 +18,28 @@
 (defparameter *browser* (concatenate 'string "conkeror" " ")
   "*browser* enthält den aktuell genutzten Standardbrowser")
 
-(defparameter *systerm* "exec uxterm -fg gainsboro -bg OrangeRed -class 'Admin-uxterm' -e 'sudo -i'"
+(defparameter *dateimanager* (concatenate 'string "pcmanfm" " ")
+  "*dateimanager* enthält den aktuell genutzten Dateimanager")
+
+(defparameter *email-client* (concatenate 'string "thunderbird" " ")
+  "*email-client* enthält den aktuell genutzten Email-Klienten des Systems")
+
+(defparameter *software-center* (concatenate 'string "lubuntu-software-center" " ")
+  "*software-center* enthält das aktuell genutzte Software-Center des Systems")
+
+(defparameter *stumpwm-thema* nil
+  "*stumpwm-thema* kann dazu benutzt werden, ein Thema nachzuladen. Soll keines geladen werden, auf NIL setzen, sonst auf 'lubuntu oder 'ubuntu")
+
+(defparameter *systerm* "exec uxterm -fg CornflowerBlue -bg DarkSlateGrey -class 'Admin-uxterm' -e 'sudo -i'"
   "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
 
-(defparameter *uxthema* "exec uxterm -fg lavender -bg maroon4"
+(defparameter *uxthema* "exec uxterm -fg DodgerBlue -bg NavyBlue"
   "*uxthema* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS. Die Farben wurden ausgesucht anhand von http://http://critical.ch/xterm/")
 
-(defparameter *uxt* "uxterm -fg lavender -bg maroon4 -class 'Userterminal'"
+(defparameter *uxt* "uxterm -fg DodgerBlue -bg NavyBlue -class 'Userterminal'"
   "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
 
-(defparameter *uxt-neu* "uxterm -fg lavender -bg maroon4"
+(defparameter *uxt-neu* "uxterm -fg DodgerBlue -bg NavyBlue"
   "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
 
 (defvar *dropbox-zustand* 'eingeschaltet
@@ -49,15 +61,18 @@
     (define-key m (kbd "a")   "file-roller")
     (define-key m (kbd "C-a") "audacious")
     (define-key m (kbd "C-A") "exec avidemux2_gtk")
-    (define-key m (kbd "b")   "banshee")
+    (define-key m (kbd "b")   *browser*)
+    (define-key m (kbd "B")   "banshee")
     (define-key m (kbd "c")   "conkeror")
     (define-key m (kbd "C")   "chromium-browser")
     (define-key m (kbd "C-c") "cherrytree")
     (define-key m (kbd "C-C") "calibre")
-    (define-key m (kbd "d")   "deluge")
-    (define-key m (kbd "D")   "dropbox-umschalten")
-    (define-key m (kbd "e")   "empathy")
-    (define-key m (kbd "E")   "evince")
+    (define-key m (kbd "d")   *dateimanager*)
+    (define-key m (kbd "D")   "deluge")
+    (define-key m (kbd "C-d")   "dropbox-umschalten")
+    (define-key m (kbd "e")   *email-client*)
+    (define-key m (kbd "E")   "empathy")
+    (define-key m (kbd "C-e")   "evince")
     (define-key m (kbd "f")   "firefox")
     (define-key m (kbd "F")   "focuswriter")
     (define-key m (kbd "g")   "gwibber")
@@ -87,7 +102,7 @@
     (define-key m (kbd "C-Q") "quit")
     (define-key m (kbd "r")   "rhythmbox")
     (define-key m (kbd "R")   "reinit")
-    (define-key m (kbd "s")   "software-center")
+    (define-key m (kbd "s")   *software-center*)
     (define-key m (kbd "S")   "scribus")
     (define-key m (kbd "C-s") "update-manager")
     (define-key m (kbd "C-S") "synaptic")
@@ -199,12 +214,12 @@
     ("Admin-Terminal                  präfix C-c"    "adminterminal")
     ("Archiv-Manager                  präfix-x a"    "file-roller")
     ("Benutzer-Terminal               präfix M-c"    "userterminal")
-    ("Browser starten                 BROWSER-Taste" ,(concatenate 'string "exec " *browser*))
+    ("Browser starten                 präfix-x b"    ,(concatenate 'string "exec " *browser*))
     ("Byobu-Terminal                  präfix c"      "byobu")
-    ("Dateimanager                    präfix-x n"    "nautilus")
+    ("Dateimanager                    präfix-x d"    ,(concatenate 'string "exec " *dateimanager*))
     ("Erscheinungsbild ändern         präfix-x L"    "lxappearance")
     ("Emacs                           präfix-e"      "emacs")
-    ("Email                           EMAIL-Taste"   "thunderbird")
+    ("Email                           präfix-x e"    ,(concatenate 'string "exec " *email-client*))
     ("Hintergrundbild ändern          präfix-x h"    "nitrogen")
     ("Kontrollzentrum                 präfix-x z"    "gnome-control-center")
     ("Kurzmitteilungsdienst           präfix-x g"    "gwibber")
@@ -213,13 +228,13 @@
     ("Medienabspieler                 präfix-x r"    "rhythmbox")
     ("Nachrichtendienste              präfix-x e"    "empathy")
     ("Netzwerkverbindung bearbeiten   präfix-x N"    "nm-connection-editor")
+    ("Software-Center                 präfix-x s"    ,(concatenate 'string "exec " *software-center*))
     ("Software aktualisieren          präfix-x C-s"  "update-manager")
     ("StumpWM beenden                 präfix-x C-Q"  "quit")
     ("StumpWM-Konfiguration neu laden präfix-x R"    "reinit")
     ("Synaptic Paketmanager           präfix-x C-S"  "synaptic")
     ("Taschenrechner                  CALC-Taste"    "speedcrunch")
     ("Touchpad ein/aus                präfix-x y"    "touchpad-umschalten")
-    ("Ubuntu Software-Center          präfix-x s"    "software-center")
     ("UbuntuOne Steuerpult            präfix-x o"    "ubuntuone-control-panel-qt")
     ("Ubuntu-Tweak                    präfix-x T"    "exec ubuntu-tweak")
     ("Übersicht aller Kommandos       präfix C"      "commands")
@@ -251,10 +266,10 @@
     )
 
     ("+ Untermenü: Clouddienste"
-     ("Dropbox ein-/ausschalten   präfix-x D" "dropbox-umschalten")
-     ("DropBox Webseite"                      ,(concatenate 'string "exec " *browser* "https://dropbox.com"))
-     ("UbuntuOne Steuerpult"                  "ubuntuone-control-panel-qt")
-     ("UbuntuOne Webseite"                    ,(concatenate 'string "exec " *browser* "https://one.ubuntu.com"))
+     ("Dropbox ein-/ausschalten   präfix-x C-d" "dropbox-umschalten")
+     ("DropBox Webseite"                        ,(concatenate 'string "exec " *browser* "https://dropbox.com"))
+     ("UbuntuOne Steuerpult"                    "ubuntuone-control-panel-qt")
+     ("UbuntuOne Webseite"                      ,(concatenate 'string "exec " *browser* "https://one.ubuntu.com"))
     )
    
     ("+ Untermenü: Erholung"
@@ -398,7 +413,7 @@
      ("DuckDuckGo                      präfix-y d"   "ddg")
      ("EDXonline Lernplattform"                      ,(concatenate 'string "exec " *browser* "http://www.edxonline.org"))
      ("Fabled Lands App"                             ,(concatenate 'string "exec " *browser* "http://flapp.sourceforge.net/"))
-     ("Farben für das XTerminal"                     ,(concatenate 'string "exec " *browser* "http://http://critical.ch/xterm/"))
+     ("Farben für das XTerminal"                     ,(concatenate 'string "exec " *browser* "http://critical.ch/xterm/"))
      ("Fighting Fantasy"                             ,(concatenate 'string "exec " *browser* "http://fightingfantasy.com/"))
      ("Fighting Fantasy Project"                     ,(concatenate 'string "exec " *browser* "http://www.ffproject.com/"))
      ("FreshPorts"                                   ,(concatenate 'string "exec " *browser* "http://freshports.org"))
@@ -440,7 +455,7 @@
      ("Chromium     präfix-x C"   "chromium-browser")
      ("Claws-Mail"                "claws-mail")
      ("Conkeror     präfix-x c"   "conkeror")
-     ("Deluge       präfix-x d"   "deluge")
+     ("Deluge       präfix-x D"   "deluge")
      ("dwb"                       "dwb")
      ("Firefox      präfix-x f"   "firefox")
      ("Iceweasel    präfix-x i"   "iceweasel")
@@ -465,11 +480,11 @@
 (set-font "-*-terminus-medium-r-normal-*-12-*-*-*-*-*-*-1") ; set-font stellt den Standardzeichensatz ein.
 
 ;; Ubuntu 12.04 LTS Thema
-(set-focus-color      "orange")
+(set-focus-color      "DodgerBlue3")
 (set-unfocus-color    "black")
-(set-win-bg-color     "gainsboro")
-(set-fg-color         "maroon4")
-(set-bg-color         "gainsboro")
+(set-win-bg-color     "CornflowerBlue")
+(set-fg-color         "NavyBlue")
+(set-bg-color         "LightSkyBlue")
 
 (setq *time-format-string-default* "%A %B %e %k:%M:%S")
 
@@ -506,9 +521,9 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 ;; -----------------------
 
 ;; Vorbereitungen für das Modeline-Verhalten
-(setf *mode-line-background-color*      "OrangeRed" ; "Grey18"
-      *mode-line-foreground-color*      "gainsboro" ; "DodgerBlue"
-      *mode-line-border-color*          "gainsboro" ; "CornflowerBlue"
+(setf *mode-line-background-color*      "Grey18"
+      *mode-line-foreground-color*      "DodgerBlue"
+      *mode-line-border-color*          "CornflowerBlue"
       *mode-line-timeout*               1
       *mode-line-position*              :top
       *time-format-string-default*      "%a %d.%m.%Y %I:%M%p"
@@ -536,13 +551,24 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (run-or-raise "exec ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
   (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
   (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
-  (run-or-raise "exec setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen  
+  (run-or-raise "exec setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
   (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
       (toggle-mode-line (current-screen) (current-head)))
   (banish-pointer) ; Mauszeiger verbannen
-  (clear-window-placement-rules))
+  (clear-window-placement-rules)
+)
 
+;; ===================================
+;; Falls ein Thema geladen werden soll
+;; ===================================
 
+(when (eql *stumpwm-thema* 'lubuntu)
+  (message "Lade Lubuntu-Thema")
+  (load "~/lubuntu-thema.lisp"))
+
+(when (eql *stumpwm-thema* 'ubuntu)
+  (message "Lade Ubuntu-Thema")
+  (load "~/ubuntu-thema.lisp"))
 
 ;; ==============
 ;; Neue defmacros
@@ -977,6 +1003,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl lxappearance "Starte/wechsle zum LxAppearance Einstellungsmanager." "lxappearance" "Lxappearance")
 
+(neuerbefehl lubuntu-software-center "Starte/wechsle zum Lubuntu Software-Center." "lubuntu-software-center" "Lubuntu-software-center")
+
 (neuerbefehl minitube "Starte/wechsle zu Minitube Medienabspieler für YouTube-Videos." "minitube" "Minitube")
 
 (neuerbefehl nautilus "Starte/wechsle zum Nautilus Dateimanager." "nautilus --no-desktop" "Nautilus")
@@ -988,6 +1016,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 (neuerbefehl okular "Starte/wechsle zum Okular PDF-Betrachter." "okular" "Okular")
 
 (neuerbefehl palapeli "Starte/wechsle zu Palapeli Puzzle-Spiel." "palapeli" "Palapeli")
+
+(neuerbefehl pcmanfm "Starte/wechsle zum Pcmanfm-Dateimanager." "pcmanfm" "Pcmanfm")
 
 (neuerbefehl pouetChess "Starte/wechsle zu Pouetchess." "pouetChess" "pouetChess")
 
@@ -1130,6 +1160,10 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("S-SPC" "pull-marked")
 		  ("Pause" "windowlist")
 		  ("C-Pause" "grouplist")
+		  ("S-Left"  "move-window left")
+		  ("S-Right"  "move-window right")
+		  ("S-Up"  "move-window up")
+		  ("S-Down"  "move-window down")
 		  ("M-Left" "gprev")
 		  ("M-Right" "gnext")
 		  ("M-S-Left" "gprev-with-window")
@@ -1172,7 +1206,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 ;; --------------------------------------------------------------------------------------
 ;; Zusätzliche Optionen für einen Direkttastenmodus, wie ihn andere Fenstermanager nutzen
-;; - wird von mir nicht mehr genutzt, jedoch gepflegt                                   -                                                    -
+;; - wird von mir nicht mehr genutzt, jedoch gepflegt                                   -
 ;; --------------------------------------------------------------------------------------
 
 (tastaturbelegung *top-map*
@@ -1259,22 +1293,25 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("s-w"   "windows")
 		  ("s-W"   "place-existing-windows")
 		  ;; Programme per Direkttaste starten
-		  ("Print" "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
-		  ("XF86HomePage" *browser*)
-		  ("XF86Mail" "thunderbird")
-		  ("XF86Calculator" "speedcrunch")
+		  ("Print"                "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
+		  ("XF86HomePage"         *browser*)
+		  ("XF86Mail"             *email-client*)
+		  ("XF86Calculator"       "speedcrunch")
 		  ("XF86AudioRaiseVolume" "exec amixer set Master 5%+ unmute")
 		  ("XF86AudioLowerVolume" "exec amixer set Master 5%- unmute")
-		  ("XF86AudioMute" "exec amixer set Master toggle")
+		  ("XF86AudioMute"        "exec amixer set Master toggle")
 		  ;; Programme per Tastenkombination starten
 		  ("M-s-a"   "file-roller")
-		  ("M-s-b"   "banshee")
+		  ("M-s-b"   *browser*)
+		  ("M-s-B"   "banshee")
 		  ("M-s-c"   "conkeror")
 		  ("M-s-C"   "chromium-browser")
-		  ("M-s-d"   "deluge")
-		  ("M-s-D"   "dropbox-umschalten")
-		  ("M-s-e"   "empathy")
-		  ("M-s-E"   "evince")
+		  ("M-s-d"   *dateimanager*)
+		  ("M-s-D"   "deluge")
+		  ("M-C-s-d"   "dropbox-umschalten")
+		  ("M-s-e"   *email-client*)
+		  ("M-s-E"   "empathy")
+		  ("M-C-s-e"   "evince")
 		  ("M-s-f"   "firefox")
 		  ("M-s-F"   "focuswriter")
 		  ("M-s-g"   "gwibber")
@@ -1283,7 +1320,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("M-s-H"   "htop")
 		  ("M-s-i"   "idle-python3.2")
 		  ("M-s-I"   "i2p-umschalten")
-		  ("C-M-s-i"   "exec iscan")
+		  ("M-C-s-i"   "exec iscan")
 		  ("M-s-j"   "jumanji")
 		  ("M-s-k"   "keepassx")
 		  ("M-s-K"   "kaffeine")
@@ -1301,7 +1338,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("M-s-q"   "geeqie")
 		  ("M-s-r"   "rhythmbox")
 		  ("M-s-R"   "reinit")
-		  ("M-s-s"   "software-center")
+		  ("M-s-s"   *software-center*)
 		  ("M-s-S"   "scribus")
 		  ("M-C-s-s" "update-manager")
 		  ("M-C-s-S" "synaptic")
