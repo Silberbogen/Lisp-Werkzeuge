@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.35
+;;;; Version 0.36
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -12,17 +12,26 @@
 ;; Initialisierung der globalen Variablen
 ;; ======================================
 
-(defparameter *contrib-pfad* "~/Entwicklung/lisp/stumpwm/contrib/"
-  "*contrib-pfad* enthält den Pfad, der zum /contrib/-Verzeichnis von StumpWM führt")
+(defparameter *archivmanager* (concatenate 'string "file-roller" " ")
+  "*archivmanager* enthält den aktuell genutzten Archivmanager")
 
 (defparameter *browser* (concatenate 'string "conkeror" " ")
   "*browser* enthält den aktuell genutzten Standardbrowser")
+
+(defparameter *contrib-pfad* "~/Entwicklung/lisp/stumpwm/contrib/"
+  "*contrib-pfad* enthält den Pfad, der zum /contrib/-Verzeichnis von StumpWM führt")
 
 (defparameter *dateimanager* (concatenate 'string "pcmanfm" " ")
   "*dateimanager* enthält den aktuell genutzten Dateimanager")
 
 (defparameter *email-client* (concatenate 'string "thunderbird" " ")
   "*email-client* enthält den aktuell genutzten Email-Klienten des Systems")
+
+(defparameter *medien-abspieler* (concatenate 'string "rhythmbox" " ")
+  "*medien-abspieler* enthält den aktuell genutzten Medien-Abspieler des Systems")
+
+(defparameter *nachrichtendienst* (concatenate 'string "pidgin" " ")
+  "*nachrichtendienst* enthält den aktuell genutzten nachrichtendienst des Systems")
 
 (defparameter *software-center* (concatenate 'string "lubuntu-software-center" " ")
   "*software-center* enthält das aktuell genutzte Software-Center des Systems")
@@ -58,7 +67,7 @@
 (defparameter *programmstart-map*
   (let ((m (make-sparse-keymap)))
     (define-key m (kbd "Print") "exec scrot -d 5 -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
-    (define-key m (kbd "a")   "file-roller")
+    (define-key m (kbd "a")   *archivmanager*)
     (define-key m (kbd "C-a") "audacious")
     (define-key m (kbd "C-A") "exec avidemux2_gtk")
     (define-key m (kbd "b")   *browser*)
@@ -69,10 +78,10 @@
     (define-key m (kbd "C-C") "calibre")
     (define-key m (kbd "d")   *dateimanager*)
     (define-key m (kbd "D")   "deluge")
-    (define-key m (kbd "C-d")   "dropbox-umschalten")
+    (define-key m (kbd "C-d") "dropbox-umschalten")
     (define-key m (kbd "e")   *email-client*)
     (define-key m (kbd "E")   "empathy")
-    (define-key m (kbd "C-e")   "evince")
+    (define-key m (kbd "C-e")  "evince")
     (define-key m (kbd "f")   "firefox")
     (define-key m (kbd "F")   "focuswriter")
     (define-key m (kbd "g")   "gwibber")
@@ -81,18 +90,18 @@
     (define-key m (kbd "H")   "htop")
     (define-key m (kbd "i")   "idle-python3.2")
     (define-key m (kbd "I")   "i2p-umschalten")
-    (define-key m (kbd "C-i")   "exec iscan")
+    (define-key m (kbd "C-i") "exec iscan")
     (define-key m (kbd "j")   "jumanji")
     (define-key m (kbd "k")   "keepassx")
     (define-key m (kbd "K")   "kaffeine")
     (define-key m (kbd "l")   "alsamixer")
     (define-key m (kbd "L")   "lxappearance")
     (define-key m (kbd "C-k") "exec k3b")
-    (define-key m (kbd "m")   "mc")
-    (define-key m (kbd "M")   "mocp")
-    (define-key m (kbd "C-m") "minitube")  
-    (define-key m (kbd "C-M") "mathomatic")
-    (define-key m (kbd "n")   "nautilus")
+    (define-key m (kbd "m")   *medien-abspieler*)
+    (define-key m (kbd "M")   "mc")
+    (define-key m (kbd "C-m") "mocp")
+    (define-key m (kbd "C-M") "minitube")
+    (define-key m (kbd "n")   *nachrichtendienst*)
     (define-key m (kbd "N")   "nm-connection-editor")
     (define-key m (kbd "o")   "ubuntuone-control-panel-qt")
     (define-key m (kbd "O")   "okular")
@@ -108,7 +117,7 @@
     (define-key m (kbd "C-S") "synaptic")
     (define-key m (kbd "t")   "thunderbird")
     (define-key m (kbd "T")   "ubuntu-tweak")
-    (define-key m (kbd "C-t")  "ttytter")
+    (define-key m (kbd "C-t") "ttytter")
     (define-key m (kbd "u")   "unison-gtk")
     (define-key m (kbd "v")   "vlc")
     (define-key m (kbd "V")   "vym")
@@ -212,7 +221,7 @@
 (defparameter *start-menü*
   `(
     ("Admin-Terminal                  präfix C-c"    "adminterminal")
-    ("Archiv-Manager                  präfix-x a"    "file-roller")
+    ("Archiv-Manager                  präfix-x a"    ,(concatenate 'string "exec " *archivmanager*))
     ("Benutzer-Terminal               präfix M-c"    "userterminal")
     ("Browser starten                 präfix-x b"    ,(concatenate 'string "exec " *browser*))
     ("Byobu-Terminal                  präfix c"      "byobu")
@@ -225,8 +234,8 @@
     ("Kurzmitteilungsdienst           präfix-x g"    "gwibber")
     ("Kurzmitteilung posten           präfix-y z"    "gwibber-poster")
     ("Lautstärke regeln               präfix-x l"    "alsamixer")
-    ("Medienabspieler                 präfix-x r"    "rhythmbox")
-    ("Nachrichtendienste              präfix-x e"    "empathy")
+    ("Medienabspieler                 präfix-x m"    (concatenate 'string "exec " *medien-abspieler*))
+    ("Nachrichtendienste              präfix-x n"    *nachrichtendienst*)
     ("Netzwerkverbindung bearbeiten   präfix-x N"    "nm-connection-editor")
     ("Software-Center                 präfix-x s"    ,(concatenate 'string "exec " *software-center*))
     ("Software aktualisieren          präfix-x C-s"  "update-manager")
@@ -256,7 +265,7 @@
      ("LibreOffice-Math"                      "lomath")
      ("LibreOffice-Startcenter"               "loffice")
      ("LibreOffice-Writer"                    "lowriter")
-     ("Mathomatic               präfix-x C-M" "mathomatic")
+     ("Mathomatic"                            "mathomatic")
      ("Okular                   präfix-x O"   "okular")
      ("PyRoom                   präfix-x P"   "pyroom")
      ("Scribus                  präfix-x S"   "scribus")
@@ -350,12 +359,12 @@
      ("Audacious           präfix-x C-a" "audacious")
      ("AviDeMux            präfix-x C-A" "avidemux2_gtk")
      ("Banshee             präfix-x b"   "banshee")
-     ("Comix"                            "comix")     
+     ("Comix               präfix-X c"   "comix")     
      ("Geeqie              präfix-x q"   "geeqie")
      ("K3b Burner          präfix-x C-k" "k3b")
      ("Kaffeine            präfix-x K"   "kaffeine")
-     ("MiniTube            präfix-x C-m" "minitube")
-     ("Music on Console    präfix-x m"   "mocp")
+     ("MiniTube            präfix-x C-M" "minitube")
+     ("Music on Console    präfix-x C-m" "mocp")
      ("Ristretto"                        "ristretto")
      ("TV-Browser          "             "tvbrowser")
      ("VideoLan-Client     präfix-x v"   "vlc")
@@ -366,6 +375,7 @@
      ("Ask Ubuntu                                 präfix-y a" ,(concatenate 'string "exec " *browser* "http://askubuntu.com"))
      ("Diaspora*"                                             ,(concatenate 'string "exec " *browser* "https://joindiaspora.com/stream"))
      ("Dwarf Fortress Wiki"                                   ,(concatenate 'string "exec " *browser* "http://df.magmawiki.com"))
+     ("Empathy Chat-Klient"                                   "empathy")
      ("GitHUB"                                                ,(concatenate 'string "exec " *browser* "https://github.com"))
      ("Google+                                    präfix-y m" "google+mitteilungen")
      ("i2p-Netzwerk ein/aus                       präfix-x I" "i2p-umschalten")
@@ -374,32 +384,34 @@
      ("Lernu Esperanto"                                       ,(concatenate 'string "exec " *browser* "http://lernu.net"))
      ("Memory Alpha                               präfix-y M" "memory-alpha")
      ("Minecraft Wiki"                                        ,(concatenate 'string "exec " *browser* "http://www.minecraftwiki.net"))
+     ("Pidgin Chat-Klient"                                    "pidgin")
      ("Stackoverflow                              präfix-y s" "stackoverflow")
      ("SubCentral"                                            ,(concatenate 'string "exec " *browser* "http://subcentral.de"))
      ("Telecomix"                                             ,(concatenate 'string "exec " *browser* "https://status.telecomix.org"))
      ("Twitter"                                               ,(concatenate 'string "exec " *browser* "https://twitter.com"))
      ("Ubuntuusers Deutschland"                               ,(concatenate 'string "exec " *browser* "http://ubuntuusers.de"))
-     ("X-Chat IRC-Netz                            präfix-x x" "xchat")     
+     ("X-Chat Chat-Klient                         präfix-x x" "xchat")     
     )
     
     ("+ Untermenü: System"
-     ("Bildschirmschoner einstellen"                           "xscreensaver-demo")
-     ("Event-Anzeiger XEV"                                     "xev")
-     ("GNOME-Partitions-Editor"                                "gparted")
-     ("GPG-Crypter"                                            "gpg-crypter")
-     ("Htop                                       präfix-x H"  "htop")
-     ("KeePassX                                   präfix-x k"  "keepassx")
-     ("Kurzmitteilungsdienst-Einstellungen"                    "gwibber-preferences")
-     ("Kurzmitteilungsdienst-Konteneinstellungen"              "gwibber-accounts")
-     ("Midnight Commander                         präfix-x m"  "mc")
-     ("Nachrichtendienst-Kontoeinstellungen"                   "empathy-accounts")
-     ("UnetBootin Starmedienersteller"                         "gksudo unetbootin")
-     ("Unison Synchronisationsdienste             präfix-x u"  "unison-gtk")
-     ("USB-Startmedienersteller"                               "usb-creator-gtk")
-     ("WICD (curses)                              präfix-x w"  "wicd-curses")
-     ("XArchiver                                  präfix-x X"  "xarchiver")
-     ("XFontSel"                                               "xfontsel")
-     ("Zustände der globalen Variablen anzeigen"               "zustände-anzeigen")
+     ("Bildschirmschoner einstellen"                                   "xscreensaver-demo")
+     ("Event-Anzeiger XEV"                                             "xev")
+     ("File-Rikker"                                                    "file-roller")
+     ("GNOME-Partitions-Editor"                                        "gparted")
+     ("GPG-Crypter"                                                    "gpg-crypter")
+     ("Htop                                               präfix-x H"  "htop")
+     ("KeePassX                                           präfix-x k"  "keepassx")
+     ("Empathy-Kurzmitteilungsdienst-Einstellungen"                    "gwibber-preferences")
+     ("Empathy-Kurzmitteilungsdienst-Konteneinstellungen"              "gwibber-accounts")
+     ("Midnight Commander                                 präfix-x m"  "mc")
+     ("Nachrichtendienst-Kontoeinstellungen"                           "empathy-accounts")
+     ("UnetBootin Starmedienersteller"                                 "gksudo unetbootin")
+     ("Unison Synchronisationsdienste                     präfix-x u"  "unison-gtk")
+     ("USB-Startmedienersteller"                                       "usb-creator-gtk")
+     ("WICD (curses)                                      präfix-x w"  "wicd-curses")
+     ("XArchiver                                          präfix-x X"  "xarchiver")
+     ("XFontSel"                                                       "xfontsel")
+     ("Zustände der globalen Variablen anzeigen"                       "zustände-anzeigen")
     )
 
     ("+ Untermenü: Webseiten"
@@ -457,11 +469,13 @@
      ("Conkeror     präfix-x c"   "conkeror")
      ("Deluge       präfix-x D"   "deluge")
      ("dwb"                       "dwb")
+     ("Empatyh"                   "empathy")
      ("Firefox      präfix-x f"   "firefox")
      ("Iceweasel    präfix-x i"   "iceweasel")
      ("Jumanji      präfix-x j"   "jumanji")
      ("MiniTube     präfix-x C-m" "minitube")
      ("Mutt"                      "mutt")
+     ("Pidgin"                    "pidgin")
      ("Surf"                      "surf")
      ("Telecomix    präfix-y t"   "telecomix")
      ("Thunderbird  präfix-x t"   "thunderbird")
@@ -979,6 +993,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl gnome-control-center "Starte/wechsle zum Kontrollzentrum." "gnome-control-center" "Gnome-control-center")
 
+(neuerbefehl gnome-mplayer "Starte/wechsle zum Gnome MPlayer." "gnome-mplayer" "Gnome-mplayer")
+
 (neuerbefehl gparted "Starte/wechsle zu GNOME-Partitions-Editor." "exec gksudo gparted" "Gparted")
 
 (neuerbefehl gwibber "Starte/wechsle zum Gwibber Kurznachrichtendienst." "gwibber" "Gwibber")
@@ -1018,6 +1034,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 (neuerbefehl palapeli "Starte/wechsle zu Palapeli Puzzle-Spiel." "palapeli" "Palapeli")
 
 (neuerbefehl pcmanfm "Starte/wechsle zum Pcmanfm-Dateimanager." "pcmanfm" "Pcmanfm")
+
+(neuerbefehl pidgin "Starte/wechsle zum Pidgin-Nachrichtendienst." "pidgin" "Pidgin")
 
 (neuerbefehl pouetChess "Starte/wechsle zu Pouetchess." "pouetChess" "pouetChess")
 
@@ -1301,7 +1319,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("XF86AudioLowerVolume" "exec amixer set Master 5%- unmute")
 		  ("XF86AudioMute"        "exec amixer set Master toggle")
 		  ;; Programme per Tastenkombination starten
-		  ("M-s-a"   "file-roller")
+		  ("M-s-a"   *archivmanager*)
 		  ("M-s-b"   *browser*)
 		  ("M-s-B"   "banshee")
 		  ("M-s-c"   "conkeror")
@@ -1326,11 +1344,11 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("M-s-K"   "kaffeine")
 		  ("M-s-l"   "alsamixer")
 		  ("M-s-L"   "lxappearance")
-		  ("M-s-m"   "mc")
-		  ("M-s-M"   "mocp")
-		  ("C-s-m"   "minitube")
-		  ("C-s-M"   "mathomatic")
-		  ("M-s-n"   "nautilus")
+		  ("M-s-m"   *medien-abspieler*)
+		  ("M-s-M"   "mc")
+		  ("M-C-s-m" "mocp")
+		  ("M-C-s-M" "minitube")
+		  ("M-s-n"   *nachrichtendienst*)
 		  ("M-s-N"   "nm-connection-editor")
 		  ("M-s-o"   "ubuntuone-control-panel-qt")
 		  ("M-s-O"   "okular")

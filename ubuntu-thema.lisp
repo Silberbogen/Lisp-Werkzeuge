@@ -2,15 +2,21 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; Ubuntu Thema zum Nachladen durch die StumpWM-RC-Datei
-;;;; Version 0.01
+;;;; Version 0.02
 ;;;; ============================================================================================
 (in-package :stumpwm)
+
+(setq *archivmanager* (concatenate 'string "file-roller" " "))
 
 (setq *browser* (concatenate 'string "firefox" " "))
 
 (setq *dateimanager* (concatenate 'string "nautilus" " "))
 
 (setq *email-client* (concatenate 'string "thunderbird" " "))
+
+(setq *medien-abspieler* (concatenate 'string "rhythmbox" " "))
+
+(setq *nachrichtendienst* (concatenate 'string "empathy" " "))
 
 (setq *software-center* (concatenate 'string "software-center" " "))
 

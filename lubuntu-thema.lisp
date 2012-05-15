@@ -2,15 +2,21 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; Lubuntu Thema zum Nachladen durch die StumpWM-RC-Datei
-;;;; Version 0.01
+;;;; Version 0.02
 ;;;; ============================================================================================
 (in-package :stumpwm)
+
+(setq *archivmanager* (concatenate 'string "file-roller" " "))
 
 (setq *browser* (concatenate 'string "chromium-browser" " "))
 
 (setq *dateimanager* (concatenate 'string "pcmanfm" " "))
 
 (setq *email-client* (concatenate 'string "sylpheed" " "))
+
+(setq *medien-abspieler* (concatenate 'string "gnome-mplayer" " "))
+
+(setq *nachrichtendienst* (concatenate 'string "pidgin" " "))
 
 (setq *software-center* (concatenate 'string "lubuntu-software-center" " "))
 
