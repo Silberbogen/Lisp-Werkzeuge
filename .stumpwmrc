@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.37
+;;;; Version 0.38
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -21,7 +21,7 @@
 (defparameter *contrib-pfad* "~/Entwicklung/lisp/stumpwm/contrib/"
   "*contrib-pfad* enthält den Pfad, der zum /contrib/-Verzeichnis von StumpWM führt")
 
-(defparameter *dateimanager* (concatenate 'string "pcmanfm" " ")
+(defparameter *dateimanager* (concatenate 'string "nautilus" " ")
   "*dateimanager* enthält den aktuell genutzten Dateimanager")
 
 (defparameter *email-client* (concatenate 'string "thunderbird" " ")
@@ -30,10 +30,10 @@
 (defparameter *medien-abspieler* (concatenate 'string "rhythmbox" " ")
   "*medien-abspieler* enthält den aktuell genutzten Medien-Abspieler des Systems")
 
-(defparameter *nachrichtendienst* (concatenate 'string "pidgin" " ")
+(defparameter *nachrichtendienst* (concatenate 'string "empathy" " ")
   "*nachrichtendienst* enthält den aktuell genutzten nachrichtendienst des Systems")
 
-(defparameter *software-center* (concatenate 'string "lubuntu-software-center" " ")
+(defparameter *software-center* (concatenate 'string "synaptic" " ")
   "*software-center* enthält das aktuell genutzte Software-Center des Systems")
 
 (defparameter *stumpwm-thema* nil
@@ -223,6 +223,7 @@
     (define-key m (kbd "p")   "piratebay")
     (define-key m (kbd "P")   "google+profile")
     (define-key m (kbd "r")   "news-register")
+    (define-key m (kbd "R")   "recipefy")
     (define-key m (kbd "s")   "stackoverflow")
     (define-key m (kbd "T")   "telecomix")
     (define-key m (kbd "t")   "ttytter")
@@ -251,6 +252,7 @@
     ("Emacs                           präfix-e"      "emacs")
     ("Email                           präfix-x e"    ,(concatenate 'string "exec " *email-client*))
     ("Hintergrundbild ändern          präfix-x h"    "nitrogen")
+    ("Kennwortverwaltung              präfix-x k"    "keepassx")
     ("Kontrollzentrum                 präfix-x z"    "gnome-control-center")
     ("Kurzmitteilungsdienst           präfix-x g"    "gwibber")
     ("Kurzmitteilung posten           präfix-y z"    "gwibber-poster")
@@ -262,7 +264,6 @@
     ("Software aktualisieren          präfix-x C-s"  "update-manager")
     ("StumpWM beenden                 präfix-x C-Q"  "quit")
     ("StumpWM-Konfiguration neu laden präfix-x R"    "reinit")
-    ("Synaptic Paketmanager           präfix-x S"    "synaptic")
     ("Taschenrechner                  CALC-Taste"    "speedcrunch")
     ("Touchpad ein/aus                präfix-x y"    "touchpad-umschalten")
     ("UbuntuOne Steuerpult            präfix-x o"    "ubuntuone-control-panel-qt")
@@ -409,8 +410,10 @@
      ("Memory Alpha                               präfix-y M" "memory-alpha")
      ("Minecraft Wiki"                                        ,(concatenate 'string "exec " *browser* "http://www.minecraftwiki.net"))
      ("Pidgin Chat-Klient"                                    "pidgin")
+     ("Recipefy                                   präfix-y R" "recipefy")
      ("Stackoverflow                              präfix-y s" "stackoverflow")
      ("SubCentral"                                            ,(concatenate 'string "exec " *browser* "http://subcentral.de"))
+     ("Synaptic Paketmanager                      präfix-x S" "synaptic")
      ("Telecomix"                                             ,(concatenate 'string "exec " *browser* "https://status.telecomix.org"))
      ("Twitter"                                               ,(concatenate 'string "exec " *browser* "https://twitter.com"))
      ("Ubuntuusers Deutschland"                               ,(concatenate 'string "exec " *browser* "http://ubuntuusers.de"))
@@ -420,7 +423,7 @@
     ("+ Untermenü: System"
      ("Bildschirmschoner einstellen"                                   "xscreensaver-demo")
      ("Event-Anzeiger XEV"                                             "xev")
-     ("File-Rikker"                                                    "file-roller")
+     ("File-Roller"                                                    "file-roller")
      ("GNOME-Partitions-Editor"                                        "gparted")
      ("GPG-Crypter"                                                    "gpg-crypter")
      ("Htop                                               präfix-x H"  "htop")
@@ -590,8 +593,8 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
   (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
   (run-or-raise "exec setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
-  (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
-      (toggle-mode-line (current-screen) (current-head)))
+;  (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
+;      (toggle-mode-line (current-screen) (current-head)))
   (banish-pointer) ; Mauszeiger verbannen
   (clear-window-placement-rules)
 )
@@ -893,6 +896,13 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
   (check-type suche string)
   (nsubstitute #\+ #\Space suche)
   (run-shell-command (cat *browser* "https://thepiratebay.se/search.php?q=" suche)))
+
+(defcommand recipefy (suche)
+  ((:string "Durchsuche Rezepte bei Recipefy nach: "))
+  "Dient zur Suche bei Recipefy per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.recipefy.com/de/recipe-search?search[value]=" suche)))
 
 (defcommand reinit () ()
 	    "Reinitialisierung des Systems"
@@ -1247,7 +1257,6 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 ;; ---------------------------------------------------------------------
 
 (tastaturbelegung *root-map*
-		  ("u" "menü")
 		  ("x" '*programmstart-map*)
 		  ("y" '*websuche-map*)
 		  ("X" '*erholung-map*)
@@ -1256,7 +1265,6 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  )
 
 (tastaturbelegung *top-map*
-		  ("s-u" "menü")
 		  ("s-x" '*programmstart-map*)
 		  ("s-y" '*websuche-map*)
 		  ("s-X" '*erholung-map*)
@@ -1425,6 +1433,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("C-s-p" "piratebay")
 		  ("C-s-P" "google+profile")
 		  ("C-s-r" "news-register")
+		  ("C-s-R" "recipefy")
 		  ("C-s-s" "stackoverflow")
 		  ("C-s-u" "browse-url")
 		  ("C-s-w" "wikipedia")
