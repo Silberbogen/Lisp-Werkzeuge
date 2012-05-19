@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.40
+;;;; Version 0.41
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -257,8 +257,8 @@
     ("Kurzmitteilungsdienst           präfix-x g"    "gwibber")
     ("Kurzmitteilung posten           präfix-y z"    "gwibber-poster")
     ("Lautstärke regeln               präfix-x l"    "alsamixer")
-    ("Medienabspieler                 präfix-x m"    (concatenate 'string "exec " *medien-abspieler*))
-    ("Nachrichtendienste              präfix-x n"    *nachrichtendienst*)
+    ("Medienabspieler                 präfix-x m"    ,(concatenate 'string "exec " *medien-abspieler*))
+    ("Nachrichtendienste              präfix-x n"    ,(concatenate 'string "exec " *nachrichtendienst*))
     ("Netzwerkverbindung bearbeiten   präfix-x N"    "nm-connection-editor")
     ("Software-Center                 präfix-x s"    ,(concatenate 'string "exec " *software-center*))
     ("Software aktualisieren          präfix-x C-s"  "update-manager")
