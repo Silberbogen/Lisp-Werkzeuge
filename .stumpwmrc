@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.39
+;;;; Version 0.40
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -397,6 +397,31 @@
      ("XVidCap Screencast  präfix-x C-v" "xvidcap")
     )
 
+    ("+ Untermenü: Python, Go & andere Algol-Sprachen"
+     ("A Byte of Python 3"                                    ,(concatenate 'string "exec " *browser* "http://www.swaroopch.org/notes/Python_en:Table_of_Contents"))
+     ("Das deutsche Python-Forum"                             ,(concatenate 'string "exec " *browser* "http://www.python-forum.de/"))
+     ("Das deutsche Python-Wiki"                              ,(concatenate 'string "exec " *browser* "http://wiki.python.de/"))
+     ("Das Python 3.2 Tutorial auf Deutsch"                   ,(concatenate 'string "exec " *browser* "http://tutorial.pocoo.org/"))
+     ("Eine Anleitung zum Programmieren in Go"                ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/go_tutorial_de.html"))
+     ("Galileo-Openbook: C von A bis Z"                       ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/c_von_a_bis_z/"))
+     ("Galileo-Openbook: Linux-Unix-Programmierung"           ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/linux_unix_programmierung/"))
+     ("Galileo-Openbook: Python"                              ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/python/"))
+     ("Galileo-Openbook: Shell-Programmierung"                ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/shell_programmierung/"))
+     ("Galileo-Openbook: Wie werde ich Unix-Guru?"            ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/unix_guru/"))
+     ("Go Language Resources"                                 ,(concatenate 'string "exec " *browser* "http://go-lang.cat-v.org/"))
+     ("GoLang Tutorials"                                      ,(concatenate 'string "exec " *browser* "http://golangtutorials.blogspot.se/2011/05/table-of-contents.html"))
+     ("GoPkgDoc / Bitbucket"                                  ,(concatenate 'string "exec " *browser* "http://go.pkgdoc.org/"))
+     ("Learning Go"                                           ,(concatenate 'string "exec " *browser* "http://www.miek.nl/projects/learninggo/index.html"))
+     ("Nightly builds of the book 'Learning Go'"              ,(concatenate 'string "exec " *browser* "http://www.miek.nl/files/go/"))
+     ("The Go Programming Language - Official Side"           ,(concatenate 'string "exec " *browser* "http://golang.org/"))
+     ("The Python 3.2 Documentation"                          ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/index.html"))
+     ("The Python 3.2 Language Reference"                     ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/reference/index.html"))
+     ("The Python 3.2 Standard Library"                       ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/library/index.html"))
+     ("The Python 3.2 Tutorial"                               ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/tutorial/"))
+     ("Wie man mit Go arbeitet"                               ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/code_de.html"))
+     ("Wirkungsvoll Go programmieren"                         ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/effective_go_de.html"))
+    )
+    
     ("+ Untermenü: Soziale Netzwerke"
      ("Ask Ubuntu                                 präfix-y a" ,(concatenate 'string "exec " *browser* "http://askubuntu.com"))
      ("Diaspora*"                                             ,(concatenate 'string "exec " *browser* "https://joindiaspora.com/stream"))
