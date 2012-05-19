@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.38
+;;;; Version 0.39
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -360,6 +360,7 @@
      ("Common Lisp Wiki"                                       ,(concatenate 'string "exec " *browser* "http://www.cliki.net/index"))
      ("Debugstufe umschalten                   präfix-x C-d"   "debuggen-umschalten")
      ("Denksport: 99 Lisp Probleme"                            ,(concatenate 'string "exec " *browser* "http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html"))
+     ("Doug Hoyte's Let over Lambda book"                      ,(concatenate 'string "exec " *browser* "http://letoverlambda.com/"))
      ("ELM-Art Lisp Tutor (Deutsch/English)"                   ,(concatenate 'string "exec " *browser* "http://art2.ph-freiburg.de/art/login-d.html"))
      ("Graham's On Lisp Book"                                  ,(concatenate 'string "exec " *browser* "http://www.paulgraham.com/onlisptext.html"))
      ("L1sp"                                                   ,(concatenate 'string "exec " *browser* "http://l1sp.org"))
@@ -574,7 +575,13 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 
 ;; Modeline zeigt Zeit in lokalem Format, CPU-Nutzung, Netzwerk-Verkehr, Gruppe, Notifikation und aktuellen Rahmen
 (setf *screen-mode-line-format*
-      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W"))
+      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " %t %c %M %l " (:eval (format-gmail nil)) " [^B%n^b] %W "))
+
+;(setf *screen-mode-line-format*
+;      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " %t %c %M %l [^B%n^b] %W " (:eval (format-gmail nil))))
+
+;(setf *screen-mode-line-format*
+;      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W" ))
 
 ;; ================================
 ;; Beim Erstart einmal zu erledigen
@@ -585,6 +592,7 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (load (concatenate 'string *contrib-pfad* "net"))
   (load (concatenate 'string *contrib-pfad* "cpu"))
   (load (concatenate 'string *contrib-pfad* "mem"))
+  (load "gmail.lisp")
   (run-or-raise "exec nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
   (run-or-raise "exec synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
   (run-or-raise "exec xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
@@ -593,8 +601,8 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
   (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
   (run-or-raise "exec setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
-;  (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
-;      (toggle-mode-line (current-screen) (current-head)))
+  (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
+      (toggle-mode-line (current-screen) (current-head)))
   (banish-pointer) ; Mauszeiger verbannen
   (clear-window-placement-rules)
 )
@@ -614,6 +622,10 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 ;; ==============
 ;; Neue defmacros
 ;; ==============
+    
+(defmacro ersetze-hook (hook fn)
+  `(remove-hook ,hook ,fn)
+  `(add-hook ,hook ,fn))
 
 (defmacro neuerbefehl (name dokstring befehl klasse)
   "Kurzes Macro, um einen neuen grafischen Befehl bereitzustellen"
@@ -681,7 +693,7 @@ ERSETZTE-TEILSTRING ersetzt das Teilstück ALT durch NEU."
 			:start alte-position
 			:end (or position (length string)))
        when position do (write-string neu ausgabe)
-       while position))) 
+       while position)))
 
 (defun satz-umformatieren (satz)
   "(satz-umformatieren string)
@@ -691,9 +703,15 @@ SATZ-UMFORMATIEREN entfernt alle deutschen Sonderzeichen aus einer übergebenen 
 (defun string->liste (string)
   (read-from-string (cat "(" string ")")))
 
-(defun uhrzeit () "Gibt die aktuelle Uhrzeit zurück"
-       (multiple-value-bind (sekunden minuten stunden) (get-decoded-time)
-	 (format nil "~2,1,0,'0@A:~2,1,0,'0@A:~2,1,0,'0@A" stunden minuten sekunden)))
+(defun tastendruck-hook (taste tasten-seq befehl)
+  (declare (ignore taste))
+  (unless (stringp befehl)
+    (message "Tasten gedrückt: ~A" (print-key-seq (reverse tasten-seq)))))
+
+(defun uhrzeit ()
+  "Gibt die aktuelle Uhrzeit zurück"
+  (multiple-value-bind (sekunden minuten stunden) (get-decoded-time)
+    (format nil "~2,1,0,'0@A:~2,1,0,'0@A:~2,1,0,'0@A" stunden minuten sekunden)))
 
 ;; ===========================================
 ;; Spezialisierte defcommands / Ausgabebefehle
@@ -1561,8 +1579,9 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 ;;; =====
 ;;; Hooks
 ;;; =====
-
+    
 (add-hook *urgent-window-hook* 'echo-urgent-window)
+(ersetze-hook *key-press-hook* 'tastendruck-hook)
 
 ;; =========================================
 ;; für aktive Programmierzyklen - SWANK
