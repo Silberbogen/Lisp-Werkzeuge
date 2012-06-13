@@ -1,0 +1,1682 @@
+;-*-lisp-*-
+;-*- coding: utf-8 -*-
+;;;; ============================================================================================
+;;;; StumpWM-RC-Datei
+;;;; Version 0.43
+;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
+;;;; mit prefix-x R neu einlesen nach einer Änderung
+;;;; ============================================================================================
+(in-package :stumpwm)
+
+;; ======================================
+;; Initialisierung der globalen Variablen
+;; ======================================
+
+(defparameter *archivmanager* (concatenate 'string "file-roller" " ")
+  "*archivmanager* enthält den aktuell genutzten Archivmanager")
+
+(defparameter *browser* (concatenate 'string "chromium-browser" " ")
+  "*browser* enthält den aktuell genutzten Standardbrowser")
+
+(defparameter *contrib-pfad* "~/Dropbox/Lisp/stumpwm/contrib/"
+  "*contrib-pfad* enthält den Pfad, der zum /contrib/-Verzeichnis von StumpWM führt")
+
+(defparameter *dateimanager* (concatenate 'string "nautilus" " ")
+  "*dateimanager* enthält den aktuell genutzten Dateimanager")
+
+(defparameter *email-client* (concatenate 'string "thunderbird" " ")
+  "*email-client* enthält den aktuell genutzten Email-Klienten des Systems")
+
+(defparameter *medien-abspieler* (concatenate 'string "rhythmbox" " ")
+  "*medien-abspieler* enthält den aktuell genutzten Medien-Abspieler des Systems")
+
+(defparameter *nachrichtendienst* (concatenate 'string "pidgin" " ")
+  "*nachrichtendienst* enthält den aktuell genutzten nachrichtendienst des Systems")
+
+(defparameter *software-center* (concatenate 'string "synaptic" " ")
+  "*software-center* enthält das aktuell genutzte Software-Center des Systems")
+
+(defparameter *stumpwm-thema* nil
+  "*stumpwm-thema* kann dazu benutzt werden, ein Thema nachzuladen. Soll keines geladen werden, auf NIL setzen, sonst auf 'lubuntu oder 'ubuntu")
+
+(defparameter *systerm* "exec uxterm -fg CornflowerBlue -bg DarkSlateGrey -class 'Admin-uxterm' -e 'sudo -i'"
+  "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
+
+(defparameter *uxthema* "exec uxterm -fg DodgerBlue -bg NavyBlue"
+  "*uxthema* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS. Die Farben wurden ausgesucht anhand von http://http://critical.ch/xterm/")
+
+(defparameter *uxt* "uxterm -fg DodgerBlue -bg NavyBlue -class 'Userterminal'"
+  "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
+
+(defparameter *uxt-neu* "uxterm -fg DodgerBlue -bg NavyBlue"
+  "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
+
+(defvar *dropbox-zustand* 'eingeschaltet
+  "*dropbox-zustand* enthält den Betriebszustand des DropBox-Dienstes")
+
+(defvar *i2p-zustand* 'unbestimmt
+  "*i2p-zustand* enthält den Zustand ob i2p betrieben wird")
+
+(defvar *touchpad-zustand* 'ausgeschaltet
+  "*touchpad-zustand* enthält die Information, ob das Touchpad eingeschaltet oder ausgeschaltet ist")
+
+;; -------------------------------------------------------------
+;; emacs-artige Tastenbedienung mit Präfix - *programmstart-map*
+;; -------------------------------------------------------------
+
+(defparameter *programmstart-map*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "Print") "exec scrot -d 5 -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
+    (define-key m (kbd "a")   *archivmanager*)
+    (define-key m (kbd "C-a") "audacious")
+    (define-key m (kbd "C-A") "exec avidemux2_gtk")
+    (define-key m (kbd "b")   *browser*)
+    (define-key m (kbd "B")   "banshee")
+    (define-key m (kbd "c")   "conkeror")
+    (define-key m (kbd "C")   "chromium-browser")
+    (define-key m (kbd "d")   *dateimanager*)
+    (define-key m (kbd "D")   "deluge")
+    (define-key m (kbd "C-d") "dropbox-umschalten")
+    (define-key m (kbd "e")   *email-client*)
+    (define-key m (kbd "E")   "empathy")
+    (define-key m (kbd "f")   "firefox")
+    (define-key m (kbd "g")   "gwibber")
+    (define-key m (kbd "h")   "nitrogen")
+    (define-key m (kbd "H")   "htop")
+    (define-key m (kbd "i")   "i2p-umschalten")
+    (define-key m (kbd "j")   "jumanji")
+    (define-key m (kbd "k")   "keepassx")
+    (define-key m (kbd "K")   "kaffeine")
+    (define-key m (kbd "C-k") "exec k3b")
+    (define-key m (kbd "l")   "alsamixer")
+    (define-key m (kbd "L")   "lxappearance")
+    (define-key m (kbd "m")   *medien-abspieler*)
+    (define-key m (kbd "M")   "mc")
+    (define-key m (kbd "C-m") "mocp")
+    (define-key m (kbd "C-M") "minitube")
+    (define-key m (kbd "n")   *nachrichtendienst*)
+    (define-key m (kbd "N")   "nm-connection-editor")
+    (define-key m (kbd "o")   "ubuntuone-control-panel-qt")
+    (define-key m (kbd "p")   "exec dmenu_run")
+    (define-key m (kbd "P")   "pidgin")
+    (define-key m (kbd "q")   "geeqie")
+    (define-key m (kbd "C-Q") "quit")
+    (define-key m (kbd "r")   "rhythmbox")
+    (define-key m (kbd "R")   "reinit")
+    (define-key m (kbd "s")   *software-center*)
+    (define-key m (kbd "S")   "synaptic")
+    (define-key m (kbd "C-s") "update-manager")
+    (define-key m (kbd "t")   "thunderbird")
+    (define-key m (kbd "T")   "ubuntu-tweak")
+    (define-key m (kbd "C-t") "ttytter")
+    (define-key m (kbd "u")   "unison-gtk")
+    (define-key m (kbd "v")   "vlc")
+    (define-key m (kbd "C-v") "exec xvidcap")
+    (define-key m (kbd "w")   "wicd-curses")
+    (define-key m (kbd "x")   "xchat")
+    (define-key m (kbd "y")   "touchpad-umschalten")
+    (define-key m (kbd "z")   "gnome-control-center")
+    m))
+
+;; --------------------------------------------------------
+;; emacs-artige Tastenbedienung mit Präfix - *arbeiten-map*
+;; --------------------------------------------------------
+
+(defparameter *arbeiten-map*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "a")   "abiword")
+    (define-key m (kbd "A")   "abook")
+    (define-key m (kbd "c")   "localc")
+    (define-key m (kbd "C")   "calibre")
+    (define-key m (kbd "C-c") "cherrytree")
+    (define-key m (kbd "d")   "lodraw")
+    (define-key m (kbd "e")   "evince")
+    (define-key m (kbd "f")   "fbreader")
+    (define-key m (kbd "F")   "focuswriter")
+    (define-key m (kbd "g")   "gimp")
+    (define-key m (kbd "G")   "gnumeric")
+    (define-key m (kbd "i")   "idle-python3.2")
+    (define-key m (kbd "I")   "inkscape")
+    (define-key m (kbd "C-i") "loimpress")
+    (define-key m (kbd "C-I") "iscan")
+    (define-key m (kbd "m")   "lomath")
+    (define-key m (kbd "M")   "mathomatic")
+    (define-key m (kbd "o")   "loffice")
+    (define-key m (kbd "O")   "okular")
+    (define-key m (kbd "p")   "pyroom")
+    (define-key m (kbd "r")   "rednotebook")
+    (define-key m (kbd "s")   "scribes")
+    (define-key m (kbd "S")   "scribus")
+    (define-key m (kbd "C-s") "simple-scan")
+    (define-key m (kbd "v")   "gvim")
+    (define-key m (kbd "V")   "vym")
+    (define-key m (kbd "w")   "lowriter")
+    (define-key m (kbd "z")   "zathura")
+    m))
+
+;; --------------------------------------------------------
+;; emacs-artige Tastenbedienung mit Präfix - *erholung-map*
+;; --------------------------------------------------------
+
+(defparameter *erholung-map*
+  (let ((m (make-sparse-keymap)))
+     (define-key m (kbd "a")   "exec adv770")
+     (define-key m (kbd "A")   "exec asciiportal")
+     (define-key m (kbd "C-a") "aliensrl")
+     (define-key m (kbd "b")   "exec wesnoth --smallgui")
+     (define-key m (kbd "B")   "brogue")
+     (define-key m (kbd "c")   "comix")
+     (define-key m (kbd "C")   "crawl")
+     (define-key m (kbd "d")   "desmume-glade")
+     (define-key m (kbd "D")   "dwarffortress")
+     (define-key m (kbd "C-d") "exec dwarftherapist")
+     (define-key m (kbd "C-D") "doomrl")
+     (define-key m (kbd "f")   "flands")
+     (define-key m (kbd "F")   "flare")
+     (define-key m (kbd "C-f") "exec freedroidRPG")
+     (define-key m (kbd "h")   "exec hitchhikersguide")
+     (define-key m (kbd "l")   "exec scummvm")
+     (define-key m (kbd "m")   "exec java -jar minecraft.jar")
+     (define-key m (kbd "C-M") "moria")
+     (define-key m (kbd "C-m") "exec mangband")
+     (define-key m (kbd "M")   "exec minutor")
+     (define-key m (kbd "p")   "palapelli")
+     (define-key m (kbd "P")   "worldofpadman")
+     (define-key m (kbd "C-p") "pouetChess")
+     (define-key m (kbd "C-P") "pychess")
+     (define-key m (kbd "r")   "rogue")
+     (define-key m (kbd "s")   "scid")
+     (define-key m (kbd "C-S") "exec stella")
+     (define-key m (kbd "S")   "exec supertuxkart")
+     (define-key m (kbd "C-s") "exec scummvm")
+     (define-key m (kbd "t")   "exec tome")
+     (define-key m (kbd "T")   "exec tome4")
+     (define-key m (kbd "v")   "exec gvbam")
+     (define-key m (kbd "w")   "exec warmux")
+     (define-key m (kbd "W")   "exec widelands")
+     (define-key m (kbd "C-w") "worldofpadman")
+     (define-key m (kbd "x")   "xorcurses")
+     (define-key m (kbd "X")   "exec xskat")
+     (define-key m (kbd "z")   "exec zsnes")
+     (define-key m (kbd "1")   "zork1")
+     (define-key m (kbd "2")   "zork2")
+     (define-key m (kbd "3")   "zork3")
+     m))
+
+;; --------------------------------------------------------
+;; emacs-artige Tastenbedienung mit Präfix - *websuche-map*
+;; --------------------------------------------------------
+
+(defparameter *websuche-map*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "a")   "askubuntu")
+    (define-key m (kbd "b")   "news-bbc")
+    (define-key m (kbd "c")   "clhs")
+    (define-key m (kbd "d")   "ddg")
+    (define-key m (kbd "g")   "google")
+    (define-key m (kbd "G")   "news-guardian")
+    (define-key m (kbd "h")   "hackernews")
+    (define-key m (kbd "i")   "imdb-suche")
+    (define-key m (kbd "I")   "ixquick")
+    (define-key m (kbd "m")   "google+mitteilungen")
+    (define-key m (kbd "M")   "memory-alpha")
+    (define-key m (kbd "n")   "nachrichten")
+    (define-key m (kbd "o")   "open-selection-browser")
+    (define-key m (kbd "m")   "google+mitteilungen")
+    (define-key m (kbd "p")   "piratebay")
+    (define-key m (kbd "P")   "google+profile")
+    (define-key m (kbd "r")   "news-register")
+    (define-key m (kbd "R")   "recipefy")
+    (define-key m (kbd "s")   "stackoverflow")
+    (define-key m (kbd "T")   "telecomix")
+    (define-key m (kbd "t")   "ttytter")
+    (define-key m (kbd "u")   "browse-url")
+    (define-key m (kbd "w")   "wikipedia")
+    (define-key m (kbd "W")   "wikipedia-en")
+    (define-key m (kbd "C-w") "wetter")
+    (define-key m (kbd "y")   "youtube-suche")
+    (define-key m (kbd "z")   "gwibber-poster")
+    (define-key m (kbd "Z")   "zwitschere")
+    m))
+
+;; ======================================================================================================
+;; *start-menü* - ein grafisches Auswahl-Menü; die Struktur hatte ehemals eine Abstimmung mit den Gruppen
+;; ======================================================================================================
+
+(defparameter *start-menü*
+  `(
+    ("Admin-Terminal                  präfix C-c"    "adminterminal")
+    ("Archiv-Manager                  präfix-x a"    ,(concatenate 'string "exec " *archivmanager*))
+    ("Benutzer-Terminal               präfix M-c"    "userterminal")
+    ("Browser starten                 präfix-x b"    ,(concatenate 'string "exec " *browser*))
+    ("Byobu-Terminal                  präfix c"      "byobu")
+    ("Dateimanager                    präfix-x d"    ,(concatenate 'string "exec " *dateimanager*))
+    ("Erscheinungsbild ändern         präfix-x L"    "lxappearance")
+    ("Emacs                           präfix-e"      "emacs")
+    ("Email                           präfix-x e"    ,(concatenate 'string "exec " *email-client*))
+    ("Hintergrundbild ändern          präfix-x h"    "nitrogen")
+    ("Kennwortverwaltung              präfix-x k"    "keepassx")
+    ("Kontrollzentrum                 präfix-x z"    "gnome-control-center")
+    ("Kurzmitteilungsdienst           präfix-x g"    "gwibber")
+    ("Kurzmitteilung posten           präfix-y z"    "gwibber-poster")
+    ("Lautstärke regeln               präfix-x l"    "alsamixer")
+    ("Medienabspieler                 präfix-x m"    ,(concatenate 'string "exec " *medien-abspieler*))
+    ("Nachrichtendienste              präfix-x n"    ,(concatenate 'string "exec " *nachrichtendienst*))
+    ("Netzwerkverbindung bearbeiten   präfix-x N"    "nm-connection-editor")
+    ("Software-Center                 präfix-x s"    ,(concatenate 'string "exec " *software-center*))
+    ("Software aktualisieren          präfix-x C-s"  "update-manager")
+    ("StumpWM beenden                 präfix-x C-Q"  "quit")
+    ("StumpWM-Konfiguration neu laden präfix-x R"    "reinit")
+    ("Taschenrechner                  CALC-Taste"    "speedcrunch")
+    ("Touchpad ein/aus                präfix-x y"    "touchpad-umschalten")
+    ("UbuntuOne Steuerpult            präfix-x o"    "ubuntuone-control-panel-qt")
+    ("Ubuntu-Tweak                    präfix-x T"    "exec ubuntu-tweak")
+    ("Übersicht aller Kommandos       präfix C"      "commands")
+    
+    ("+ Untermenü: Arbeiten"
+     ("Abiword                  präfix-Y a"   "abiword")
+     ("Adressbuch               präfix-Y A"   "abook")
+     ("Calibre                  präfix-Y C"   "calibre")
+     ("Cherrytree               präfix-Y C-c" "cherrytree")
+     ("Evince                   präfix-Y e"   "evince")
+     ("Emacs                    präfix-e"     "emacs")
+     ("Emacs Klientenmodus      präfix-E"     "emacsclient")
+     ("FB-Reader                präfix-Y f"   "fbreader")
+     ("FocusWriter              präfix-Y F"   "focuswriter")
+     ("GIMP                     präfix-Y g"   "gimp")
+     ("Gnumeric                 präfix-Y G"   "gnumeric")
+     ("Idle Python 3            präfix-Y i"   "idle-python3.2")
+     ("Inkscape                 präfix-Y I"   "inkscape")
+     ("iScan                    präfix-Y C-I" "iscan")
+     ("LibreOffice-Calc         präfix-Y c"   "localc")
+     ("LibreOffice-Draw         präfix-Y d"   "lodraw")
+     ("LibreOffice-Impress      präfix-Y C-i" "loimpress")
+     ("LibreOffice-Math         präfix-Y m"   "lomath")
+     ("LibreOffice-Startcenter  präfix-Y o"   "loffice")
+     ("LibreOffice-Writer       präfix-Y w"   "lowriter")
+     ("Mathomatic               präfix-Y M"   "mathomatic")
+     ("Okular                   präfix-Y O"   "okular")
+     ("PyRoom                   präfix-Y P"   "pyroom")
+     ("Rednotebook              präfix-Y r"   "rednotebook")
+     ("Scribes                  präfix-Y-s"   "scribes")
+     ("Scribus                  präfix-Y S"   "scribus")
+     ("Simple-Scan              präfix-Y C-s" "simple-scan")
+     ("Vim                      präfix-Y v"   "gvim")
+     ("ViewYourMind             präfix-Y V"   "vym")
+     ("Zathura                  präfix-Y z"   "zathura")
+    )
+
+    ("+ Untermenü: Clouddienste"
+     ("Dropbox ein-/ausschalten   präfix-x C-d" "dropbox-umschalten")
+     ("DropBox Webseite"                        ,(concatenate 'string "exec " *browser* "https://dropbox.com"))
+     ("UbuntuOne Steuerpult"                    "ubuntuone-control-panel-qt")
+     ("UbuntuOne Webseite"                      ,(concatenate 'string "exec " *browser* "https://one.ubuntu.com"))
+    )
+   
+    ("+ Untermenü: Erholung"
+     ("Adventure 770        präfix-X a"   "adv770")
+     ("Aliens RL            präfix-X C-a" "aliensrl")
+     ("ASCII-Portal         präfix-X A"   "asciiportal")
+     ("Battle for Wesnoth   präfix-X b"   "wesnoth --smallgui")
+     ("B-Rogue              präfix-X B"   "brogue")
+     ("Comix                präfix-X c"   "comix")
+     ("Crawl                präfix-X C"   "crawl")
+     ("Desmume              präfix-X d"   "desmume-glade")
+     ("Doom RL              präfix-X C-D" "doomrl")
+     ("Dwarffortress        präfix-X D"   "dwarffortress")
+     ("DwarfTherapist       präfix-X C-d" "dwarftherapist")
+     ("Fabled Lands App     präfix-X f"   "flands")
+     ("Flare RPG            präfix-X F"   "flare")
+     ("Freedroid-RPG        präfix-X C-f" "freedroidRPG")
+     ("Hitchhikers Guide    präfix-X h"   "hitchhikersguide")
+     ("Minecraft            präfix-X m"   "java -jar minecraft.jar")
+     ("Minutor              präfix-X M"   "minutor")
+     ("MiniTube             präfix-x M"   "minitube")
+     ("Moria                präfix-X C-M" "moria")
+     ("Multiplayer-Angband  präfix-X C-m" "mangband")
+     ("Palapelli            präfix-X p"   "palapelli")
+     ("Pouet-Chess 3D       präfix-X C-p" "pouetChess")
+     ("Prime RL             präfix-X P"   "primerl")
+     ("PyChess Staunton     präfix-X C-P" "pychess")
+     ("Rogue                präfix-X r"   "rogue")
+     ("Scid vs. PC          präfix-X s"   "scid")
+     ("S.C.U.M.M.-VM        präfix-X C-s" "scummvm")
+     ("STella               präfix-X C-S" "stella")
+     ("Supertux-Kart        präfix-X S"   "supertuxkart")
+     ("T.O.M.E. 2           präfix-X t"   "tome")
+     ("T.O.M.E. 4           präfix-X T"   "tome4")
+     ("VisualBoy Advanced m präfix-X v"   "gvbam")
+     ("Warmux               präfix-X w"   "warmux")
+     ("Widelands            präfix-X W"   "widelands")
+     ("World of Padman      präfix-X C-w" "wop")
+     ("XorCurses            präfix-X x"   "xorcurses")
+     ("X-Skat               präfix-X X"   "exec xskat")
+     ("Zork 1               präfix-X 1"   "zork1")
+     ("Zork 2               präfix-X 2"   "zork2")
+     ("Zork 3               präfix-X 3"   "zork3")
+     ("ZSNES                präfix-X z"   "zsnes")
+    )
+    
+    ("+ Untermenü: Lisp & StumpWM"
+     ("An interactive Guide to GNU Emacs CL package"           ,(concatenate 'string "exec " *browser* "http://dto.github.com/notebook/require-cl.html"))
+     ("CCL - Clozure Common Lisp"                              ,(concatenate 'string "exec " *browser* "http://clozure.com"))
+     ("CL User"                                                ,(concatenate 'string "exec " *browser* "http://www.cl-user.net"))
+     ("Common Lisp"                                            ,(concatenate 'string "exec " *browser* "http://common-lisp.net/"))
+     ("Common Lisp Coobbook"                                   ,(concatenate 'string "exec " *browser* "http://cl-cookbook.sourceforge.net/"))
+     ("Common Lisp HyperSpec                   präfix-y c"     ,(concatenate 'string "exec " *browser* "http://www.lispworks.com/documentation/HyperSpec/Front/index.htm"))
+     ("Common Lisp Wiki"                                       ,(concatenate 'string "exec " *browser* "http://www.cliki.net/index"))
+     ("Debugstufe umschalten                   präfix-x C-d"   "debuggen-umschalten")
+     ("Denksport: 99 Lisp Probleme"                            ,(concatenate 'string "exec " *browser* "http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html"))
+     ("Doug Hoyte's Let over Lambda book"                      ,(concatenate 'string "exec " *browser* "http://letoverlambda.com/"))
+     ("ELM-Art Lisp Tutor (Deutsch/English)"                   ,(concatenate 'string "exec " *browser* "http://art2.ph-freiburg.de/art/login-d.html"))
+     ("Graham's On Lisp Book"                                  ,(concatenate 'string "exec " *browser* "http://www.paulgraham.com/onlisptext.html"))
+     ("L1sp"                                                   ,(concatenate 'string "exec " *browser* "http://l1sp.org"))
+     ("Lambkins Successful Lisp Book"                          ,(concatenate 'string "exec " *browser* "http://psg.com/~dlamkins/sl/cover.html"))
+     ("Lisp-Forum"                                             ,(concatenate 'string "exec " *browser* "http://www.lispforum.com"))
+     ("Lisptips"                                               ,(concatenate 'string "exec " *browser* "http://lisptips.com/"))
+     ("Planet LISP"                                            ,(concatenate 'string "exec " *browser* "http://planet.lisp.org"))
+     ("Planet SBCL"                                            ,(concatenate 'string "exec " *browser* "http://planet.sbcl.org"))
+     ("Quicklisp Blog & News"                                  ,(concatenate 'string "exec " *browser* "http://blog.quicklisp.org/"))
+     ("Rosetta Code"                                           ,(concatenate 'string "exec " *browser* "http://rosettacode.org/wiki/Category:Common_Lisp"))
+     ("Seibel's Practical Common Lisp Book"                    ,(concatenate 'string "exec " *browser* "http://gigamonkeys.com/book/"))
+     ("SBCL - Steelbank Common Lisp"                           ,(concatenate 'string "exec " *browser* "http://sbcl.org"))
+     ("Slime Tips"                                             ,(concatenate 'string "exec " *browser* "http://slime-tips.tumblr.com/"))
+     ("Steele's CL the Language, 2nd Ed. Book"                 ,(concatenate 'string "exec " *browser* "http://www.cs.cmu.edu/Groups/AI/html/cltl/cltl2.html"))
+     ("StumpWM Homepage"                                       ,(concatenate 'string "exec " *browser* "http://stumpwm.org"))
+     ("StumpWM Wiki"                                           ,(concatenate 'string "exec " *browser* "http://stumpwm.svkt.org/cgi-bin/wiki.pl"))
+     ("Touretzky's Common Lisp Book"                           ,(concatenate 'string "exec " *browser* "http://www.cs.cmu.edu/~dst/LispBook/"))
+     ("Wikibook: Common Lisp"                                  ,(concatenate 'string "exec " *browser* "https://en.wikibooks.org/wiki/Common_Lisp"))
+    )
+    
+    ("+ Untermenü: Multimedia"
+     ("Audacious           präfix-x C-a" "audacious")
+     ("AviDeMux            präfix-x C-A" "avidemux2_gtk")
+     ("Banshee             präfix-x B"   "banshee")
+     ("Comix               präfix-X c"   "comix")     
+     ("Geeqie              präfix-x q"   "geeqie")
+     ("K3b Burner          präfix-x C-k" "k3b")
+     ("Kaffeine            präfix-x K"   "kaffeine")
+     ("MiniTube            präfix-x C-M" "minitube")
+     ("Music on Console    präfix-x C-m" "mocp")
+     ("Ristretto"                        "ristretto")
+     ("TV-Browser"                       "tvbrowser")
+     ("VideoLan-Client     präfix-x v"   "vlc")
+     ("XVidCap Screencast  präfix-x C-v" "xvidcap")
+    )
+
+    ("+ Untermenü: Python, Go & andere Algol-Sprachen"
+     ("A Byte of Python 3"                                       ,(concatenate 'string "exec " *browser* "http://www.swaroopch.org/notes/Python_en:Table_of_Contents"))
+     ("Das deutsche Python-Forum"                                ,(concatenate 'string "exec " *browser* "http://www.python-forum.de/"))
+     ("Das deutsche Python-Wiki"                                 ,(concatenate 'string "exec " *browser* "http://wiki.python.de/"))
+     ("Das Python 3.2 Tutorial auf Deutsch"                      ,(concatenate 'string "exec " *browser* "http://tutorial.pocoo.org/"))
+     ("Eine Anleitung zum Programmieren in Go"                   ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/go_tutorial_de.html"))
+     ("Galileo-Openbook: C von A bis Z"                          ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/c_von_a_bis_z/"))
+     ("Galileo-Openbook: Linux-Unix-Programmierung"              ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/linux_unix_programmierung/"))
+     ("Galileo-Openbook: Python"                                 ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/python/"))
+     ("Galileo-Openbook: Shell-Programmierung"                   ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/shell_programmierung/"))
+     ("Galileo-Openbook: Wie werde ich Unix-Guru?"               ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/unix_guru/"))
+     ("Go Language Resources"                                    ,(concatenate 'string "exec " *browser* "http://go-lang.cat-v.org/"))
+     ("GoLang Tutorials"                                         ,(concatenate 'string "exec " *browser* "http://golangtutorials.blogspot.se/2011/05/table-of-contents.html"))
+     ("GoPkgDoc / Bitbucket"                                     ,(concatenate 'string "exec " *browser* "http://go.pkgdoc.org/"))
+     ("Idle - Python 3.2                           präfix-Y C-i" "idle-python3.2")
+     ("Learning Go"                                              ,(concatenate 'string "exec " *browser* "http://www.miek.nl/projects/learninggo/index.html"))
+     ("Nightly builds of the book 'Learning Go'"                 ,(concatenate 'string "exec " *browser* "http://www.miek.nl/files/go/"))
+     ("The Go Programming Language - Official Side"              ,(concatenate 'string "exec " *browser* "http://golang.org/"))
+     ("The Python 3.2 Documentation"                             ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/index.html"))
+     ("The Python 3.2 Language Reference"                        ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/reference/index.html"))
+     ("The Python 3.2 Standard Library"                          ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/library/index.html"))
+     ("The Python 3.2 Tutorial"                                  ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/tutorial/"))
+     ("Wie ein Informatiker denken lernen ... mit Python"        ,(concatenate 'string "exec " *browser* "http://ada.rg16.asn-wien.ac.at/~python/how2think/"))
+     ("Wie man mit Go arbeitet"                                  ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/code_de.html"))
+     ("Wirkungsvoll Go programmieren"                            ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/effective_go_de.html"))
+    )
+    
+    ("+ Untermenü: Soziale Netzwerke"
+     ("Ask Ubuntu                                 präfix-y a" ,(concatenate 'string "exec " *browser* "http://askubuntu.com"))
+     ("Diaspora*"                                             ,(concatenate 'string "exec " *browser* "https://joindiaspora.com/stream"))
+     ("Dwarf Fortress Wiki"                                   ,(concatenate 'string "exec " *browser* "http://df.magmawiki.com"))
+     ("Empathy Chat-Klient"                                   "empathy")
+     ("GitHUB"                                                ,(concatenate 'string "exec " *browser* "https://github.com"))
+     ("Google+                                    präfix-y m" "google+mitteilungen")
+     ("i2p-Netzwerk ein/aus                       präfix-x i" "i2p-umschalten")
+     ("identi.ca"                                             ,(concatenate 'string "exec " *browser* "https://identi.ca"))
+     ("Launchpad"                                             ,(concatenate 'string "exec " *browser* "https://launchpad.net"))
+     ("Lernu Esperanto"                                       ,(concatenate 'string "exec " *browser* "http://lernu.net"))
+     ("Memory Alpha                               präfix-y M" "memory-alpha")
+     ("Minecraft Wiki"                                        ,(concatenate 'string "exec " *browser* "http://www.minecraftwiki.net"))
+     ("Pidgin Chat-Klient"                                    "pidgin")
+     ("Recipefy                                   präfix-y R" "recipefy")
+     ("Stackoverflow                              präfix-y s" "stackoverflow")
+     ("SubCentral"                                            ,(concatenate 'string "exec " *browser* "http://subcentral.de"))
+     ("Synaptic Paketmanager                      präfix-x S" "synaptic")
+     ("Telecomix"                                             ,(concatenate 'string "exec " *browser* "https://status.telecomix.org"))
+     ("Twitter"                                               ,(concatenate 'string "exec " *browser* "https://twitter.com"))
+     ("Ubuntuusers Deutschland"                               ,(concatenate 'string "exec " *browser* "http://ubuntuusers.de"))
+     ("X-Chat Chat-Klient                         präfix-x x" "xchat")     
+    )
+    
+    ("+ Untermenü: System"
+     ("Bildschirmschoner einstellen"                                   "xscreensaver-demo")
+     ("Event-Anzeiger XEV"                                             "xev")
+     ("File-Roller"                                                    "file-roller")
+     ("GNOME-Partitions-Editor"                                        "gparted")
+     ("GPG-Crypter"                                                    "gpg-crypter")
+     ("Htop                                               präfix-x H"  "htop")
+     ("KeePassX                                           präfix-x k"  "keepassx")
+     ("Empathy-Kurzmitteilungsdienst-Einstellungen"                    "gwibber-preferences")
+     ("Empathy-Kurzmitteilungsdienst-Konteneinstellungen"              "gwibber-accounts")
+     ("Midnight Commander                                 präfix-x m"  "mc")
+     ("Nachrichtendienst-Kontoeinstellungen"                           "empathy-accounts")
+     ("UnetBootin Starmedienersteller"                                 "gksudo unetbootin")
+     ("Unison Synchronisationsdienste                     präfix-x u"  "unison-gtk")
+     ("USB-Startmedienersteller"                                       "usb-creator-gtk")
+     ("WICD (curses)                                      präfix-x w"  "wicd-curses")
+     ("XArchiver"                                                      "xarchiver")
+     ("XFontSel"                                                       "xfontsel")
+     ("Zustände der globalen Variablen anzeigen"                       "zustände-anzeigen")
+    )
+
+    ("+ Untermenü: Webseiten"
+     ("URL direkt ansteuern            präfix-y u"   "browse-url")
+     ("BBC Nachrichten                 präfix-y b"   "news-bbc")
+     ("Blottr Breaking-News"                         ,(concatenate 'string "exec " *browser* "http://blottr.com"))
+     ("Conkeror für Debian/Ubuntu"                   ,(concatenate 'string "exec " *browser* "http://noone.org/conkeror-nightly-debs/"))
+     ("Conkeror Homepage"                            ,(concatenate 'string "exec " *browser* "http://conkeror.org"))
+     ("Detektiv Conan"                               ,(concatenate 'string "exec " *browser* "http://detektiv-conan.ch"))
+     ("Dictionary of Imaginary Places"               ,(concatenate 'string "exec " *browser* "http://urbangeek.net/dictionary/"))
+     ("DuckDuckGo                      präfix-y d"   "ddg")
+     ("EDXonline Lernplattform"                      ,(concatenate 'string "exec " *browser* "http://www.edxonline.org"))
+     ("Fabled Lands App"                             ,(concatenate 'string "exec " *browser* "http://flapp.sourceforge.net/"))
+     ("Farben für das XTerminal"                     ,(concatenate 'string "exec " *browser* "http://critical.ch/xterm/"))
+     ("Fighting Fantasy"                             ,(concatenate 'string "exec " *browser* "http://fightingfantasy.com/"))
+     ("Fighting Fantasy Project"                     ,(concatenate 'string "exec " *browser* "http://www.ffproject.com/"))
+     ("FreshPorts"                                   ,(concatenate 'string "exec " *browser* "http://freshports.org"))
+     ("Full Circle Magazine"                         ,(concatenate 'string "exec " *browser* "http://fullcirclemagazine.org"))
+     ("GetDeb"                                       ,(concatenate 'string "exec " *browser* "http://getdeb.net"))
+     ("Google                          präfix-y g"   "google")
+     ("Gronkh"                                       ,(concatenate 'string "exec " *browser* "http://gronkh.de"))
+     ("Hackernews                      präfix-y h"   "hackernews")
+     ("Heise"                                        ,(concatenate 'string "exec " *browser* "http://heise.de"))
+     ("I.M.D.B.                        präfix-y i"   "imdb-suche")
+     ("IxQuick                         präfix-y I"   "ixquick")
+     ("LEO EN-DE"                                    ,(concatenate 'string "exec " *browser* "http://leo.org"))
+     ("Nachrichten                     präfix-y n"   "nachrichten")
+     ("OMG! Ubuntu"                                  ,(concatenate 'string "exec " *browser* "http://omgubuntu.co.uk"))
+     ("Pirate Parties International"                 ,(concatenate 'string "exec " *browser* "http://www.pp-international.net/"))
+     ("Piratenpartei Deutschland"                    ,(concatenate 'string "exec " *browser* "http://www.piratenpartei.de/"))
+     ("Piratenpartei Krefeld"                        ,(concatenate 'string "exec " *browser* "http://www.seidenstadt-piraten.de/"))
+     ("Piratenpartei NRW"                            ,(concatenate 'string "exec " *browser* "http://www.piratenpartei-nrw.de/"))
+     ("Planet Ubuntu"                                ,(concatenate 'string "exec " *browser* "http://planet.ubuntu.com"))
+     ("PlayDeb"                                      ,(concatenate 'string "exec " *browser* "http://playdeb.net"))
+     ("Revo Vortaro EO"                              ,(concatenate 'string "exec " *browser* "http://reta-vortaro.de"))
+     ("Sonja Vortaro EO"                             ,(concatenate 'string "exec " *browser* "http://kisa.ca/vortaro"))
+     ("Thalia"                                       ,(concatenate 'string "exec " *browser* "http://thalia.de"))
+     ("The Guardian                    präfix-y G"   "news-guardian")
+     ("The Pirate Bay                  präfix-y p"   "piratebay")
+     ("The Register                    präfix-y r"   "news-register")
+     ("Titannica - FF wiki"                          ,(concatenate 'string "exec " *browser* "http://fightingfantasy.wikia.com/wiki/Fighting_Fantasy"))
+     ("TOR check"                                    ,(concatenate 'string "exec " *browser* "https://check.torproject.org"))
+     ("Ubuntu Webseite"                              ,(concatenate 'string "exec " *browser* "http://ubuntu.com"))
+     ("Ubuntu-Tweak Webseite"                        ,(concatenate 'string "exec " *browser* "http://ubuntu-tweak.com"))
+     ("Webupd8"                                      ,(concatenate 'string "exec " *browser* "http://webupd8.org"))
+     ("Wetter                          präfix-y C-w" "wetter")
+     ("Wikipedia                       präfix-y w"   "wikipedia")
+     ("YouTube                         präfix-y y"   "youtube-suche")
+     ("ZenCast"                                      ,(concatenate 'string "exec " *browser* "http://zencast.org"))
+    )
+
+    ("+ Untermenü: WWW-Programme"
+     ("Chromium     präfix-x C"   "chromium-browser")
+     ("Claws-Mail"                "claws-mail")
+     ("Conkeror     präfix-x c"   "conkeror")
+     ("Deluge       präfix-x D"   "deluge")
+     ("dwb"                       "dwb")
+     ("Empathy"                   "empathy")
+     ("Firefox      präfix-x f"   "firefox")
+     ("Iceweasel    präfix-x i"   "iceweasel")
+     ("Jumanji      präfix-x j"   "jumanji")
+     ("MiniTube     präfix-x C-m" "minitube")
+     ("Mutt"                      "mutt")
+     ("Pidgin       präfix-x P"   "pidgin")
+     ("Surf"                      "surf")
+     ("Telecomix    präfix-y t"   "telecomix")
+     ("Thunderbird  präfix-x t"   "thunderbird")
+     ("Turpial      präfix-x T"   "turpial")
+     ("Twitter      präfix-y t"   "ttytter")
+     ("X-Chat       präfix-x x"   "xchat")
+    )    
+))
+
+;; ======================================
+;; Neubesetzung von vorhandenen Variablen
+;; ======================================
+
+(set-prefix-key (kbd "Menu")) ; set-prefix-key stellt die Präfix-Taste um. Statt C-t, wird nun die Menütaste benutzt.
+
+(set-font "-*-terminus-medium-r-normal-*-12-*-*-*-*-*-*-1") ; set-font stellt den Standardzeichensatz ein.
+
+;; Ubuntu 12.04 LTS Thema
+(set-focus-color      "DodgerBlue3")
+(set-unfocus-color    "black")
+(set-win-bg-color     "CornflowerBlue")
+(set-fg-color         "NavyBlue")
+(set-bg-color         "LightSkyBlue")
+
+(setq *time-format-string-default* "%A %B %e %k:%M:%S")
+
+(setq *time-modeline-string* "%a %b %e %k:%M:%S")
+
+(setq *time-month-names*
+      #("Januar" "Februar" "März" "April" "Mai" "Juni" "Juli" "August"
+	"September" "Oktober" "November" "Dezember"))
+
+(setq *time-day-names*
+      #("Montag" "Dienstag" "Mittwoch" "Donnerstag" "Freitag" "Samstag" "Sonntag"))
+
+(setq *mouse-focus-policy* :click) ; Ändert das Verhalten des Mauszeigers
+
+(setq *startup-message* "^2*Willkommen zum ^BStump^b ^BW^bindow ^BM^banager!
+Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
+
+;; --------------------------
+;; Ein Ersatz *help-map* Menü
+;; --------------------------
+
+(setf *help-map*
+          (let ((m (make-sparse-keymap)))
+	    (define-key m (kbd "m") "man")
+	    (define-key m (kbd "c") "describe-command")
+	    (define-key m (kbd "f") "describe-function")
+	    (define-key m (kbd "k") "describe-key")
+            (define-key m (kbd "v") "describe-variable")
+	    (define-key m (kbd "w") "where-is")
+            m))
+
+;; -----------------------
+;; Die angepasste Modeline
+;; -----------------------
+
+;; Vorbereitungen für das Modeline-Verhalten
+(setf *mode-line-background-color*      "Grey18"
+      *mode-line-foreground-color*      "DodgerBlue"
+      *mode-line-border-color*          "CornflowerBlue"
+      *mode-line-timeout*               1
+      *mode-line-position*              :top
+      *time-format-string-default*      "%a %d.%m.%Y %I:%M%p"
+      *time-modeline-string*            "%a %d.%m.%Y %I:%M%p"
+      *group-format*                    "%n%s%t"
+      *window-format*                   "«%n%s%m%10c»")
+
+;; Modeline zeigt Zeit in lokalem Format, CPU-Nutzung, Netzwerk-Verkehr, Gruppe, Notifikation und aktuellen Rahmen
+(setf *screen-mode-line-format*
+      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " %t %c %M %l " (:eval (format-gmail nil)) " [^B%n^b] %W "))
+
+;(setf *screen-mode-line-format*
+;      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " %t %c %M %l [^B%n^b] %W " (:eval (format-gmail nil))))
+
+;(setf *screen-mode-line-format*
+;      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W" ))
+
+;; ================================
+;; Beim Erstart einmal zu erledigen
+;; ================================
+
+(when *initializing*
+  (load (concatenate 'string *contrib-pfad* "sbclfix"))
+  (load (concatenate 'string *contrib-pfad* "net"))
+  (load (concatenate 'string *contrib-pfad* "cpu"))
+  (load (concatenate 'string *contrib-pfad* "mem"))
+  (load "gmail.lisp")
+  (run-or-raise "exec nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
+  (run-or-raise "exec synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
+  (run-or-raise "exec xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
+  (run-or-raise "exec nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
+  (run-or-raise "exec ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
+  (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
+  (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
+  (run-or-raise "exec setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
+;  (run-or-raise "exec python /usr/share/popper/popper.sh" '(:class "Setxkbmap")) ; Popper prüft Emails
+  (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
+      (toggle-mode-line (current-screen) (current-head)))
+  (banish-pointer) ; Mauszeiger verbannen
+  (clear-window-placement-rules)
+)
+
+;; ===================================
+;; Falls ein Thema geladen werden soll
+;; ===================================
+
+(when (eql *stumpwm-thema* 'lubuntu)
+  (message "Lade Lubuntu-Thema")
+  (load "~/lubuntu-thema.lisp"))
+
+(when (eql *stumpwm-thema* 'ubuntu)
+  (message "Lade Ubuntu-Thema")
+  (load "~/ubuntu-thema.lisp"))
+
+;; ==============
+;; Neue defmacros
+;; ==============
+    
+(defmacro ersetze-hook (hook fn)
+  `(remove-hook ,hook ,fn)
+  `(add-hook ,hook ,fn))
+
+(defmacro neuerbefehl (name dokstring befehl klasse)
+  "Kurzes Macro, um einen neuen grafischen Befehl bereitzustellen"
+  `(defcommand ,name () () ,dokstring
+	       (message ,dokstring)
+	       (run-or-raise ,befehl '(:class ,klasse))))
+
+(defmacro neuerterminalbefehl (name dokstring befehl klasse &optional (fg "lavender") (bg "maroon4"))
+  "Kurzes Macro, um einen neuen Terminalbefehl bereitzustellen"
+  `(neuerbefehl ,name ,dokstring (format nil "uxterm -fg ~A -bg ~A -class '~A' -e '~A'" ,fg ,bg ,klasse ,befehl) ,klasse))
+
+(defmacro tastenbindung (keymap taste befehl)
+  "Kurzes Macro, um eine Tastenbindung zu definieren"
+  `(define-key, keymap (kbd, taste), befehl))
+
+(defmacro tastaturbelegung (keymap &rest tasten)
+  "Kurzes Macro, um mehrere Tastenbindungen an eine Keymap zu definieren, verwendet pro Taste die Funktion tastenbindung"
+  (let ((ks (mapcar (lambda (k)
+		      (append (list 'tastenbindung keymap) k))
+		    tasten)))
+    `(progn ,@ks)))
+
+;; ===============
+;; Neue Funktionen
+;; ===============
+
+(defun buchstaben-austauschen (satz)
+  "(buchstaben-austauschen string)
+BUCHSTABEN-AUSTAUSCHEN entfernt deutsche Sonderzeichen und ersetzt sie durch lateinische Standardzeichen."
+  (cond ((null satz) nil)
+	((char-equal (car satz) #\LATIN_SMALL_LETTER_A_WITH_DIAERESIS)
+	 (cons #\a (cons #\e (buchstaben-austauschen (cdr satz)))))
+	((char-equal (car satz) #\LATIN_SMALL_LETTER_O_WITH_DIAERESIS)
+	 (cons #\o (cons #\e (buchstaben-austauschen (cdr satz)))))
+	((char-equal (car satz) #\LATIN_SMALL_LETTER_U_WITH_DIAERESIS)
+	 (cons #\u (cons #\e (buchstaben-austauschen (cdr satz)))))
+	(t (cons (car satz) (buchstaben-austauschen (cdr satz))))))
+
+(defun cat (&rest strings)
+  "(cat &rest strings)
+CAT bietet ein Kürzel für (concatenate 'string foo bar {baz ...})."
+  (apply 'concatenate 'string strings))
+
+(defun datum-uhrzeit ()
+  "(datum-uhrzeit)
+DATUM-UHRZEIT gibt das heutige Datum und die aktuelle Uhrzeit des Systems zurück."
+  (multiple-value-bind (sekunden minuten stunden tag monat jahr) (get-decoded-time)
+    (format nil "~2,'0D.~2,'0D.~4,'0D ~2,'0D:~2,'0D:~2,'0D" tag monat jahr stunden minuten sekunden)))
+
+(defun echo-urgent-window (target)
+  "(echo-urgent-window (target)
+ECHO-URGENDT-WINDOW teilt mit, welches Fenster uns dringend benötigt."
+  (message-no-timeout "~a hat eine Nachricht für dich." (window-title target)))
+
+(defun ersetze-teilstring (string alt neu &key (test #'char=))
+  "(ersetze-teilsting string alt neu)
+ERSETZTE-TEILSTRING ersetzt das Teilstück ALT durch NEU."
+  (with-output-to-string (ausgabe)
+    (loop with alt-länge = (length alt)
+       for alte-position = 0 then (+ position alt-länge)
+       for position = (search alt string
+                              :start2 alte-position
+                              :test test)
+       do (write-string string ausgabe
+			:start alte-position
+			:end (or position (length string)))
+       when position do (write-string neu ausgabe)
+       while position)))
+
+(defun satz-umformatieren (satz)
+  "(satz-umformatieren string)
+SATZ-UMFORMATIEREN entfernt alle deutschen Sonderzeichen aus einer übergebenen Zeichenkette und ersetzt sie durch lateinische Standardzeichen."
+  (coerce (buchstaben-austauschen (coerce satz 'list)) 'string))
+
+(defun string->liste (string)
+  (read-from-string (cat "(" string ")")))
+
+(defun tastendruck-hook (taste tasten-seq befehl)
+  (declare (ignore taste))
+  (unless (stringp befehl)
+    (message "Tasten gedrückt: ~A" (print-key-seq (reverse tasten-seq)))))
+
+(defun uhrzeit ()
+  "Gibt die aktuelle Uhrzeit zurück"
+  (multiple-value-bind (sekunden minuten stunden) (get-decoded-time)
+    (format nil "~2,1,0,'0@A:~2,1,0,'0@A:~2,1,0,'0@A" stunden minuten sekunden)))
+
+;; ===========================================
+;; Spezialisierte defcommands / Ausgabebefehle
+;; ===========================================
+
+(defcommand askubuntu (suche)
+  ((:string "Suche in Ask Ubuntu nach: "))
+  "Dient zur Suche bei Ask Ubuntu per Conkeror."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://askubuntu.com/search?q=" suche)))
+
+(defcommand ausführen-im-terminal (befehl) ((:string "Befehl: "))
+  (run-shell-command (format nil "~A -e ~A" *uxt-neu* befehl)))
+
+(defcommand browse-url (url)
+  ((:string "Wie lautet die gewünschte URL? "))
+  "Dient zum Ansurfen einer beliebigen URL."
+  (check-type url string)
+  (run-shell-command (cat *browser* url)))
+
+(defcommand clhs (suche)
+  ((:string "Suche im Common Lisp HyperSpec nach: "))
+  "Dient zur Suche im CLHS mit Hilfe von Xach's Suchschnittstelle per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://xach.com/clhs?q=" suche)))
+
+(defcommand ddg (suche)
+  ((:string "Suche in DuckDuckGo nach: "))
+  "Dient zur Suche bei DuckDuckGo per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "https://duckduckgo.com/?q=" suche)))
+
+(defcommand debuggen-umschalten () ()
+	    "Schaltet das Debugging ein oder aus"
+	    (cond ((= *debug-level* 0)
+		   (redirect-all-output (data-dir-file "debug-output" "txt"))
+		   (setq *debug-level* 1)
+		   (message "Debugging wurde eingeschaltet."))
+		  (t (setq *debug-level* 0)
+		     (message "Debugging wurde ausgeschaltet."))))
+
+(defcommand dropbox-umschalten () ()
+	    "Schaltet den Dropbox-Dienst um zwischen eingeschaltet und ausgeschaltet"
+	    (case *dropbox-zustand*
+	      ((eingeschaltet)
+	       (setq *dropbox-zustand* 'ausgeschaltet)
+	       (run-shell-command "dropbox stop")
+	       (message "Dropbox ist ausgeschaltet worden."))
+	      (otherwise
+	       (setq *dropbox-zustand* 'eingeschaltet)
+	       (run-shell-command "dropbox start")
+	       (message "Dropbox ist eingeschaltet worden."))))
+
+(defcommand echo-date () ()
+	    "(echo-date)
+ECHO-DATE stellt das Datum und die Uhrzeit dar.
+Beispiel: (echo-date) => 11.01.2012 06:09:43"
+	    (message "~a" (datum-uhrzeit)))
+
+(defcommand echo-time () ()
+	    "(echo-date)
+ECHO-DATE stellt die Uhrzeit dar.
+Beispiel: (echo-time) => 06:11:27"
+	    (message "~a" (uhrzeit)))
+
+(defcommand google (suche)
+  ((:string "Suche in Google nach: "))
+  "Dient zur Suche in Google per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "https://www.google.de/search?q=" suche)))
+
+(defcommand google+mitteilungen (suche)
+  ((:string "Suche in Google+ Mitteilungen nach: "))
+  "Dient zur Suche in Google+ Mitteilungen per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "'https://www.google.de/search?q=site:plus.google.com inurl:posts/* " suche "'" )))
+
+(defcommand google+profile (suche)
+  ((:string "Suche in Google+ Profilen nach: "))
+  "Dient zur Suche in Google+ Profilen per Browser. Ist dieser bereits geöffnet, so in einem neuen Tab."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "'https://www.google.de/search?q=" suche "&tbs=prfl:e'")))
+
+(defcommand gselect-oder-gnew (gruppen-nummer) ((:number "Gruppen-Nummer: "))
+	    "(gselect-oder-gnew gruppen-nr)
+GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstellt worden, legt die Funktion die Gruppe an, bevor hinübergewechselt wird."
+  (gselect
+   (or (select-group (current-screen) (format nil "~A" gruppen-nummer) )
+       ; Die Auswahl der Gruppe schlug fehl, da sie nicht existiert, also erschaffen wir sie
+       (let ((gruppe (add-group (current-screen)
+			       (format nil "unbenannt~A" gruppen-nummer))))
+	 (setf (group-number gruppe) gruppen-nummer)
+	 gruppe))))
+
+(defcommand hackernews (suche)
+  ((:string "Suche bei Hackernews nach: "))
+  "Dient zur Suche bei Hackernews per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" suche)))
+
+(defcommand hsplit-fnext () ()
+  "Rahmen splitten und zum neuen Rahmen wechseln."
+  (run-commands "hsplit" "fnext"))
+
+(defcommand i2p-umschalten () ()
+	    "Schaltet den i2p-Dienst um zwischen eingeschaltet und ausgeschaltet"
+	    (case *i2p-zustand*
+	      ((eingeschaltet)
+	       (setq *i2p-zustand* 'ausgeschaltet)
+	       (run-shell-command "i2prouter stop")
+	       (message "i2p ist ausgeschaltet worden."))
+	      (otherwise
+	       (setq *i2p-zustand* 'eingeschaltet)
+	       (run-shell-command "i2prouter start")
+	       (message "i2p ist eingeschaltet worden."))))
+
+(defcommand imdb-suche (suche)
+  ((:string "Suche in der Internet Movie Database nach: "))
+  "Dient zur Suche in der IMDB per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://imdb.com/find?q=" suche)))
+
+(defcommand ixquick (suche)
+  ((:string "Suche in IxQuick nach: "))
+  "Dient zur Suche bei IxQuick per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://ixquick.com/do/metasearch.pl?query=" suche)))
+
+(defcommand man (man) ((:string "Manual: "))
+	    "Sucht nach einem Befehl in den Manual-Seiten"
+	    (run-shell-command (format nil "~A -e sh -c 'man ~A'" terminal man)))
+
+(defcommand memory-alpha (suche)
+  ((:string "Suche in Memory Alpha nach: "))
+  "Dient zur Suche in Memory Alpha, einem Star Trek Wiki, per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://memory-alpha.org/en/wiki/Special:Search/?search=" suche)))
+
+(defcommand menü () ()
+  "menü dient der Abarbeitung der Optionen, die als Menüstruktur-Liste in *start-menü* hinterlegt sind."
+  (labels ((pick (options)
+                 (let ((selection (stumpwm::select-from-menu
+                                   (current-screen) options "")))
+                   (cond
+                    ((null selection)
+                     (throw 'stumpwm::error "Abbruch."))
+                    ((stringp (second selection))
+                     (second selection))
+                    (t
+                     (pick (cdr selection)))))))
+    (let ((choice (pick *start-menü*)))
+      (run-commands choice))))
+
+(defcommand move-focus-warp (dir) ((:direction "Direction:"))
+	    "Bewege den Fokus und anschließend die Maus in das Fenster."
+	    (move-focus-and-or-window dir)
+	    (banish-pointer :window))
+
+(defcommand nachrichten (suche)
+  ((:string "Suche in Google News nach: "))
+  "Dient zur Suche bei Google News per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://news.google.com/news/search?q=" suche)))
+
+(defcommand news-bbc (suche)
+  ((:string "Suche bei BBC News nach: "))
+  "Dient zur Suche bei BBC News per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.bbc.co.uk/search/news/?q=" suche)))
+
+(defcommand news-guardian (suche)
+  ((:string "Suche bei Guardian News nach: "))
+  "Dient zur Suche bei Guardian News per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.guardian.co.uk/search?q=" suche)))
+
+(defcommand news-register (suche)
+  ((:string "Suche bei The Register nach: "))
+  "Dient zur Suche bei The Register per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://search.theregister.co.uk/?q=" suche)))
+
+(defcommand open-selection-browser () ()
+	    "Öffnet die markierte Webadresse per Browser."
+	    (run-shell-command (cat *browser* (get-x-selection))))
+
+(defcommand piratebay (suche)
+  ((:string "Suche bei The Pirate Bay nach: "))
+  "Dient zur Suche bei The Pirate Bay per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "https://thepiratebay.se/search.php?q=" suche)))
+
+(defcommand recipefy (suche)
+  ((:string "Durchsuche Rezepte bei Recipefy nach: "))
+  "Dient zur Suche bei Recipefy per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.recipefy.com/de/recipe-search?search[value]=" suche)))
+
+(defcommand reinit () ()
+	    "Reinitialisierung des Systems"
+	    (run-commands "loadrc")
+	    (message "Reinitialisierung abgeschlossen"))
+
+(defcommand stackoverflow (suche)
+  ((:string "Suche in Stackoverflow nach: "))
+  "Dient zur Suche bei Stackoverflow per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://stackoverflow.com/search?q=" suche)))
+
+(defcommand switch-modeline () ()
+	    "Schaltet die Modeline ein oder aus"
+	    (toggle-mode-line (current-screen) (current-head)))
+
+(defcommand touchpad-umschalten () ()
+	    "Schaltet das Touchpad um zwischen eingeschaltet und ausgeschaltet"
+	    (case *touchpad-zustand*
+	      ((eingeschaltet)
+	       (setq *touchpad-zustand* 'ausgeschaltet)
+	       (run-shell-command "synclient touchpadoff=1")
+	       (banish-pointer)
+	       (message "Touchpad ist ausgeschaltet worden."))
+	      (otherwise
+	       (setq *touchpad-zustand* 'eingeschaltet)
+	       (run-shell-command "synclient touchpadoff=0")
+	       (message "Touchpad ist eingeschaltet worden.")))) 
+
+(defcommand vsplit-fnext () ()
+  "Rahmen splitten und zum neuen Rahmen wechseln."
+  (run-commands "vsplit" "fnext"))
+
+(defcommand wetter (suche)
+  ((:string "Suche das Wetter der Stadt: "))
+  "Dient zur Suche bei wetter.net nach einer Stadt, um deren Wetter anzuzeigen."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.wetter.net/cgi-bin/wetter-net3/wetter-stadt.pl?NAME=" (satz-umformatieren suche))))
+
+(defcommand wikipedia (suche)
+  ((:string "Suche in der deutschsprachigen Wikipedia nach: "))
+  "Dient zur Suche in der deutschsprachigen Wikipedia per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "https://de.wikipedia.org/w/index.php?search=" suche)))
+
+(defcommand wikipedia-en (suche)
+  ((:string "Suche in der englischsprachigen Wikipedia nach: "))
+  "Dient zur Suche in der englischsprachigen Wikipedia per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "https://en.wikipedia.org/w/index.php?search=" suche)))
+
+(defcommand youtube-suche (suche)
+  ((:string "Suche in Youtube nach: "))
+  "Dient zur Suche in Youtube per Browser."
+  (check-type suche string)
+  (nsubstitute #\+ #\Space suche)
+  (run-shell-command (cat *browser* "http://www.youtube.com/results?search_query=" suche "&search=Search")))
+
+(defcommand zustände-anzeigen () ()
+  "Dient der Darstellung der globalen Zustandsvariablen"
+  (message " Dropbox: ~A~%     i2p: ~A~%Touchpad: ~A~%" *dropbox-zustand* *i2p-zustand* *touchpad-zustand*))
+
+(defcommand zwitschere (nachricht)
+  ((:string "Die zu zwitschernde Mitteilung: "))
+  "Dient zum schnellen zwitschern per Twitter via ttytter"
+  (check-type nachricht string)
+  (run-shell-command (cat "ttytter -status='" (ersetze-teilstring nachricht "<at>" "@") "'")))
+
+;; ========================================================
+;; Grafische Programme aufrufen oder zu geöffneten wechseln
+;; ========================================================
+
+(neuerbefehl abiword "Starte/wechsle zur Abiword Textverarbeitung." "abiword" "Abiword")
+
+(neuerbefehl audacious "Starte/wechsle zur Audacious Audiobearbeitung." "audacious" "Audacious")
+
+(neuerbefehl avidemux2_gtk "Starte/wechsle zur AviDemux Videobearbeitung." "avidemux2_gtk" "Avidemux2_gtk")
+
+(neuerbefehl banshee "Starte/wechsle zum Banshee Medienabspieler." "banshee" "Banshee")
+
+(neuerbefehl brogue "Starte/wechsle zum ansprechenden B-Rogue Spiel." "brogue" "Brogue")
+
+(neuerbefehl calibre "Starte/wechsle zur Calibre Ebook-Verwaltung." "calibre" "Calibre")
+
+(neuerbefehl cherrytree "Starte/wechsle zur Cherrytree Wiki-Notiz-Verwaltung." "cherrytree" "Cherrytree")
+
+(neuerbefehl chromium-browser "Starte/wechsle zum Chromium Webbrowser." "chromium-browser" "Chromium-Browser")
+
+(neuerbefehl claws-mail "Starte/wechsle zum Claws-Mail Emailprogramm." "claws-mail" "Claws-mail")
+
+(neuerbefehl comix "Starte/wechsle zum Comix Leseprogramm für elektronische Comics." "comix" "Comix")
+
+(neuerbefehl conkeror "Starte/wechsle zum Conkeror Webbrowser." "conkeror" "Conkeror")
+
+(neuerbefehl deluge "Starte/wechsle zum Deluge BitTorrent-Klienten." "deluge" "Deluge")
+
+(neuerbefehl desmume-glade "Starte/wechsle zum Desmume-Emulator." "desmume-glade" "Desmume-glade")
+
+(neuerbefehl dwarffortress "Starte/wechsle zum Sandkastenspiel Dwarf Fortress." "/opt/df_linux/df" "Dwarffortress")
+
+(neuerbefehl dwb "Starte/wechsle zum Dwb Webbrowser." "dwb" "Dwb")	    
+
+(neuerbefehl emacs "Starte/wechsle zu Emacs Lisp-System für Textbearbeitung und mehr." "emacs" "Emacs")
+
+(neuerbefehl emacs-snapshot "Starte/wechsle zu Emacs Lisp-System für Textbearbeitung und mehr." "emacs-snapshot" "Emacs-snapshot")
+
+(neuerbefehl emacsclient "Starte/wechsle zum Emacs Lisp-System für Textbearbeitung und mehr im Klientenmodus." "emacsclient -c -a ''" "Emacsclient")
+
+(neuerbefehl empathy "Starte/wechsle zum Empathy Mitteilungsdienst." "empathy" "Empathy")
+
+(neuerbefehl empathy-accounts "Starte/wechsle zu den Empathy Kontoeinstellungen." "empathy-accounts" "Empathy-accounts")
+
+(neuerbefehl evince "Starte/wechsle zum Evince Leseprogramm für elektronische Bücher." "evince" "Evince")
+
+(neuerbefehl evolution "Starte/wechsle zum Evolution persönlichen Assistenten." "evolution" "Evolution")
+
+(neuerbefehl fbreader "Starte/wechsle zum FBreader Leseprogramm für elektronische Bücher." "fbreader" "Fbreader")
+
+(neuerbefehl file-roller "Starte/wechsle zum File-Roller Archivverwalter und -ersteller." "file-roller" "File-roller")
+
+(neuerbefehl firefox "Starte/wechsle zum Firefox Webbrowser." "firefox" "Firefox")
+
+(neuerbefehl flare "Starte/wechsle zum Flare RPG Rollenspiel." "flare" "Flare")
+
+(neuerbefehl focuswriter "Starte/wechsle zur FocusWriter Textverarbeitung." "focuswriter" "Focuswriter")
+
+(neuerbefehl geeqie "Starte/wechsle zum Geekie Bildbetrachter." "geeqie" "Geeqie")
+
+(neuerbefehl gimp "Starte/wechsle zu GIMP Grafikbeareitungsprogramm." "gimp" "Gimp")
+
+(neuerbefehl gnome-control-center "Starte/wechsle zum Kontrollzentrum." "gnome-control-center" "Gnome-control-center")
+
+(neuerbefehl gnome-mplayer "Starte/wechsle zum Gnome MPlayer." "gnome-mplayer" "Gnome-mplayer")
+
+(neuerbefehl gnumeric "Starte/wechsle zur Gnumeric Tabellenkalkulation." "gnumeric" "Gnumeric")
+
+(neuerbefehl gparted "Starte/wechsle zu GNOME-Partitions-Editor." "exec gksudo gparted" "Gparted")
+
+(neuerbefehl gwibber "Starte/wechsle zum Gwibber Kurznachrichtendienst." "gwibber" "Gwibber")
+
+(neuerbefehl gwibber-accounts "Starte/wechsle zu den Gwibber Kontoeinstellungen." "gwibber-accounts" "Gwibber-accounts")
+
+(neuerbefehl gwibber-poster "Starte/wechsle zur Gwibber Mitteilungsversand." "gwibber-poster" "Gwibber-poster")
+
+(neuerbefehl gwibber-preferences "Starte/wechsle zu den Gwibber-Einstellungen." "gwibber-preferences" "Gwibber-preferences")
+
+(neuerbefehl gwibber-service "Starte/wechsle den Gwibber-Hintergrunddienst." "gwibber-service" "Gwibber-service")
+
+(neuerbefehl gvim "Starte/wechsle zum gVim Editor." "gvim" "Gvim")
+
+(neuerbefehl iceweasel "Starte/wechsle zum Iceweasel Webbrowser." "iceweasel" "Iceweasel")
+
+(neuerbefehl idle-python3.2 "Starte/wechsle zu Idle in der Python 3.2 Fassung." "idle-python3.2" "Toplevel")
+
+(neuerbefehl jumanji "Starte/wechsle zum Jumanji Webbrowser." "jumanji" "Jumanji")	    
+
+(neuerbefehl kaffeine "Starte/wechsle zum Kaffeine Medienabspieler." "kaffeine" "Kaffeine")
+
+(neuerbefehl keepassx "Starte/wechsle zur KeePassX Passwortverwaltung." "keepassx" "Keepassx")
+
+(neuerbefehl lxappearance "Starte/wechsle zum LxAppearance Einstellungsmanager." "lxappearance" "Lxappearance")
+
+(neuerbefehl localc "Starte/wechsle zur LibreOffice Tabellenkalkulation." "localc" "Localc")
+
+(neuerbefehl lodraw "Starte/wechsle zum LibreOffice Zeichenprogramm." "lodraw" "Lodraw")
+
+(neuerbefehl loimpress "Starte/wechsle zum LibreOffice Präsentationsprogramm." "loimpress" "Loimpress")
+
+(neuerbefehl lomath "Starte/wechsle zum LibreOffice Mathematikprogramm." "lomath" "Lomath")
+
+(neuerbefehl loffice "Starte/wechsle zum LibreOffice Startprogramm." "loffice" "Loffice")
+
+(neuerbefehl lowriter "Starte/wechsle zur LibreOffice Textverarbeitung." "lowriter" "Lowriter")
+
+(neuerbefehl lubuntu-software-center "Starte/wechsle zum Lubuntu Software-Center." "lubuntu-software-center" "Lubuntu-software-center")
+
+(neuerbefehl minitube "Starte/wechsle zu Minitube Medienabspieler für YouTube-Videos." "minitube" "Minitube")
+
+(neuerbefehl nautilus "Starte/wechsle zum Nautilus Dateimanager." "nautilus --no-desktop" "Nautilus")
+
+(neuerbefehl nm-connection-editor "Starte/wechsle zum Networkmanager Verbindungseditor." "nm-connection-editor" "Nm-connection-editor")
+
+(neuerbefehl nitrogen "Starte/wechsle zu Nitrogen Hintergrundbild-Wechsler." "nitrogen" "Nitrogen")
+
+(neuerbefehl okular "Starte/wechsle zum Okular PDF-Betrachter." "okular" "Okular")
+
+(neuerbefehl palapeli "Starte/wechsle zu Palapeli Puzzle-Spiel." "palapeli" "Palapeli")
+
+(neuerbefehl pcmanfm "Starte/wechsle zum Pcmanfm-Dateimanager." "pcmanfm" "Pcmanfm")
+
+(neuerbefehl pidgin "Starte/wechsle zum Pidgin-Nachrichtendienst." "pidgin" "Pidgin")
+
+(neuerbefehl pouetChess "Starte/wechsle zu Pouetchess." "pouetChess" "pouetChess")
+
+(neuerbefehl pychess "Starte/wechsle zu PyChess Staunton." "pychess" "pychess")
+
+(neuerbefehl rednotebook "Starte/wechsle zu Rednotebook." "rednotebook" "Rednotebook")
+
+(neuerbefehl ristretto "Starte/wechsle zum Ristretto Bildbetrachter." "ristretto" "Ristretto")
+
+(neuerbefehl rhythmbox "Starte/wechsle zu Rhythmbox Medienabspieler." "rhythmbox-client" "Rhythmbox")
+
+(neuerbefehl scid "Starte/wechsle zum Schachprogramm Scid vs. PC." "scid" "Scid")
+
+(neuerbefehl scribes "Starte/wechsle zum Scribes Editor." "scribes" "Scribes")
+
+(neuerbefehl scribus "Starte/wechsle zum Scribus DTP-Programm." "scribus" "Scribus")
+
+(neuerbefehl simple-scan "Starte/wechsle zu Simple-Scan." "simple-scan" "Simple-scan")
+
+(neuerbefehl software-center "Starte/wechsle zum Ubuntu Software-Center." "software-center" "Software-center")
+
+(neuerbefehl speedcrunch "Starte/wechsle zum Speedcrunch Taschenrechner." "speedcrunch" "Speedcrunch")
+
+(neuerbefehl surf "Starte/wechsle zum Surf Webbrowser." "surf" "surf")
+
+(neuerbefehl synaptic "Starte/wechsle zur Synaptic Paketverwaltung." "exec gksudo synaptic" "Synaptic")
+
+(neuerbefehl thunderbird "Starte/wechsle zum Thunderbird Email-Klienten." "thunderbird" "Thunderbird")
+
+(neuerbefehl turpial "Starte/wechsle zum Turpial Kurzmitteilungsprogramm." "turpial" "Turpial")
+
+(neuerbefehl ubuntuone-control-panel-qt "Starte/wechsle zum UbuntuOne Steuerpult." "ubuntuone-control-panel-qt" "Ubuntuone-control-panel-qt")
+
+(neuerbefehl unison-gtk "Starte/wechsle zum Unison Synchronisationsprogramm." "unison-gtk" "Unison-gtk")
+
+(neuerbefehl usb-creator-gtk "Starte/wechsle zum USB-Startmedienersteller." "exec gksudo usb-creator-gtk" "Usb-creator-gtk")
+
+(neuerbefehl update-manager "Starte/wechsle zum Software Update-Manager" "update-manager" "Update-manager")
+
+(neuerbefehl userterminal "Starte/wechsle zum Userterminal." *uxt* "Userterminal")
+
+(neuerbefehl uxt-neu "Starte ein neues UXTerminal." *uxt-neu* "UXTerminal")
+
+(neuerbefehl uzbl-browser "Starte/wechsle zu Uzbl." "uzbl-browser" "Uzbl-core")
+
+(neuerbefehl vlc "Starte/wechsle zu VideoLanClient." "vlc" "Vlc")
+
+(neuerbefehl vym "Starte/wechsle zu ViewYourMind." "vym" "Vym")
+
+(neuerbefehl worldofpadman "Starte/wechsle zu World of Padman." "worldofpadman" "Worldofpadman")
+
+(neuerbefehl xarchiver "Starte/wechsle zu X-Archiver." "xarchiver" "Xarchiver")
+
+(neuerbefehl xchat "Starte/wechsle zu X-Chat." "xchat" "Xchat")
+
+(neuerbefehl xscreensaver-demo "Startet/wechselt zum Bildschirmschoner-Einstellungsdialog." "xscreensaver-demo" "Xscreensaver-demo")
+
+(neuerbefehl zathura "Starte/wechsle zu Zathura." "zathura" "Zathura")
+
+;; ===================================================================
+;; Programme in einem eigenen Terminal starten oder zu diesem wechseln
+;; ===================================================================
+
+(neuerterminalbefehl abook "Starte/wechsle zu Abook Adressbuch." "abook" "Abook")
+
+(neuerterminalbefehl adminterminal "Starte/wechsle zum Administrator-Terminal." "sudo -i" "Adminterminal" "gainsboro" "OrangeRed")
+
+(neuerterminalbefehl aliensrl "Starte/wechsle zu AliensRL Rollenspiel." "aliensrl" "Aliensrl")
+
+(neuerterminalbefehl alsamixer "Starte/wechsle zur Alsa-Mixer-Lautstärkeregelung." "alsamixer" "Alsamixer")
+
+(neuerterminalbefehl byobu "Starte/wechsle zum Byobu-Terminal." "byobu" "Byobu" "gainsboro" "DarkSlateGray")
+
+(neuerterminalbefehl crawl "Starte/wechsle zu Crawl Hack'n'Slay Rollenspiel." "crawl" "Crawl")
+
+(neuerterminalbefehl doomrl "Starte/wechsle zu DoomRL." "doomrl" "Doomrl")
+
+(neuerterminalbefehl htop "Starte/wechsle zur Htop Systemressourcen-Darstellung." "htop" "Htop" "BlanchedAlmond" "MidnightBlue")
+
+(neuerterminalbefehl mathomatic "Starte/wechsle zu Mathomatic Rechenprogramm." "mathomatic" "Mathomatic")
+
+(neuerterminalbefehl mc "Starte/wechsle zum Dateimanager Midnight Commander." "mc" "Mc")
+
+(neuerterminalbefehl mocp "Starte/wechsle zum Music on Console Medienabspieler." "mocp" "Mocp")
+
+(neuerterminalbefehl moria "Starte/wechsle zum Moria Rollenspiel." "moria" "Moria")
+
+(neuerterminalbefehl mutt "Starte/wechsle zum Mutt Emailprogramm." "mutt" "Mutt")
+
+(neuerterminalbefehl primerl "Starte/wechsle zum PrimeRL Rollenspiel." "primerl" "Primerl")
+
+(neuerterminalbefehl rogue "Starte/wechsle zum Rogue Rollenspiel." "rogue" "Rogue")
+
+(neuerterminalbefehl telecomix "Starte/wechsle zur Telecomix Kurzmitteilungskonsole." "telecomix" "Telecomix")
+
+(neuerterminalbefehl ttytter "Starte/wechsle zu Ttytter Kurzmitteilungskonsole." "ttytter -ansi" "Ttytter" "lavender" "NavyBlue")
+
+(neuerterminalbefehl wicd-curses "Starte/wechsle zum WICD (curses) Netzwerk-Verbindungseditor." "wicd-curses" "Wicd")
+
+(neuerterminalbefehl xorcurses "Starte/wechsle zum Abstraktionsspiel Xorcurses." "xorcurses" "Xorcurses")
+
+(neuerterminalbefehl zork1 "Starte/wechsle zum Zork 1 Textabenteuer." "zork1" "Zork1")
+
+(neuerterminalbefehl zork2 "Starte/wechsle zum Zork 2 Textabenteuer." "zork2" "Zork2")
+
+(neuerterminalbefehl zork3 "Starte/wechsle zum Zork 3 Textabenteuer." "zork3" "Zork3")
+
+;; ======================================
+;; Neuere Tasten - nach eigenem Gutdünken
+;; ======================================
+;; Übersicht zu den Zusatztasten:
+;; M-s = ALT+SUPER
+;; s- = SUPER
+;; S- = SHIFT
+;; C- = Control/STRG
+;; H- = ALT-GR
+;; ======================================
+
+;; --------------------------------------------------------------------
+;; Zusätzliche Optionen für die emacs-artige Tastenbedienung mit Präfix
+;; --------------------------------------------------------------------
+
+(tastaturbelegung *root-map*
+		  ("Print" "exec scrot -d 5 -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
+		  ("RET" "userterminal")
+		  ("S-RET" "uxt-neu")
+		  ("M-RET" "fullscreen")
+		  ("C-RET" "adminterminal")
+		  ("DEL" "repack-window-numbers")
+		  ("C-!" "ausführen-im-terminal")
+		  ("E"   "emacsclient")
+		  ("C-e" "emacs-snapshot")
+		  ("I" "show-window-properties")
+		  ("P" "exec dmenu_run ")
+		  ("s" "vsplit-fnext")
+		  ("S" "hsplit-fnext")
+		  ("," "switch-modeline")
+		  ("C-b" "byobu")
+		  ("c" "byobu")
+		  ("C" "commands")
+		  ("M-c" "userterminal")
+		  ("M-C" "uxt-neu")
+		  ("C-c" "adminterminal")
+		  ("C-d" "debuggen-umschalten")
+		  ;; Die fehlenden Features auch in der root-map anlegen
+		  ("C-SPC" "other")
+		  ("M-SPC" "gother")
+		  ("S-SPC" "pull-marked")
+		  ("Pause" "windowlist")
+		  ("C-Pause" "grouplist")
+		  ("S-Left"  "move-window left")
+		  ("S-Right"  "move-window right")
+		  ("S-Up"  "move-window up")
+		  ("S-Down"  "move-window down")
+		  ("M-Left" "gprev")
+		  ("M-Right" "gnext")
+		  ("M-S-Left" "gprev-with-window")
+		  ("M-S-Right" "gnext-with-window")
+		  ;; Features umbiegen
+		  )
+
+;; --------------------------------------------------------------------
+;; Zusätzliche Optionen für die emacs-artige Tastenbedienung mit Präfix
+;; - Fehlende Features in der groups-map                              -
+;; --------------------------------------------------------------------
+
+(tastaturbelegung *groups-map*
+		  ("C" "gnew-float")
+		  )
+(dotimes (i 9)
+  (define-key *groups-map* (kbd (format nil "~A" (1+ i)))
+    (format nil "gselect-oder-gnew ~A" (1+ i))))
+
+;; ---------------------------------------------------------------------
+;; Zusätzliche Optionen für die emacs-artige Tastenbedienung mit Präfix
+;; - Die Tastenanbindung für meine Zusatzmenüs                         -
+;; ---------------------------------------------------------------------
+
+(tastaturbelegung *root-map*
+		  ("x" '*programmstart-map*)
+		  ("y" '*websuche-map*)
+		  ("X" '*erholung-map*)
+		  ("Y" '*arbeiten-map*)
+		  ("." "menü")
+		  ("F1" "gselect-oder-gnew 1")
+		  ("F2" "gselect-oder-gnew 2")
+		  ("F3" "gselect-oder-gnew 3")
+		  ("F4" "gselect-oder-gnew 4")
+		  ("F5" "gselect-oder-gnew 5")
+		  ("F6" "gselect-oder-gnew 6")
+		  ("F7" "gselect-oder-gnew 7")
+		  ("F8" "gselect-oder-gnew 8")
+		  ("F9" "gselect-oder-gnew 9")
+		  ("F10" "gselect-oder-gnew 10")
+		  )
+
+(tastaturbelegung *top-map*
+		  ("s-x" '*programmstart-map*)
+		  ("s-y" '*websuche-map*)
+		  ("s-X" '*erholung-map*)
+		  ("s-Y" '*arbeiten-map*)
+		  ("s-." "menü")
+		  ("s-F1" "gselect-oder-gnew 1")
+		  ("s-F2" "gselect-oder-gnew 2")
+		  ("s-F3" "gselect-oder-gnew 3")
+		  ("s-F4" "gselect-oder-gnew 4")
+		  ("s-F5" "gselect-oder-gnew 5")
+		  ("s-F6" "gselect-oder-gnew 6")
+		  ("s-F7" "gselect-oder-gnew 7")
+		  ("s-F8" "gselect-oder-gnew 8")
+		  ("s-F9" "gselect-oder-gnew 9")
+		  ("s-F10" "gselect-oder-gnew 10")
+		  )
+
+;; --------------------------------------------------------------------------------------
+;; Zusätzliche Optionen für einen Direkttastenmodus, wie ihn andere Fenstermanager nutzen
+;; - wird von mir nicht mehr genutzt, jedoch gepflegt                                   -
+;; --------------------------------------------------------------------------------------
+
+(tastaturbelegung *top-map*
+		  ;;; Fenster-Verhalten dwm-like
+		  ("s-Left"    "move-focus-warp left")
+		  ("s-S-Left"  "move-window left")
+		  ("s-Right"   "move-focus-warp right")
+		  ("s-S-Right" "move-window right")
+		  ("s-Up"      "move-focus-warp up")
+		  ("s-S-Up"    "move-window up")
+		  ("s-Down"    "move-focus-warp down")
+		  ("s-S-Down"  "move-window down")
+		  ("C-s-Left"  "pull-hidden-previous")
+		  ("C-s-Right" "pull-hidden-next")
+		  ("C-s-Up"    "mark")
+		  ("C-s-Down"  "pull-marked")
+		  ;; Durch Fenster wechseln - dwm-like
+		  ("s-Tab"            "fnext")
+		  ("C-s-Tab"          "next-in-frame")
+		  ("C-s-ISO_Left_Tab" "prev-in-frame")     ;; Erinnerung: Das ist  Shift-Tab
+		  ;; Gruppen-Verhalten ist dwm-like
+		  ("M-s-Left"    "gprev")
+		  ("M-s-Right"   "gnext")
+		  ("M-S-s-Left"  "gprev-with-window")
+		  ("M-S-s-Right" "gnext-with-window")
+		  ("s-SPC"   "pull-hidden-next")
+		  ("C-s-SPC" "other")
+		  ("M-s-SPC" "gother")
+		  ("S-s-SPC" "pull-marked")
+		  ("Pause"   "windowlist")
+		  ("C-Pause" "grouplist")
+		  ;; Nachbildung der vordefinierten StumpWM-Tasten als Direkttasten
+		  ("s-RET"   "userterminal")
+		  ("S-RET"   "uxt-neu")
+		  ("M-s-RET" "fullscreen")
+		  ("C-s-RET" "adminterminal")
+		  ("s-;"   "colon")
+		  ("s-:"   "eval")
+		  ("s-!"   "exec")
+		  ("s-C-!" "ausführen-im-terminal")
+		  ("s-#"   "mark")
+		  ("s--"   "fclear")
+		  ("s-+"   "balance-frames")
+		  ("s-\""  "select")
+		  ("s-'"   "windowlist")
+		  ("s-,"   "switch-modeline")
+		  ("s-a"   "time")
+		  ("s-A"   "title")
+		  ("s-b"   "banish")
+		  ("C-s-b" "byobu")
+		  ("s-c"   "userterminal")
+		  ("s-C"   "commands")
+		  ("C-s-c" "Adminterminal")
+		  ("C-s-d" "debuggen-umschalten")
+		  ("s-e"   "emacs")
+		  ("s-E"   "emacsclient")
+		  ("C-s-e" "emacs-snapshot")
+		  ("s-f"   "fselect")
+		  ("s-F"   "curframe")
+		  ("s-g"   *groups-map*)
+		  ("s-G"   "vgroups")
+		  ("s-h"   *help-map*)
+		  ("s-i"   "info")
+		  ("s-I"   "show-window-properties")
+		  ("s-k"   "delete")
+		  ("s-K"   "kill")
+		  ("s-l"   "exec xscreensaver-command -lock")
+		  ("s-L"   "loadrc")
+		  ("s-m"   "lastmsg")
+		  ("s-n"   "pull-hidden-next")
+		  ("M-s-N" "next")
+		  ("C-s-n" "next-in-frame")
+		  ("C-s-N" "number")
+		  ("s-o"   "fnext")
+		  ("s-p"   "pull-hidden-previous")
+		  ("s-P"   "prev")
+		  ("C-s-p" "prev-in-frame")
+		  ("s-Q"   "only")
+		  ("C-s-Q" "quit")
+		  ("s-r"   "iresize")
+		  ("s-R"   "remove")
+		  ("s-s"   "vsplit-fnext")
+		  ("s-S"   "hsplit-fnext")
+		  ("s-t"   "send-escape")
+		  ("s-u"   "next-urgent")
+		  ("s-v"   "version")
+		  ("s-w"   "windows")
+		  ("s-W"   "place-existing-windows")
+		  ;; Programme per Direkttaste starten
+		  ("Print"                "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
+		  ("XF86HomePage"         *browser*)
+		  ("XF86Mail"             *email-client*)
+		  ("XF86Calculator"       "speedcrunch")
+		  ("XF86AudioRaiseVolume" "exec amixer set Master 5%+ unmute")
+		  ("XF86AudioLowerVolume" "exec amixer set Master 5%- unmute")
+		  ("XF86AudioMute"        "exec amixer set Master toggle")
+		  ;; Programme per Tastenkombination starten
+		  ("M-s-a"   *archivmanager*)
+		  ("M-s-b"   *browser*)
+		  ("M-s-B"   "banshee")
+		  ("M-s-c"   "conkeror")
+		  ("M-s-C"   "chromium-browser")
+		  ("M-s-d"   *dateimanager*)
+		  ("M-s-D"   "deluge")
+		  ("M-C-s-d"   "dropbox-umschalten")
+		  ("M-s-e"   *email-client*)
+		  ("M-s-E"   "empathy")
+		  ("M-s-f"   "firefox")
+		  ("M-s-g"   "gwibber")
+		  ("M-s-h"   "nitrogen")
+		  ("M-s-H"   "htop")
+		  ("M-s-i"   "i2p-umschalten")
+		  ("M-s-I"   "iscan")
+		  ("M-s-j"   "jumanji")
+		  ("M-s-k"   "keepassx")
+		  ("M-s-K"   "kaffeine")
+		  ("M-s-l"   "alsamixer")
+		  ("M-s-L"   "lxappearance")
+		  ("M-s-m"   *medien-abspieler*)
+		  ("M-s-M"   "mc")
+		  ("M-C-s-m" "mocp")
+		  ("M-C-s-M" "minitube")
+		  ("M-s-n"   *nachrichtendienst*)
+		  ("M-s-N"   "nm-connection-editor")
+		  ("M-s-o"   "ubuntuone-control-panel-qt")
+		  ("M-s-p"   "exec dmenu_run ")
+		  ("M-s-P"   "pidgin")
+		  ("M-s-q"   "geeqie")
+		  ("M-s-r"   "rhythmbox")
+		  ("M-s-R"   "reinit")
+		  ("M-s-s"   *software-center*)
+		  ("M-s-S"   "synaptic")
+		  ("M-C-s-s" "update-manager")
+		  ("M-s-t"   "thunderbird")
+		  ("M-s-T"   "ubuntu-tweak")
+		  ("M-C-s-t" "ttytter")
+		  ("M-s-u"   "unison-gtk")
+		  ("M-s-v"   "vlc")
+		  ("M-s-w"   "wicd-curses ")
+		  ("M-s-x"   "xchat")
+		  ("M-s-X"   "xarchiver")
+		  ("M-s-y"   "touchpad-umschalten")
+		  ("M-s-z"   "gnome-control-center")
+		  ("M-s-Z"   "zathura")
+		  ;; Websuchen
+		  ("C-s-a" "askubuntu")
+		  ("C-s-b" "news-bbc")
+		  ("C-s-c" "clhs")
+		  ("C-s-d" "ddg")
+		  ("C-s-g" "google")
+		  ("C-s-G" "news-guardian")
+		  ("C-s-h" "hackernews")
+		  ("C-s-i" "imdb-suche")
+		  ("C-s-I" "ixquick")
+		  ("C-s-m" "google+mitteilungen")
+		  ("C-s-M" "memory-alpha")
+		  ("C-s-n" "nachrichten")
+		  ("C-s-o" "open-selection-browser") ;; öffnet den markierten Link im Webbrowser
+		  ("C-s-p" "piratebay")
+		  ("C-s-P" "google+profile")
+		  ("C-s-r" "news-register")
+		  ("C-s-R" "recipefy")
+		  ("C-s-s" "stackoverflow")
+		  ("C-s-u" "browse-url")
+		  ("C-s-w" "wikipedia")
+		  ("C-s-W" "wikipedia-en")
+		  ("C-s-y" "youtube-suche")
+		  ("C-s-z" "gwibber-poster")
+		  ("C-s-Z" "zwitschere")
+		  )
+
+;; Zu einer anderen Gruppe wechseln, erschaffen wenn sie nicht vorhanden ist
+(dotimes (i 9)
+  (define-key *root-map* (kbd (format nil "M-~A" (1+ i)))
+    (format nil "gselect-oder-gnew ~A" (1+ i))))
+
+;; Zu einer anderen Gruppe wechseln, erschaffen wenn sie nicht vorhanden ist
+(dotimes (i 9)
+  (define-key *top-map* (kbd (format nil "M-s-~A" (1+ i)))
+    (format nil "gselect-oder-gnew ~A" (1+ i))))
+
+;; Fenster anhand seiner Nummer auswählen
+(dotimes (i 10)
+  (define-key *top-map* (kbd (format nil "M-S-s-~A" i))
+    (format nil "select-window-by-number ~A" i)))
+
+;;; ==========================================================
+;;; GRUPPEN - für Umsteiger von anderen Tiling Fenstermanagern
+;;; ==========================================================
+
+;; VORSICHT! Der Gruppenteil ist seit einem Jahr nicht mehr gepflegt worden!
+
+;(run-commands ; Erzeugt die Gruppen
+;      "grename Standard"
+;      "gnewbg Emacs"
+;      "gnewbg WWW"
+;      "gnewbg Arbeiten"
+;      "gnewbg Media"
+;      "gnewbg Erholung"
+;      "gnewbg System"
+;      )
+
+;(define-frame-preference "Standard"
+;  (0 t   t :instance "xterm")
+;  (0 t   t :class "UXTerm")
+;  (0 t   t :class "st-256color")
+;  (0 t   t :class "URxvt")
+;  )
+
+;(define-frame-preference "Emacs"
+;  (0 t   t :title "emacs")
+;  )
+
+;(define-frame-preference "WWW"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Claws-mail")  
+;  (0 t   t :class "Conkeror")
+;  (0 t   t :class "Deluge")
+;  (0 t   t :class "Firefox")
+;  (0 t   t :class "surf")
+;  (0 t   t :class "Turpial")
+;  (0 t   t :class "Uzbl-core")
+;  (0 t   t :class "Xchat")
+;  )
+
+;(define-frame-preference "Arbeiten"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Gvim")
+;  (0 t   t :class "Focuswriter")
+;  (0 t   t :class "libreoffice-startcenter")
+;  (0 t   t :class "libreoffice-writer")
+;  (0 t   t :class "libreoffice-calc")
+;  (0 t   t :class "libreoffice-impress")
+;  (0 t   t :class "libreoffice-draw")
+;  (0 t   t :class "libreoffice-math")
+;  (0 t   t :class "Okular")
+;  (0 t   t :class "Pyroom")
+;  (0 t   t :class "Zathura")
+;  )
+
+;(define-frame-preference "Media"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :instance "aumix")
+;  (0 t   t :class "Audacious")
+;  (0 t   t :class "Avidemux")  
+;  (0 t   t :class "Geeqie")
+;  (0 t   t :class "Gimp")
+;  (0 t   t :class "Iscan")
+;  (0 t   t :class "K3b")
+;  (0 t   t :class "Kaffeine")
+;  (0 t   t :class "Comixq")
+;  (0 t   t :class "Minitube")  
+;  (0 t   t :class "MPlayer")  
+;  (0 t   t :class "Ristretto") 
+;  (0 t   t :class "tvbrowser-TVBrowser")
+;  (0 t   t :class "Vlc")
+;  )
+
+;(define-frame-preference "Erholung"
+;  ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Angband")
+;  (0 t   t :class "ASCIIpOrtal")
+;  (0 t   t :class "Desmume-glade")
+;  (0 t   t :class "Desmume")
+;  (0 t   t :class "Dwarf_Fortress")
+;  (0 t   t :class "Dwarftherapist")
+;  (0 t   t :class "flands-FLApp")
+;  (0 t   t :class "flare.bin")
+;  (0 t   t :class "Gvbam")
+;  (0 t   t :class "net-minecraft-MinecraftLauncher")
+;  (0 t   t :class "russotto-zplet-ZJApp")
+;  (0 t   t :class "Palapelli")
+;  (0 t   t :class "Scid")
+;  (0 t   t :title "SuperTuxKart")
+;  (0 t   t :title "t-engine")
+;  (0 t   t :title "tome")
+;  (0 t   t :class "warmux")
+;  (0 t   t :class "wesnoth")
+;  (0 t   t :class "widelands")
+;  )
+
+;(define-frame-preference "System"
+; ;; frame raise lock (lock AND raise == jumpto)
+;  (0 t   t :class "Keepassx")
+;  (0 t   t :class "Gpg-crypter")
+;  (0 t   t :class "Nitrogen")
+;  (0 t   t :class "Thunar")
+;  (0 t   t :class "Unison-gtk2")
+;  (0 t   t :class "Xarchiver")
+;  )
+
+;;; =====
+;;; Hooks
+;;; =====
+    
+(add-hook *urgent-window-hook* 'echo-urgent-window)
+
+;; Falls man sich der Tasten nicht sicher ist, einfach aktivieren ...
+;(ersetze-hook *key-press-hook* 'tastendruck-hook)
+
+;; =========================================
+;; für aktive Programmierzyklen - SWANK
+;; -----------------------------------------
+;; Aufruf mittels M-x slime-connect in Emacs
+;; =========================================
+;(when *initializing*
+;  (require 'swank)
+;  (swank:create-server :dont-close t))
