@@ -2,7 +2,11 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
+<<<<<<< HEAD
 ;;;; Version 0.43
+=======
+;;;; Version 0.42
+>>>>>>> b258f0ff26c3a519c92c1b3130597b6af0510283
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -285,7 +289,10 @@
      ("FocusWriter              präfix-Y F"   "focuswriter")
      ("GIMP                     präfix-Y g"   "gimp")
      ("Gnumeric                 präfix-Y G"   "gnumeric")
+<<<<<<< HEAD
      ("Idle Python 3            präfix-Y i"   "idle-python3.2")
+=======
+>>>>>>> b258f0ff26c3a519c92c1b3130597b6af0510283
      ("Inkscape                 präfix-Y I"   "inkscape")
      ("iScan                    präfix-Y C-I" "iscan")
      ("LibreOffice-Calc         präfix-Y c"   "localc")
@@ -426,7 +433,10 @@
      ("The Python 3.2 Language Reference"                        ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/reference/index.html"))
      ("The Python 3.2 Standard Library"                          ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/library/index.html"))
      ("The Python 3.2 Tutorial"                                  ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/tutorial/"))
+<<<<<<< HEAD
      ("Wie ein Informatiker denken lernen ... mit Python"        ,(concatenate 'string "exec " *browser* "http://ada.rg16.asn-wien.ac.at/~python/how2think/"))
+=======
+>>>>>>> b258f0ff26c3a519c92c1b3130597b6af0510283
      ("Wie man mit Go arbeitet"                                  ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/code_de.html"))
      ("Wirkungsvoll Go programmieren"                            ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/effective_go_de.html"))
     )
