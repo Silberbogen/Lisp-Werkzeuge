@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.41
+;;;; Version 0.43
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -15,10 +15,10 @@
 (defparameter *archivmanager* (concatenate 'string "file-roller" " ")
   "*archivmanager* enthält den aktuell genutzten Archivmanager")
 
-(defparameter *browser* (concatenate 'string "conkeror" " ")
+(defparameter *browser* (concatenate 'string "chromium-browser" " ")
   "*browser* enthält den aktuell genutzten Standardbrowser")
 
-(defparameter *contrib-pfad* "~/Entwicklung/lisp/stumpwm/contrib/"
+(defparameter *contrib-pfad* "~/Dropbox/Lisp/stumpwm/contrib/"
   "*contrib-pfad* enthält den Pfad, der zum /contrib/-Verzeichnis von StumpWM führt")
 
 (defparameter *dateimanager* (concatenate 'string "nautilus" " ")
@@ -30,7 +30,7 @@
 (defparameter *medien-abspieler* (concatenate 'string "rhythmbox" " ")
   "*medien-abspieler* enthält den aktuell genutzten Medien-Abspieler des Systems")
 
-(defparameter *nachrichtendienst* (concatenate 'string "empathy" " ")
+(defparameter *nachrichtendienst* (concatenate 'string "pidgin" " ")
   "*nachrichtendienst* enthält den aktuell genutzten nachrichtendienst des Systems")
 
 (defparameter *software-center* (concatenate 'string "synaptic" " ")
@@ -135,18 +135,21 @@
     (define-key m (kbd "F")   "focuswriter")
     (define-key m (kbd "g")   "gimp")
     (define-key m (kbd "G")   "gnumeric")
-    (define-key m (kbd "i")   "loimpress")
+    (define-key m (kbd "i")   "idle-python3.2")
     (define-key m (kbd "I")   "inkscape")
-    (define-key m (kbd "C-i") "idle-python3.2")
+    (define-key m (kbd "C-i") "loimpress")
     (define-key m (kbd "C-I") "iscan")
     (define-key m (kbd "m")   "lomath")
     (define-key m (kbd "M")   "mathomatic")
     (define-key m (kbd "o")   "loffice")
     (define-key m (kbd "O")   "okular")
     (define-key m (kbd "p")   "pyroom")
-    (define-key m (kbd "s")   "scribus")
-    (define-key m (kbd "S")   "simple-scan")
-    (define-key m (kbd "v")   "vym")
+    (define-key m (kbd "r")   "rednotebook")
+    (define-key m (kbd "s")   "scribes")
+    (define-key m (kbd "S")   "scribus")
+    (define-key m (kbd "C-s") "simple-scan")
+    (define-key m (kbd "v")   "gvim")
+    (define-key m (kbd "V")   "vym")
     (define-key m (kbd "w")   "lowriter")
     (define-key m (kbd "z")   "zathura")
     m))
@@ -277,25 +280,29 @@
      ("Cherrytree               präfix-Y C-c" "cherrytree")
      ("Evince                   präfix-Y e"   "evince")
      ("Emacs                    präfix-e"     "emacs")
+     ("Emacs Klientenmodus      präfix-E"     "emacsclient")
      ("FB-Reader                präfix-Y f"   "fbreader")
      ("FocusWriter              präfix-Y F"   "focuswriter")
      ("GIMP                     präfix-Y g"   "gimp")
      ("Gnumeric                 präfix-Y G"   "gnumeric")
-     ("Idle - Python 3.2        präfix-Y C-i" "idle-python3.2")
+     ("Idle Python 3            präfix-Y i"   "idle-python3.2")
      ("Inkscape                 präfix-Y I"   "inkscape")
      ("iScan                    präfix-Y C-I" "iscan")
      ("LibreOffice-Calc         präfix-Y c"   "localc")
      ("LibreOffice-Draw         präfix-Y d"   "lodraw")
-     ("LibreOffice-Impress      präfix-Y i"   "loimpress")
+     ("LibreOffice-Impress      präfix-Y C-i" "loimpress")
      ("LibreOffice-Math         präfix-Y m"   "lomath")
      ("LibreOffice-Startcenter  präfix-Y o"   "loffice")
      ("LibreOffice-Writer       präfix-Y w"   "lowriter")
      ("Mathomatic               präfix-Y M"   "mathomatic")
      ("Okular                   präfix-Y O"   "okular")
      ("PyRoom                   präfix-Y P"   "pyroom")
-     ("Scribus                  präfix-Y s"   "scribus")
-     ("Simple-Scan              präfix-Y S"   "simple-scan")
-     ("ViewYourMind             präfix-Y v"   "vym")
+     ("Rednotebook              präfix-Y r"   "rednotebook")
+     ("Scribes                  präfix-Y-s"   "scribes")
+     ("Scribus                  präfix-Y S"   "scribus")
+     ("Simple-Scan              präfix-Y C-s" "simple-scan")
+     ("Vim                      präfix-Y v"   "gvim")
+     ("ViewYourMind             präfix-Y V"   "vym")
      ("Zathura                  präfix-Y z"   "zathura")
     )
 
@@ -398,28 +405,30 @@
     )
 
     ("+ Untermenü: Python, Go & andere Algol-Sprachen"
-     ("A Byte of Python 3"                                    ,(concatenate 'string "exec " *browser* "http://www.swaroopch.org/notes/Python_en:Table_of_Contents"))
-     ("Das deutsche Python-Forum"                             ,(concatenate 'string "exec " *browser* "http://www.python-forum.de/"))
-     ("Das deutsche Python-Wiki"                              ,(concatenate 'string "exec " *browser* "http://wiki.python.de/"))
-     ("Das Python 3.2 Tutorial auf Deutsch"                   ,(concatenate 'string "exec " *browser* "http://tutorial.pocoo.org/"))
-     ("Eine Anleitung zum Programmieren in Go"                ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/go_tutorial_de.html"))
-     ("Galileo-Openbook: C von A bis Z"                       ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/c_von_a_bis_z/"))
-     ("Galileo-Openbook: Linux-Unix-Programmierung"           ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/linux_unix_programmierung/"))
-     ("Galileo-Openbook: Python"                              ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/python/"))
-     ("Galileo-Openbook: Shell-Programmierung"                ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/shell_programmierung/"))
-     ("Galileo-Openbook: Wie werde ich Unix-Guru?"            ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/unix_guru/"))
-     ("Go Language Resources"                                 ,(concatenate 'string "exec " *browser* "http://go-lang.cat-v.org/"))
-     ("GoLang Tutorials"                                      ,(concatenate 'string "exec " *browser* "http://golangtutorials.blogspot.se/2011/05/table-of-contents.html"))
-     ("GoPkgDoc / Bitbucket"                                  ,(concatenate 'string "exec " *browser* "http://go.pkgdoc.org/"))
-     ("Learning Go"                                           ,(concatenate 'string "exec " *browser* "http://www.miek.nl/projects/learninggo/index.html"))
-     ("Nightly builds of the book 'Learning Go'"              ,(concatenate 'string "exec " *browser* "http://www.miek.nl/files/go/"))
-     ("The Go Programming Language - Official Side"           ,(concatenate 'string "exec " *browser* "http://golang.org/"))
-     ("The Python 3.2 Documentation"                          ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/index.html"))
-     ("The Python 3.2 Language Reference"                     ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/reference/index.html"))
-     ("The Python 3.2 Standard Library"                       ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/library/index.html"))
-     ("The Python 3.2 Tutorial"                               ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/tutorial/"))
-     ("Wie man mit Go arbeitet"                               ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/code_de.html"))
-     ("Wirkungsvoll Go programmieren"                         ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/effective_go_de.html"))
+     ("A Byte of Python 3"                                       ,(concatenate 'string "exec " *browser* "http://www.swaroopch.org/notes/Python_en:Table_of_Contents"))
+     ("Das deutsche Python-Forum"                                ,(concatenate 'string "exec " *browser* "http://www.python-forum.de/"))
+     ("Das deutsche Python-Wiki"                                 ,(concatenate 'string "exec " *browser* "http://wiki.python.de/"))
+     ("Das Python 3.2 Tutorial auf Deutsch"                      ,(concatenate 'string "exec " *browser* "http://tutorial.pocoo.org/"))
+     ("Eine Anleitung zum Programmieren in Go"                   ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/go_tutorial_de.html"))
+     ("Galileo-Openbook: C von A bis Z"                          ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/c_von_a_bis_z/"))
+     ("Galileo-Openbook: Linux-Unix-Programmierung"              ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/linux_unix_programmierung/"))
+     ("Galileo-Openbook: Python"                                 ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/python/"))
+     ("Galileo-Openbook: Shell-Programmierung"                   ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/shell_programmierung/"))
+     ("Galileo-Openbook: Wie werde ich Unix-Guru?"               ,(concatenate 'string "exec " *browser* "http://openbook.galileocomputing.de/unix_guru/"))
+     ("Go Language Resources"                                    ,(concatenate 'string "exec " *browser* "http://go-lang.cat-v.org/"))
+     ("GoLang Tutorials"                                         ,(concatenate 'string "exec " *browser* "http://golangtutorials.blogspot.se/2011/05/table-of-contents.html"))
+     ("GoPkgDoc / Bitbucket"                                     ,(concatenate 'string "exec " *browser* "http://go.pkgdoc.org/"))
+     ("Idle - Python 3.2                           präfix-Y C-i" "idle-python3.2")
+     ("Learning Go"                                              ,(concatenate 'string "exec " *browser* "http://www.miek.nl/projects/learninggo/index.html"))
+     ("Nightly builds of the book 'Learning Go'"                 ,(concatenate 'string "exec " *browser* "http://www.miek.nl/files/go/"))
+     ("The Go Programming Language - Official Side"              ,(concatenate 'string "exec " *browser* "http://golang.org/"))
+     ("The Python 3.2 Documentation"                             ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/index.html"))
+     ("The Python 3.2 Language Reference"                        ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/reference/index.html"))
+     ("The Python 3.2 Standard Library"                          ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/library/index.html"))
+     ("The Python 3.2 Tutorial"                                  ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/tutorial/"))
+     ("Wie ein Informatiker denken lernen ... mit Python"        ,(concatenate 'string "exec " *browser* "http://ada.rg16.asn-wien.ac.at/~python/how2think/"))
+     ("Wie man mit Go arbeitet"                                  ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/code_de.html"))
+     ("Wirkungsvoll Go programmieren"                            ,(concatenate 'string "exec " *browser* "http://www.bitloeffel.de/DOC/golang/effective_go_de.html"))
     )
     
     ("+ Untermenü: Soziale Netzwerke"
@@ -626,6 +635,7 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
   (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
   (run-or-raise "exec setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
+;  (run-or-raise "exec python /usr/share/popper/popper.sh" '(:class "Setxkbmap")) ; Popper prüft Emails
   (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
       (toggle-mode-line (current-screen) (current-head)))
   (banish-pointer) ; Mauszeiger verbannen
@@ -844,6 +854,10 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
   (nsubstitute #\+ #\Space suche)
   (run-shell-command (cat *browser* "http://www.google.com/search?q=site:news.ycombinator.com+" suche)))
 
+(defcommand hsplit-fnext () ()
+  "Rahmen splitten und zum neuen Rahmen wechseln."
+  (run-commands "hsplit" "fnext"))
+
 (defcommand i2p-umschalten () ()
 	    "Schaltet den i2p-Dienst um zwischen eingeschaltet und ausgeschaltet"
 	    (case *i2p-zustand*
@@ -976,6 +990,10 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 	       (run-shell-command "synclient touchpadoff=0")
 	       (message "Touchpad ist eingeschaltet worden.")))) 
 
+(defcommand vsplit-fnext () ()
+  "Rahmen splitten und zum neuen Rahmen wechseln."
+  (run-commands "vsplit" "fnext"))
+
 (defcommand wetter (suche)
   ((:string "Suche das Wetter der Stadt: "))
   "Dient zur Suche bei wetter.net nach einer Stadt, um deren Wetter anzuzeigen."
@@ -1048,13 +1066,19 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl dwb "Starte/wechsle zum Dwb Webbrowser." "dwb" "Dwb")	    
 
-(neuerbefehl emacs "Starte/wechsle zu Emacs Lisp-System für Textbearbeitung und mehr." "emacsclient -c -a ''" "Emacs")
+(neuerbefehl emacs "Starte/wechsle zu Emacs Lisp-System für Textbearbeitung und mehr." "emacs" "Emacs")
+
+(neuerbefehl emacs-snapshot "Starte/wechsle zu Emacs Lisp-System für Textbearbeitung und mehr." "emacs-snapshot" "Emacs-snapshot")
+
+(neuerbefehl emacsclient "Starte/wechsle zum Emacs Lisp-System für Textbearbeitung und mehr im Klientenmodus." "emacsclient -c -a ''" "Emacsclient")
 
 (neuerbefehl empathy "Starte/wechsle zum Empathy Mitteilungsdienst." "empathy" "Empathy")
 
 (neuerbefehl empathy-accounts "Starte/wechsle zu den Empathy Kontoeinstellungen." "empathy-accounts" "Empathy-accounts")
 
 (neuerbefehl evince "Starte/wechsle zum Evince Leseprogramm für elektronische Bücher." "evince" "Evince")
+
+(neuerbefehl evolution "Starte/wechsle zum Evolution persönlichen Assistenten." "evolution" "Evolution")
 
 (neuerbefehl fbreader "Starte/wechsle zum FBreader Leseprogramm für elektronische Bücher." "fbreader" "Fbreader")
 
@@ -1088,9 +1112,11 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl gwibber-service "Starte/wechsle den Gwibber-Hintergrunddienst." "gwibber-service" "Gwibber-service")
 
+(neuerbefehl gvim "Starte/wechsle zum gVim Editor." "gvim" "Gvim")
+
 (neuerbefehl iceweasel "Starte/wechsle zum Iceweasel Webbrowser." "iceweasel" "Iceweasel")
 
-(neuerbefehl idle-python3.2 "Starte/wechsle zu Idle in der Python 3.2 Fassung." "idle-python3.2" "Idle-python3.2")
+(neuerbefehl idle-python3.2 "Starte/wechsle zu Idle in der Python 3.2 Fassung." "idle-python3.2" "Toplevel")
 
 (neuerbefehl jumanji "Starte/wechsle zum Jumanji Webbrowser." "jumanji" "Jumanji")	    
 
@@ -1134,11 +1160,15 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl pychess "Starte/wechsle zu PyChess Staunton." "pychess" "pychess")
 
+(neuerbefehl rednotebook "Starte/wechsle zu Rednotebook." "rednotebook" "Rednotebook")
+
 (neuerbefehl ristretto "Starte/wechsle zum Ristretto Bildbetrachter." "ristretto" "Ristretto")
 
 (neuerbefehl rhythmbox "Starte/wechsle zu Rhythmbox Medienabspieler." "rhythmbox-client" "Rhythmbox")
 
 (neuerbefehl scid "Starte/wechsle zum Schachprogramm Scid vs. PC." "scid" "Scid")
+
+(neuerbefehl scribes "Starte/wechsle zum Scribes Editor." "scribes" "Scribes")
 
 (neuerbefehl scribus "Starte/wechsle zum Scribus DTP-Programm." "scribus" "Scribus")
 
@@ -1255,8 +1285,12 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("C-RET" "adminterminal")
 		  ("DEL" "repack-window-numbers")
 		  ("C-!" "ausführen-im-terminal")
+		  ("E"   "emacsclient")
+		  ("C-e" "emacs-snapshot")
 		  ("I" "show-window-properties")
 		  ("P" "exec dmenu_run ")
+		  ("s" "vsplit-fnext")
+		  ("S" "hsplit-fnext")
 		  ("," "switch-modeline")
 		  ("C-b" "byobu")
 		  ("c" "byobu")
@@ -1305,6 +1339,16 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("X" '*erholung-map*)
 		  ("Y" '*arbeiten-map*)
 		  ("." "menü")
+		  ("F1" "gselect-oder-gnew 1")
+		  ("F2" "gselect-oder-gnew 2")
+		  ("F3" "gselect-oder-gnew 3")
+		  ("F4" "gselect-oder-gnew 4")
+		  ("F5" "gselect-oder-gnew 5")
+		  ("F6" "gselect-oder-gnew 6")
+		  ("F7" "gselect-oder-gnew 7")
+		  ("F8" "gselect-oder-gnew 8")
+		  ("F9" "gselect-oder-gnew 9")
+		  ("F10" "gselect-oder-gnew 10")
 		  )
 
 (tastaturbelegung *top-map*
@@ -1313,6 +1357,16 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("s-X" '*erholung-map*)
 		  ("s-Y" '*arbeiten-map*)
 		  ("s-." "menü")
+		  ("s-F1" "gselect-oder-gnew 1")
+		  ("s-F2" "gselect-oder-gnew 2")
+		  ("s-F3" "gselect-oder-gnew 3")
+		  ("s-F4" "gselect-oder-gnew 4")
+		  ("s-F5" "gselect-oder-gnew 5")
+		  ("s-F6" "gselect-oder-gnew 6")
+		  ("s-F7" "gselect-oder-gnew 7")
+		  ("s-F8" "gselect-oder-gnew 8")
+		  ("s-F9" "gselect-oder-gnew 9")
+		  ("s-F10" "gselect-oder-gnew 10")
 		  )
 
 ;; --------------------------------------------------------------------------------------
@@ -1335,8 +1389,9 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("C-s-Up"    "mark")
 		  ("C-s-Down"  "pull-marked")
 		  ;; Durch Fenster wechseln - dwm-like
-		  ("s-Tab"          "next-in-frame")
-		  ("s-ISO_Left_Tab" "prev-in-frame")     ;; Erinnerung: Das ist  Shift-Tab
+		  ("s-Tab"            "fnext")
+		  ("C-s-Tab"          "next-in-frame")
+		  ("C-s-ISO_Left_Tab" "prev-in-frame")     ;; Erinnerung: Das ist  Shift-Tab
 		  ;; Gruppen-Verhalten ist dwm-like
 		  ("M-s-Left"    "gprev")
 		  ("M-s-Right"   "gnext")
@@ -1372,6 +1427,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("C-s-c" "Adminterminal")
 		  ("C-s-d" "debuggen-umschalten")
 		  ("s-e"   "emacs")
+		  ("s-E"   "emacsclient")
+		  ("C-s-e" "emacs-snapshot")
 		  ("s-f"   "fselect")
 		  ("s-F"   "curframe")
 		  ("s-g"   *groups-map*)
@@ -1396,8 +1453,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("C-s-Q" "quit")
 		  ("s-r"   "iresize")
 		  ("s-R"   "remove")
-		  ("s-s"   "vsplit")
-		  ("s-S"   "hsplit")
+		  ("s-s"   "vsplit-fnext")
+		  ("s-S"   "hsplit-fnext")
 		  ("s-t"   "send-escape")
 		  ("s-u"   "next-urgent")
 		  ("s-v"   "version")
@@ -1485,6 +1542,11 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("C-s-z" "gwibber-poster")
 		  ("C-s-Z" "zwitschere")
 		  )
+
+;; Zu einer anderen Gruppe wechseln, erschaffen wenn sie nicht vorhanden ist
+(dotimes (i 9)
+  (define-key *root-map* (kbd (format nil "M-~A" (1+ i)))
+    (format nil "gselect-oder-gnew ~A" (1+ i))))
 
 ;; Zu einer anderen Gruppe wechseln, erschaffen wenn sie nicht vorhanden ist
 (dotimes (i 9)
@@ -1606,7 +1668,9 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 ;;; =====
     
 (add-hook *urgent-window-hook* 'echo-urgent-window)
-(ersetze-hook *key-press-hook* 'tastendruck-hook)
+
+;; Falls man sich der Tasten nicht sicher ist, einfach aktivieren ...
+;(ersetze-hook *key-press-hook* 'tastendruck-hook)
 
 ;; =========================================
 ;; für aktive Programmierzyklen - SWANK
