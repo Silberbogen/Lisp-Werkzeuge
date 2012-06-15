@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.43
+;;;; Version 0.44
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -601,7 +601,7 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
       *mode-line-foreground-color*      "DodgerBlue"
       *mode-line-border-color*          "CornflowerBlue"
       *mode-line-timeout*               1
-      *mode-line-position*              :top
+      *mode-line-position*              :bottom
       *time-format-string-default*      "%a %d.%m.%Y %I:%M%p"
       *time-modeline-string*            "%a %d.%m.%Y %I:%M%p"
       *group-format*                    "%n%s%t"
@@ -609,7 +609,10 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 
 ;; Modeline zeigt Zeit in lokalem Format, CPU-Nutzung, Netzwerk-Verkehr, Gruppe, Notifikation und aktuellen Rahmen
 (setf *screen-mode-line-format*
-      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " %t %c %M %l " (:eval (format-gmail nil)) " [^B%n^b] %W "))
+      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]'" t)) "| ^BLAST:^b " (:eval (run-shell-command " uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " | %t | %c| %M| %b | %l| " (:eval (format-gmail nil)) " [^BGRUPPE:^b%n]"))
+
+;(setf *screen-mode-line-format*
+;      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " %t %c %M %b %l " (:eval (format-gmail nil)) " [^B%n^b] %W "))
 
 ;(setf *screen-mode-line-format*
 ;      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " %t %c %M %l [^B%n^b] %W " (:eval (format-gmail nil))))
@@ -617,15 +620,16 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 ;(setf *screen-mode-line-format*
 ;      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))   " %t %c %M %l [^B%n^b] %W" ))
 
-;; ================================
-;; Beim Erstart einmal zu erledigen
-;; ================================
+;; ==================================
+;; Beim Erststart einmal zu erledigen
+;; ==================================
 
 (when *initializing*
   (load (concatenate 'string *contrib-pfad* "sbclfix"))
   (load (concatenate 'string *contrib-pfad* "net"))
   (load (concatenate 'string *contrib-pfad* "cpu"))
   (load (concatenate 'string *contrib-pfad* "mem"))
+  (load (concatenate 'string *contrib-pfad* "battery"))
   (load "gmail.lisp")
   (run-or-raise "exec nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
   (run-or-raise "exec synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
