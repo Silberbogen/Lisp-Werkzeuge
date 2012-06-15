@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.44
+;;;; Version 0.45
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -597,7 +597,7 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 ;; -----------------------
 
 ;; Vorbereitungen für das Modeline-Verhalten
-(setf *mode-line-background-color*      "Grey18"
+(setf *mode-line-background-color*      "Grey34";"Grey28";"Grey18"
       *mode-line-foreground-color*      "DodgerBlue"
       *mode-line-border-color*          "CornflowerBlue"
       *mode-line-timeout*               1
@@ -609,7 +609,10 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 
 ;; Modeline zeigt Zeit in lokalem Format, CPU-Nutzung, Netzwerk-Verkehr, Gruppe, Notifikation und aktuellen Rahmen
 (setf *screen-mode-line-format*
-      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]'" t)) "| ^BLAST:^b " (:eval (run-shell-command " uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " | %t | %c| %M| %b | %l| " (:eval (format-gmail nil)) " [^BGRUPPE:^b%n]"))
+      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]'" t)) (:eval (format-gmail nil)) " [^BGRUPPE:^b %n] | %c, %t | ^BLAST:^b " (:eval (run-shell-command " uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " | %M| %l| %b" ))
+
+;(setf *screen-mode-line-format*
+;      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]'" t)) "| %c | ^BLAST:^b " (:eval (run-shell-command " uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " | %t | %M| %b | %l" (:eval (format-gmail nil)) " [^BGRUPPE:^b %n]"))
 
 ;(setf *screen-mode-line-format*
 ;      '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]' && uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t)) " %t %c %M %b %l " (:eval (format-gmail nil)) " [^B%n^b] %W "))
