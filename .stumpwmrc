@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.46
+;;;; Version 0.47
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -30,14 +30,14 @@
 (defparameter *medien-abspieler* (concatenate 'string "rhythmbox" " ")
   "*medien-abspieler* enthält den aktuell genutzten Medien-Abspieler des Systems")
 
-(defparameter *nachrichtendienst* (concatenate 'string "pidgin" " ")
+(defparameter *nachrichtendienst* (concatenate 'string "empathy" " ")
   "*nachrichtendienst* enthält den aktuell genutzten nachrichtendienst des Systems")
 
 (defparameter *software-center* (concatenate 'string "synaptic" " ")
   "*software-center* enthält das aktuell genutzte Software-Center des Systems")
 
-(defparameter *stumpwm-thema* nil
-  "*stumpwm-thema* kann dazu benutzt werden, ein Thema nachzuladen. Soll keines geladen werden, auf NIL setzen, sonst auf 'lubuntu oder 'ubuntu")
+(defparameter *stumpwm-thema* 'nil
+  "*stumpwm-thema* kann dazu benutzt werden, ein Thema nachzuladen. Soll keines geladen werden, auf NIL setzen, sonst auf 'lubuntu, 'pflaume oder 'ubuntu")
 
 (defparameter *systerm* "exec uxterm -fg CornflowerBlue -bg DarkSlateGrey -class 'Admin-uxterm' -e 'sudo -i'"
   "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
@@ -135,7 +135,7 @@
     (define-key m (kbd "F")   "focuswriter")
     (define-key m (kbd "g")   "gimp")
     (define-key m (kbd "G")   "gnumeric")
-    (define-key m (kbd "i")   "idle-python3.2")
+    (define-key m (kbd "i")   "idle3")
     (define-key m (kbd "I")   "inkscape")
     (define-key m (kbd "C-i") "loimpress")
     (define-key m (kbd "C-I") "iscan")
@@ -148,6 +148,7 @@
     (define-key m (kbd "s")   "scribes")
     (define-key m (kbd "S")   "scribus")
     (define-key m (kbd "C-s") "simple-scan")
+    (define-key m (kbd "C-S") "sublime-text")
     (define-key m (kbd "v")   "gvim")
     (define-key m (kbd "V")   "vym")
     (define-key m (kbd "w")   "lowriter")
@@ -276,6 +277,7 @@
     ("+ Untermenü: Arbeiten"
      ("Abiword                  präfix-X a"   "abiword")
      ("Adressbuch               präfix-X A"   "abook")
+     ("bPython3  Interpreter    präfix C-b"   "bpython3")
      ("Calibre                  präfix-X C"   "calibre")
      ("Cherrytree               präfix-X C-c" "cherrytree")
      ("Evince                   präfix-X e"   "evince")
@@ -285,8 +287,9 @@
      ("FocusWriter              präfix-X F"   "focuswriter")
      ("GIMP                     präfix-X g"   "gimp")
      ("Gnumeric                 präfix-X G"   "gnumeric")
-     ("Idle Python 3            präfix-X i"   "idle-python3.2")
+     ("Idle Python 3            präfix C-i"   "idle3")
      ("Inkscape                 präfix-X I"   "inkscape")
+     ("iPython3 Interpreter     präfix C-I"   "ipython3")
      ("iScan                    präfix-X C-I" "iscan")
      ("LibreOffice-Calc         präfix-X c"   "localc")
      ("LibreOffice-Draw         präfix-X d"   "lodraw")
@@ -301,6 +304,7 @@
      ("Scribes                  präfix-X-s"   "scribes")
      ("Scribus                  präfix-X S"   "scribus")
      ("Simple-Scan              präfix-X C-s" "simple-scan")
+     ("Sublime-Text             präfix-X C-S" "sublime-text")
      ("Vim                      präfix-X v"   "gvim")
      ("ViewYourMind             präfix-X V"   "vym")
      ("Zathura                  präfix-X z"   "zathura")
@@ -406,6 +410,7 @@
 
     ("+ Untermenü: Python, Go & andere Algol-Sprachen"
      ("A Byte of Python 3"                                       ,(concatenate 'string "exec " *browser* "http://www.swaroopch.org/notes/Python_en:Table_of_Contents"))
+     ("bPython3 Interpreter                        präfix C-b"   "bpython3") 
      ("Das deutsche Python-Forum"                                ,(concatenate 'string "exec " *browser* "http://www.python-forum.de/"))
      ("Das deutsche Python-Wiki"                                 ,(concatenate 'string "exec " *browser* "http://wiki.python.de/"))
      ("Das Python 3.2 Tutorial auf Deutsch"                      ,(concatenate 'string "exec " *browser* "http://tutorial.pocoo.org/"))
@@ -418,9 +423,11 @@
      ("Go Language Resources"                                    ,(concatenate 'string "exec " *browser* "http://go-lang.cat-v.org/"))
      ("GoLang Tutorials"                                         ,(concatenate 'string "exec " *browser* "http://golangtutorials.blogspot.se/2011/05/table-of-contents.html"))
      ("GoPkgDoc / Bitbucket"                                     ,(concatenate 'string "exec " *browser* "http://go.pkgdoc.org/"))
-     ("Idle - Python 3.2                           präfix-X i"   "idle-python3.2")
+     ("Idle - Python 3.2                           präfix C-i"   "idle3")
+     ("iPython3 Interpreter                        präfix C-I"   "ipython3") 
      ("Learning Go"                                              ,(concatenate 'string "exec " *browser* "http://www.miek.nl/projects/learninggo/index.html"))
      ("Nightly builds of the book 'Learning Go'"                 ,(concatenate 'string "exec " *browser* "http://www.miek.nl/files/go/"))
+     ("Python Tutorials von AwareTek"                            ,(concatenate 'string "exec " *browser* "http://www.awaretek.com/tutorials.html"))
      ("The Go Programming Language - Official Side"              ,(concatenate 'string "exec " *browser* "http://golang.org/"))
      ("The Python 3.2 Documentation"                             ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/index.html"))
      ("The Python 3.2 Language Reference"                        ,(concatenate 'string "exec " *browser* "http://docs.python.org/py3k/reference/index.html"))
@@ -555,12 +562,11 @@
 
 (set-font "-*-terminus-medium-r-normal-*-12-*-*-*-*-*-*-1") ; set-font stellt den Standardzeichensatz ein.
 
-;; Ubuntu 12.04 LTS Thema
-(set-focus-color      "DodgerBlue3")
+(set-focus-color      "orange") ;"DodgerBlue3")
 (set-unfocus-color    "black")
-(set-win-bg-color     "CornflowerBlue")
-(set-fg-color         "NavyBlue")
-(set-bg-color         "LightSkyBlue")
+(set-win-bg-color     "gainsboro") ;"CornflowerBlue")
+(set-fg-color         "maroon4") ;"NavyBlue")
+(set-bg-color         "gainsboro") ;"LightSkyBlue")
 
 (setq *time-format-string-default* "%A %B %e %k:%M:%S")
 
@@ -597,15 +603,15 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 ;; -----------------------
 
 ;; Vorbereitungen für das Modeline-Verhalten
-(setf *mode-line-background-color*      "Grey28";"Grey18"
-      *mode-line-foreground-color*      "DodgerBlue"
-      *mode-line-border-color*          "CornflowerBlue"
+(setf *mode-line-background-color*      "maroon4" ; "Grey18"
+      *mode-line-foreground-color*      "gainsboro" ; "DodgerBlue"
+      *mode-line-border-color*          "OrangeRed" ; "CornflowerBlue"
       *mode-line-timeout*               1
       *mode-line-position*              :bottom
       *time-format-string-default*      "%a %d.%m.%Y %I:%M%p"
       *time-modeline-string*            "%a %d.%m.%Y %I:%M%p"
       *group-format*                    "%n%s%t"
-      *window-format*                   "«%n%s%m%10c»")
+      *window-format*                   "%n%s%m%10c")
 
 ;; Modeline zeigt Zeit in lokalem Format, CPU-Nutzung, Netzwerk-Verkehr, Gruppe, Notifikation und aktuellen Rahmen
 (setf *screen-mode-line-format*
@@ -668,6 +674,10 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 (when (eql *stumpwm-thema* 'ubuntu)
   (message "Lade Ubuntu-Thema")
   (load "~/ubuntu-thema.lisp"))
+
+(when (eql *stumpwm-thema* 'pflaume)
+  (message "Lade Pflaume-Thema")
+  (load "~/pflaume-thema.lisp"))
 
 ;; ==============
 ;; Neue defmacros
@@ -1131,7 +1141,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl iceweasel "Starte/wechsle zum Iceweasel Webbrowser." "iceweasel" "Iceweasel")
 
-(neuerbefehl idle-python3.2 "Starte/wechsle zu Idle in der Python 3.2 Fassung." "idle-python3.2" "Toplevel")
+(neuerbefehl idle3 "Starte/wechsle zu Idle in der Python 3.x Fassung." "idle3" "Toplevel")
 
 (neuerbefehl jumanji "Starte/wechsle zum Jumanji Webbrowser." "jumanji" "Jumanji")	    
 
@@ -1193,6 +1203,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl speedcrunch "Starte/wechsle zum Speedcrunch Taschenrechner." "speedcrunch" "Speedcrunch")
 
+(neuerbefehl sublime-text "Starte/wechsle zu Sublime-Text." "sublime-text" "Sublime-text")
+
 (neuerbefehl surf "Starte/wechsle zum Surf Webbrowser." "surf" "surf")
 
 (neuerbefehl synaptic "Starte/wechsle zur Synaptic Paketverwaltung." "exec gksudo synaptic" "Synaptic")
@@ -1241,6 +1253,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerterminalbefehl alsamixer "Starte/wechsle zur Alsa-Mixer-Lautstärkeregelung." "alsamixer" "Alsamixer")
 
+(neuerterminalbefehl bpython3 "Starte/wechsle zu bpython3." "bpython3" "Bpython3" "CornflowerBlue" "DarkSlateGrey")
+
 (neuerterminalbefehl byobu "Starte/wechsle zum Byobu-Terminal." "byobu" "Byobu" "gainsboro" "DarkSlateGray")
 
 (neuerterminalbefehl crawl "Starte/wechsle zu Crawl Hack'n'Slay Rollenspiel." "crawl" "Crawl")
@@ -1248,6 +1262,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 (neuerterminalbefehl doomrl "Starte/wechsle zu DoomRL." "doomrl" "Doomrl")
 
 (neuerterminalbefehl htop "Starte/wechsle zur Htop Systemressourcen-Darstellung." "htop" "Htop" "BlanchedAlmond" "MidnightBlue")
+
+(neuerterminalbefehl ipython3 "Starte/wechsle zu ipython3." "bpython3" "Bpython3" "DodgerBlue" "NavyBlue")
 
 (neuerterminalbefehl mathomatic "Starte/wechsle zu Mathomatic Rechenprogramm." "mathomatic" "Mathomatic")
 
@@ -1300,20 +1316,22 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("C-RET" "adminterminal")
 		  ("DEL" "repack-window-numbers")
 		  ("C-!" "ausführen-im-terminal")
-		  ("E"   "emacsclient")
-		  ("C-e" "emacs-snapshot")
-		  ("I" "show-window-properties")
-		  ("P" "exec dmenu_run ")
-		  ("s" "vsplit-fnext")
-		  ("S" "hsplit-fnext")
-		  ("," "switch-modeline")
-		  ("C-b" "byobu")
 		  ("c" "byobu")
+		  ("C-b" "bpython3")
 		  ("C" "commands")
 		  ("M-c" "userterminal")
 		  ("M-C" "uxt-neu")
 		  ("C-c" "adminterminal")
-		  ("C-d" "debuggen-umschalten")
+		  ("C-d" "debuggen-umschalten")		  
+		  ("E"   "emacsclient")
+		  ("C-e" "emacs-snapshot")
+		  ("I" "show-window-properties")
+		  ("C-i" "idle3")
+		  ("C-I" "ipython3")
+		  ("P" "exec dmenu_run ")
+		  ("s" "vsplit-fnext")
+		  ("S" "hsplit-fnext")
+		  ("," "switch-modeline")
 		  ;; Die fehlenden Features auch in der root-map anlegen
 		  ("C-SPC" "other")
 		  ("M-SPC" "gother")
@@ -1437,6 +1455,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("s-A"   "title")
 		  ("s-b"   "banish")
 		  ("C-s-b" "byobu")
+		  ("C-s-B" "bpython3")
 		  ("s-c"   "userterminal")
 		  ("s-C"   "commands")
 		  ("C-s-c" "Adminterminal")
@@ -1450,6 +1469,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("s-G"   "vgroups")
 		  ("s-h"   *help-map*)
 		  ("s-i"   "info")
+		  ("C-s-i" "idle3")
+		  ("C-s-I" "ipython3")
 		  ("s-I"   "show-window-properties")
 		  ("s-k"   "delete")
 		  ("s-K"   "kill")
