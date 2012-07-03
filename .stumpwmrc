@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.47
+;;;; Version 0.48
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -15,7 +15,7 @@
 (defparameter *archivmanager* (concatenate 'string "file-roller" " ")
   "*archivmanager* enthält den aktuell genutzten Archivmanager")
 
-(defparameter *browser* (concatenate 'string "chromium-browser" " ")
+(defparameter *browser* (concatenate 'string "google-chrome" " ")
   "*browser* enthält den aktuell genutzten Standardbrowser")
 
 (defparameter *contrib-pfad* "~/Dropbox/Lisp/stumpwm/contrib/"
@@ -33,7 +33,7 @@
 (defparameter *nachrichtendienst* (concatenate 'string "empathy" " ")
   "*nachrichtendienst* enthält den aktuell genutzten nachrichtendienst des Systems")
 
-(defparameter *software-center* (concatenate 'string "synaptic" " ")
+(defparameter *software-center* (concatenate 'string "software-center" " ")
   "*software-center* enthält das aktuell genutzte Software-Center des Systems")
 
 (defparameter *stumpwm-thema* 'nil
@@ -73,7 +73,7 @@
     (define-key m (kbd "b")   *browser*)
     (define-key m (kbd "B")   "banshee")
     (define-key m (kbd "c")   "conkeror")
-    (define-key m (kbd "C")   "chromium-browser")
+    (define-key m (kbd "C")   "google-chrome")
     (define-key m (kbd "d")   *dateimanager*)
     (define-key m (kbd "D")   "deluge")
     (define-key m (kbd "C-d") "dropbox-umschalten")
@@ -533,7 +533,7 @@
     )
 
     ("+ Untermenü: WWW-Programme"
-     ("Chromium     präfix-x C"   "chromium-browser")
+     ("Chrome       präfix-x C"   "google-chrome")
      ("Claws-Mail"                "claws-mail")
      ("Conkeror     präfix-x c"   "conkeror")
      ("Deluge       präfix-x D"   "deluge")
@@ -1075,7 +1075,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl cherrytree "Starte/wechsle zur Cherrytree Wiki-Notiz-Verwaltung." "cherrytree" "Cherrytree")
 
-(neuerbefehl chromium-browser "Starte/wechsle zum Chromium Webbrowser." "chromium-browser" "Chromium-Browser")
+(neuerbefehl google-chrome "Starte/wechsle zum Chrome Webbrowser." "google-chrome" "Google-Chrome")
 
 (neuerbefehl claws-mail "Starte/wechsle zum Claws-Mail Emailprogramm." "claws-mail" "Claws-mail")
 
@@ -1163,7 +1163,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl lowriter "Starte/wechsle zur LibreOffice Textverarbeitung." "lowriter" "Lowriter")
 
-(neuerbefehl lubuntu-software-center "Starte/wechsle zum Lubuntu Software-Center." "lubuntu-software-center" "Lubuntu-software-center")
+(neuerbefehl lubuntu-software-center "Starte/wechsle zum Lubuntu Software-Center." "gksudo lubuntu-software-center" "Lubuntu-software-center")
 
 (neuerbefehl minitube "Starte/wechsle zu Minitube Medienabspieler für YouTube-Videos." "minitube" "Minitube")
 
@@ -1199,7 +1199,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl simple-scan "Starte/wechsle zu Simple-Scan." "simple-scan" "Simple-scan")
 
-(neuerbefehl software-center "Starte/wechsle zum Ubuntu Software-Center." "software-center" "Software-center")
+(neuerbefehl software-center "Starte/wechsle zum Ubuntu Software-Center." "gksudo software-center" "Software-center")
 
 (neuerbefehl speedcrunch "Starte/wechsle zum Speedcrunch Taschenrechner." "speedcrunch" "Speedcrunch")
 
@@ -1509,7 +1509,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("M-s-b"   *browser*)
 		  ("M-s-B"   "banshee")
 		  ("M-s-c"   "conkeror")
-		  ("M-s-C"   "chromium-browser")
+		  ("M-s-C"   "google-chrome")
 		  ("M-s-d"   *dateimanager*)
 		  ("M-s-D"   "deluge")
 		  ("M-C-s-d"   "dropbox-umschalten")
