@@ -1186,6 +1186,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl palapeli "Starte/wechsle zu Palapeli Puzzle-Spiel." "palapeli" "Palapeli")
 
+(neuerbefehl pavucontrol "Starte/wechsle zum Lautstärkeregler." "pavucontrol" "Pavucontrol")
+
 (neuerbefehl pcmanfm "Starte/wechsle zum Pcmanfm-Dateimanager." "pcmanfm" "Pcmanfm")
 
 (neuerbefehl pidgin "Starte/wechsle zum Pidgin-Nachrichtendienst." "pidgin" "Pidgin")
@@ -1510,9 +1512,10 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("s-S"   "hsplit-fnext")
 		  ("s-t"   "userterminal")
 		  ("s-u"   "next-urgent")
-		  ("s-v"   "version")
+		  ("s-v"   "pavucontrol")
 		  ("s-w"   *browser*)
 		  ("s-W"   "place-existing-windows")
+		  ("s-x"   "quit")
 		  ;; Programme per Direkttaste starten
 		  ("Print"                "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
 		  ("XF86HomePage"         *browser*)
