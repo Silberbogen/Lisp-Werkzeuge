@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.49
+;;;; Version 0.50 (20120816)
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -1446,7 +1446,7 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("M-s-Right"   "gnext")
 		  ("M-S-s-Left"  "gprev-with-window")
 		  ("M-S-s-Right" "gnext-with-window")
-		  ("s-SPC"   "pull-hidden-next")
+		  ("s-SPC"   "menü")
 		  ("C-s-SPC" "other")
 		  ("M-s-SPC" "gother")
 		  ("S-s-SPC" "pull-marked")
@@ -1520,7 +1520,9 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("XF86AudioRaiseVolume" "exec amixer set Master 5%+ unmute")
 		  ("XF86AudioLowerVolume" "exec amixer set Master 5%- unmute")
 		  ("XF86AudioMute"        "exec amixer set Master toggle")
-		  ;; Programme per Tastenkombination starten    
+		  ;; Programme per Tastenkombination starten
+		  ("M-F2"    "gmrun")
+		  ("M-F3"    "exec dmenu_run")
 		  ("M-s-a"   *archivmanager*)
 		  ("M-s-b"   *browser*)
 		  ("M-s-B"   "banshee")
