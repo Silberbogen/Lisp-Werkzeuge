@@ -652,6 +652,7 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (run-or-raise "exec synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
   (run-or-raise "exec xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
   (run-or-raise "exec nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
+  (run-or-raise "exec conky -q" '(:class "Conky")) ; Conky
 ;  (run-or-raise "exec ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
 ;  (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
 ;  (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
