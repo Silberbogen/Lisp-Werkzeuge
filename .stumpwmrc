@@ -2,7 +2,7 @@
 ;-*- coding: utf-8 -*-
 ;;;; ============================================================================================
 ;;;; StumpWM-RC-Datei
-;;;; Version 0.48
+;;;; Version 0.49
 ;;;; mit loadrc im colon neu laden, oder, wenn eine Vorgängerversion von ihr bereits geladen ist,
 ;;;; mit prefix-x R neu einlesen nach einer Änderung
 ;;;; ============================================================================================
@@ -15,40 +15,40 @@
 (defparameter *archivmanager* (concatenate 'string "file-roller" " ")
   "*archivmanager* enthält den aktuell genutzten Archivmanager")
 
-(defparameter *browser* (concatenate 'string "google-chrome" " ")
+(defparameter *browser* (concatenate 'string "x-www-browser" " ")
   "*browser* enthält den aktuell genutzten Standardbrowser")
 
-(defparameter *contrib-pfad* "~/Dropbox/Lisp/stumpwm/contrib/"
+(defparameter *contrib-pfad* "~/development/stumpwm/contrib/"
   "*contrib-pfad* enthält den Pfad, der zum /contrib/-Verzeichnis von StumpWM führt")
 
-(defparameter *dateimanager* (concatenate 'string "nautilus" " ")
+(defparameter *dateimanager* (concatenate 'string "thunar" " ")
   "*dateimanager* enthält den aktuell genutzten Dateimanager")
 
-(defparameter *email-client* (concatenate 'string "thunderbird" " ")
+(defparameter *email-client* (concatenate 'string "claws-mail" " ")
   "*email-client* enthält den aktuell genutzten Email-Klienten des Systems")
 
-(defparameter *medien-abspieler* (concatenate 'string "rhythmbox" " ")
+(defparameter *medien-abspieler* (concatenate 'string "smplayer" " ")
   "*medien-abspieler* enthält den aktuell genutzten Medien-Abspieler des Systems")
 
-(defparameter *nachrichtendienst* (concatenate 'string "empathy" " ")
+(defparameter *nachrichtendienst* (concatenate 'string "pidgin" " ")
   "*nachrichtendienst* enthält den aktuell genutzten nachrichtendienst des Systems")
 
-(defparameter *software-center* (concatenate 'string "software-center" " ")
+(defparameter *software-center* (concatenate 'string "synaptic" " ")
   "*software-center* enthält das aktuell genutzte Software-Center des Systems")
 
 (defparameter *stumpwm-thema* 'nil
   "*stumpwm-thema* kann dazu benutzt werden, ein Thema nachzuladen. Soll keines geladen werden, auf NIL setzen, sonst auf 'lubuntu, 'pflaume oder 'ubuntu")
 
-(defparameter *systerm* "exec uxterm -fg CornflowerBlue -bg DarkSlateGrey -class 'Admin-uxterm' -e 'sudo -i'"
+(defparameter *systerm* "exec uxterm -fg Grey90 -bg DarkSlateGray -class 'Admin-uxterm' -e 'sudo -i'"
   "*systerm* speichert eine Umgebung für ein Terminal mit Administratorrechten")
 
-(defparameter *uxthema* "exec uxterm -fg DodgerBlue -bg NavyBlue"
+(defparameter *uxthema* "exec uxterm -fg Grey90 -bg Grey18"
   "*uxthema* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS. Die Farben wurden ausgesucht anhand von http://http://critical.ch/xterm/")
 
-(defparameter *uxt* "uxterm -fg DodgerBlue -bg NavyBlue -class 'Userterminal'"
+(defparameter *uxt* "uxterm -fg Grey90 -bg Grey21 -class 'Userterminal'"
   "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
 
-(defparameter *uxt-neu* "uxterm -fg DodgerBlue -bg NavyBlue"
+(defparameter *uxt-neu* "uxterm -fg Grey90 -bg Grey13"
   "*uxt* enthält ein Farbthema für das Terminal, angepasst an Ubuntu 12.04 LTS")
 
 (defvar *dropbox-zustand* 'eingeschaltet
@@ -562,11 +562,11 @@
 
 (set-font "-*-terminus-medium-r-normal-*-12-*-*-*-*-*-*-1") ; set-font stellt den Standardzeichensatz ein.
 
-(set-focus-color      "orange") ;"DodgerBlue3")
+(set-focus-color      "Grey70") ;"DodgerBlue3")
 (set-unfocus-color    "black")
-(set-win-bg-color     "gainsboro") ;"CornflowerBlue")
-(set-fg-color         "maroon4") ;"NavyBlue")
-(set-bg-color         "gainsboro") ;"LightSkyBlue")
+(set-win-bg-color     "DarkSlateGray") ;"CornflowerBlue")
+(set-fg-color         "Grey90") ;"NavyBlue")
+(set-bg-color         "Grey18") ;"LightSkyBlue")
 
 (setq *time-format-string-default* "%A %B %e %k:%M:%S")
 
@@ -603,9 +603,9 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 ;; -----------------------
 
 ;; Vorbereitungen für das Modeline-Verhalten
-(setf *mode-line-background-color*      "maroon4" ; "Grey18"
-      *mode-line-foreground-color*      "gainsboro" ; "DodgerBlue"
-      *mode-line-border-color*          "OrangeRed" ; "CornflowerBlue"
+(setf *mode-line-background-color*      "Grey21" ; "Grey18"
+      *mode-line-foreground-color*      "Grey80" ; "DodgerBlue"
+      *mode-line-border-color*          "Grey70" ; "CornflowerBlue"
       *mode-line-timeout*               1
       *mode-line-position*              :bottom
       *time-format-string-default*      "%a %d.%m.%Y %I:%M%p"
@@ -617,7 +617,7 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
 (setf *screen-mode-line-format*
       '((:eval (run-shell-command "date '+%c '|tr -d '[:cntrl:]'" t))
 	"^B[GRUPPE:^b %n^B]^b "
-	(:eval (format-gmail nil))
+;	(:eval (format-gmail nil))
 	" %c, %t | ^BLAST:^b "
 	(:eval (run-shell-command " uptime | sed 's/.*: //; s/,//g'|tr -d '[:cntrl:]'" t))
 	" | %M| %l| %b" ))
@@ -647,14 +647,14 @@ Drücke ^5*~a ?^2* für Hilfe.") ; personalisierte Begrüssungsnachricht
   (load (concatenate 'string *contrib-pfad* "cpu"))
   (load (concatenate 'string *contrib-pfad* "mem"))
   (load (concatenate 'string *contrib-pfad* "battery"))
-  (load "gmail.lisp")
+;  (load "gmail.lisp")
   (run-or-raise "exec nitrogen --restore" '(:class "Nitrogen")) ; Hintergrund einstellen
   (run-or-raise "exec synclient touchpadoff=1" '(:class "Synclient")) ; Touchpad ausschalten
   (run-or-raise "exec xscreensaver -no-splash" '(:class "Xscreensaver")) ; Bildschirmschoner mit Sperrfunktion
   (run-or-raise "exec nm-applet" '(:class "Nm-applet")) ; Network-Manager Applet
-  (run-or-raise "exec ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
-  (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
-  (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
+;  (run-or-raise "exec ubuntuone-launch" '(:class "Ubuntuone")) ; UbuntuOne starten
+;  (run-or-raise "exec dropbox start" '(:class "Dropbox")) ; Dropbox starten
+;  (run-or-raise "exec gwibber-service" '(:class "Gwibber-service")) ; Gwibber-Dienst starten
   (run-or-raise "exec setxkbmap -layout de nodeadkeys" '(:class "Setxkbmap")) ; Deutsche Tastatur einstellen
 ;  (run-or-raise "exec python /usr/share/popper/popper.sh" '(:class "Setxkbmap")) ; Popper prüft Emails
   (if (not (head-mode-line (current-head))) ; Die Modeline einschalten, falls sie es noch nicht ist
@@ -1075,6 +1075,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl cherrytree "Starte/wechsle zur Cherrytree Wiki-Notiz-Verwaltung." "cherrytree" "Cherrytree")
 
+(neuerbefehl chromium "Starte/wechsle zum Chromium Browser" "chromium" "Chromium")
+
 (neuerbefehl google-chrome "Starte/wechsle zum Chrome Webbrowser." "google-chrome" "Google-Chrome")
 
 (neuerbefehl claws-mail "Starte/wechsle zum Claws-Mail Emailprogramm." "claws-mail" "Claws-mail")
@@ -1082,6 +1084,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 (neuerbefehl comix "Starte/wechsle zum Comix Leseprogramm für elektronische Comics." "comix" "Comix")
 
 (neuerbefehl conkeror "Starte/wechsle zum Conkeror Webbrowser." "conkeror" "Conkeror")
+
+(neuerbefehl conkychange.sh "Wechsle Conky." "conkychange.sh" "Conkychange.sh")
 
 (neuerbefehl deluge "Starte/wechsle zum Deluge BitTorrent-Klienten." "deluge" "Deluge")
 
@@ -1118,6 +1122,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 (neuerbefehl geeqie "Starte/wechsle zum Geekie Bildbetrachter." "geeqie" "Geeqie")
 
 (neuerbefehl gimp "Starte/wechsle zu GIMP Grafikbeareitungsprogramm." "gimp" "Gimp")
+
+(neuerbefehl gmrun "Starte/wechsle zum Programmstartfenster." "gmrun" "Gmrun")
 
 (neuerbefehl gnome-control-center "Starte/wechsle zum Kontrollzentrum." "gnome-control-center" "Gnome-control-center")
 
@@ -1169,6 +1175,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl nautilus "Starte/wechsle zum Nautilus Dateimanager." "nautilus --no-desktop" "Nautilus")
 
+(neuerbefehl nm-applet "Starte/wechsle zum Network-Manager-Applet." "nm-applet" "Nm-applet")
+
 (neuerbefehl nm-connection-editor "Starte/wechsle zum Networkmanager Verbindungseditor." "nm-connection-editor" "Nm-connection-editor")
 
 (neuerbefehl nitrogen "Starte/wechsle zu Nitrogen Hintergrundbild-Wechsler." "nitrogen" "Nitrogen")
@@ -1199,6 +1207,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 
 (neuerbefehl simple-scan "Starte/wechsle zu Simple-Scan." "simple-scan" "Simple-scan")
 
+(neuerbefehl smplayer "Starte/wechsle zum SMplayer." "smplayer" "Smplayer")
+
 (neuerbefehl software-center "Starte/wechsle zum Ubuntu Software-Center." "gksudo software-center" "Software-center")
 
 (neuerbefehl speedcrunch "Starte/wechsle zum Speedcrunch Taschenrechner." "speedcrunch" "Speedcrunch")
@@ -1210,6 +1220,10 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 (neuerbefehl synaptic "Starte/wechsle zur Synaptic Paketverwaltung." "exec gksudo synaptic" "Synaptic")
 
 (neuerbefehl thunderbird "Starte/wechsle zum Thunderbird Email-Klienten." "thunderbird" "Thunderbird")
+
+(neuerbefehl thunar "Starte/wechsle zum Thunar Dateimanager." "thunar" "Thunar")
+
+(neuerbefehl trackpad-toggle.sh "Schalte das Touchpad ein oder aus." "trackpad-toggle.sh" "Trackpad-toggle.sh")
 
 (neuerbefehl turpial "Starte/wechsle zum Turpial Kurzmitteilungsprogramm." "turpial" "Turpial")
 
@@ -1232,6 +1246,8 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 (neuerbefehl vym "Starte/wechsle zu ViewYourMind." "vym" "Vym")
 
 (neuerbefehl worldofpadman "Starte/wechsle zu World of Padman." "worldofpadman" "Worldofpadman")
+
+(neuerbefehl x-www-browser "Starte/wechsle zum von Debian voreingestellten Browser" "x-www-browser" "X-www-browser")
 
 (neuerbefehl xarchiver "Starte/wechsle zu X-Archiver." "xarchiver" "Xarchiver")
 
@@ -1463,11 +1479,11 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("s-e"   "emacs")
 		  ("s-E"   "emacsclient")
 		  ("C-s-e" "emacs-snapshot")
-		  ("s-f"   "fselect")
+		  ("s-f"   *dateimanager*)
 		  ("s-F"   "curframe")
 		  ("s-g"   *groups-map*)
 		  ("s-G"   "vgroups")
-		  ("s-h"   *help-map*)
+		  ("s-h"   "conkychange.sh")
 		  ("s-i"   "info")
 		  ("C-s-i" "idle3")
 		  ("C-s-I" "ipython3")
@@ -1476,13 +1492,13 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("s-K"   "kill")
 		  ("s-l"   "exec xscreensaver-command -lock")
 		  ("s-L"   "loadrc")
-		  ("s-m"   "lastmsg")
+		  ("s-m"   *medien-abspieler*)
 		  ("s-n"   "pull-hidden-next")
 		  ("M-s-N" "next")
 		  ("C-s-n" "next-in-frame")
 		  ("C-s-N" "number")
 		  ("s-o"   "fnext")
-		  ("s-p"   "pull-hidden-previous")
+		  ("s-p"   "trackpad-toggle.sh")
 		  ("s-P"   "prev")
 		  ("C-s-p" "prev-in-frame")
 		  ("s-Q"   "only")
@@ -1491,10 +1507,10 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("s-R"   "remove")
 		  ("s-s"   "vsplit-fnext")
 		  ("s-S"   "hsplit-fnext")
-		  ("s-t"   "send-escape")
+		  ("s-t"   "userterminal")
 		  ("s-u"   "next-urgent")
 		  ("s-v"   "version")
-		  ("s-w"   "windows")
+		  ("s-w"   *browser*)
 		  ("s-W"   "place-existing-windows")
 		  ;; Programme per Direkttaste starten
 		  ("Print"                "exec scrot -e 'mv $f ~/Bilder/Bildschirmfotos/ 2>/dev/null'")
@@ -1504,12 +1520,12 @@ GSELECT-ODER-GNEW wechselt zur Gruppe gruppen-nr. Ist diese bisher nicht erstell
 		  ("XF86AudioRaiseVolume" "exec amixer set Master 5%+ unmute")
 		  ("XF86AudioLowerVolume" "exec amixer set Master 5%- unmute")
 		  ("XF86AudioMute"        "exec amixer set Master toggle")
-		  ;; Programme per Tastenkombination starten
+		  ;; Programme per Tastenkombination starten    
 		  ("M-s-a"   *archivmanager*)
 		  ("M-s-b"   *browser*)
 		  ("M-s-B"   "banshee")
 		  ("M-s-c"   "conkeror")
-		  ("M-s-C"   "google-chrome")
+		  ("M-s-C"   "chromium")
 		  ("M-s-d"   *dateimanager*)
 		  ("M-s-D"   "deluge")
 		  ("M-C-s-d"   "dropbox-umschalten")
