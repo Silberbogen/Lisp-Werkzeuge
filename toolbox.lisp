@@ -503,9 +503,11 @@ Beispiel: (vorher-p 'alpha 'beta '(alpha beta gamma delta)) => (BETA GAMMA DELTA
   "(durchschnitt liste)
 DURCHSCHNITT ermöglicht es, den Durchschnitt einer Reihe von Zahlen zu berechnen.
 Beispiel: (durchschnitt 2 3 4) => 3"
-  (if (null liste)
-      nil
-      (/ (reduce #'+ liste) (length liste))))
+  (if (null liste) ; Ist die Liste leer ...
+      nil ; ... muss man nichts tun ...
+      (/ ; ... ansonsten: Teile die Gesamtsumme der Elemente durch ihre Anzahl
+	   (reduce #'+ liste) ; Wendet die Funktion + auf die Liste an und errechnet so die Gesamtsumme
+	   (length liste)))) ; Wendet die Funktion Länge auf die Liste an und errechnet so die Anzahl Elemente
 
 (defun faktor (n)
   "(faktor zahl)
@@ -584,10 +586,11 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 	  (cond ((> d max-d) (return (list n))) ; n ist eine Primzahl
 		((zerop (rem n d)) (return (cons d (faktorisiere (truncate n d)))))))))
 
-(defun fibonacci-reihe (n) "Bildet die Fibonacci-Reihe zur n. Zahl; Beispiel: (fibonacci-reihe 20) => 6765"
-  (if (< n 2)
-      n
-      (+ (fibonacci-reihe (- n 2)) (fibonacci-reihe (- n 1)))))
+(defun fibonacci-folge (n &optional (a 0) (b 1))
+	   "Bildet die Fibonacci-Folge zur n. Zahl; Beispiel: (fibonacci-reihe 20) => 6765"
+  (if (= n 0)
+      a
+	  (fibonacci-folge (- n 1) b (+ a b))))
 
 ;;; Kilometer-pro-Tankfüllung
 (defun km-pro-tankfüllung (anfang ende spritmenge)
@@ -672,8 +675,6 @@ Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
 WÜRFELWURF bildet den Wurf mit einem in Spieleboxen üblichen, voreingestellt 6-seitigen, Würfel nach. Durch einen Aufruf mit einer anderen Seitenzahl wird ein entsprechender über Seiten verfügender Würfel angenommen.
 Beispiel: (würfelwurf) => 4"
   (1+ (random seiten)))
-
-
 
 ;;; ===================================
 ;;; Abschnitt 6 - Allgemeine Funktionen
