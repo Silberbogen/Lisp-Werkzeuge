@@ -1,4 +1,4 @@
-;-*-lisp-*-
+
 ;-*- coding: utf-8 -*-
 
 ;;;; Dateiname: toolbox.lisp
@@ -403,8 +403,8 @@ T"
   (princ zeichenkette)
   (let ((eingabe (read)))
     (case eingabe
-      ((j J ja Ja JA) t)
-      ((n N nein Nein NEIN) nil)
+      ((j ja) t)
+      ((n ne nei nein) nil)
       (otherwise (j-oder-n-p zeichenkette)))))
 
 (defmacro liste? (objekt)
@@ -414,7 +414,7 @@ LIST? prüft ob ein Objekt eine Liste ist, wenn ja, so wird T zurückgegeben, an
 Beispiel: (liste? nil) => T"
   `(listp ,objekt))
 
-(defmacro nichtleereliste? (objekt)
+(defmacro nicht-leere-liste? (objekt)
   "(nichtleereliste? objekt)
 NICHTLEERELISTE? ist ein Ersatz für das Prädikat CONSP.
 NICHTLEERELISTE? prüft ob ein Objekt eine nicht leere Liste ist, wenn ja, so wird T zurückgegeben, ansonsten NIL.
@@ -559,7 +559,7 @@ Beispiel: (faktor-festlegen 'mm) => 1/1000"
     ((ha hektar zehntausend) 10000) ; 10e4
     ((zentner ztr) 50000)
     ((dezitonne dezitonnen doppelzentner dt dz) 100000) ; 10e5
-    ((km2 mb megabyte megameter million million mg quadratkilometer t tonne tonnen) 1000000) ; 10e6
+    ((km2 mb megabyte megameter ) 1000000) ; 10e6
     ((mib mebibyte) 1048576) ; 2e20
     ((square-mile) 2589988.1103)
     ((gb gigabyte gigameter gm kilotonne kilotonnen kt milliarde) 1000000000) ; 10e9
