@@ -1,14 +1,11 @@
-
 ;-*- coding: utf-8 -*-
-
 ;;;; Dateiname: toolbox.lisp
-;;;; Beschreibung: Ein kleiner Werkzeugkasten für den Umgang mit Lisp - und um Programme "einzudeutschen"
+;;;; Beschreibung: Ein kleiner Werkzeugkasten für den Umgang mit Lisp
+;;;; - und um Lisp-Befehle "einzudeutschen"
+;;;; ------------------------------------------------------------------------
 ;;;; Author: Sascha Biermanns, <skkd.h4k1n9@yahoo.de>
-
 ;;;; Lizenz: ISC
-
 ;;;; Copyright (C) 2011,2012 Sascha Biermanns
-
 ;;;; Permission to use, copy, modify, and/or distribute this software for any
 ;;;; purpose with or without fee is hereby granted, provided that the above
 ;;;; copyright notice and this permission notice appear in all copies.
@@ -19,12 +16,12 @@
 ;;;; WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ;;;; ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 ;;;; OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
+;;;; ------------------------------------------------------------------------
 ;;;; Hinweis:
 ;;;; Das Laden dieser Datei in Common Lisp erfolgt per:
-;;;; (load "toolbox")
+;;;; (load "toolbox.lisp")
 ;;;; Zur Verbesserung der Geschwinidkeit bitte vorher compilieren per:
-;;;; (compile-file "toolbox")
+;;;; (compile-file "toolbox.lisp")
 
 
 ;;; ===============================
