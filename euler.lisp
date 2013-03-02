@@ -120,3 +120,4 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 (defun euler7 ()
   "Find the 10001st prime."
   (erzeuge-primzahl 10001))
+
