@@ -442,10 +442,22 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
  (palindrom-p \"Otto\") => T"
        (typecase sequenz
 	 (null nil)
+	 (number (string= (write-to-string sequenz) (reverse (write-to-string sequenz))))
 	 (string (string= sequenz (reverse sequenz)))
 	 (symbol (string= (symbol-name sequenz) (reverse (symbol-name sequenz))))
 	 (list (equal sequenz (reverse sequenz)))
 	 (otherwise nil)))
+
+(defun primzahl-p (x)
+  "Prüft ob eine Zahl eine echte Primzahl ist."
+  (labels ((versuche (&optional (n 2))
+			 (if (> (expt n 2) x)
+				 t
+				 (if (zerop (rem x n))
+					 nil
+					 (versuche (1+ n))))))
+    (and (/= 1 x)
+		 (versuche))))
 
 (defun set-equal-p (a b)
   "(set-equal-p liste1 liste2)
@@ -505,6 +517,17 @@ Beispiel: (durchschnitt 2 3 4) => 3"
       (/ ; ... ansonsten: Teile die Gesamtsumme der Elemente durch ihre Anzahl
 	   (reduce #'+ liste) ; Wendet die Funktion + auf die Liste an und errechnet so die Gesamtsumme
 	   (length liste)))) ; Wendet die Funktion Länge auf die Liste an und errechnet so die Anzahl Elemente
+
+(defun erzeuge-primzahl (x)
+  "Erzeugt die x. Primzahl."
+  (labels ((durchgang (&optional (test 2) (zähler 0))
+			 (if (=  zähler x)
+				 (1- test)
+				 (if (primzahl-p test)
+					 (durchgang (1+ test) (1+ zähler))
+					 (durchgang (1+ test) zähler)))))
+    (durchgang)))
+
 
 (defun faktor (n)
   "(faktor zahl)
