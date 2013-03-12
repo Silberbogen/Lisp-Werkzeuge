@@ -108,14 +108,6 @@ Beispiel: (vorher-p 'alpha 'beta '(alpha beta gamma delta)) => (BETA GAMMA DELTA
 ;;; Funktionen
 ;;; ==========
 
-(defun about (x)
-  (format t "symbol-name: ~A~%" (symbol-name x))
-  (format t "symbol-package: ~A~%" (symbol-package x))
-  (format t "symbol-plist: ~A~%" (symbol-plist x))
-  (format t "symbol-value: ~A~%" (symbol-value x))
-  (when (functionp x)
-    (format t "~&symbol-function: ~A~%" (symbol-function x))))
-
 (defun alle-permutationen (liste)
   "Alle Permutationen einer Liste erzeugen; Beispiel: (alle-permutationen (list 'a 'b 'c 'd 'e))"
   (if (null liste) '(())
@@ -128,7 +120,7 @@ Beispiel: (vorher-p 'alpha 'beta '(alpha beta gamma delta)) => (BETA GAMMA DELTA
 ANHÄNGEN ist ein umgekehrtes cons, das Item wird an das Ende der Liste gesetzt, nicht an den Anfang.
 Beispiel: (hinten-einfügen 'Alpha '(Beta Gamma)) => (BETA GAMMA ALPHA)
 Hinweis: (SNOC item liste) ist eine weitaus schnellere Fassung dieser Funktion." 
-  (rückwärts (cons item (rückwärts liste))))
+  (reverse (cons item (reverse liste))))
   
 (defun durchschnitt (&rest liste)
   "(durchschnitt liste)
@@ -161,7 +153,7 @@ Beispiel: (entferne-letztes '(a b c d)) => (A B C)"
 
 (defun ersetze-letztes (item liste)
   "Ersetzt das letzte Element einer Liste durch item; Beispiel: (ersetze-letztes 'delta '(alpha beta gamma)) => (ALPHA BETA DELTA)"
-       (rückwärts (cons item (rest (rückwärts liste)))))
+       (reverse (cons item (rest (reverse liste)))))
 
 (defun erzeuge-primzahl (x)
   "Erzeugt die x. Primzahl."
@@ -173,72 +165,19 @@ Beispiel: (entferne-letztes '(a b c d)) => (A B C)"
 					 (durchgang (1+ test) zähler)))))
     (durchgang)))
     
-(defun faktor (n)
+(defun faktor (n &optional (zwischenergebnis 1))
   "(faktor zahl)
 FAKTOR berechnet den Faktor einer Zahl.
 Ein Faktor von 6 wird zum Beispiel errechnet, indem man die Werte von 1 bis 6 miteinander malnimmt, also 1 * 2 * 3 * 4 * 5 * 6. Faktoren haben die unangenehme Eigenschaft, das sie sehr schnell sehr groß werden können.
 Beispiel: (faktor 20) =>  2432902008176640000"
-  (if (eql n 0) 
-    1 
-    (* n (faktor (1- n)))))
+  (cond
+	((> n 0)
+	 (faktor (1- n) (* n zwischenergebnis)))
+	((< n 0)
+	 (faktor (1+ n) (* n zwischenergebnis)))
+	(t
+	 (return-from faktor zwischenergebnis))))
     
-(defun faktor-festlegen (wert)
-  "(faktor-festlegen wert)
-FAKTOR-FESTLEGEN dient dazu, einen Rechenfaktor für die Maßeinheit zurückzugeben.
-Beispiel: (faktor-festlegen 'mm) => 1/1000"
-  (case wert
-    ((yoctometer) 10e-24)
-    ((zeptometer) 10e-21)
-    ((am attometer) 10e-18)
-    ((femtometer fm) 10e-15)
-    ((picometer pm) 1/1000000000000) ; 10e-12
-    ((Ångström Å) 1/10000000000) ; 10e-10
-    ((nanometer nm) 1/1000000000) ; 10e-9
-    ((mikrometer mm2 µm quadratmillimeter) 1/1000000) ; 10e-6
-    ((cm2 quadratzentimeter) 1/10000) ; 10e-4
-    ((mm tausendstel) 1/1000) ; 10e-3
-    ((cm dm2 hundertstel quadratdezimeter zentimeter) 1/100) ; 10e-2
-    ((inch zoll) 0.0254)
-    ((dm dezimeter zehntel) 1/10) ; 10e-1
-    ((foot fuß) 0.3048) ; 12 inches
-    ((gerte schritt yard yd) 0.9144) ; 3 feet
-    ((bit g gramm m m2 meter qm quadratmeter) 1)
-    ((fathom fth) 1.8288) ; 6 feet
-    ((byte octet oktett) 8)
-    ((square-foot) 10.7639)
-    ((dutzend) 12)
-    ((shackle shot) 27.432) ; 15 fathom
-    ((a ar hundert) 100) ; 10e2
-    ((gros gröthen gruessa tylt) 144)
-    ((pfund) 500)
-    ((kb kg kilobyte kilogramm kilometer myriameter tausend) 1000) ; 10e3
-    ((kib kibibyte) 1024) ; 2e10
-    ((square-inch) 1550.0031)
-    ((meile mile) 1609.344) ; 5280 feet
-    ((großes-gros großgros maß) 1728)
-    ((seemeile) 1852)
-    ((international-nautical-mile) 1852.01)
-    ((acre) 4046.8564)
-    ((league nautical-league sea-league) 5559.552) ; 3 admirality sea miles
-    ((ha hektar zehntausend) 10000) ; 10e4
-    ((zentner ztr) 50000)
-    ((dezitonne dezitonnen doppelzentner dt dz) 100000) ; 10e5
-    ((km2 mb megabyte megameter ) 1000000) ; 10e6
-    ((mib mebibyte) 1048576) ; 2e20
-    ((square-mile) 2589988.1103)
-    ((gb gigabyte gigameter gm kilotonne kilotonnen kt milliarde) 1000000000) ; 10e9
-    ((gib gibibyte) 1073741824) ; 2e30
-    ((billion megatonne mt tb terabyte terameter tm) 1000000000000) ; 10e12
-    ((tebibyte tib) 1099511627776) ; 2e40
-    ((billiarde pb petabyte petameter) 10e15)
-    ((pebibyte pib) 1125899906842624) ; 2e50
-    ((eb exabyte em exameter) 10e18)
-    ((exbibyte eib) 1152921504606846976) ; 2e60
-    ((zb zettabyte zettameter) 10e21)
-    ((zebibyte zib) 1180591620717411303424) ; 2e70
-    ((yb yottabyte yottameter) 10e24)
-    ((yobibyte yib) 1208925819614629174706176) ; 2e80
-    (otherwise nil)))
 
 (defun faktorisiere (n)
   "(faktorisiere n)
@@ -327,6 +266,64 @@ Beispiel: (pythagoras 3 4) => 5.0"
 QUADRATZAHL berechnet die Quadratzahl einer gegebenen Zahl.
 Beispiel: (quadratzahl 1024) => 1048576)"
        (* x x))
+
+(defun rechenfaktor-festlegen (wert)
+  "(faktor-festlegen wert)
+RECHENFAKTOR-FESTLEGEN dient dazu, einen Rechenfaktor für die Maßeinheit zurückzugeben.
+Beispiel: (rechenfaktor-festlegen 'mm) => 1/1000"
+  (case wert
+    ((yoctometer) 10e-24)
+    ((zeptometer) 10e-21)
+    ((am attometer) 10e-18)
+    ((femtometer fm) 10e-15)
+    ((picometer pm) 1/1000000000000) ; 10e-12
+    ((Ångström Å) 1/10000000000) ; 10e-10
+    ((nanometer nm) 1/1000000000) ; 10e-9
+    ((mikrometer mm2 µm quadratmillimeter) 1/1000000) ; 10e-6
+    ((cm2 quadratzentimeter) 1/10000) ; 10e-4
+    ((mm tausendstel) 1/1000) ; 10e-3
+    ((cm dm2 hundertstel quadratdezimeter zentimeter) 1/100) ; 10e-2
+    ((inch zoll) 0.0254)
+    ((dm dezimeter zehntel) 1/10) ; 10e-1
+    ((foot fuß) 0.3048) ; 12 inches
+    ((gerte schritt yard yd) 0.9144) ; 3 feet
+    ((bit g gramm m m2 meter qm quadratmeter) 1)
+    ((fathom fth) 1.8288) ; 6 feet
+    ((byte octet oktett) 8)
+    ((square-foot) 10.7639)
+    ((dutzend) 12)
+    ((shackle shot) 27.432) ; 15 fathom
+    ((a ar hundert) 100) ; 10e2
+    ((gros gröthen gruessa tylt) 144)
+    ((pfund) 500)
+    ((kb kg kilobyte kilogramm kilometer myriameter tausend) 1000) ; 10e3
+    ((kib kibibyte) 1024) ; 2e10
+    ((square-inch) 1550.0031)
+    ((meile mile) 1609.344) ; 5280 feet
+    ((großes-gros großgros maß) 1728)
+    ((seemeile) 1852)
+    ((international-nautical-mile) 1852.01)
+    ((acre) 4046.8564)
+    ((league nautical-league sea-league) 5559.552) ; 3 admirality sea miles
+    ((ha hektar zehntausend) 10000) ; 10e4
+    ((zentner ztr) 50000)
+    ((dezitonne dezitonnen doppelzentner dt dz) 100000) ; 10e5
+    ((km2 mb megabyte megameter ) 1000000) ; 10e6
+    ((mib mebibyte) 1048576) ; 2e20
+    ((square-mile) 2589988.1103)
+    ((gb gigabyte gigameter gm kilotonne kilotonnen kt milliarde) 1000000000) ; 10e9
+    ((gib gibibyte) 1073741824) ; 2e30
+    ((billion megatonne mt tb terabyte terameter tm) 1000000000000) ; 10e12
+    ((tebibyte tib) 1099511627776) ; 2e40
+    ((billiarde pb petabyte petameter) 10e15)
+    ((pebibyte pib) 1125899906842624) ; 2e50
+    ((eb exabyte em exameter) 10e18)
+    ((exbibyte eib) 1152921504606846976) ; 2e60
+    ((zb zettabyte zettameter) 10e21)
+    ((zebibyte zib) 1180591620717411303424) ; 2e70
+    ((yb yottabyte yottameter) 10e24)
+    ((yobibyte yib) 1208925819614629174706176) ; 2e80
+    (otherwise nil)))
 
 (defun rotiere-nach-links (x)
   "(rotiere-nach-links liste)
