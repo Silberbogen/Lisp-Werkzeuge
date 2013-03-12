@@ -710,7 +710,7 @@ Beispiel: (würfelwurf) => 4"
 (defun entferne-letztes (liste)
   "(entferne-letztes liste)
 ENTFERNE-LETZES entfernt das letzte Top-Level-Element einer Liste.
-Beispiel: (letztes-weg '(a b c d)) => (A B C)"
+Beispiel: (entferne-letztes '(a b c d)) => (A B C)"
 ;ehemals  (rückwärts (rest (rückwärts liste))))
   (if (null liste)
       nil				 
