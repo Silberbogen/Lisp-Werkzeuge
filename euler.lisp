@@ -1,5 +1,5 @@
 ;-*- coding: utf-8 -*-
-;;;; Dateiname: lotto.lisp
+;;;; Dateiname: euler.lisp
 ;;;; Beschreibung: Mögliche Lösungen zu den Aufgaben des Projekt Eulers, die
 ;;;;               ich in Common Lisp geschrieben habe.
 ;;;; ------------------------------------------------------------------------
@@ -45,25 +45,26 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 (defun fibonacci-folge (n &optional (a 0) (b 1))
   "Bildet die Fibonacci-Folge zur n. Zahl; Beispiel: (fibonacci-reihe 20) => 6765"
-  (if (= n 0)
+  (if (zerop n)
       a
 	  (fibonacci-folge (- n 1) b (+ a b))))
 
 
 
-(defun palindrom-p (sequenz) "(palindrom-p sequenz)
+(defun palindrom-p (sequenz)
+  "(palindrom-p sequenz)
 Palindromp testet, ob eine übergebene Sequenz, eine übergebene Zeichenkette oder ein übergebenes Symbol ein Palindrom darstellt.
 Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
  (palindrom-p 'otto) => T
  (palindrom-p 'otta) => NIL
  (palindrom-p \"Otto\") => T"
-       (typecase sequenz
-		 (null nil)
-		 (number (string= (write-to-string sequenz) (reverse (write-to-string sequenz))))
-		 (string (string= sequenz (reverse sequenz)))
-		 (symbol (string= (symbol-name sequenz) (reverse (symbol-name sequenz))))
-		 (list (equal sequenz (reverse sequenz)))
-		 (otherwise nil)))
+  (typecase sequenz
+	(null nil)
+	(number (string= (write-to-string sequenz) (reverse (write-to-string sequenz))))
+	(string (string= sequenz (reverse sequenz)))
+	(symbol (string= (symbol-name sequenz) (reverse (symbol-name sequenz))))
+	(list (equal sequenz (reverse sequenz)))
+	(otherwise nil)))
 
 
 
