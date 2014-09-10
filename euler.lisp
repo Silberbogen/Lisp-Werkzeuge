@@ -86,6 +86,19 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 
+(defun sammle-divisoren (n)
+  "Erstellt eine Liste aller Divisoren einer Zahl."
+  (let ((liste nil))
+	(do ((i 1 (1+ i)))
+		((> i (sqrt n))
+		 liste)
+	  (when (zerop (mod n i))
+		(push i liste)
+		(unless (= i (/ n i))
+		  (push (/ n i) liste))))))
+
+
+
 ;;; ----------------------------------------
 ;;;  Die Lösungen zu den einzelnen Aufgaben
 ;;; ----------------------------------------
@@ -216,7 +229,7 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 (defun euler-11 ()
-  "What is the greatest product of four adjacent numbers on the same straight line in the 20 by 20 grid?"
+  "What is the greatest product of four adjacent numbers on the same straight line in the 20 by 20 grid? Correct answer: 70600674"
   (let ((zahlen nil)
 		(n 0)
 		(maximum 0))
@@ -282,6 +295,16 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 			(test-n)
 			(setf n (sequenz-lo-ru i j))
 			(test-n)))))))
-				 
+
+
+
+(defun euler-12 ()
+  "What is the value of the first dreieck number to have over five hundred divisors? Correct answer: 76576500"
+  (let ((n 0))
+	(do ((i 1 (1+ i)))
+		((> (length (sammle-divisoren n)) 500)
+		 n)
+	  (setf n (/ (* i (1+ i)) 2)))))
+
 
 	  
