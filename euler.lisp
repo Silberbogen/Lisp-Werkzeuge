@@ -132,6 +132,18 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 
+(defun nur-buchstaben (text)
+  "Entfernt die Nicht-Buchstaben eines Textes."
+  (remove-if #'(lambda (string) (not (alpha-char-p string)))
+			 text))
+
+
+(defun zähle-buchstaben (text)
+  "Zählt die Buchstaben eines angegebenen Texts."
+	(length (nur-buchstaben text)))
+
+
+
 ;;; ----------------------------------------
 ;;;  Die Lösungen zu den einzelnen Aufgaben
 ;;; ----------------------------------------
@@ -487,15 +499,11 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 (defun euler-17 ()
   "How many letters would be needed to write all the numbers in words from 1 to 1000? Correct answer: 21124 (english, american would be 18451)."
   (let ((x 0)
-		(missing-ands (* 3 9 99)) ; like in one hundred and one
-	(flet
-		((buchstaben (zahl)
-		   (remove-if #'(lambda (string) (not (alpha-char-p string)))
-					  (format nil "~R" zahl))))
-	  (do ((i 1 (1+ i)))
-		  ((> i 1000)
-		   (+ x missing-ands))
-		(incf x (length (buchstaben i)))))))
+		(missing-ands (* 3 9 99)))		; like in one hundred and one
+	(do ((i 1 (1+ i)))
+		((> i 1000)
+		 (+ x missing-ands))
+	  (incf x (zähle-buchstaben (format nil "~R" i))))))
 
 
 
