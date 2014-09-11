@@ -120,6 +120,7 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 (defun route-dreieck (liste)
+  "Findet den Weg vom Boden zur Spitze einer Zahlenpyramide anhand des teuersten Weges."
   (if (null (rest liste))
 	  (first liste)
 	  (let ((bottom-row (pop liste))
@@ -157,6 +158,49 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 (defun zähle-buchstaben (text)
   "Zählt die Buchstaben eines angegebenen Texts."
 	(length (nur-buchstaben text)))
+
+
+
+(defun wochentag (tag monat jahr)
+  "Gibt den Tag der Woche als Zahl zurück. Montag = 0 ... Sonntag = 6."
+  (seventh (multiple-value-list
+			(decode-universal-time
+			 (encode-universal-time 0 0 0 tag monat jahr)))))
+
+
+
+(defun montag-p (tag monat jahr)
+  (= (wochentag tag monat jahr) 0))
+
+
+
+(defun dienstag-p (tag monat jahr)
+  (= (wochentag tag monat jahr) 1))
+
+
+
+(defun mittwoch-p (tag monat jahr)
+  (= (wochentag tag monat jahr) 2))
+
+
+
+(defun donnerstag-p (tag monat jahr)
+  (= (wochentag tag monat jahr) 3))
+
+
+
+(defun freitag-p (tag monat jahr)
+  (= (wochentag tag monat jahr) 4))
+
+
+
+(defun samstag-p (tag monat jahr)
+  (= (wochentag tag monat jahr) 5))
+
+
+
+(defun sonntag-p (tag monat jahr)
+  (= (wochentag tag monat jahr) 6))
 
 
 
@@ -543,6 +587,25 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 					(63 66 04 68 89 53 67 30 73 16 69 87 40 31)
 					(04 62 98 27 23 09 70 98 73 93 38 53 60 04 23)))))
 	(first (route-dreieck dreieck))))
+
+
+
+(defun euler-19 ()
+  "How many sonntage fell on the first of the month during the twentieth century? Correct answer: 171."
+  (let ((x 0))
+	(do ((jahr 1901 (1+ jahr)))
+	  ((> jahr 2000)
+	   x)
+	  (do ((monat 1 (1+ monat)))
+		  ((> monat 12))
+		(when (sonntag-p 1 monat jahr)
+		  (incf x))))))
+
+
+
+(defun euler-20 ()
+  "Find the sum of digits in 100! Correct answer: 648."
+  (addiere-ziffern (faktor 100)))
 
 
 
