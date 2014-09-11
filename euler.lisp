@@ -100,6 +100,10 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 
+; ------------------------------------------
+
+
+
 (defun primzahl-p (x)
   "Prüft ob eine Zahl eine echte Primzahl ist."
   (labels ((versuche (&optional (n 2))
@@ -111,11 +115,13 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
     (and (/= 1 x)
 		 (versuche))))
 
-
-
 (defun nächste-primzahl (&optional (zahl 0))
   "Ein Primzahlen-Generator"
   (loop for n from (1+ zahl) when (primzahl-p n) return n))
+
+
+
+; -------------------------------------------
 
 
 
@@ -149,15 +155,22 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 
+; --------------------------------
+
+
+
 (defun nur-buchstaben (text)
   "Entfernt die Nicht-Buchstaben eines Textes."
   (remove-if #'(lambda (string) (not (alpha-char-p string)))
 			 text))
 
-
 (defun zähle-buchstaben (text)
   "Zählt die Buchstaben eines angegebenen Texts."
 	(length (nur-buchstaben text)))
+
+
+
+;---------------------------------
 
 
 
@@ -167,40 +180,30 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 			(decode-universal-time
 			 (encode-universal-time 0 0 0 tag monat jahr)))))
 
-
-
 (defun montag-p (tag monat jahr)
   (= (wochentag tag monat jahr) 0))
-
-
 
 (defun dienstag-p (tag monat jahr)
   (= (wochentag tag monat jahr) 1))
 
-
-
 (defun mittwoch-p (tag monat jahr)
   (= (wochentag tag monat jahr) 2))
-
-
 
 (defun donnerstag-p (tag monat jahr)
   (= (wochentag tag monat jahr) 3))
 
-
-
 (defun freitag-p (tag monat jahr)
   (= (wochentag tag monat jahr) 4))
-
-
 
 (defun samstag-p (tag monat jahr)
   (= (wochentag tag monat jahr) 5))
 
-
-
 (defun sonntag-p (tag monat jahr)
   (= (wochentag tag monat jahr) 6))
+
+
+
+; ---------------------------------
 
 
 
