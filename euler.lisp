@@ -142,18 +142,28 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 
-(defun sammle-divisoren (n)
+(defun sammle-divisoren (n &optional (ohne-selbst nil))
   "Erstellt eine Liste aller Divisoren einer Zahl."
   (let ((liste nil))
 	(do ((i 1 (1+ i)))
 		((> i (sqrt n))
-		 liste)
+		 (if ohne-selbst
+			 (set-difference liste (list n))
+			 liste))
 	  (when (zerop (mod n i))
 		(push i liste)
 		(unless (= i (/ n i))
 		  (push (/ n i) liste))))))
 
 
+
+(defun befreundete-zahl-p (n)
+  (let* ((bz (apply #'+ (sammle-divisoren n t)))
+		(bz-summe (apply #'+ (sammle-divisoren bz t))))
+	(when (= n bz-summe)
+		bz)))
+	
+	
 
 ; --------------------------------
 
@@ -612,6 +622,19 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 
+(defun euler-21 ()
+  "Evaluate the sum of all amicable pairs under 10000. Correct answer: 31626."
+  (let ((summe 0)
+		(bz nil))
+	(do ((i 1 (1+ i)))
+		((>= i 10000)
+		 summe)
+	  (setf bz (befreundete-zahl-p i))
+	  (when (and bz (/= i bz) (< bz 10000))
+		(incf summe i)))))
+	  
+		 
+	
 (defun euler-67 ()
   "Find the maximum total from top to bottom in triangle.txt (right click and 'Save Link/Target As...'), a 15K text file containing a triangle with one-hundred rows. Correct answer: 7273."
   (let ((dreieck
