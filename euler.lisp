@@ -157,12 +157,31 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 
+(defun abundante-zahl-p (n)
+  "Eine natürliche Zahl heißt abundant (lat. abundans „überladen“), wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) größer ist als die Zahl selbst. Die kleinste abundante Zahl ist 12 (1+2+3+4+6 = 16 > 12). Die ersten geraden abundanten Zahlen lauten 12, 18, 20, 24, 30, 36, 40, 42, …"
+  (> (apply #'+ (sammle-divisoren n t)) n))
+
+
+
 (defun befreundete-zahl-p (n)
   (let* ((bz (apply #'+ (sammle-divisoren n t)))
 		(bz-summe (apply #'+ (sammle-divisoren bz t))))
 	(when (= n bz-summe)
 		bz)))
-	
+
+
+
+(defun defiziente-zahl-p (n)
+  "Eine natürliche Zahl heißt defizient, wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) kleiner ist als die Zahl selbst. Ist die Teilersumme dagegen gleich der Zahl, spricht man von einer vollkommenen Zahl, ist sie größer, so spricht man von einer abundanten Zahl.
+Beispiele: Die Zahl 10 ist defizient, denn 1+2+5 = 8 < 10.
+Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist."
+  (< (apply #'+ (sammle-divisoren n t)) n))
+
+
+
+(defun vollkommene-zahl-p (n)
+  "Eine natürliche Zahl n wird vollkommene Zahl (auch perfekte Zahl) genannt, wenn sie gleich der Summe σ*(n) aller ihrer (positiven) Teiler außer sich selbst ist. Eine äquivalente Definition lautet: eine vollkommene Zahl n ist eine Zahl, die halb so groß ist wie die Summe aller ihrer positiven Teiler (sie selbst eingeschlossen), d. h. σ(n) = 2n. Die kleinsten drei vollkommenen Zahlen sind 6, 28 und 496. Alle bekannten vollkommenen Zahlen sind gerade und von Mersenne-Primzahlen abgeleitet."
+  (= n (apply #'+ (sammle-divisoren n t))))
 	
 
 ; --------------------------------
@@ -632,8 +651,33 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 	  (setf bz (befreundete-zahl-p i))
 	  (when (and bz (/= i bz) (< bz 10000))
 		(incf summe i)))))
-	  
-		 
+
+
+
+(defun euler-23 ()
+  "Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.By mathematical analysis, it can be shown that all integers greater than 28123 can be written as the sum of two abundant numbers. However, this upper limit cannot be reduced any further by analysis even though it is known that the greatest number that cannot be expressed as the sum of two abundant numbers is less than this limit.
+Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers. Correct answer: 4179871."
+  (let ((liste-abundanter-zahlen nil)
+		(summe 0))
+	;; Erstellen einer Liste aller abundanter Zahlen und der Summe aller Zahlen von 1 bis 28123
+	(do ((i 1 (1+ i)))
+		((> i 28123))			  ; vereinbartes Maximum überschritten
+	  (incf summe i)
+	  (when (abundante-zahl-p i)
+		(push i liste-abundanter-zahlen)))
+	(setf liste-abundanter-zahlen (reverse liste-abundanter-zahlen))
+	;; Ermittle die gesuchte Summe
+	(do ((i 12 (1+ i)))
+		((> i 28123)
+		 summe)
+	  (dolist (j liste-abundanter-zahlen)
+		(when (>= j i)
+		  (return))
+		(when (abundante-zahl-p (- i j))
+		  (decf summe i) ; bei jedem Treffer Reduzierung der Summe um i
+		  (return))))))
+	
+
 	
 (defun euler-67 ()
   "Find the maximum total from top to bottom in triangle.txt (right click and 'Save Link/Target As...'), a 15K text file containing a triangle with one-hundred rows. Correct answer: 7273."
