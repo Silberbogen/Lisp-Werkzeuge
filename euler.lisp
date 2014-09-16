@@ -76,7 +76,7 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 (defun fibonacci-folge (n &optional (a 0) (b 1))
-  "Bildet die Fibonacci-Folge zur n. Zahl; Beispiel: (fibonacci-reihe 20) => 6765"
+  "Bildet die Fibonacci-Folge zur n. Zahl; Beispiel: (fibonacci-folge 20) => 6765"
   (if (zerop n)
       a
 	  (fibonacci-folge (- n 1) b (+ a b))))
@@ -233,6 +233,38 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 
 
 ; ---------------------------------
+
+
+
+(defun alle-permutationen (liste)
+  "Alle Permutationen einer Liste erzeugen; Beispiel: (alle-permutationen (list 'a 'b 'c 'd 'e))"
+  (if (null liste) '(())
+      (mapcan #'(lambda (x)
+		  (mapcar #'(lambda (y) (cons x y))
+			  (alle-permutationen (remove x liste :count 1)))) liste)))
+
+
+
+(defun but-nth (n liste)
+  (if (zerop n)
+	  (rest liste)
+	  (cons (first liste)
+			(but-nth (1- n) (rest liste)))))
+
+
+
+(defun nth-permutation (x liste)
+  (if (zerop x)
+	  liste
+	  (let* ((länge (length liste))
+			 (sublen (1- länge))
+			 (modulus (faktor sublen)))
+		(if (> x (* länge modulus))
+			(format t "Die Liste mit der Länge ~A ermöglicht keine ~A Permutationen." länge x)
+			(multiple-value-bind (quotient remainder)
+				(floor x modulus)
+			  (cons (nth quotient liste)
+					(nth-permutation remainder (but-nth quotient liste))))))))
 
 
 
@@ -658,17 +690,18 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
   "Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.By mathematical analysis, it can be shown that all integers greater than 28123 can be written as the sum of two abundant numbers. However, this upper limit cannot be reduced any further by analysis even though it is known that the greatest number that cannot be expressed as the sum of two abundant numbers is less than this limit.
 Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers. Correct answer: 4179871."
   (let ((liste-abundanter-zahlen nil)
-		(summe 0))
+		(summe 0)
+		(maximum 28123)) ; vereinbartes Maximum
 	;; Erstellen einer Liste aller abundanter Zahlen und der Summe aller Zahlen von 1 bis 28123
 	(do ((i 1 (1+ i)))
-		((> i 28123))			  ; vereinbartes Maximum überschritten
+		((> i maximum)
+		 (setf liste-abundanter-zahlen (reverse liste-abundanter-zahlen)))
 	  (incf summe i)
 	  (when (abundante-zahl-p i)
 		(push i liste-abundanter-zahlen)))
-	(setf liste-abundanter-zahlen (reverse liste-abundanter-zahlen))
 	;; Ermittle die gesuchte Summe
 	(do ((i 12 (1+ i)))
-		((> i 28123)
+		((> i maximum)
 		 summe)
 	  (dolist (j liste-abundanter-zahlen)
 		(when (>= j i)
@@ -676,7 +709,20 @@ Find the sum of all the positive integers which cannot be written as the sum of 
 		(when (abundante-zahl-p (- i j))
 		  (decf summe i) ; bei jedem Treffer Reduzierung der Summe um i
 		  (return))))))
-	
+
+
+(defun euler-24 ()
+  "What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9? Correct answer: 2783915460"
+  (nth-permutation 999999 '(0 1 2 3 4 5 6 7 8 9)))
+
+
+
+(defun euler-25 ()
+  "What is the first term in the Fibonacci sequence to contain 1000 digits? Correct answer: 4782."
+  (do ((i 1 (1+ i)))
+	  ((= 1000 (length (princ-to-string (fibonacci-folge i))))
+	   i)))
+
 
 	
 (defun euler-67 ()
