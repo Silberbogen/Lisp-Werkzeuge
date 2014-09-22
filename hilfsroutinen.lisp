@@ -64,7 +64,7 @@ Beispiel: (faktor 20) =>  2432902008176640000"
   "(faktorisiere n)
 Gibt eine Liste der Faktoren der Zahl N zurück.
 Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"  
-  (when (and (integerp n) (> n 1))
+  (when (and (integerp n) (> n 0))
 	(let
 		((max-d (isqrt n)))
 	  (do ((d 2 (incf d (if (evenp d)
@@ -111,15 +111,17 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 Beispiele:
    (primzahl-p 24) => NIL
    (primzahl-p 29) => T
-   (primzahl-p 1299709) => T"
-  (labels ((versuche (&optional (n 2))
-			 (if (> (expt n 2) x)
-				 t
-				 (if (zerop (rem x n))
-					 nil
-					 (versuche (1+ n))))))
-	(and (typep x 'integer) (> x 1)
-		 (versuche))))
+   (primzahl-p 1299709) => T"  
+  (when (and (integerp x) (> x 0))
+	(let
+		((max-d (isqrt x)))
+	  (do ((d 2 (incf d (if (evenp d)
+							1
+							2))))
+		  ((cond ((> d max-d)
+				  (return t))
+				 ((zerop (rem x d))
+				  (return nil))))))))
 
 
 
