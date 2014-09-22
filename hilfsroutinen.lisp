@@ -23,11 +23,6 @@
 ;;;; (compile-file "hilfsroutinen.lisp")
 
 
-;;; ---------------
-;;;  Hilfsroutinen
-;;; ---------------
-
-
 
 (defun addiere-ziffern (n &optional (summe 0))
   "Nimmt eine Zahl entgegen und gibt die Summe all ihrer Ziffern zurück."
@@ -36,6 +31,7 @@
 	 summe)
 	(t
 	 (addiere-ziffern (truncate (/ n 10)) (+ summe (rem n 10))))))
+
 
 
 (defun collatz-sequenz (n &optional (liste nil))
@@ -50,6 +46,7 @@
 	(t
 	 (setf n (1+ (* 3 n)))
 	 (collatz-sequenz n liste))))
+
 
 
 (defun faktor (n)
@@ -105,22 +102,52 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 (defun primzahl-p (x)
-  "Prüft ob eine Zahl eine echte Primzahl ist."
+  "Prüft ob eine Zahl eine echte Primzahl ist.
+Beispiele:
+   (primzahl-p 24) => NIL
+   (primzahl-p 29) => T
+   (primzahl-p 1299709) => T"
   (labels ((versuche (&optional (n 2))
 			 (if (> (expt n 2) x)
 				 t
 				 (if (zerop (rem x n))
 					 nil
 					 (versuche (1+ n))))))
-    (and (/= 1 x)
+	(and (typep x 'integer) (> x 1)
 		 (versuche))))
 
+
+
 (defun nächste-primzahl (&optional (zahl 0))
-  "Ein Primzahlen-Generator"
+  "Ein Primzahlen-Generator, der die nächste Primzahl nach der angegebenen Zahl berechnet.
+Beispiele:
+   (nächste-primzahl 19) => 23
+   (nächste-primzahl 20) => 23
+   (nächste-primzahl 23) => 29"
   (loop for n from (1+ zahl) when (primzahl-p n) return n))
 
 
 
+(defun nth-primzahl (x &optional (rang 1) (letzte-primzahl 0))
+  "Erzeugte die Primzahl eines bestimmten Rangs.
+Beispiele:
+   (nth-primzahl 1) => 2
+   (nth-primzahl 1000) => 7919
+   (nth-primzahl 100000) => 1299709"
+  (cond ((< x 1)
+		 nil)
+		((= x rang)
+		 (nächste-primzahl letzte-primzahl))
+		(t
+		 (nth-primzahl x (1+ rang) (nächste-primzahl letzte-primzahl)))))
+
+
+
+(defmacro primzahl-rang (x)
+  `(nth-primzahl ,x))
+
+
+  
 ; -------------------------------------------
 
 
@@ -142,8 +169,16 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 
+; -------------------------------------------
+
+
+
 (defun sammle-divisoren (n &optional (ohne-selbst nil))
-  "Erstellt eine Liste aller Divisoren einer Zahl."
+  "Erstellt eine Liste aller Divisoren einer Zahl, wahlweise mit oder ohne sich selbst in die Liste einzubeziehen, vorgegeben, ist sich selbst mit einzubeziehen.
+Beispiele:
+   (sammle-divisoren 28) => (7 4 14 2 28 1)
+   (sammle-divisoren 8128) => (127 64 254 32 508 16 1016 8 2032 4 4064 2 8128 1)
+   (sammle-divisoren 2000 t) => (1 2 1000 4 500 5 400 8 250 10 200 16 125 20 100 25 80 40 50)"
   (let ((liste nil))
 	(do ((i 1 (1+ i)))
 		((> i (sqrt n))
@@ -164,6 +199,10 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 (defun befreundete-zahl-p (n)
+  "Zwei verschiedene natürliche Zahlen, von denen wechselseitig jeweils eine Zahl gleich der Summe der echten Teiler der anderen Zahl ist, bilden ein Paar befreundeter Zahlen.
+Das kleinste befreundete Zahlenpaar wird von den Zahlen 220 und 284 gebildet. Man rechnet leicht nach, dass die beiden Zahlen der Definition genügen:
+    Die Summe der echten Teiler von 220 ergibt 1 + 2 + 4 + 5 + 10 + 11 + 20 + 22 + 44 + 55 + 110 = 284 und die Summe der echten Teiler von 284 ergibt 1 + 2 + 4 + 71 + 142 = 220.
+In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die größere Zahl defizient."
   (let* ((bz (apply #'+ (sammle-divisoren n t)))
 		(bz-summe (apply #'+ (sammle-divisoren bz t))))
 	(when (= n bz-summe)
@@ -270,8 +309,44 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 
 
 
-(defun permutations-rang (x liste)
+(defmacro permutations-rang (x liste)
   "Translator zwischen Mensch und Maschine, um die Zählung bei 1 (Mensch) gegen die Zählung bei 0 (Maschine) auszutauschen"
-  (nth-permutation (1- x) liste))
+  `(nth-permutation (1- ,x) ,liste))
+
+
+
+; ------------------------------------
+
+
+
+(defun echte-teilmenge-p (a b)
+  "(echte-teilmenge-p liste1 liste2)
+ECHTE-TEILMENGE-P überprüft, ob Liste1 ein wirklicher Subset von Liste2 ist. Das bedeutet, das Liste1 ausschließlich Elemente aus Liste 2 enthält, nicht aber alle Elemente der Liste 2. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
+Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
+ (echte-teilmenge-p '(rot schwarz) '(grün blau gelb)) => NIL"
+	   (when (and (subsetp a b) (not (subsetp b a)))
+	     t))
+
+(defun gleichwertige-elemente (a b)
+  "(gleichwertige-elemente liste1 liste2)
+GLEICHWERTIGE-ELEMENTE überprüft, ob Liste1 und Liste2 über dieselben Elemente verfügen. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
+Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
+	   (when (and (subsetp a b) (subsetp b a))
+	     t))
+
+
+
+; --------------------------------------
+
+
+
+(defun durchschnitt (&rest liste)
+  "(durchschnitt liste)
+DURCHSCHNITT ermöglicht es, den Durchschnitt einer Reihe von Zahlen zu berechnen.
+Beispiel: (durchschnitt 2 3 4) => 3"
+  (if (null liste)
+      nil
+      (/ (reduce #'+ liste) 
+		 (length liste)))) 
 
 
