@@ -65,10 +65,15 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 Gibt eine Liste der Faktoren der Zahl N zurück.
 Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"  
   (when (and (integerp n) (> n 1))
-    (loop with max-d = (isqrt n)
-	   for d = 2 then (if (evenp d) (+ d 1) (+ d 2)) do
-		 (cond ((> d max-d) (return (list n))) ; n ist eine Primzahl
-			   ((zerop (rem n d)) (return (cons d (faktorisiere (truncate n d)))))))))
+	(let
+		((max-d (isqrt n)))
+	  (do ((d 2 (incf d (if (evenp d)
+							1
+							2))))
+		  ((cond ((> d max-d)
+				  (return (list n)))
+				 ((zerop (rem n d))
+				  (return (cons d (faktorisiere (truncate n d)))))))))))
 
 
 
@@ -124,8 +129,9 @@ Beispiele:
    (nächste-primzahl 19) => 23
    (nächste-primzahl 20) => 23
    (nächste-primzahl 23) => 29"
-  (loop for n from (1+ zahl) when (primzahl-p n) return n))
-
+  (do ((i (1+ zahl) (1+ i)))
+	  ((primzahl-p i)
+	   i)))
 
 
 (defun nth-primzahl (x &optional (rang 1) (letzte-primzahl 0))
