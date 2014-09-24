@@ -945,7 +945,9 @@ Answer:	443839"
 
 
 
-(defun euler-31 ()
+(defparameter *münzen* #(200 100 50 20 10 5 2 1))
+
+(defun euler-31 (&optional (ziel 200) (münztyp 0) (möglichkeiten 0))
   "Coin sums
 Problem 31
 In England the currency is made up of pound, £, and pence, p, and there are eight coins in general circulation:
@@ -954,26 +956,17 @@ It is possible to make £2 in the following way:
     1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
 How many different ways can £2 be made using any number of coins?
 Answer:	73682"
-  (let ((anzahl 0))
-	(do ((a 0 (1+ a)))
-		((> a 200))
-	  (do ((b 0 (1+ b)))
-		  ((> b 100))
-		(do ((c 0 (1+ c)))
-			((> c 40))	
-		  (do ((d 0 (1+ d)))
-			  ((> d 20))
-			(do ((e 0 (1+ e)))
-				((> e 10))
-			  (do ((f 0 (1+ f)))
-				  ((> f 4))
-				(do ((g 0 (1+ g)))
-					((> g 2))
-				  (if (= 200 (+ a (* b 2) (* c 5) (* d 10) (* e 20) (* f 50) (* g 100)))
-					  (incf anzahl)))))))))
-	(incf anzahl)))
+  (if (= münztyp 7)
+      (incf möglichkeiten)
+      (do ((i münztyp (1+ i)))
+		  ((> i 7)
+		   möglichkeiten)
+        (let ((hand (- ziel (svref *münzen* i))))
+          (when (zerop hand)
+            (incf möglichkeiten))
+          (when (plusp hand)
+            (incf möglichkeiten (euler-31 hand i 0)))))))
 
-				
   
 
 (defun euler-67 ()
