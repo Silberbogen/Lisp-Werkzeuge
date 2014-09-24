@@ -943,6 +943,37 @@ Answer:	443839"
 	  (if (= i (expt-ziffern i 5))
 		  (incf summe i)))))
 
+
+
+(defun euler-31 ()
+  "Coin sums
+Problem 31
+In England the currency is made up of pound, £, and pence, p, and there are eight coins in general circulation:
+    1p, 2p, 5p, 10p, 20p, 50p, £1 (100p) and £2 (200p).
+It is possible to make £2 in the following way:
+    1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
+How many different ways can £2 be made using any number of coins?
+Answer:	73682"
+  (let ((anzahl 0))
+	(do ((a 0 (1+ a)))
+		((> a 200))
+	  (do ((b 0 (1+ b)))
+		  ((> b 100))
+		(do ((c 0 (1+ c)))
+			((> c 40))	
+		  (do ((d 0 (1+ d)))
+			  ((> d 20))
+			(do ((e 0 (1+ e)))
+				((> e 10))
+			  (do ((f 0 (1+ f)))
+				  ((> f 4))
+				(do ((g 0 (1+ g)))
+					((> g 2))
+				  (if (= 200 (+ a (* b 2) (* c 5) (* d 10) (* e 20) (* f 50) (* g 100)))
+					  (incf anzahl)))))))))
+	(incf anzahl)))
+
+				
   
 
 (defun euler-67 ()
