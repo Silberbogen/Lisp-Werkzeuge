@@ -1019,6 +1019,24 @@ Answer:	40730"
 		 summe)
 	  (if (= i (reduce #'+ (mapcar #'faktor (zahl->ziffern i))))
 		  (incf summe i)))))
+
+
+
+(defun euler-35 ()
+  "Circular primes
+Problem 35
+The number, 197, is called a circular prime because all rotations of the digits: 197, 971, and 719, are themselves prime.
+There are thirteen such primes below 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, and 97.
+How many circular primes are there below one million?
+Answer:	55"
+  (let ((liste nil)
+		(weitere-zahlen nil))
+	(do ((i 2 (nächste-primzahl i)))
+		((>= i 1000000)
+		 (length liste))
+	  (unless (member i liste)
+		(when (setf weitere-zahlen (zirkuläre-primzahl-p i)) 
+		  (setf liste (union weitere-zahlen liste)))))))
   
   
 

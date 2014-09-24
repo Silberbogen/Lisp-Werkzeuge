@@ -451,3 +451,39 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 			(pushnew produkt liste))))))
 
 
+
+; ----------------------------------------
+
+
+
+(defun liste->zahl (liste &optional (zahl 0))
+  (if (null liste)
+	  zahl
+	  (liste->zahl (cdr liste) (+ (* zahl 10) (car liste)))))
+
+
+
+(defun zirkuläre-primzahl-p (zahl)
+  (let
+	  ((länge (length (zahl->ziffern zahl))))
+	(if (= länge 1)
+		(when (primzahl-p zahl)
+		  (list zahl))
+		(let
+			((temp-zahl zahl)
+			 (temp-liste (zahl->ziffern zahl))
+			 (liste (list zahl)))
+		  (do ((i 1 (1+ i)))
+			  ((= i länge)
+			   liste)
+			(setf temp-liste (append (cdr temp-liste) (cons (car temp-liste) '())))
+			(setf temp-zahl (liste->zahl temp-liste))
+			(if (primzahl-p temp-zahl)
+				(pushnew temp-zahl liste)
+				(return nil)))))))
+	
+	  
+		
+
+
+
