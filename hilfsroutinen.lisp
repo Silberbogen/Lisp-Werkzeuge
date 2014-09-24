@@ -392,10 +392,15 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 
 
 
-(defun multiplicative-order (k n &rest rs)
-  (let ((rs (or rs '(1))))
-    (loop
-	   for m from 1
-	   when (member (mod (expt k m) n) rs :test #'=)
-	   do (return m))))
+(defun reziproker-zyklus-länge (n)
+  (let ((i 1))
+	(cond
+	  ((zerop (rem n 2))
+	   (zyklus-länge (truncate (/ n 2.0))))
+	  ((zerop (rem n 5))
+	   (zyklus-länge (truncate (/ n 5.0))))
+	  (t (do ()
+			 ((zerop (rem (1- (expt 10 i)) n))
+			  i)
+		   (incf i))))))
 

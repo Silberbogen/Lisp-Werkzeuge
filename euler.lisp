@@ -830,11 +830,11 @@ Answer:	983"
   (let ((maximallänge 0)
 		(maximales-i 0)
 		(länge-i 0))
-	(do ((i 1000 (1- i)))
-		((>= maximallänge i)
+	(do ((i 1 (1+ i)))
+		((= i 1000)
 		 maximales-i)
 	  (when (and (= 1 (gcd i 10))
-				 (< maximallänge (setf länge-i (multiplicative-order 10 i))))
+				 (< maximallänge (setf länge-i (reziproker-zyklus-länge i))))
 		(setf maximallänge länge-i
 			  maximales-i i)))))
 
