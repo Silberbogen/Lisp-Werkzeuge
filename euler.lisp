@@ -726,6 +726,23 @@ Answer:	31626"
 
 
 
+(defun euler-22 ()
+  "Names scores
+Problem 22
+Using names.txt (right click and 'Save Link/Target As...'), a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order. Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.
+For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list. So, COLIN would obtain a score of 938 × 53 = 49714.
+What is the total of all the name scores in the file?
+Answer:	871198282"
+  (let* ((namensliste (erstelle-namensliste "~/lisp/p022_names.txt"))
+		(länge (length namensliste))
+		(summe 0))
+	(do ((i 1 (1+ i)))
+		((> i länge)
+		 summe)
+	  (incf summe (* i (alphabetischer-wert (pop namensliste)))))))
+	
+
+
 (defun euler-23 ()
   "Non-abundant sums
 Problem 23
@@ -791,6 +808,35 @@ Answer:	4782"
   (do ((i 1 (1+ i)))
 	  ((= 1000 (length (princ-to-string (fibonacci-folge i))))
 	   i)))
+
+
+
+(defun euler-26 ()
+  "Reciprocal cycles
+Problem 26
+A unit fraction contains 1 in the numerator. The decimal representation of the unit fractions with denominators 2 to 10 are given:
+    1/2	= 	0.5
+    1/3	= 	0.(3)
+    1/4	= 	0.25
+    1/5	= 	0.2
+    1/6	= 	0.1(6)
+    1/7	= 	0.(142857)
+    1/8	= 	0.125
+    1/9	= 	0.(1)
+    1/10 = 	0.1
+Where 0.1(6) means 0.166666..., and has a 1-digit recurring cycle. It can be seen that 1/7 has a 6-digit recurring cycle.
+Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
+Answer:	983"
+  (let ((maximallänge 0)
+		(maximales-i 0)
+		(länge-i 0))
+	(do ((i 1000 (1- i)))
+		((>= maximallänge i)
+		 maximales-i)
+	  (when (and (= 1 (gcd i 10))
+				 (< maximallänge (setf länge-i (multiplicative-order 10 i))))
+		(setf maximallänge länge-i
+			  maximales-i i)))))
 
 
 	

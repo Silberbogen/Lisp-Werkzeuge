@@ -112,7 +112,7 @@ Beispiele:
    (primzahl-p 24) => NIL
    (primzahl-p 29) => T
    (primzahl-p 1299709) => T"  
-  (when (and (integerp x) (> x 0))
+  (when (and (integerp x) (> x 1))
 	(let
 		((max-d (isqrt x)))
 	  (do ((d 2 (incf d (if (evenp d)
@@ -134,6 +134,7 @@ Beispiele:
   (do ((i (1+ zahl) (1+ i)))
 	  ((primzahl-p i)
 	   i)))
+
 
 
 (defun nth-primzahl (x &optional (rang 1) (letzte-primzahl 0))
@@ -230,6 +231,7 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
   "Eine natürliche Zahl n wird vollkommene Zahl (auch perfekte Zahl) genannt, wenn sie gleich der Summe σ*(n) aller ihrer (positiven) Teiler außer sich selbst ist. Eine äquivalente Definition lautet: eine vollkommene Zahl n ist eine Zahl, die halb so groß ist wie die Summe aller ihrer positiven Teiler (sie selbst eingeschlossen), d. h. σ(n) = 2n. Die kleinsten drei vollkommenen Zahlen sind 6, 28 und 496. Alle bekannten vollkommenen Zahlen sind gerade und von Mersenne-Primzahlen abgeleitet."
   (= n (apply #'+ (sammle-divisoren n t))))
 	
+
 
 ; --------------------------------
 
@@ -357,4 +359,43 @@ Beispiel: (durchschnitt 2 3 4) => 3"
       (/ (reduce #'+ liste) 
 		 (length liste)))) 
 
+
+
+; ---------------------------------------
+
+
+
+(defun erstelle-namensliste (stream-name)
+  "Liest eine Datei der Form STRINGKOMMASTRINGKOMMASTRING ein und erstellt aus den gewonnenen Daten eine Liste aller Strings, während die Kommatas entfallen."
+  (let ((namensliste nil))
+	(with-open-file (stream stream-name)
+	  (do ((i (read stream nil)
+			  (read stream nil)))
+		  ((null i)
+		   (sort namensliste #'string<))
+		(push i namensliste)
+		(read-char-no-hang stream nil)))))
+
+
+
+(defun alphabetischer-wert (string)
+  "Errechnet den alphabetischen Wert eines Strings, momentan nur für Großbuchstaben korrekt."
+  (let ((länge (length string))
+		(summe 0))
+	(do ((i 0 (1+ i)))
+		((= i länge)
+		 summe)
+	  (incf summe (- (char-int (aref string i)) 64)))))
+
+
+; ----------------------------------------
+
+
+
+(defun multiplicative-order (k n &rest rs)
+  (let ((rs (or rs '(1))))
+    (loop
+	   for m from 1
+	   when (member (mod (expt k m) n) rs :test #'=)
+	   do (return m))))
 
