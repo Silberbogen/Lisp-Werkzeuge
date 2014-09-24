@@ -863,7 +863,7 @@ Answer:	-59231"
 		  (gezählte-primzahlen 0)
 		  (aktuelle-primzahlen))
 	  (do ((a -999 (1+ a)))
-		  ((>= a 1000)
+		  ((zerop a)
 		   (* zahl1 zahl2))
 		(do ((b 2 (nächste-primzahl b)))
 			((>= b 1000))
