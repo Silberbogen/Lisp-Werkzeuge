@@ -396,11 +396,16 @@ Beispiel: (durchschnitt 2 3 4) => 3"
   (let ((i 1))
 	(cond
 	  ((zerop (rem n 2))
-	   (zyklus-länge (truncate (/ n 2.0))))
+	   (reziproker-zyklus-länge (truncate (/ n 2.0))))
 	  ((zerop (rem n 5))
-	   (zyklus-länge (truncate (/ n 5.0))))
+	   (reziproker-zyklus-länge (truncate (/ n 5.0))))
 	  (t (do ()
 			 ((zerop (rem (1- (expt 10 i)) n))
 			  i)
 		   (incf i))))))
+
+
+
+; ----------------------------------------
+
 
