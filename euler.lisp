@@ -1035,8 +1035,27 @@ Answer:	55"
 		 (length liste))
 		(when (zirkuläre-primzahl-p i) 
 		  (push i liste)))))
+
+
+
+(defun euler-36 ()
+  "Double-base palindromes
+Problem 36
+The decimal number, 585 = 1001001001 (binary), is palindromic in both bases.
+Find the sum of all numbers, less than one million, which are palindromic in base 10 and base 2.
+\(Please note that the palindromic number, in either base, may not include leading zeros.\)
+Answer:	872187"
+  (let
+	  ((summe 0))
+	(do ((i 1 (1+ i)))
+		((>= i 1000000)
+		 summe)
+	  (when (doppel-basis-palindrom i)
+		(incf summe i)))))
   
-  
+
+
+
 
 (defun euler-67 ()
   "Maximum path sum II

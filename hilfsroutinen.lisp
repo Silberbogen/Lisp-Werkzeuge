@@ -479,6 +479,14 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 			(setf temp-zahl (liste->zahl temp-liste))
 			(unless (primzahl-p temp-zahl)
 			  (return nil)))))))
+
+
+
+; --------------------------------------------
+
+
+(defun doppel-basis-palindrom (zahl)
+  (and (palindrom-p zahl) (palindrom-p (format nil "~B" zahl))))
 	
 	  
 		
