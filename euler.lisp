@@ -1092,6 +1092,35 @@ Answer:	932718654"
 		(return (list i (* 2 i))))))
 
 
+
+(defun euler-39 ()
+  "Integer right triangles
+Problem 39
+If p is the perimeter of a right angle triangle with integral length sides, {a,b,c}, there are exactly three solutions for p = 120.
+{20,48,52}, {24,45,51}, {30,40,50}
+For which value of p ≤ 1000, is the number of solutions maximised?
+Answer:	840"
+  (let ((max-anzahl 0)
+		(max-p 0))
+	(do ((p 12 (+ p 2)))
+		((> p 1000)
+		 max-p)
+	  (let ((anzahl 0))
+		(do ((a 1 (1+ a)))
+			((> a (/ p 3)))
+		  (let ((a-quadrat (expt a 2)))
+			(do ((b a (1+ b)))
+				((> b (/ (- p a) 2)))
+			  (let ((c (- p a b)))
+				(when (= (+ a-quadrat (expt b 2)) (expt c 2))
+				  (incf anzahl))))))
+		(when (> anzahl max-anzahl)
+		  (setf max-anzahl anzahl
+				max-p p))))))
+		
+  
+  
+
 (defun euler-67 ()
   "Maximum path sum II
 Problem 67
