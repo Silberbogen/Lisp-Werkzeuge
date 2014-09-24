@@ -409,3 +409,13 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 ; ----------------------------------------
 
 
+
+(defun expt-ziffern (n p &optional (summe 0))
+  "Berechnet den Exponent p zu jeder einzelnen Ziffer der Zahl n. Bemerkenswert:
+(expt-ziffern 9474 4) => 9474"
+  (if (zerop n)
+	  summe
+	  (expt-ziffern (truncate (/ n 10)) p (+ summe (expt (rem n 10) p)))))
+		
+	
+	
