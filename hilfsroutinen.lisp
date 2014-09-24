@@ -468,19 +468,17 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 	  ((länge (length (zahl->ziffern zahl))))
 	(if (= länge 1)
 		(when (primzahl-p zahl)
-		  (list zahl))
+		  t)
 		(let
 			((temp-zahl zahl)
-			 (temp-liste (zahl->ziffern zahl))
-			 (liste (list zahl)))
+			 (temp-liste (zahl->ziffern zahl)))
 		  (do ((i 1 (1+ i)))
 			  ((= i länge)
-			   liste)
+			   t)
 			(setf temp-liste (append (cdr temp-liste) (cons (car temp-liste) '())))
 			(setf temp-zahl (liste->zahl temp-liste))
-			(if (primzahl-p temp-zahl)
-				(pushnew temp-zahl liste)
-				(return nil)))))))
+			(unless (primzahl-p temp-zahl)
+			  (return nil)))))))
 	
 	  
 		

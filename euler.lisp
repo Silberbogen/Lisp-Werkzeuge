@@ -1029,14 +1029,12 @@ The number, 197, is called a circular prime because all rotations of the digits:
 There are thirteen such primes below 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, and 97.
 How many circular primes are there below one million?
 Answer:	55"
-  (let ((liste nil)
-		(weitere-zahlen nil))
+  (let ((liste nil))
 	(do ((i 2 (nächste-primzahl i)))
 		((>= i 1000000)
 		 (length liste))
-	  (unless (member i liste)
-		(when (setf weitere-zahlen (zirkuläre-primzahl-p i)) 
-		  (setf liste (union weitere-zahlen liste)))))))
+		(when (zirkuläre-primzahl-p i) 
+		  (push i liste)))))
   
   
 
