@@ -485,8 +485,27 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 ; --------------------------------------------
 
 
+
 (defun doppel-basis-palindrom (zahl)
   (and (palindrom-p zahl) (palindrom-p (format nil "~B" zahl))))
+
+
+
+; -------------------------------------------
+
+
+
+(defun abtrennbare-primzahl-p (zahl)
+  (if (< zahl 10)
+	  nil
+	  (let
+		  ((länge (length (zahl->ziffern zahl))))
+		(do ((i 1 (1+ i)))
+			((= i länge)
+			 t)
+		  (unless (and (primzahl-p (truncate (/ zahl (expt 10 i))))
+					   (primzahl-p (rem zahl (expt 10 i))))
+			(return nil))))))
 	
 	  
 		
