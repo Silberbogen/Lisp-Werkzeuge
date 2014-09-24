@@ -416,6 +416,38 @@ Beispiel: (durchschnitt 2 3 4) => 3"
   (if (zerop n)
 	  summe
 	  (expt-ziffern (truncate (/ n 10)) p (+ summe (expt (rem n 10) p)))))
-		
-	
-	
+
+
+
+; ----------------------------------------
+
+
+
+(defun zahl->ziffern (zahl)
+  "Die übergebene Zahl wird als Liste von Ziffern zurückgegeben."
+  (map 'list #'(lambda (zeichen) (read-from-string (string zeichen)))
+	   (prin1-to-string zahl)))		
+
+
+
+(defun pandigital-p (liste)
+  (equal (sort liste #'<) '(1 2 3 4 5 6 7 8 9)))
+
+
+
+(defun alle-pandigitalen-produkte ()
+  (let ((liste nil)
+		(produkt 0))
+	(do ((i 1 (1+ i)))
+		((> i 99)
+		 liste)
+	  (do ((j 100 (1+ j)))
+		  ((> j 9999))
+		(setf produkt (* i j))
+		(if (and (< produkt 9999)
+				 (pandigital-p (append (zahl->ziffern i)
+									   (zahl->ziffern j)
+									   (zahl->ziffern produkt))))
+			(pushnew produkt liste))))))
+
+
