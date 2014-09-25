@@ -1017,7 +1017,7 @@ Answer:	40730"
 	(do ((i 3 (1+ i)))
 		((> i 50000)
 		 summe)
-	  (if (= i (reduce #'+ (mapcar #'faktor (zahl->ziffern i))))
+	  (if (= i (reduce #'+ (mapcar #'faktor (zahl->liste i))))
 		  (incf summe i)))))
 
 
@@ -1088,7 +1088,7 @@ Answer:	932718654"
   (do ((i 9999 (1- i)))
 	  ((< i 1)
 	   nil)
-	(if (pandigital-p (append (zahl->ziffern i) (zahl->ziffern (* 2 i))))
+	(if (pandigital-p (append (zahl->liste i) (zahl->liste (* 2 i))))
 		(return (list i (* 2 i))))))
 
 
@@ -1129,7 +1129,7 @@ It can be seen that the 12th digit of the fractional part is 1.
 If dn represents the nth digit of the fractional part, find the value of the following expression.
 d1 × d10 × d100 × d1000 × d10000 × d100000 × d1000000
 Answer:	210"
-  (let ((digits (loop for i from 0 to 200000 append (zahl->ziffern i))))
+  (let ((digits (loop for i from 0 to 200000 append (zahl->liste i))))
 	(apply #'* (mapcar #'(lambda (n) (nth n digits)) '(1 10 100 1000 10000 100000 1000000)))))
 
 
@@ -1169,6 +1169,59 @@ Answer:	162"
 		(incf anzahl)))))
 
 
+
+(defun euler-43 ()
+  "Sub-string divisibility
+Problem 43
+The number, 1406357289, is a 0 to 9 pandigital number because it is made up of each of the digits 0 to 9 in some order, but it also has a rather interesting sub-string divisibility property.
+Let d1 be the 1st digit, d2 be the 2nd digit, and so on. In this way, we note the following:
+    d2d3d4=406 is divisible by 2
+    d3d4d5=063 is divisible by 3
+    d4d5d6=635 is divisible by 5
+    d5d6d7=357 is divisible by 7
+    d6d7d8=572 is divisible by 11
+    d7d8d9=728 is divisible by 13
+    d8d9d10=289 is divisible by 17
+Find the sum of all 0 to 9 pandigital numbers with this property.
+Answer:	16695334890"
+  (flet
+	  ((teile-p (n lst)
+		 (zerop (mod (liste->zahl lst) n))))
+	(let ((liste '(0 1 2 3 4 5 6 7 8 9))
+		  (summe 0))
+	  (dolist (d1 liste summe)
+		(dolist (d2 (set-difference
+					 liste (list d1)))
+		  (dolist (d3 (set-difference
+					   liste (list d1 d2)))
+			(dolist (d4 (set-difference
+						 '(0 2 4 6 8) (list d1 d2 d3))) ; Teilbarkeit durch 2, erspart teile-p 2
+			  (dolist (d5 (set-difference
+						   liste (list d1 d2 d3 d4)))
+				(dolist (d6 (set-difference
+							 '(0 5) (list d1 d2 d3 d4 d5))) ; Teilbarkeit durch 5, schnelleres teile-p 5
+				  (dolist (d7 (set-difference
+							   liste (list d1 d2 d3 d4 d5 d6)))
+					(dolist (d8 (set-difference
+								 liste (list d1 d2 d3 d4 d5 d6 d7)))
+					  (dolist (d9 (set-difference
+								   liste (list d1 d2 d3 d4 d5 d6 d7 d8)))
+						(dolist (d10 (set-difference
+									  liste (list d1 d2 d3 d4 d5 d6 d7 d8 d9)))
+						  (when (and (teile-p 3 (list d3 d4 d5))
+									 (teile-p 5 (list d4 d5 d6))
+									 (teile-p 7 (list d5 d6 d7))
+									 (teile-p 11 (list d6 d7 d8))
+									 (teile-p 13 (list d7 d8 d9))
+									 (teile-p 17 (list d8 d9 d10)))
+							(incf summe
+								  (liste->zahl
+								   (list d1 d2 d3 d4 d5 d6 d7 d8 d9 d10)))))))))))))))))
+
+
+		
+  
+  
 
 (defun euler-67 ()
   "Maximum path sum II

@@ -423,15 +423,10 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 
 
 
-(defun zahl->ziffern (zahl)
+(defun zahl->liste (zahl)
   "Die übergebene Zahl wird als Liste von Ziffern zurückgegeben."
   (map 'list #'(lambda (zeichen) (read-from-string (string zeichen)))
 	   (prin1-to-string zahl)))		
-
-
-
-;(defun pandigital-p (liste)
-;  (equal (sort liste #'<) '(1 2 3 4 5 6 7 8 9)))
 
 
 
@@ -455,9 +450,9 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 		  ((> j 9999))
 		(setf produkt (* i j))
 		(if (and (< produkt 9999)
-				 (pandigital-p (append (zahl->ziffern i)
-									   (zahl->ziffern j)
-									   (zahl->ziffern produkt))))
+				 (pandigital-p (append (zahl->liste i)
+									   (zahl->liste j)
+									   (zahl->liste produkt))))
 			(pushnew produkt liste))))))
 
 
@@ -466,22 +461,20 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 
 
 
-(defun liste->zahl (liste &optional (zahl 0))
-  (if (null liste)
-	  zahl
-	  (liste->zahl (cdr liste) (+ (* zahl 10) (car liste)))))
+(defun liste->zahl (liste)
+  (reduce #'(lambda (x y) (+ (* 10 x) y)) liste))
 
 
 
 (defun zirkuläre-primzahl-p (zahl)
   (let
-	  ((länge (length (zahl->ziffern zahl))))
+	  ((länge (length (zahl->liste zahl))))
 	(if (= länge 1)
 		(when (primzahl-p zahl)
 		  t)
 		(let
 			((temp-zahl zahl)
-			 (temp-liste (zahl->ziffern zahl)))
+			 (temp-liste (zahl->liste zahl)))
 		  (do ((i 1 (1+ i)))
 			  ((= i länge)
 			   t)
@@ -509,7 +502,7 @@ Beispiel: (durchschnitt 2 3 4) => 3"
   (if (< zahl 10)
 	  nil
 	  (let
-		  ((länge (length (zahl->ziffern zahl))))
+		  ((länge (length (zahl->liste zahl))))
 		(do ((i 1 (1+ i)))
 			((= i länge)
 			 t)
