@@ -49,6 +49,17 @@
 
 
 
+(defun durchschnitt (&rest liste)
+  "(durchschnitt liste)
+DURCHSCHNITT ermöglicht es, den Durchschnitt einer Reihe von Zahlen zu berechnen.
+Beispiel: (durchschnitt 2 3 4) => 3"
+  (if (null liste)
+      nil
+      (/ (reduce #'+ liste) 
+		 (length liste)))) 
+
+
+
 (defun faktor (n)
   "(faktor zahl)
 FAKTOR berechnet den Faktor einer Zahl.
@@ -85,6 +96,31 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 
+(defun liste->zahl (liste)
+  (reduce #'(lambda (x y) (+ (* 10 x) y)) liste))
+
+
+
+(defun zahl->liste (zahl)
+  "Die übergebene Zahl wird als Liste von Ziffern zurückgegeben."
+  (map 'list #'(lambda (zeichen) (read-from-string (string zeichen)))
+	   (prin1-to-string zahl)))
+
+
+
+(defun nur-buchstaben (text)
+  "Entfernt die Nicht-Buchstaben eines Textes."
+  (remove-if #'(lambda (string) (not (alpha-char-p string)))
+			 text))
+
+
+
+(defun zähle-buchstaben (text)
+  "Zählt die Buchstaben eines angegebenen Texts."
+	(length (nur-buchstaben text)))
+
+
+
 (defun palindrom-p (sequenz)
   "(palindrom-p sequenz)
 Palindromp testet, ob eine übergebene Sequenz, eine übergebene Zeichenkette oder ein übergebenes Symbol ein Palindrom darstellt.
@@ -103,6 +139,17 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 ; ------------------------------------------
+
+
+
+(defun sieb-des-eratosthenes (maximum)
+  (let ((composites (make-array (1+ maximum) :element-type 'bit
+								:initial-element 0)))
+    (loop for candidate from 2 to maximum
+	   when (zerop (bit composites candidate))
+	   collect candidate
+	   and do (loop for composite from (expt candidate 2) to maximum by candidate
+				 do (setf (bit composites composite) 1)))))
 
 
 
@@ -153,7 +200,43 @@ Beispiele:
 
 
 (defmacro primzahl-rang (x)
+  "Mensch -> Maschine Übersetzer"
   `(nth-primzahl ,x))
+
+
+
+(defun abtrennbare-primzahl-p (zahl)
+  "Die Primzahl bleibt eine Primzahl, selbst wenn die Ziffern von vorne oder von hinten abgetrennt werden."
+  (if (< zahl 10)
+	  nil
+	  (let
+		  ((länge (length (zahl->liste zahl))))
+		(do ((i 1 (1+ i)))
+			((= i länge)
+			 t)
+		  (unless (and (primzahl-p (truncate (/ zahl (expt 10 i))))
+					   (primzahl-p (rem zahl (expt 10 i))))
+			(return nil))))))
+
+
+
+(defun zirkuläre-primzahl-p (zahl)
+  "Die Ziffern können rotiert werden, vorne raus, hinten rein - und es ergibt sich dennoch immer eine Primzahl."
+  (let
+	  ((länge (length (zahl->liste zahl))))
+	(if (= länge 1)
+		(when (primzahl-p zahl)
+		  t)
+		(let
+			((temp-zahl zahl)
+			 (temp-liste (zahl->liste zahl)))
+		  (do ((i 1 (1+ i)))
+			  ((= i länge)
+			   t)
+			(setf temp-liste (append (cdr temp-liste) (cons (car temp-liste) '())))
+			(setf temp-zahl (liste->zahl temp-liste))
+			(unless (primzahl-p temp-zahl)
+			  (return nil)))))))
 
 
   
@@ -231,23 +314,6 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
   "Eine natürliche Zahl n wird vollkommene Zahl (auch perfekte Zahl) genannt, wenn sie gleich der Summe σ*(n) aller ihrer (positiven) Teiler außer sich selbst ist. Eine äquivalente Definition lautet: eine vollkommene Zahl n ist eine Zahl, die halb so groß ist wie die Summe aller ihrer positiven Teiler (sie selbst eingeschlossen), d. h. σ(n) = 2n. Die kleinsten drei vollkommenen Zahlen sind 6, 28 und 496. Alle bekannten vollkommenen Zahlen sind gerade und von Mersenne-Primzahlen abgeleitet."
   (= n (apply #'+ (sammle-divisoren n t))))
 	
-
-
-; --------------------------------
-
-
-
-(defun nur-buchstaben (text)
-  "Entfernt die Nicht-Buchstaben eines Textes."
-  (remove-if #'(lambda (string) (not (alpha-char-p string)))
-			 text))
-
-
-
-(defun zähle-buchstaben (text)
-  "Zählt die Buchstaben eines angegebenen Texts."
-	(length (nur-buchstaben text)))
-
 
 
 ;---------------------------------
@@ -337,27 +403,14 @@ Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
 	   (when (and (subsetp a b) (not (subsetp b a)))
 	     t))
 
+
+
 (defun gleichwertige-elemente (a b)
   "(gleichwertige-elemente liste1 liste2)
 GLEICHWERTIGE-ELEMENTE überprüft, ob Liste1 und Liste2 über dieselben Elemente verfügen. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
 Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 	   (when (and (subsetp a b) (subsetp b a))
 	     t))
-
-
-
-; --------------------------------------
-
-
-
-(defun durchschnitt (&rest liste)
-  "(durchschnitt liste)
-DURCHSCHNITT ermöglicht es, den Durchschnitt einer Reihe von Zahlen zu berechnen.
-Beispiel: (durchschnitt 2 3 4) => 3"
-  (if (null liste)
-      nil
-      (/ (reduce #'+ liste) 
-		 (length liste)))) 
 
 
 
@@ -423,13 +476,6 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 
 
 
-(defun zahl->liste (zahl)
-  "Die übergebene Zahl wird als Liste von Ziffern zurückgegeben."
-  (map 'list #'(lambda (zeichen) (read-from-string (string zeichen)))
-	   (prin1-to-string zahl)))		
-
-
-
 (defun pandigital-p (n)
   (typecase n
 	(null nil)
@@ -457,34 +503,6 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 
 
 
-; ----------------------------------------
-
-
-
-(defun liste->zahl (liste)
-  (reduce #'(lambda (x y) (+ (* 10 x) y)) liste))
-
-
-
-(defun zirkuläre-primzahl-p (zahl)
-  (let
-	  ((länge (length (zahl->liste zahl))))
-	(if (= länge 1)
-		(when (primzahl-p zahl)
-		  t)
-		(let
-			((temp-zahl zahl)
-			 (temp-liste (zahl->liste zahl)))
-		  (do ((i 1 (1+ i)))
-			  ((= i länge)
-			   t)
-			(setf temp-liste (append (cdr temp-liste) (cons (car temp-liste) '())))
-			(setf temp-zahl (liste->zahl temp-liste))
-			(unless (primzahl-p temp-zahl)
-			  (return nil)))))))
-
-
-
 ; --------------------------------------------
 
 
@@ -494,38 +512,44 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 
 
 
-; -------------------------------------------
+; --------------------------------------------
 
 
 
-(defun abtrennbare-primzahl-p (zahl)
-  (if (< zahl 10)
-	  nil
-	  (let
-		  ((länge (length (zahl->liste zahl))))
-		(do ((i 1 (1+ i)))
-			((= i länge)
-			 t)
-		  (unless (and (primzahl-p (truncate (/ zahl (expt 10 i))))
-					   (primzahl-p (rem zahl (expt 10 i))))
-			(return nil))))))
-
-
-
-; ------------------------------------------
+(defun dreieckszahl-rang (zahl)
+  "Gibt die Dreieckszahl des gewünschten Rangs aus."
+  (/ (* zahl (1+ zahl)) 2))
 
 
 
 (defun dreieckszahl-p (zahl)
-  (if (plusp zahl)
-	  (let
-		  ((dreieckszahl 0))
-		(do ((i 1 (1+ i)))
-			((> dreieckszahl zahl)
-			 nil)
-		  (incf dreieckszahl i)
-		  (when (= zahl dreieckszahl)
-			(return t))))))
+  "Prüft ob eine Zahl eine Dreieckszahl ist."
+  (let
+	  ((wert (sqrt (1+ (* 8 zahl)))))
+	(= wert (truncate wert))))
+
+
+
+(defun fünfeckszahl-rang (zahl)
+  "Gibt die Fünfeckszahl des gewünschten Rangs aus."
+  (/ (* zahl (1- (* 3 zahl))) 2))
+
+
+
+(defun fünfeckszahl-p (zahl)
+  "Prüft ob eine Zahl eine Dreieckszahl ist."
+;  (and (zerop (mod (1+ (sqrt (1+ (* zahl 24)))) 6))
+	   (= 5 (mod (sqrt (1+ (* zahl 24))) 6)))
+
+
+
+(defun sechseckzahl-rang (zahl)
+  "Gibt die Sechseckzahl des gewünschten Rangs aus."
+  (* zahl (1- (* 2 zahl))))
+
+
+
+; -------------------------------------------
 
 
 
