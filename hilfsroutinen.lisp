@@ -553,6 +553,16 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
+(defun goldbach-aufgliedern (zahl)
+  "Aufgliederung einer Zahl nach Goldbach's anderer Vermutung"
+  (let
+	  ((maximum (isqrt zahl)))
+	(do ((i 1 (1+ i)))
+		((> i maximum))
+	  (let
+		  ((p (- zahl (* 2 (expt i 2)))))
+		(when (primzahl-p p)
+		  (return (list p i)))))))
 
 
 

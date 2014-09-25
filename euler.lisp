@@ -1241,7 +1241,9 @@ Answer:	5482660"
 ;			 (fk (fünfeckszahl-rang k)))
 ;		  (when (and (fünfeckszahl-p (+ fk fj)) (fünfeckszahl-p (- fk fj)))
 ;			(setf max-wert (max max-wert (- fk fj)))))))))
+;;; ###############################
 ;;; fehlerhaft - funktioniert nicht
+;;; ###############################
   (let
 	  ((tabelle-rang (make-hash-table))
 	   (tabelle-wert (make-hash-table))
@@ -1307,6 +1309,27 @@ Answer:	1533776805"
 	   collect key))))
 
 
+
+(defun euler-46 ()
+  "Goldbach's other conjecture
+Problem 46
+It was proposed by Christian Goldbach that every odd composite number can be written as the sum of a prime and twice a square.
+9 = 7 + 2×12
+15 = 7 + 2×22
+21 = 3 + 2×32
+25 = 7 + 2×32
+27 = 19 + 2×22
+33 = 31 + 2×12
+It turns out that the conjecture was false.
+What is the smallest odd composite that cannot be written as the sum of a prime and twice a square?
+Answer:	5777"
+  (do ((i 3 (+ 2 i)))
+	  ((> i 10000))
+	(unless (primzahl-p i)
+	  (when (null (goldbach-aufgliedern i))
+		(return i)))))
+
+  
 
 (defun euler-67 ()
   "Maximum path sum II
