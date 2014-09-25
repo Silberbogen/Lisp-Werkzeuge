@@ -1351,7 +1351,22 @@ Answer:	134043"
       zahl
       (euler-47 fortlaufend (1+ zahl))))
 
-  
+
+
+(defun euler-48 ()
+  "Self powers
+Problem 48
+The series, 11 + 22 + 33 + ... + 1010 = 10405071317.
+Find the last ten digits of the series, 11 + 22 + 33 + ... + 10001000.
+Answer:	9110846700"
+  (let
+	  ((summe 0))
+	(do ((i 1 (1+ i)))
+		((> i 1000)
+		 (last (zahl->liste summe) 10))
+	  (incf summe (expt i i)))))
+
+
 
 (defun euler-67 ()
   "Maximum path sum II
