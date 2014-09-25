@@ -733,7 +733,7 @@ Using names.txt (right click and 'Save Link/Target As...'), a 46K text file cont
 For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list. So, COLIN would obtain a score of 938 × 53 = 49714.
 What is the total of all the name scores in the file?
 Answer:	871198282"
-  (let* ((namensliste (erstelle-namensliste "~/lisp/p022_names.txt"))
+  (let* ((namensliste (erstelle-wortliste "~/lisp/p022_names.txt"))
 		(länge (length namensliste))
 		(summe 0))
 	(do ((i 1 (1+ i)))
@@ -1130,9 +1130,45 @@ If dn represents the nth digit of the fractional part, find the value of the fol
 d1 × d10 × d100 × d1000 × d10000 × d100000 × d1000000
 Answer:	210"
   (let ((digits (loop for i from 0 to 200000 append (zahl->ziffern i))))
-	(princ digits)
 	(apply #'* (mapcar #'(lambda (n) (nth n digits)) '(1 10 100 1000 10000 100000 1000000)))))
-  
+
+
+
+(defun euler-41 ()
+  "Pandigital prime
+Problem 41
+We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once. For example, 2143 is a 4-digit pandigital and is also prime.
+What is the largest n-digit pandigital prime that exists?
+Answer:	7652413"
+  (let ((maximum 0))
+	(do ((i 2 (nächste-primzahl i)))
+		((> i 7654321)
+		 maximum)
+	  (if (pandigital-p i)
+		  (setf maximum i)))))
+
+
+
+(defun euler-42 ()
+  "Coded triangle numbers
+Problem 42
+The nth term of the sequence of triangle numbers is given by, tn = ½n(n+1); so the first ten triangle numbers are:
+1, 3, 6, 10, 15, 21, 28, 36, 45, 55, ...
+By converting each letter in a word to a number corresponding to its alphabetical position and adding these values we form a word value. For example, the word value for SKY is 19 + 11 + 25 = 55 = t10. If the word value is a triangle number then we shall call the word a triangle word.
+Using words.txt (right click and 'Save Link/Target As...'), a 16K text file containing nearly two-thousand common English words, how many are triangle words?
+Answer:	162"
+  (let* ((wortliste (erstelle-wortliste "~/lisp/p042_words.txt"))
+		 (länge (length wortliste))
+		 (anzahl 0)
+		 (aktueller-wert 0))
+	(do ((i 1 (1+ i)))
+		((> i länge)
+		 anzahl)
+	  (setf aktueller-wert (alphabetischer-wert (pop wortliste)))
+	  (when (dreieckszahl-p aktueller-wert)
+		(incf anzahl)))))
+
+
 
 (defun euler-67 ()
   "Maximum path sum II

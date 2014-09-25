@@ -365,15 +365,15 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 
 
 
-(defun erstelle-namensliste (stream-name)
+(defun erstelle-wortliste (stream-name)
   "Liest eine Datei der Form STRINGKOMMASTRINGKOMMASTRING ein und erstellt aus den gewonnenen Daten eine Liste aller Strings, während die Kommatas entfallen."
-  (let ((namensliste nil))
+  (let ((wortliste nil))
 	(with-open-file (stream stream-name)
 	  (do ((i (read stream nil)
 			  (read stream nil)))
 		  ((null i)
-		   (sort namensliste #'string<))
-		(push i namensliste)
+		   (sort wortliste #'string<))
+		(push i wortliste)
 		(read-char-no-hang stream nil)))))
 
 
@@ -430,8 +430,18 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 
 
 
-(defun pandigital-p (liste)
-  (equal (sort liste #'<) '(1 2 3 4 5 6 7 8 9)))
+;(defun pandigital-p (liste)
+;  (equal (sort liste #'<) '(1 2 3 4 5 6 7 8 9)))
+
+
+
+(defun pandigital-p (n)
+  (typecase n
+	(null nil)
+	(number (let ((p (search (sort (prin1-to-string n) #'char<) "123456789")))
+			  (if (and (integerp p) (zerop p)) t nil)))
+	(list (equal (sort n #'<) '(1 2 3 4 5 6 7 8 9)))
+	(otherwise nil)))
 
 
 
@@ -506,9 +516,28 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 		  (unless (and (primzahl-p (truncate (/ zahl (expt 10 i))))
 					   (primzahl-p (rem zahl (expt 10 i))))
 			(return nil))))))
-	
-	  
-		
+
+
+
+; ------------------------------------------
+
+
+
+(defun dreieckszahl-p (zahl)
+  (if (plusp zahl)
+	  (let
+		  ((dreieckszahl 0))
+		(do ((i 1 (1+ i)))
+			((> dreieckszahl zahl)
+			 nil)
+		  (incf dreieckszahl i)
+		  (when (= zahl dreieckszahl)
+			(return t))))))
+
+
+
+
+
 
 
 
