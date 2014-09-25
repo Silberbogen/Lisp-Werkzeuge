@@ -71,21 +71,19 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 
 
 
-(defun faktorisiere (n)
+(defun faktorisiere (zahl)
   "(faktorisiere n)
 Gibt eine Liste der Faktoren der Zahl N zurück.
 Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"  
-  (when (and (integerp n) (> n 0))
-	(let
-		((max-d (isqrt n)))
-	  (do ((d 2 (incf d (if (evenp d)
-							1
-							2))))
-		  ((cond ((> d max-d)
-				  (return (list n)))
-				 ((zerop (rem n d))
-				  (return (cons d (faktorisiere (truncate n d)))))))))))
-
+  (when (> zahl 1)
+    (let
+		((limit (1+ (isqrt zahl))))
+      (do ((i 2 (1+ i)))
+		  ((> i limit)
+		   (list zahl))
+        (when (zerop (mod zahl i))
+          (return-from faktorisiere
+            (cons i (faktorisiere (/ zahl i)))))))))
 
 
 (defun fibonacci-folge (n &optional (a 0) (b 1))

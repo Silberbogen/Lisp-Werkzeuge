@@ -1329,6 +1329,28 @@ Answer:	5777"
 	  (when (null (goldbach-aufgliedern i))
 		(return i)))))
 
+
+
+(defun euler-47 (&optional (fortlaufend 4) (zahl 645))
+  "Distinct primes factors
+Problem 47
+The first two consecutive numbers to have two distinct prime factors are:
+14 = 2 × 7
+15 = 3 × 5
+The first three consecutive numbers to have three distinct prime factors are:
+644 = 2² × 7 × 23
+645 = 3 × 5 × 43
+646 = 2 × 17 × 19.
+Find the first four consecutive integers to have four distinct prime factors. What is the first of these numbers?
+Answer:	134043"
+  (if (= fortlaufend
+         (length (remove-duplicates (faktorisiere zahl)))
+         (length (remove-duplicates (faktorisiere (+ zahl 1))))
+         (length (remove-duplicates (faktorisiere (+ zahl 2))))
+         (length (remove-duplicates (faktorisiere (+ zahl 3)))))
+      zahl
+      (euler-47 fortlaufend (1+ zahl))))
+
   
 
 (defun euler-67 ()
