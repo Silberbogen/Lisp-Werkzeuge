@@ -237,7 +237,21 @@ Beispiele:
 			  (return nil)))))))
 
 
-  
+
+(defun summe-fortlaufender-primzahlen (start maximum)
+  (let
+	  ((summe 0)
+	   (anzahl 0))
+	(unless (primzahl-p start)
+	  (setf start (nächste-primzahl start)))
+	(do ((i start (nächste-primzahl i)))
+		((> (+ summe i) maximum)
+		 (list summe anzahl))
+	  (incf summe i)
+	  (incf anzahl))))
+
+
+
 ; -------------------------------------------
 
 

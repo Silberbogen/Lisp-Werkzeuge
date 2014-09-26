@@ -1386,8 +1386,33 @@ Answer:	296962999629"
 			  (l3 (remove-duplicates (zahl->liste i3))))
 		  (when (and (subsetp l1 l2) (subsetp l1 l3) (subsetp l2 l1) (subsetp l3 l1))
 			(return (list i (+ i 3330) (+ i 6660)))))))))
-  
-  
+
+
+
+(defun euler-50 ()
+  "Consecutive prime sum
+Problem 50
+The prime 41, can be written as the sum of six consecutive primes:
+41 = 2 + 3 + 5 + 7 + 11 + 13
+This is the longest sum of consecutive primes that adds to a prime below one-hundred.
+The longest sum of consecutive primes below one-thousand that adds to a prime, contains 21 terms, and is equal to 953.
+Which prime, below one-million, can be written as the sum of the most consecutive primes?
+Answer:	997651"
+  (let ((max-zahl 0)
+		(max-anzahl 0)
+		(obergrenze (second (summe-fortlaufender-primzahlen 1 1000000))))
+	(do ((i (nächste-primzahl) (nächste-primzahl i)))
+		((>= i obergrenze)
+		 max-zahl)
+	  (let*
+		  ((werte (summe-fortlaufender-primzahlen i 1000000))
+		   (zahl (first werte))
+		   (anzahl (second werte)))
+		(when (and (> anzahl max-anzahl) (> zahl max-zahl) (primzahl-p zahl))
+		  (setf max-zahl zahl)
+		  (setf max-anzahl anzahl))))))
+
+
 
 (defun euler-67 ()
   "Maximum path sum II
