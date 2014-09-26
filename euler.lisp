@@ -1368,6 +1368,27 @@ Answer:	9110846700"
 
 
 
+(defun euler-49 ()
+  "Prime permutations
+Problem 49
+The arithmetic sequence, 1487, 4817, 8147, in which each of the terms increases by 3330, is unusual in two ways: (i) each of the three terms are prime, and, (ii) each of the 4-digit numbers are permutations of one another.
+There are no arithmetic sequences made up of three 1-, 2-, or 3-digit primes, exhibiting this property, but there is one other 4-digit increasing sequence.
+What 12-digit number do you form by concatenating the three terms in this sequence?
+Answer:	296962999629"
+  (do ((i 1489 (+ i 2)))
+	  ((= i 4817)
+	   nil)
+	(let ((i2 (+ i 3330))
+		  (i3 (+ i 6660)))
+	  (when (and (primzahl-p i) (primzahl-p i2) (primzahl-p i3))
+		(let ((l1 (remove-duplicates (zahl->liste i)))
+			  (l2 (remove-duplicates (zahl->liste i2)))
+			  (l3 (remove-duplicates (zahl->liste i3))))
+		  (when (and (subsetp l1 l2) (subsetp l1 l3) (subsetp l2 l1) (subsetp l3 l1))
+			(return (list i (+ i 3330) (+ i 6660)))))))))
+  
+  
+
 (defun euler-67 ()
   "Maximum path sum II
 Problem 67
