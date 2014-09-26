@@ -1565,6 +1565,25 @@ Answer:	249"
 	(dotimes (i 10000 anzahl)
 	  (when (lychrel-zahl-p i)
 		(incf anzahl)))))
+
+
+
+(defun euler-56 ()
+  "Powerful digit sum
+Problem 56
+A googol (10100) is a massive number: one followed by one-hundred zeros; 100100 is almost unimaginably large: one followed by two-hundred zeros. Despite their size, the sum of the digits in each number is only 1.
+Considering natural numbers of the form, ab, where a, b < 100, what is the maximum digital sum?
+Answer:	972"
+  (let ((maximum 0))
+	(do ((a 1 (1+ a)))
+		((>= a 100)
+		 maximum)
+	  (do ((b 1 (1+ b)))
+		  ((>= b 100))
+		(let ((wert (ziffer-summe (expt a b))))
+		  (when (> wert maximum)
+			(setf maximum wert)))))))
+  
   
 
 (defun euler-67 ()

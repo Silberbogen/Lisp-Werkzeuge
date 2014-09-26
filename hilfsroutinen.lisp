@@ -795,3 +795,14 @@ Beispiele
 			(lychrel-zahl-p kandidat (1- versuche))))))
 
 
+
+; --------------------------------------------
+
+
+
+(defun ziffer-summe (zahl)
+  (apply #'+ (zahl->liste zahl)))
+
+
+
+
