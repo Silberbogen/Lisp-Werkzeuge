@@ -1430,7 +1430,7 @@ Answer:	121313"
 				 (if (teil-der-liste (tausche-ziffer i j k) kandidaten)
 					 (incf anzahl))
 				 (if (= anzahl anzahl-primzahlen)
-					 (return anzahl))
+					 (return t))
 				 (if (< (+ anzahl (- 9 k)) anzahl-primzahlen)
 					 (return nil))))))
 	  (dolist (i kandidaten)
@@ -1439,6 +1439,28 @@ Answer:	121313"
 			  (return-from euler-51 i)))))))
 
 
+
+(defun euler-52 ()
+  "Permuted multiples
+Problem 52
+It can be seen that the number, 125874, and its double, 251748, contain exactly the same digits, but in a different order.
+Find the smallest positive integer, x, such that 2x, 3x, 4x, 5x, and 6x, contain the same digits.
+Answer:	142857"
+  (labels ((sortierte-ziffern (zahl)
+			 (sort (zahl->liste zahl) #'<))
+		   (gleiche-ziffern (i maxmult)
+			 (let ((d (sortierte-ziffern i)))
+			   (do ((m 2 (1+ m)))
+				   ((> m maxmult)
+					(return t))
+				 (unless (equal (sortierte-ziffern (* m i)) d)
+				   (return nil)))))
+		   (finde-gleiche-ziffern (maxmult)
+			 (do ((i 100000 (1+ i)))
+				 ((> i 1000000))
+			   (if (gleiche-ziffern i maxmult)
+				   (return i)))))
+	(finde-gleiche-ziffern 6)))
 
 (defun euler-67 ()
   "Maximum path sum II
