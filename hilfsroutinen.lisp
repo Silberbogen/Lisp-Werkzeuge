@@ -578,5 +578,27 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
+; -------------------------------------------
+
+
+
+(defun tausche-ziffer (zahl original-ziffer neue-ziffer)
+  (liste->zahl
+   (mapcar #'(lambda (x) (if (= x original-ziffer)
+							 neue-ziffer
+							 x))
+	   (zahl->liste zahl))))
+
+
+
+(defun teil-der-liste (zahl liste)
+  (dolist (i liste)
+	(cond
+	  ((= i zahl)
+	   (return t))
+	  ((> i zahl)
+	   (return nil)))))
+
+
 
 
