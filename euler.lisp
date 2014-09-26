@@ -39,14 +39,13 @@ Problem 1
 If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
 Find the sum of all the multiples of 3 or 5 below 1000.
 Answer: 233168"
-  (let ((summe 0)
-		(liste ()))
+  (let ((summe 0))
 	(do ((i 1 (1+ i)))
 		((>= i 1000)
-		 (list summe (reverse liste)))
+		 summe)
 	  (when (or (zerop (mod i 3)) (zerop (mod i 5)))
-		(incf summe i)
-		(push i liste)))))
+		(incf summe i)))))
+
 		 
 
 
@@ -74,7 +73,7 @@ The prime factors of 13195 are 5, 7, 13 and 29.
 What is the largest prime factor of the number 600851475143 ?
 Answer:	6857"
   (let ((x (faktorisiere 600851475143)))
-	(list (apply #'max x) x)))
+	(apply #'max x)))
 
 
 
@@ -92,7 +91,7 @@ Answer:	906609"
 	  (do ((j i (1- j)))
 		  ((< j 100))
 		(setf n (* i j))
-		(when (and (> n x) (palindrom-p n))
+		(when (and (> n x) (palindromp n))
 		  (setf x n))))))
 
 
@@ -690,7 +689,7 @@ Answer:	171"
 	   x)
 	  (do ((monat 1 (1+ monat)))
 		  ((> monat 12))
-		(when (sonntag-p 1 monat jahr)
+		(when (sonntagp 1 monat jahr)
 		  (incf x))))))
 
 
@@ -855,7 +854,7 @@ Find the product of the coefficients, a and b, for the quadratic expression that
 Answer:	-59231"
   (labels
 	  ((primzahl-reihe (a b &optional (n 0))
-		 (if (primzahl-p (+ (expt n 2) (* a n) b))
+		 (if (primzahlp (+ (expt n 2) (* a n) b))
 			 (primzahl-reihe a b (1+ n))
 			 n)))
 	(let ((zahl1 0)
@@ -1088,7 +1087,7 @@ Answer:	932718654"
   (do ((i 9999 (1- i)))
 	  ((< i 1)
 	   nil)
-	(if (pandigital-p (append (zahl->liste i) (zahl->liste (* 2 i))))
+	(if (pandigitalp (append (zahl->liste i) (zahl->liste (* 2 i))))
 		(return (list i (* 2 i))))))
 
 
@@ -1144,7 +1143,7 @@ Answer:	7652413"
 	(do ((i 2 (nächste-primzahl i)))
 		((> i 7654321)
 		 maximum)
-	  (if (pandigital-p i)
+	  (if (pandigitalp i)
 		  (setf maximum i)))))
 
 
@@ -1165,7 +1164,7 @@ Answer:	162"
 		((> i länge)
 		 anzahl)
 	  (setf aktueller-wert (alphabetischer-wert (pop wortliste)))
-	  (when (dreieckszahl-p aktueller-wert)
+	  (when (dreieckszahlp aktueller-wert)
 		(incf anzahl)))))
 
 
@@ -1239,7 +1238,7 @@ Answer:	5482660"
 ;		(let
 ;			((fj (fünfeckszahl-rang j))
 ;			 (fk (fünfeckszahl-rang k)))
-;		  (when (and (fünfeckszahl-p (+ fk fj)) (fünfeckszahl-p (- fk fj)))
+;		  (when (and (fünfeckszahlp (+ fk fj)) (fünfeckszahlp (- fk fj)))
 ;			(setf max-wert (max max-wert (- fk fj)))))))))
 ;;; ###############################
 ;;; fehlerhaft - funktioniert nicht
@@ -1325,7 +1324,7 @@ What is the smallest odd composite that cannot be written as the sum of a prime 
 Answer:	5777"
   (do ((i 3 (+ 2 i)))
 	  ((> i 10000))
-	(unless (primzahl-p i)
+	(unless (primzahlp i)
 	  (when (null (goldbach-aufgliedern i))
 		(return i)))))
 
@@ -1380,7 +1379,7 @@ Answer:	296962999629"
 	   nil)
 	(let ((i2 (+ i 3330))
 		  (i3 (+ i 6660)))
-	  (when (and (primzahl-p i) (primzahl-p i2) (primzahl-p i3))
+	  (when (and (primzahlp i) (primzahlp i2) (primzahlp i3))
 		(let ((l1 (remove-duplicates (zahl->liste i)))
 			  (l2 (remove-duplicates (zahl->liste i2)))
 			  (l3 (remove-duplicates (zahl->liste i3))))
@@ -1408,7 +1407,7 @@ Answer:	997651"
 		  ((werte (summe-fortlaufender-primzahlen i 1000000))
 		   (zahl (first werte))
 		   (anzahl (second werte)))
-		(when (and (> anzahl max-anzahl) (> zahl max-zahl) (primzahl-p zahl))
+		(when (and (> anzahl max-anzahl) (> zahl max-zahl) (primzahlp zahl))
 		  (setf max-zahl zahl)
 		  (setf max-anzahl anzahl))))))
 
@@ -1487,7 +1486,65 @@ Answer:	4075"
 		(dotimes (j i)
 		  (when (> (möglichkeit i j) minimum)
 			(incf summe)))))))
-  
+
+
+
+(defun euler-54 ()
+  "Poker hands
+Problem 54
+In the card game poker, a hand consists of five cards and are ranked, from lowest to highest, in the following way:
+    High Card: Highest value card.
+    One Pair: Two cards of the same value.
+    Two Pairs: Two different pairs.
+    Three of a Kind: Three cards of the same value.
+    Straight: All cards are consecutive values.
+    Flush: All cards of the same suit.
+    Full House: Three of a kind and a pair.
+    Four of a Kind: Four cards of the same value.
+    Straight Flush: All cards are consecutive values of same suit.
+    Royal Flush: Ten, Jack, Queen, King, Ace, in same suit.
+The cards are valued in the order:
+2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King, Ace.
+If two players have the same ranked hands then the rank made up of the highest value wins; for example, a pair of eights beats a pair of fives (see example 1 below). But if two ranks tie, for example, both players have a pair of queens, then highest cards in each hand are compared (see example 4 below); if the highest cards tie then the next highest cards are compared, and so on.
+Consider the following five hands dealt to two players:
+Hand	 	Player 1	 	Player 2	 	Winner
+1	 	5H 5C 6S 7S KD
+Pair of Fives
+	 	2C 3S 8S 8D TD
+Pair of Eights
+	 	Player 2
+2	 	5D 8C 9S JS AC
+Highest card Ace
+	 	2C 5C 7D 8S QH
+Highest card Queen
+	 	Player 1
+3	 	2D 9C AS AH AC
+Three Aces
+	 	3D 6D 7D TD QD
+Flush with Diamonds
+	 	Player 2
+4	 	4D 6S 9H QH QC
+Pair of Queens
+Highest card Nine
+	 	3D 6D 7H QD QS
+Pair of Queens
+Highest card Seven
+	 	Player 1
+5	 	2H 2D 4C 4D 4S
+Full House
+With Three Fours
+	 	3C 3D 3S 9S 9D
+Full House
+with Three Threes
+	 	Player 1
+The file, poker.txt, contains one-thousand random hands dealt to two players. Each line of the file contains ten cards (separated by a single space): the first five are Player 1's cards and the last five are Player 2's cards. You can assume that all hands are valid (no invalid characters or repeated cards), each player's hand is in no specific order, and in each hand there is a clear winner.
+How many hands does Player 1 win?
+Answer:	376"
+  (let ((kartenliste (erstelle-kartenliste "/home/sascha/lisp/p054_poker.txt")))
+	(loop for blatt-paar in kartenliste
+	   when (blatt< (nthcdr 5 blatt-paar) (butlast blatt-paar 5))
+	   sum 1)))
+
   
 
 (defun euler-67 ()

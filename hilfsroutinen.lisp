@@ -119,13 +119,13 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 
-(defun palindrom-p (sequenz)
-  "(palindrom-p sequenz)
+(defun palindromp (sequenz)
+  "(palindromp sequenz)
 Palindromp testet, ob eine übergebene Sequenz, eine übergebene Zeichenkette oder ein übergebenes Symbol ein Palindrom darstellt.
-Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
- (palindrom-p 'otto) => T
- (palindrom-p 'otta) => NIL
- (palindrom-p \"Otto\") => T"
+Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
+ (palindromp 'otto) => T
+ (palindromp 'otta) => NIL
+ (palindromp \"Otto\") => T"
   (typecase sequenz
 	(null nil)
 	(number (string= (write-to-string sequenz) (reverse (write-to-string sequenz))))
@@ -151,12 +151,12 @@ Beispiele: (palindrom-p '(1 2 3 4 3 2 1)) => T
 
 
 
-(defun primzahl-p (x)
+(defun primzahlp (x)
   "Prüft ob eine Zahl eine echte Primzahl ist.
 Beispiele:
-   (primzahl-p 24) => NIL
-   (primzahl-p 29) => T
-   (primzahl-p 1299709) => T"  
+   (primzahlp 24) => NIL
+   (primzahlp 29) => T
+   (primzahlp 1299709) => T"  
   (when (and (integerp x) (> x 1))
 	(let
 		((max-d (isqrt x)))
@@ -177,7 +177,7 @@ Beispiele:
    (nächste-primzahl 20) => 23
    (nächste-primzahl 23) => 29"
   (do ((i (1+ zahl) (1+ i)))
-	  ((primzahl-p i)
+	  ((primzahlp i)
 	   i)))
 
 
@@ -212,8 +212,8 @@ Beispiele:
 		(do ((i 1 (1+ i)))
 			((= i länge)
 			 t)
-		  (unless (and (primzahl-p (truncate (/ zahl (expt 10 i))))
-					   (primzahl-p (rem zahl (expt 10 i))))
+		  (unless (and (primzahlp (truncate (/ zahl (expt 10 i))))
+					   (primzahlp (rem zahl (expt 10 i))))
 			(return nil))))))
 
 
@@ -223,7 +223,7 @@ Beispiele:
   (let
 	  ((länge (length (zahl->liste zahl))))
 	(if (= länge 1)
-		(when (primzahl-p zahl)
+		(when (primzahlp zahl)
 		  t)
 		(let
 			((temp-zahl zahl)
@@ -233,7 +233,7 @@ Beispiele:
 			   t)
 			(setf temp-liste (append (cdr temp-liste) (cons (car temp-liste) '())))
 			(setf temp-zahl (liste->zahl temp-liste))
-			(unless (primzahl-p temp-zahl)
+			(unless (primzahlp temp-zahl)
 			  (return nil)))))))
 
 
@@ -242,7 +242,7 @@ Beispiele:
   (let
 	  ((summe 0)
 	   (anzahl 0))
-	(unless (primzahl-p start)
+	(unless (primzahlp start)
 	  (setf start (nächste-primzahl start)))
 	(do ((i start (nächste-primzahl i)))
 		((> (+ summe i) maximum)
@@ -338,25 +338,25 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 			(decode-universal-time
 			 (encode-universal-time 0 0 0 tag monat jahr)))))
 
-(defun montag-p (tag monat jahr)
+(defun montagp (tag monat jahr)
   (= (wochentag tag monat jahr) 0))
 
-(defun dienstag-p (tag monat jahr)
+(defun dienstagp (tag monat jahr)
   (= (wochentag tag monat jahr) 1))
 
-(defun mittwoch-p (tag monat jahr)
+(defun mittwochp (tag monat jahr)
   (= (wochentag tag monat jahr) 2))
 
-(defun donnerstag-p (tag monat jahr)
+(defun donnerstagp (tag monat jahr)
   (= (wochentag tag monat jahr) 3))
 
-(defun freitag-p (tag monat jahr)
+(defun freitagp (tag monat jahr)
   (= (wochentag tag monat jahr) 4))
 
-(defun samstag-p (tag monat jahr)
+(defun samstagp (tag monat jahr)
   (= (wochentag tag monat jahr) 5))
 
-(defun sonntag-p (tag monat jahr)
+(defun sonntagp (tag monat jahr)
   (= (wochentag tag monat jahr) 6))
 
 
@@ -488,7 +488,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
-(defun pandigital-p (n)
+(defun pandigitalp (n)
   (typecase n
 	(null nil)
 	(number (let ((p (search (sort (prin1-to-string n) #'char<) "123456789")))
@@ -508,7 +508,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 		  ((> j 9999))
 		(setf produkt (* i j))
 		(if (and (< produkt 9999)
-				 (pandigital-p (append (zahl->liste i)
+				 (pandigitalp (append (zahl->liste i)
 									   (zahl->liste j)
 									   (zahl->liste produkt))))
 			(pushnew produkt liste))))))
@@ -520,7 +520,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 (defun doppel-basis-palindrom (zahl)
-  (and (palindrom-p zahl) (palindrom-p (format nil "~B" zahl))))
+  (and (palindromp zahl) (palindromp (format nil "~B" zahl))))
 
 
 
@@ -534,7 +534,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
-(defun dreieckszahl-p (zahl)
+(defun dreieckszahlp (zahl)
   "Prüft ob eine Zahl eine Dreieckszahl ist."
   (let
 	  ((wert (sqrt (1+ (* 8 zahl)))))
@@ -548,7 +548,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
-(defun fünfeckszahl-p (zahl)
+(defun fünfeckszahlp (zahl)
   "Prüft ob eine Zahl eine Dreieckszahl ist."
 ;  (and (zerop (mod (1+ (sqrt (1+ (* zahl 24)))) 6))
 	   (= 5 (mod (sqrt (1+ (* zahl 24))) 6)))
@@ -573,7 +573,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 		((> i maximum))
 	  (let
 		  ((p (- zahl (* 2 (expt i 2)))))
-		(when (primzahl-p p)
+		(when (primzahlp p)
 		  (return (list p i)))))))
 
 
@@ -600,5 +600,179 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 	   (return nil)))))
 
 
+
+; -------------------------------------------
+;;; ###########################################
+;;; Aufgabe 54 - das Pokerblatt, mörderisch !!!
+;;; ###########################################
+
+
+
+(defun karten-wert (karte)
+  (declare (type (string 2) karte))
+  (or (parse-integer karte :end 1 :junk-allowed t)
+      (ecase (char-upcase (char karte 0))
+        (#\T 10)
+        (#\J 11)
+        (#\Q 12)
+        (#\K 13)
+        (#\A 14))))
+
+
+
+(defun karte= (karte &rest weitere-karten)
+  (apply #'= (mapcar #'karten-wert (cons karte weitere-karten))))
+
+
+
+(defun karte< (karte &rest weitere-karten)
+  (apply #'< (mapcar #'karten-wert (cons karte weitere-karten))))
+
+
+
+(defun farbe= (karte &rest weitere-karten)
+  (apply #'char= (mapcar (lambda (c) (char-upcase (char c 1)))
+                         (cons karte weitere-karten))))
+
+
+
+(defun entferne-karten (blatt &rest karten)
+  (set-difference blatt karten :test #'karte=))
+
+
+
+(defun flushp (blatt)
+  (apply #'farbe= blatt))
+
+
+
+(defun straightp (blatt)
+  (let ((sortiertes-blatt (sort (copy-seq blatt) #'karte<)))
+    (loop for a in sortiertes-blatt
+	   for b in (rest sortiertes-blatt)
+	   when (/= 1 (- (karten-wert b) (karten-wert a)))
+	   do (return nil)
+	   finally (return t))))
+
+
+
+(defun n-einer-art-p (blatt n)
+  (dolist (test-karte (remove-duplicates blatt :test #'karte=))
+	(when (<= n (length (remove-if (lambda (c) (not (karte= test-karte c)))
+								   blatt)))
+	  (return test-karte))))
+
+
+
+(defun höchste-karte (blatt)
+  (first (last (sort (copy-seq blatt) #'karte<))))
+
+
+
+(defun blatt< (blatt0 blatt1)
+  (labels ((blatt-test (test gleichstand-lösen)
+             (if (funcall test blatt1)
+                 (return-from blatt<
+                   (or (not (funcall test blatt0))
+                       (funcall gleichstand-lösen blatt0 blatt1))))
+             (if (funcall test blatt0)
+                 (return-from blatt< nil)))
+           (höchste-karte< (h0 h1)
+             (karte< (höchste-karte h0) (höchste-karte h1))))
+    (or (blatt-test						; Straight Flush / Royal Flush
+         (lambda (h) (and (straightp h) (flushp h)))
+         #'höchste-karte<)
+        (blatt-test						; Vierling
+         (lambda (h) (n-einer-art-p h 4))
+         (lambda (h0 h1) (karte< (n-einer-art-p h0 4)
+								 (n-einer-art-p h1 4))))
+        (blatt-test						; Full House
+         (lambda (h)
+           (let ((3-of-a-kind (n-einer-art-p h 3)))
+             (and 3-of-a-kind
+                  (n-einer-art-p (entferne-karten h 3-of-a-kind)
+                                 2))))
+         (lambda (h0 h1) (karte< (n-einer-art-p h0 3)
+								 (n-einer-art-p h1 3))))
+        (blatt-test						; Flush
+         #'flushp
+         (lambda (h0 h1)
+           (loop for c0 in (nreverse (sort (copy-seq h0) #'karte<))
+			  for c1 in (nreverse (sort (copy-seq h1) #'karte<))
+			  for result = (karte< c0 c1)
+			  while (karte= c0 c1)
+			  finally (return result))))
+        (blatt-test						; Straight
+         #'straightp
+         #'höchste-karte<)
+        (blatt-test						; Drilling
+         (lambda (h) (n-einer-art-p h 3))
+         (lambda (h0 h1) (karte< (n-einer-art-p h0 3)
+								 (n-einer-art-p h1 3))))
+        (blatt-test						; Zwei Paare
+         (lambda (h)
+           (let ((paar (n-einer-art-p h 2)))
+             (and paar (n-einer-art-p (entferne-karten h paar) 2))))
+         (lambda (h0 h1)
+           (let* ((paar0-0 (n-einer-art-p h0 2))
+                  (paar0-1 (n-einer-art-p
+                            (entferne-karten h0 paar0-0) 2))
+                  (paar1-0 (n-einer-art-p h1 2))
+                  (paar1-1 (n-einer-art-p
+                            (entferne-karten h1 paar1-0) 2))
+                  (entpaare0 (entferne-karten h0 paar0-0 paar0-1))
+                  (entpaare1 (entferne-karten h1 paar1-0 paar1-1)))
+             (if (karte< paar0-0 paar0-1)
+                 (rotatef paar0-0 paar0-1))
+             (if (karte< paar1-0 paar1-1)
+                 (rotatef paar1-0 paar1-1))
+             (or (karte< paar0-0 paar1-0)
+                 (and (karte= paar0-0 paar1-0)
+                      (or (karte< paar0-1 paar1-1)
+                          (and (karte= paar0-1 paar1-1)
+                               (karte< entpaare0 entpaare1))))))))
+        (blatt-test						; Ein Paar
+         (lambda (h) (n-einer-art-p h 2))
+         (lambda (h0 h1)
+           (let ((paar0 (n-einer-art-p h0 2))
+                 (paar1 (n-einer-art-p h1 2)))
+             (or (karte< paar0 paar1)
+                 (and (karte= paar0 paar1)
+                      (höchste-karte< (remove paar0 h0 :test #'karte=)
+									  (remove paar1 h1 :test #'karte=)))))))
+        (blatt-test						;Höchste Karte
+         (lambda (h) t)
+         #'höchste-karte<))))
+
+
+
+(defun trennsymbolep (c) (position c " ,.;/"))
+
+
+
+(defun string-aufteilen (string &key (trennzeichenp #'trennsymbolep))
+  (loop :for beg = (position-if-not trennzeichenp string)
+	 :then (position-if-not trennzeichenp string :start (1+ end))
+	 :for end = (and beg (position-if trennzeichenp string :start beg))
+	 :when beg :collect (subseq string beg end)
+	 :while end))
+
+
+
+(defun erstelle-kartenliste (stream-name)
+  (let ((kartenliste nil))
+	(with-open-file (stream stream-name)
+	  (do ((i (read-line stream nil)
+			  (read-line stream nil)))
+		  ((null i)
+		   (reverse kartenliste))
+		(push (string-aufteilen i) kartenliste)))))
+
+
+
+; ===========================================
+;        Ende des Zusatzspiels :-P
+; ===========================================
+; -------------------------------------------
 
 
