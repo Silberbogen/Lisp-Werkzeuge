@@ -805,4 +805,60 @@ Beispiele
 
 
 
+; --------------------------------------------
+
+
+
+(defun erstelle-zahlenliste (stream-name)
+  "Liest eine Datei der Form ZAHLKOMMAZAHLKOMMAZAHL ein und erstellt aus den gewonnenen Daten eine Liste aller Strings, während die Kommatas entfallen."
+  (let ((zahlenliste nil))
+	(with-open-file (stream stream-name)
+	  (do ((i (read stream nil)
+			  (read stream nil)))
+		  ((null i)
+		   (reverse zahlenliste))
+		(push i zahlenliste)
+		(read-char-no-hang stream nil)))))
+
+
+
+(defun mögliche-entschlüsselung (pw1 pw2 pw3 crypto-text)
+  (let* ((summe 0)
+         (entschlüsselt
+          (with-output-to-string (sstr)
+            (let ((p crypto-text))
+              (dotimes (i 400)
+                (let ((d1 (logxor (pop p) pw1))
+                      (d2 (logxor (pop p) pw2))
+                      (d3 (logxor (pop p) pw3)))
+                  (incf summe (+ d1 d2 d3))
+                  (format sstr "~C~C~C" (code-char d1) (code-char d2) (code-char d3))))
+              (let ((d (logxor (first p) pw1)))
+                (incf summe d)
+                (write-char (code-char d) sstr))))))
+    (if (and (search " the " entschlüsselt) (search ". " entschlüsselt))
+        (list summe entschlüsselt)
+        nil)))
+
+
+
+(defun entschlüssle-alles (&optional (schreibe-in-datei nil))
+  "Decodiert die Datei und gibt den Text auf dem Bildschirm aus oder schreibt ihn auf Festplatte."
+  (let ((crypto-text (erstelle-zahlenliste "~/lisp/p059_cipher.txt")))
+	(do ((i 97 (1+ i)))
+		((> i 122))
+	  (do ((j 97 (1+ j)))
+		  ((> j 122))
+		(do ((k 97 (1+ k)))
+			((> k 122))
+		  (let ((pd (mögliche-entschlüsselung i j k crypto-text)))
+			(when pd
+			  (if schreibe-in-datei
+				  (with-open-file (ostr "klar.txt" :direction :output :if-exists :supersede)
+					(format ostr "~D~%~S~2%" (car pd) (cadr pd)))
+				  (format t "~a~%" pd)))))))))
+
+
+
+
 
