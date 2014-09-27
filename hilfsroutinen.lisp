@@ -24,6 +24,12 @@
 
 
 
+(defun abundante-zahl-p (n)
+  "Eine natürliche Zahl heißt abundant (lat. abundans „überladen“), wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) größer ist als die Zahl selbst. Die kleinste abundante Zahl ist 12 (1+2+3+4+6 = 16 > 12). Die ersten geraden abundanten Zahlen lauten 12, 18, 20, 24, 30, 36, 40, 42, …"
+  (> (apply #'+ (sammle-divisoren n t)) n))
+
+
+
 (defun addiere-ziffern (n &optional (summe 0))
   "Nimmt eine Zahl entgegen und gibt die Summe all ihrer Ziffern zurück."
   (cond
@@ -31,6 +37,47 @@
 	 summe)
 	(t
 	 (addiere-ziffern (truncate (/ n 10)) (+ summe (rem n 10))))))
+
+
+
+(defun alle-permutationen (liste)
+  "Alle Permutationen einer Liste erzeugen; Beispiel: (alle-permutationen (list 'a 'b 'c 'd 'e))"
+  (if (null liste) '(())
+      (mapcan #'(lambda (x)
+		  (mapcar #'(lambda (y) (cons x y))
+			  (alle-permutationen (remove x liste :count 1)))) liste)))
+
+
+
+(defun alphabetischer-wert (string)
+  "Errechnet den alphabetischen Wert eines Strings, momentan nur für Großbuchstaben korrekt."
+  (let ((länge (length string))
+		(summe 0))
+	(do ((i 0 (1+ i)))
+		((= i länge)
+		 summe)
+	  (incf summe (- (char-int (aref string i)) 64)))))
+
+
+
+(defun befreundete-zahl-p (n)
+  "Zwei verschiedene natürliche Zahlen, von denen wechselseitig jeweils eine Zahl gleich der Summe der echten Teiler der anderen Zahl ist, bilden ein Paar befreundeter Zahlen.
+Das kleinste befreundete Zahlenpaar wird von den Zahlen 220 und 284 gebildet. Man rechnet leicht nach, dass die beiden Zahlen der Definition genügen:
+    Die Summe der echten Teiler von 220 ergibt 1 + 2 + 4 + 5 + 10 + 11 + 20 + 22 + 44 + 55 + 110 = 284 und die Summe der echten Teiler von 284 ergibt 1 + 2 + 4 + 71 + 142 = 220.
+In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die größere Zahl defizient."
+  (let* ((bz (apply #'+ (sammle-divisoren n t)))
+		(bz-summe (apply #'+ (sammle-divisoren bz t))))
+	(when (= n bz-summe)
+		bz)))
+
+
+
+(defun but-nth (n liste)
+  "Gibt die Liste, ohne das nte Element zurück. Die Zählung der Liste beginnt bei NULL."
+  (if (zerop n)
+	  (rest liste)
+	  (cons (first liste)
+			(but-nth (1- n) (rest liste)))))
 
 
 
@@ -49,6 +96,28 @@
 
 
 
+(defun defiziente-zahl-p (n)
+  "Eine natürliche Zahl heißt defizient, wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) kleiner ist als die Zahl selbst. Ist die Teilersumme dagegen gleich der Zahl, spricht man von einer vollkommenen Zahl, ist sie größer, so spricht man von einer abundanten Zahl.
+Beispiele: Die Zahl 10 ist defizient, denn 1+2+5 = 8 < 10.
+Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist."
+  (< (apply #'+ (sammle-divisoren n t)) n))
+
+
+
+(defun dreieckszahl-rang (zahl)
+  "Gibt die Dreieckszahl des gewünschten Rangs aus."
+  (/ (* zahl (1+ zahl)) 2))
+
+
+
+(defun dreieckszahlp (zahl)
+  "Prüft ob eine Zahl eine Dreieckszahl ist."
+  (let
+	  ((wert (sqrt (1+ (* 8 zahl)))))
+	(= wert (truncate wert))))
+
+
+
 (defun durchschnitt (&rest liste)
   "(durchschnitt liste)
 DURCHSCHNITT ermöglicht es, den Durchschnitt einer Reihe von Zahlen zu berechnen.
@@ -57,6 +126,16 @@ Beispiel: (durchschnitt 2 3 4) => 3"
       nil
       (/ (reduce #'+ liste) 
 		 (length liste)))) 
+
+
+
+(defun echte-teilmenge-p (a b)
+  "(echte-teilmenge-p liste1 liste2)
+ECHTE-TEILMENGE-P überprüft, ob Liste1 ein wirklicher Subset von Liste2 ist. Das bedeutet, das Liste1 ausschließlich Elemente aus Liste 2 enthält, nicht aber alle Elemente der Liste 2. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
+Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
+ (echte-teilmenge-p '(rot schwarz) '(grün blau gelb)) => NIL"
+	   (when (and (subsetp a b) (not (subsetp b a)))
+	     t))
 
 
 
@@ -94,15 +173,69 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 
+(defun fünfeckszahl-rang (zahl)
+  "Gibt die Fünfeckszahl des gewünschten Rangs aus."
+  (/ (* zahl (1- (* 3 zahl))) 2))
+
+
+
+(defun fünfeckszahlp (zahl)
+  "Prüft ob eine Zahl eine Dreieckszahl ist."
+  (zerop (mod (/ (1+ (sqrt (1+ (* 24 zahl)))) 6) 1)))
+
+
+
+(defun gleichwertige-elemente (a b)
+  "(gleichwertige-elemente liste1 liste2)
+GLEICHWERTIGE-ELEMENTE überprüft, ob Liste1 und Liste2 über dieselben Elemente verfügen. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
+Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
+	   (when (and (subsetp a b) (subsetp b a))
+	     t))
+
+
+
 (defun liste->zahl (liste)
+  "Die übergebene Liste wird als Zahl zurückgegeben."
   (reduce #'(lambda (x y) (+ (* 10 x) y)) liste))
 
 
 
-(defun zahl->liste (zahl)
-  "Die übergebene Zahl wird als Liste von Ziffern zurückgegeben."
-  (map 'list #'(lambda (zeichen) (read-from-string (string zeichen)))
-	   (prin1-to-string zahl)))
+(defun lychrel-zahl-p (zahl &optional (versuche 50))
+  "Jede natürliche Zahl n, die nicht durch eine endliche Anzahl von Inversionen und Additionen zu einem Zahlen-Palindrom führt, wird als Lychrel-Zahl bezeichnet. Als Inversion versteht man hier das Bilden der spiegelverkehrten Zahl m. Führt die Addition n+m dabei zu einem Zahlenpalindrom, ist der Algorithmus beendet. Falls nicht, wird durch erneute Inversion und Addition dieser Vorgang solange ausgeführt, bis das Ergebnis ein Palindrom ist.
+Beispiele
+    Man nimmt die Zahl 5273. Die spiegelverkehrte Zahl dazu lautet 3725 (Inversion). Durch Addition erhält man das Zahlenpalindrom 8998.
+    Bei anderen Zahlen dauert dieser Algorithmus länger:
+        4753 + 3574 = 8327
+        8327 + 7238 = 15565
+        15565 + 56551 = 72116
+        72116 + 61127 = 133243
+        133243 + 342331 = 475574 (ein Palindrom)"
+  (if (zerop versuche)
+	  t
+	  (let ((kandidat (+ zahl (liste->zahl (reverse (zahl->liste zahl))))))
+		(if (palindromp kandidat)
+			nil
+			(lychrel-zahl-p kandidat (1- versuche))))))
+
+
+
+(defun nth-permutation (x liste)
+  "Gibt die nte Permutation einer Liste zurück. Die Zählung beginnt bei NULL."
+  (if (zerop x)
+	  liste
+	  (let* ((länge (length liste))
+			 (sublen (1- länge))
+			 (modulus (faktor sublen)))
+		(if (> x (* länge modulus))
+			(format t "Die Liste mit der Länge ~A ermöglicht keine ~A Permutationen." länge x)
+			(multiple-value-bind (quotient remainder)
+				(floor x modulus)
+			  (cons (nth quotient liste)
+					(nth-permutation remainder (but-nth quotient liste))))))))
+
+(defmacro permutations-rang (x liste)
+  "Translator zwischen Mensch und Maschine, um die Zählung bei 1 (Mensch) gegen die Zählung bei 0 (Maschine) auszutauschen"
+  `(nth-permutation (1- ,x) ,liste))
 
 
 
@@ -110,12 +243,6 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
   "Entfernt die Nicht-Buchstaben eines Textes."
   (remove-if #'(lambda (string) (not (alpha-char-p string)))
 			 text))
-
-
-
-(defun zähle-buchstaben (text)
-  "Zählt die Buchstaben eines angegebenen Texts."
-	(length (nur-buchstaben text)))
 
 
 
@@ -136,6 +263,78 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 
 
 
+(defun pandigitalp (n)
+  "Prüft, ob die Zahl n pandigital ist. Eine pandigitale Zahl (aus griechisch παν: „jedes“ und digital) ist eine dezimale ganze Zahl, die jede der zehn Ziffern von 0 bis 9 genau einmal enthält. Die erste Ziffer darf dabei nicht 0 sein."
+  (typecase n
+	(null nil)
+	(number (let ((p (search (sort (prin1-to-string n) #'char<) "123456789")))
+			  (if (and (integerp p) (zerop p)) t nil)))
+	(list (equal (sort n #'<) '(1 2 3 4 5 6 7 8 9)))
+	(otherwise nil)))
+
+
+
+(defun sammle-divisoren (n &optional (ohne-selbst nil))
+  "Erstellt eine Liste aller Divisoren einer Zahl, wahlweise mit oder ohne sich selbst in die Liste einzubeziehen, vorgegeben, ist sich selbst mit einzubeziehen.
+Beispiele:
+   (sammle-divisoren 28) => (7 4 14 2 28 1)
+   (sammle-divisoren 8128) => (127 64 254 32 508 16 1016 8 2032 4 4064 2 8128 1)
+   (sammle-divisoren 2000 t) => (1 2 1000 4 500 5 400 8 250 10 200 16 125 20 100 25 80 40 50)"
+  (let ((liste nil))
+	(do ((i 1 (1+ i)))
+		((> i (sqrt n))
+		 (if ohne-selbst
+			 (set-difference liste (list n))
+			 liste))
+	  (when (zerop (mod n i))
+		(push i liste)
+		(unless (= i (/ n i))
+		  (push (/ n i) liste))))))
+
+
+
+(defun sechseckzahl-rang (zahl)
+  "Gibt die Sechseckzahl des gewünschten Rangs aus."
+  (* zahl (1- (* 2 zahl))))
+
+
+
+(defun tausche-ziffer (zahl original-ziffer neue-ziffer)
+  "Vertauscht alle Vorkommen einer bestimmten Ziffer einer Zahl gegen eine andere aus."
+  (liste->zahl
+   (mapcar #'(lambda (x) (if (= x original-ziffer)
+							 neue-ziffer
+							 x))
+	   (zahl->liste zahl))))
+
+
+
+(defun vollkommene-zahl-p (n)
+  "Eine natürliche Zahl n wird vollkommene Zahl (auch perfekte Zahl) genannt, wenn sie gleich der Summe σ*(n) aller ihrer (positiven) Teiler außer sich selbst ist. Eine äquivalente Definition lautet: eine vollkommene Zahl n ist eine Zahl, die halb so groß ist wie die Summe aller ihrer positiven Teiler (sie selbst eingeschlossen), d. h. σ(n) = 2n. Die kleinsten drei vollkommenen Zahlen sind 6, 28 und 496. Alle bekannten vollkommenen Zahlen sind gerade und von Mersenne-Primzahlen abgeleitet."
+  (= n (apply #'+ (sammle-divisoren n t))))
+
+
+
+(defun zahl->liste (zahl)
+  "Die übergebene Zahl wird als Liste von Ziffern zurückgegeben."
+  (map 'list #'(lambda (zeichen) (read-from-string (string zeichen)))
+	   (prin1-to-string zahl)))
+
+
+
+(defun zähle-buchstaben (text)
+  "Zählt die Buchstaben eines angegebenen Texts."
+	(length (nur-buchstaben text)))
+
+
+
+(defun ziffer-summe (zahl)
+  (apply #'+ (zahl->liste zahl)))
+
+
+
+; ------------------------------------------
+;          Abteilung: Primzahlen
 ; ------------------------------------------
 
 
@@ -203,7 +402,7 @@ Beispiele:
 
 
 
-(defun abtrennbare-primzahl-p (zahl)
+(defun trunkierbare-primzahl-p (zahl)
   "Die Primzahl bleibt eine Primzahl, selbst wenn die Ziffern von vorne oder von hinten abgetrennt werden."
   (if (< zahl 10)
 	  nil
@@ -218,7 +417,7 @@ Beispiele:
 
 
 
-(defun zirkuläre-primzahl-p (zahl)
+(defun kreisförmige-primzahl-p (zahl)
   "Die Ziffern können rotiert werden, vorne raus, hinten rein - und es ergibt sich dennoch immer eine Primzahl."
   (let
 	  ((länge (length (zahl->liste zahl))))
@@ -253,6 +452,57 @@ Beispiele:
 
 
 ; -------------------------------------------
+;        Abteilung: Zeit und Datum
+; -------------------------------------------
+
+
+
+(defun wochentag (tag monat jahr)
+  "Gibt den Tag der Woche als Zahl zurück. Montag = 0 ... Sonntag = 6."
+  (seventh (multiple-value-list
+			(decode-universal-time
+			 (encode-universal-time 0 0 0 tag monat jahr)))))
+
+
+
+(defun montagp (tag monat jahr)
+  (= (wochentag tag monat jahr) 0))
+
+
+
+(defun dienstagp (tag monat jahr)
+  (= (wochentag tag monat jahr) 1))
+
+
+
+(defun mittwochp (tag monat jahr)
+  (= (wochentag tag monat jahr) 2))
+
+
+
+(defun donnerstagp (tag monat jahr)
+  (= (wochentag tag monat jahr) 3))
+
+
+
+(defun freitagp (tag monat jahr)
+  (= (wochentag tag monat jahr) 4))
+
+
+
+(defun samstagp (tag monat jahr)
+  (= (wochentag tag monat jahr) 5))
+
+
+
+(defun sonntagp (tag monat jahr)
+  (= (wochentag tag monat jahr) 6))
+
+
+
+; -------------------------------------------
+;     Abteilung: Mehr als einmal benötigt
+; -------------------------------------------
 
 
 
@@ -273,165 +523,8 @@ Beispiele:
 
 
 
-; -------------------------------------------
-
-
-
-(defun sammle-divisoren (n &optional (ohne-selbst nil))
-  "Erstellt eine Liste aller Divisoren einer Zahl, wahlweise mit oder ohne sich selbst in die Liste einzubeziehen, vorgegeben, ist sich selbst mit einzubeziehen.
-Beispiele:
-   (sammle-divisoren 28) => (7 4 14 2 28 1)
-   (sammle-divisoren 8128) => (127 64 254 32 508 16 1016 8 2032 4 4064 2 8128 1)
-   (sammle-divisoren 2000 t) => (1 2 1000 4 500 5 400 8 250 10 200 16 125 20 100 25 80 40 50)"
-  (let ((liste nil))
-	(do ((i 1 (1+ i)))
-		((> i (sqrt n))
-		 (if ohne-selbst
-			 (set-difference liste (list n))
-			 liste))
-	  (when (zerop (mod n i))
-		(push i liste)
-		(unless (= i (/ n i))
-		  (push (/ n i) liste))))))
-
-
-
-(defun abundante-zahl-p (n)
-  "Eine natürliche Zahl heißt abundant (lat. abundans „überladen“), wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) größer ist als die Zahl selbst. Die kleinste abundante Zahl ist 12 (1+2+3+4+6 = 16 > 12). Die ersten geraden abundanten Zahlen lauten 12, 18, 20, 24, 30, 36, 40, 42, …"
-  (> (apply #'+ (sammle-divisoren n t)) n))
-
-
-
-(defun befreundete-zahl-p (n)
-  "Zwei verschiedene natürliche Zahlen, von denen wechselseitig jeweils eine Zahl gleich der Summe der echten Teiler der anderen Zahl ist, bilden ein Paar befreundeter Zahlen.
-Das kleinste befreundete Zahlenpaar wird von den Zahlen 220 und 284 gebildet. Man rechnet leicht nach, dass die beiden Zahlen der Definition genügen:
-    Die Summe der echten Teiler von 220 ergibt 1 + 2 + 4 + 5 + 10 + 11 + 20 + 22 + 44 + 55 + 110 = 284 und die Summe der echten Teiler von 284 ergibt 1 + 2 + 4 + 71 + 142 = 220.
-In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die größere Zahl defizient."
-  (let* ((bz (apply #'+ (sammle-divisoren n t)))
-		(bz-summe (apply #'+ (sammle-divisoren bz t))))
-	(when (= n bz-summe)
-		bz)))
-
-
-
-(defun defiziente-zahl-p (n)
-  "Eine natürliche Zahl heißt defizient, wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) kleiner ist als die Zahl selbst. Ist die Teilersumme dagegen gleich der Zahl, spricht man von einer vollkommenen Zahl, ist sie größer, so spricht man von einer abundanten Zahl.
-Beispiele: Die Zahl 10 ist defizient, denn 1+2+5 = 8 < 10.
-Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist."
-  (< (apply #'+ (sammle-divisoren n t)) n))
-
-
-
-(defun vollkommene-zahl-p (n)
-  "Eine natürliche Zahl n wird vollkommene Zahl (auch perfekte Zahl) genannt, wenn sie gleich der Summe σ*(n) aller ihrer (positiven) Teiler außer sich selbst ist. Eine äquivalente Definition lautet: eine vollkommene Zahl n ist eine Zahl, die halb so groß ist wie die Summe aller ihrer positiven Teiler (sie selbst eingeschlossen), d. h. σ(n) = 2n. Die kleinsten drei vollkommenen Zahlen sind 6, 28 und 496. Alle bekannten vollkommenen Zahlen sind gerade und von Mersenne-Primzahlen abgeleitet."
-  (= n (apply #'+ (sammle-divisoren n t))))
-	
-
-
-;---------------------------------
-
-
-
-(defun wochentag (tag monat jahr)
-  "Gibt den Tag der Woche als Zahl zurück. Montag = 0 ... Sonntag = 6."
-  (seventh (multiple-value-list
-			(decode-universal-time
-			 (encode-universal-time 0 0 0 tag monat jahr)))))
-
-(defun montagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 0))
-
-(defun dienstagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 1))
-
-(defun mittwochp (tag monat jahr)
-  (= (wochentag tag monat jahr) 2))
-
-(defun donnerstagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 3))
-
-(defun freitagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 4))
-
-(defun samstagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 5))
-
-(defun sonntagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 6))
-
-
-
-; ---------------------------------
-
-
-
-(defun alle-permutationen (liste)
-  "Alle Permutationen einer Liste erzeugen; Beispiel: (alle-permutationen (list 'a 'b 'c 'd 'e))"
-  (if (null liste) '(())
-      (mapcan #'(lambda (x)
-		  (mapcar #'(lambda (y) (cons x y))
-			  (alle-permutationen (remove x liste :count 1)))) liste)))
-
-
-
-(defun but-nth (n liste)
-  (if (zerop n)
-	  (rest liste)
-	  (cons (first liste)
-			(but-nth (1- n) (rest liste)))))
-
-
-
-(defun nth-permutation (x liste)
-  (if (zerop x)
-	  liste
-	  (let* ((länge (length liste))
-			 (sublen (1- länge))
-			 (modulus (faktor sublen)))
-		(if (> x (* länge modulus))
-			(format t "Die Liste mit der Länge ~A ermöglicht keine ~A Permutationen." länge x)
-			(multiple-value-bind (quotient remainder)
-				(floor x modulus)
-			  (cons (nth quotient liste)
-					(nth-permutation remainder (but-nth quotient liste))))))))
-
-
-
-(defmacro permutations-rang (x liste)
-  "Translator zwischen Mensch und Maschine, um die Zählung bei 1 (Mensch) gegen die Zählung bei 0 (Maschine) auszutauschen"
-  `(nth-permutation (1- ,x) ,liste))
-
-
-
-; ------------------------------------
-
-
-
-(defun echte-teilmenge-p (a b)
-  "(echte-teilmenge-p liste1 liste2)
-ECHTE-TEILMENGE-P überprüft, ob Liste1 ein wirklicher Subset von Liste2 ist. Das bedeutet, das Liste1 ausschließlich Elemente aus Liste 2 enthält, nicht aber alle Elemente der Liste 2. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
-Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
- (echte-teilmenge-p '(rot schwarz) '(grün blau gelb)) => NIL"
-	   (when (and (subsetp a b) (not (subsetp b a)))
-	     t))
-
-
-
-(defun gleichwertige-elemente (a b)
-  "(gleichwertige-elemente liste1 liste2)
-GLEICHWERTIGE-ELEMENTE überprüft, ob Liste1 und Liste2 über dieselben Elemente verfügen. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
-Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
-	   (when (and (subsetp a b) (subsetp b a))
-	     t))
-
-
-
-; ---------------------------------------
-
-
-
 (defun erstelle-wortliste (stream-name)
-  "Liest eine Datei der Form STRINGKOMMASTRINGKOMMASTRING ein und erstellt aus den gewonnenen Daten eine Liste aller Strings, während die Kommatas entfallen."
+  "Einleseformat: TextKommaTextKommaText ohne Leerzeichen"
   (let ((wortliste nil))
 	(with-open-file (stream stream-name)
 	  (do ((i (read stream nil)
@@ -443,35 +536,22 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
-(defun alphabetischer-wert (string)
-  "Errechnet den alphabetischen Wert eines Strings, momentan nur für Großbuchstaben korrekt."
-  (let ((länge (length string))
-		(summe 0))
-	(do ((i 0 (1+ i)))
-		((= i länge)
-		 summe)
-	  (incf summe (- (char-int (aref string i)) 64)))))
-
-
-; ----------------------------------------
-
-
-
-(defun reziproker-zyklus-länge (n)
-  (let ((i 1))
-	(cond
-	  ((zerop (rem n 2))
-	   (reziproker-zyklus-länge (truncate (/ n 2.0))))
-	  ((zerop (rem n 5))
-	   (reziproker-zyklus-länge (truncate (/ n 5.0))))
-	  (t (do ()
-			 ((zerop (rem (1- (expt 10 i)) n))
-			  i)
-		   (incf i))))))
+(defun erstelle-zahlenliste (stream-name)
+  "Einleseformat: ZahlKommaZahlKommaZahl ohne Leerzeichen"
+  (let ((zahlenliste nil))
+	(with-open-file (stream stream-name)
+	  (do ((i (read stream nil)
+			  (read stream nil)))
+		  ((null i)
+		   (reverse zahlenliste))
+		(push i zahlenliste)
+		(read-char-no-hang stream nil)))))
 
 
 
-; ----------------------------------------
+; -------------------------------------------
+;     Abteilung: Nur einmal benötigt
+; -------------------------------------------
 
 
 
@@ -481,87 +561,6 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
   (if (zerop n)
 	  summe
 	  (expt-ziffern (truncate (/ n 10)) p (+ summe (expt (rem n 10) p)))))
-
-
-
-; ----------------------------------------
-
-
-
-(defun pandigitalp (n)
-  (typecase n
-	(null nil)
-	(number (let ((p (search (sort (prin1-to-string n) #'char<) "123456789")))
-			  (if (and (integerp p) (zerop p)) t nil)))
-	(list (equal (sort n #'<) '(1 2 3 4 5 6 7 8 9)))
-	(otherwise nil)))
-
-
-
-(defun alle-pandigitalen-produkte ()
-  (let ((liste nil)
-		(produkt 0))
-	(do ((i 1 (1+ i)))
-		((> i 99)
-		 liste)
-	  (do ((j 100 (1+ j)))
-		  ((> j 9999))
-		(setf produkt (* i j))
-		(if (and (< produkt 9999)
-				 (pandigitalp (append (zahl->liste i)
-									   (zahl->liste j)
-									   (zahl->liste produkt))))
-			(pushnew produkt liste))))))
-
-
-
-; --------------------------------------------
-
-
-
-(defun doppel-basis-palindrom (zahl)
-  (and (palindromp zahl) (palindromp (format nil "~B" zahl))))
-
-
-
-; --------------------------------------------
-
-
-
-(defun dreieckszahl-rang (zahl)
-  "Gibt die Dreieckszahl des gewünschten Rangs aus."
-  (/ (* zahl (1+ zahl)) 2))
-
-
-
-(defun dreieckszahlp (zahl)
-  "Prüft ob eine Zahl eine Dreieckszahl ist."
-  (let
-	  ((wert (sqrt (1+ (* 8 zahl)))))
-	(= wert (truncate wert))))
-
-
-
-(defun fünfeckszahl-rang (zahl)
-  "Gibt die Fünfeckszahl des gewünschten Rangs aus."
-  (/ (* zahl (1- (* 3 zahl))) 2))
-
-
-
-(defun fünfeckszahlp (zahl)
-  "Prüft ob eine Zahl eine Dreieckszahl ist."
-;  (and (zerop (mod (1+ (sqrt (1+ (* zahl 24)))) 6))
-	   (= 5 (mod (sqrt (1+ (* zahl 24))) 6)))
-
-
-
-(defun sechseckzahl-rang (zahl)
-  "Gibt die Sechseckzahl des gewünschten Rangs aus."
-  (* zahl (1- (* 2 zahl))))
-
-
-
-; -------------------------------------------
 
 
 
@@ -575,19 +574,6 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 		  ((p (- zahl (* 2 (expt i 2)))))
 		(when (primzahlp p)
 		  (return (list p i)))))))
-
-
-
-; -------------------------------------------
-
-
-
-(defun tausche-ziffer (zahl original-ziffer neue-ziffer)
-  (liste->zahl
-   (mapcar #'(lambda (x) (if (= x original-ziffer)
-							 neue-ziffer
-							 x))
-	   (zahl->liste zahl))))
 
 
 
@@ -760,6 +746,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 (defun erstelle-kartenliste (stream-name)
+  "Einleseformat: 10 durch Leerzeichen getrennte Daten je Zeile"
   (let ((kartenliste nil))
 	(with-open-file (stream stream-name)
 	  (do ((i (read-line stream nil)
@@ -773,92 +760,3 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 ; ===========================================
 ;        Ende des Zusatzspiels :-P
 ; ===========================================
-; -------------------------------------------
-
-
-
-(defun lychrel-zahl-p (zahl &optional (versuche 50))
-  "Jede natürliche Zahl n, die nicht durch eine endliche Anzahl von Inversionen und Additionen zu einem Zahlen-Palindrom führt, wird als Lychrel-Zahl bezeichnet. Als Inversion versteht man hier das Bilden der spiegelverkehrten Zahl m. Führt die Addition n+m dabei zu einem Zahlenpalindrom, ist der Algorithmus beendet. Falls nicht, wird durch erneute Inversion und Addition dieser Vorgang solange ausgeführt, bis das Ergebnis ein Palindrom ist.
-Beispiele
-    Man nimmt die Zahl 5273. Die spiegelverkehrte Zahl dazu lautet 3725 (Inversion). Durch Addition erhält man das Zahlenpalindrom 8998.
-    Bei anderen Zahlen dauert dieser Algorithmus länger:
-        4753 + 3574 = 8327
-        8327 + 7238 = 15565
-        15565 + 56551 = 72116
-        72116 + 61127 = 133243
-        133243 + 342331 = 475574 (ein Palindrom)"
-  (if (zerop versuche)
-	  t
-	  (let ((kandidat (+ zahl (liste->zahl (reverse (zahl->liste zahl))))))
-		(if (palindromp kandidat)
-			nil
-			(lychrel-zahl-p kandidat (1- versuche))))))
-
-
-
-; --------------------------------------------
-
-
-
-(defun ziffer-summe (zahl)
-  (apply #'+ (zahl->liste zahl)))
-
-
-
-; --------------------------------------------
-
-
-
-(defun erstelle-zahlenliste (stream-name)
-  "Liest eine Datei der Form ZAHLKOMMAZAHLKOMMAZAHL ein und erstellt aus den gewonnenen Daten eine Liste aller Strings, während die Kommatas entfallen."
-  (let ((zahlenliste nil))
-	(with-open-file (stream stream-name)
-	  (do ((i (read stream nil)
-			  (read stream nil)))
-		  ((null i)
-		   (reverse zahlenliste))
-		(push i zahlenliste)
-		(read-char-no-hang stream nil)))))
-
-
-
-(defun mögliche-entschlüsselung (pw1 pw2 pw3 crypto-text)
-  (let* ((summe 0)
-         (entschlüsselt
-          (with-output-to-string (sstr)
-            (let ((p crypto-text))
-              (dotimes (i 400)
-                (let ((d1 (logxor (pop p) pw1))
-                      (d2 (logxor (pop p) pw2))
-                      (d3 (logxor (pop p) pw3)))
-                  (incf summe (+ d1 d2 d3))
-                  (format sstr "~C~C~C" (code-char d1) (code-char d2) (code-char d3))))
-              (let ((d (logxor (first p) pw1)))
-                (incf summe d)
-                (write-char (code-char d) sstr))))))
-    (if (and (search " the " entschlüsselt) (search ". " entschlüsselt))
-        (list summe entschlüsselt)
-        nil)))
-
-
-
-(defun entschlüssle-alles (&optional (schreibe-in-datei nil))
-  "Decodiert die Datei und gibt den Text auf dem Bildschirm aus oder schreibt ihn auf Festplatte."
-  (let ((crypto-text (erstelle-zahlenliste "~/lisp/p059_cipher.txt")))
-	(do ((i 97 (1+ i)))
-		((> i 122))
-	  (do ((j 97 (1+ j)))
-		  ((> j 122))
-		(do ((k 97 (1+ k)))
-			((> k 122))
-		  (let ((pd (mögliche-entschlüsselung i j k crypto-text)))
-			(when pd
-			  (if schreibe-in-datei
-				  (with-open-file (ostr "klar.txt" :direction :output :if-exists :supersede)
-					(format ostr "~D~%~S~2%" (car pd) (cadr pd)))
-				  (format t "~a~%" pd)))))))))
-
-
-
-
-
