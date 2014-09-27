@@ -1511,10 +1511,131 @@ Die Datei poker.txt enthält eintausend zufällige Blätter, die den zwei Spiele
 Bei wie vielen der Blätter gewinnt Spieler 1?
 HINWEIS: Da projecteuler.net englisch ist, sind auch die Abkürzungen der Karten auf Englisch; Bei den Kartennamen bedeutet J(Jack) Bube, Q(Queen) Dame, K(King) König und A(Ace) Ass. Bei den Farben bedeutet C(Club) Kreuz, H(Heart) Herz, D(Diamond) Karo und S(Spade) Pik. Wichtig ist auch, dass die Karte Zehn nicht etwa 10, sondern T(Ten) lautet.
 Antwort: 376"
-  (let ((kartenliste (erstelle-kartenliste "/home/sascha/lisp/p054_poker.txt")))
-	(loop for blatt-paar in kartenliste
-	   when (blatt< (nthcdr 5 blatt-paar) (butlast blatt-paar 5))
-	   sum 1)))
+  (labels ((karten-wert (karte)
+			 (declare (type (string 2) karte))
+			 (or (parse-integer karte :end 1 :junk-allowed t)
+				 (ecase (char-upcase (char karte 0))
+				   (#\T 10)
+				   (#\J 11)
+				   (#\Q 12)
+				   (#\K 13)
+				   (#\A 14))))
+
+		   (karte= (karte &rest weitere-karten)
+			 (apply #'= (mapcar #'karten-wert (cons karte weitere-karten))))
+
+		   (karte< (karte &rest weitere-karten)
+			 (apply #'< (mapcar #'karten-wert (cons karte weitere-karten))))
+
+		   (farbe= (karte &rest weitere-karten)
+			 (apply #'char= (mapcar (lambda (c) (char-upcase (char c 1)))
+									(cons karte weitere-karten))))
+
+		   (entferne-karten (blatt &rest karten)
+			 (set-difference blatt karten :test #'karte=))
+
+		   (flushp (blatt)
+			 (apply #'farbe= blatt))
+
+		   (straightp (blatt)
+			 (let ((sortiertes-blatt (sort (copy-seq blatt) #'karte<)))
+			   (loop for a in sortiertes-blatt
+				  for b in (rest sortiertes-blatt)
+				  when (/= 1 (- (karten-wert b) (karten-wert a)))
+				  do (return nil)
+				  finally (return t))))
+
+		   (n-einer-art-p (blatt n)
+			 (dolist (test-karte (remove-duplicates blatt :test #'karte=))
+			   (when (<= n (length (remove-if (lambda (c) (not (karte= test-karte c)))
+											  blatt)))
+				 (return test-karte))))
+
+		   (höchste-karte (blatt)
+			 (first (last (sort (copy-seq blatt) #'karte<))))
+
+		   (höchste-karte< (h0 h1)
+             (karte< (höchste-karte h0) (höchste-karte h1)))
+
+		   (blatt< (blatt0 blatt1)
+			 (labels ((blatt-test (test gleichstand-lösen)
+						(if (funcall test blatt1)
+							(return-from blatt<
+							  (or (not (funcall test blatt0))
+								  (funcall gleichstand-lösen blatt0 blatt1))))
+						(if (funcall test blatt0)
+							(return-from blatt< nil))))
+			     
+			 (or (blatt-test (lambda (h) (and (straightp h) (flushp h))) #'höchste-karte<) ; Straight / Flush
+				 ;; Vierling
+				 (blatt-test  (lambda (h) (n-einer-art-p h 4))
+							  (lambda (h0 h1) (karte< (n-einer-art-p h0 4)
+													  (n-einer-art-p h1 4))))
+				 ;; Full House
+				 (blatt-test  (lambda (h) (let ((3-of-a-kind (n-einer-art-p h 3)))
+											(and 3-of-a-kind
+												 (n-einer-art-p (entferne-karten h 3-of-a-kind)
+																2))))
+							  (lambda (h0 h1) (karte< (n-einer-art-p h0 3)
+													  (n-einer-art-p h1 3))))
+				 ;; Flush
+				 (blatt-test #'flushp (lambda (h0 h1) (loop for c0 in (nreverse (sort (copy-seq h0) #'karte<))
+														 for c1 in (nreverse (sort (copy-seq h1) #'karte<))
+														 for result = (karte< c0 c1)
+														 while (karte= c0 c1)
+														 finally (return result))))
+				 ;; Straight
+				 (blatt-test #'straightp #'höchste-karte<)
+				 ;; Drilling
+				 (blatt-test (lambda (h) (n-einer-art-p h 3))
+							 (lambda (h0 h1) (karte< (n-einer-art-p h0 3)
+													 (n-einer-art-p h1 3))))
+				 ;; Zwei Paare
+				 (blatt-test (lambda (h) (let ((paar (n-einer-art-p h 2)))
+										   (and paar (n-einer-art-p (entferne-karten h paar) 2))))
+							 (lambda (h0 h1)
+							   (let* ((paar0-0 (n-einer-art-p h0 2))
+									  (paar0-1 (n-einer-art-p
+												(entferne-karten h0 paar0-0) 2))
+									  (paar1-0 (n-einer-art-p h1 2))
+									  (paar1-1 (n-einer-art-p
+												(entferne-karten h1 paar1-0) 2))
+									  (entpaare0 (entferne-karten h0 paar0-0 paar0-1))
+									  (entpaare1 (entferne-karten h1 paar1-0 paar1-1)))
+								 (if (karte< paar0-0 paar0-1)
+									 (rotatef paar0-0 paar0-1))
+								 (if (karte< paar1-0 paar1-1)
+									 (rotatef paar1-0 paar1-1))
+								 (or (karte< paar0-0 paar1-0)
+									 (and (karte= paar0-0 paar1-0)
+										  (or (karte< paar0-1 paar1-1)
+											  (and (karte= paar0-1 paar1-1)
+												   (karte< entpaare0 entpaare1))))))))
+				 ;; Ein Paar
+				 (blatt-test (lambda (h) (n-einer-art-p h 2))
+							 (lambda (h0 h1) (let ((paar0 (n-einer-art-p h0 2))
+												   (paar1 (n-einer-art-p h1 2)))
+											   (or (karte< paar0 paar1)
+												   (and (karte= paar0 paar1)
+														(höchste-karte< (remove paar0 h0 :test #'karte=)
+																		(remove paar1 h1 :test #'karte=)))))))
+				 ;; Höchste Karte
+				 (blatt-test (lambda (h) t) #'höchste-karte<))))
+	
+		   (erstelle-kartenliste (stream-name)
+			 "Einleseformat: 10 durch Leerzeichen getrennte Daten je Zeile"
+			 (let ((kartenliste nil))
+			   (with-open-file (stream stream-name)
+				 (do ((i (read-line stream nil)
+						 (read-line stream nil)))
+					 ((null i)
+					  (reverse kartenliste))
+				   (push (string-aufteilen i) kartenliste))))))
+	;; ---------- ENDE der Unterprogramme ----------------------------------------
+	(let ((kartenliste (erstelle-kartenliste "/home/sascha/lisp/p054_poker.txt")))
+	  (loop for blatt-paar in kartenliste
+		 when (blatt< (nthcdr 5 blatt-paar) (butlast blatt-paar 5))
+		 sum 1))))
 
 
 
