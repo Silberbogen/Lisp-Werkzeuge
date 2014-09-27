@@ -212,9 +212,7 @@ Die Summe aller Primzahlen unter 10 ist 2 + 3 + 5 + 7 = 17.
 Finden Sie die Summe aller Primzahlen unter 2 Millionen.
 Antwort: 142913828922"
   (let ((summe 0))
-	(do ((i (nächste-primzahl) (nächste-primzahl i)))
-		((>= i 2000000)
-		 summe)
+	(dolist (i (sieb-des-eratosthenes 1999999) summe)
 	  (incf summe i))))
 
 
@@ -873,8 +871,7 @@ Antwort: -59231"
 	  (do ((a -999 (1+ a)))
 		  ((zerop a)
 		   (* zahl1 zahl2))
-		(do ((b 2 (nächste-primzahl b)))
-			((>= b 1000))
+		(dolist (b (sieb-des-eratosthenes 999))
 		  (when (> (setf aktuelle-primzahlen (primzahl-reihe a b))
 				   gezählte-primzahlen)
 			(setf zahl1 a
@@ -1049,11 +1046,9 @@ Es gibt 13 solche Primzahlen unter 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 
 Wie viele kreisförmige Primzahlen unter 1 Million gibt es?
 Antwort: 55"
   (let ((liste nil))
-	(do ((i 2 (nächste-primzahl i)))
-		((>= i 1000000)
-		 (length liste))
-		(when (kreisförmige-primzahl-p i) 
-		  (push i liste)))))
+	(dolist (i (sieb-des-eratosthenes 999999) (length liste))
+	  (when (kreisförmige-primzahl-p i) 
+		(push i liste)))))
 
 
 
@@ -1084,9 +1079,7 @@ HINWEIS: 2, 3, 5 und 7 zählen nicht als trunkierbare Primzahlen.
 Antwort: 748317"
   (let ((summe 0)
 		(anzahl 0))
-	(do ((i 2 (nächste-primzahl i)))
-		((= anzahl 11)
-		 summe)
+	(dolist (i (sieb-des-eratosthenes 1000000) summe)
 	  (when (trunkierbare-primzahl-p i)
 		(incf anzahl)
 		(incf summe i)))))
@@ -1371,9 +1364,7 @@ Antwort: 997651"
   (let ((max-zahl 0)
 		(max-anzahl 0)
 		(obergrenze (second (summe-fortlaufender-primzahlen 1 1000000))))
-	(do ((i (nächste-primzahl) (nächste-primzahl i)))
-		((>= i obergrenze)
-		 max-zahl)
+	(dolist (i (sieb-des-eratosthenes (1- obergrenze)) max-zahl)
 	  (let* ((werte (summe-fortlaufender-primzahlen i 1000000))
 			 (zahl (first werte))
 			 (anzahl (second werte)))
