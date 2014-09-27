@@ -81,6 +81,17 @@ In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die gr
 
 
 
+(defun collatz-rang (n &optional (durchgang 1))
+  "Gibt die Länge der Sequenz der Collatz-Folge beginnend mit n zurück."
+  (cond ((= n 1)
+		 (return-from collatz-rang durchgang))
+		((evenp n)
+		 (collatz-rang (/ n 2) (1+ durchgang)))
+		(t
+		 (collatz-rang (1+ (* 3 n)) (1+ durchgang)))))
+
+
+
 (defun collatz-sequenz (n &optional (liste nil))
   "Gibt die Collatz-Sequenz einer gegebenen Zahl n als Liste zurück."
   (push n liste)

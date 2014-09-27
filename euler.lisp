@@ -201,7 +201,7 @@ Antwort: 31875000"
 		(when (and (> c b)
 				   (= (+ (expt a 2) (expt b 2))
 					  (expt c 2)))
-		  (return-from euler-9 (list a b c)))))))
+		  (return-from euler-9 (* a b c)))))))
 
 
 
@@ -565,17 +565,15 @@ Es ist zu sehen, dass diese Folge (beginnend bei 13 und endend bei 1) 10 Terme e
 Welche Anfangszahl unter 1 Million erzeugt die längste Folge?
 HINWEIS: Sobald die Folge begonnen hat, dürfen die Terme auch 1 Million überschreiten.
 Antwort: 837799"
-  (let ((x 0)				  ; gesuchte Zahl
-		(länge 0)			  ; Länge der Collatz-Sequenz
-		(n nil))			  ; Zwischenspeicher der aktuellen Sequenz
+  (let ((gesuchte-zahl 0)
+		(maximale-länge 0))
 	(do ((i 1 (1+ i)))
 		((>= i 1000000)
-		 x)
-	  (setf n (collatz-sequenz i))
-	  (when (> (length n) länge)
-		(setf länge (length n)
-			  x (first n))))))
-
+		 gesuchte-zahl)
+	  (let ((länge (collatz-rang i)))
+		(when (> länge maximale-länge)
+		  (setf maximale-länge länge
+				gesuchte-zahl i))))))
 
 
 (defun euler-15 ()
