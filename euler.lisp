@@ -1804,8 +1804,26 @@ Antwort: 127035954683 (5027³)"
 				 (when (>= (length neueintrag) gesuchte-anzahl)
 					 (return (expt (first (last neueintrag)) 3))))))))
 	(finde-permutationen 5)))
-			   
-						
+
+
+
+(defun euler-63 ()
+  "Ziffern-Anzahlen mit Potenzial
+Aufgabe 63
+Die 5-stellige Zahl 16807=75 ist auch eine fünfte Potenz. Auf die gleiche Weise ist die 9-stellige Zahl 134217728=89 eine neunte Potenz.
+Wie viele n-stellige positive Zahlen gibt es, die auch eine nte Potenz sind?
+Antwort: 49"
+  (flet ((finde-anzahl ()
+		   (let ((anzahl 0))
+			 (do ((i 1 (1+ i)))
+				 ((> i 100)
+				  anzahl)
+			   (do ((j 1 (1+ j)))
+				   ((> j 100))
+				 (when (= j (length (zahl->liste (expt i j))))
+				   (incf anzahl)))))))
+	(finde-anzahl)))
+
 
   
 (defun euler-67 ()
