@@ -576,6 +576,7 @@ Antwort: 837799"
 				gesuchte-zahl i))))))
 
 
+
 (defun euler-15 ()
   "Gitter-Wege
 Aufgabe 15
@@ -1404,9 +1405,7 @@ Aufgabe 52
 Es ist zu sehen, dass die Zahl 125874 und ihr Doppeltes 251748 die selben Ziffern enthalten, nur in einer anderen Reihenfolge.
 Finden Sie die kleinste natürliche Zahl x, für die 2x, 3x, 4x, 5x und 6x die selben Ziffern in beliebiger Reihenfolge enthalten.
 Antwort: 142857"
-  (labels ((sortierte-ziffern (zahl)
-			 (sort (zahl->liste zahl) #'<))
-		   (gleiche-ziffern (i maxmult)
+  (labels ((gleiche-ziffern (i maxmult)
 			 (let ((d (sortierte-ziffern i)))
 			   (do ((m 2 (1+ m)))
 				   ((> m maxmult)
@@ -1768,6 +1767,45 @@ Die Primzahlen 3, 7, 109 und 673 sind ziemlich erstaunlich. Wenn man beliebige 2
 Finden Sie die kleinste mögliche Summe für eine Menge von 5 Primzahlen, für die zwei beliebige Primzahlen miteinander verbunden eine weitere Primzahl produzieren.
 Antwort: 26033"
   )
+
+
+
+(defun euler-61 ()
+  "Zyklische figurierte Zahlen
+Aufgabe 61
+Dreiecks-, Quadrat-, Fünfecks-, Sechsecks-, Siebenecks- und Achteckszahlen sind alles figurierte (Polygonal-) Zahlen und werden mit den folgenden Formeln gebildet:
+Dreieck 	  	P3,n=n(n+1)/2 	  	1, 3, 6, 10, 15, ...
+Quadrat 	  	P4,n=n2 	  	1, 4, 9, 16, 25, ...
+Fünfeck 	  	P5,n=n(3n− 1)/2 	  	1, 5, 12, 22, 35, ...
+Sechseck 	  	P6,n=n(2n−1) 	  	1, 6, 15, 28, 45, ...
+Siebeneck 	  	P7,n=n(5n− 3)/2 	  	1, 7, 18, 34, 55, ...
+Achteck 	  	P8,n=n(3n−2) 	  	1, 8, 21, 40, 65, ...
+Die geordnete Menge von 3 vierstelligen Zahlen: 8128, 2882, 8281, hat drei interessante Eigenschaften.
+    Die Menge ist zyklisch, denn die letzten beiden Ziffern jeder Zahl sind die ersten zwei Ziffern der nächsten Zahl (das gilt auch für die letzte und erste Zahl).
+    Jeder Polygonal-Typ: Dreieck (P3,127=8128), Quadrat (P4,91=8281) und Fünfeck (P5,44=2882), ist durch eine verschiedene Zahl der Menge vertreten.
+    Dies ist die einzige Menge mit vierstelligen Zahlen mit dieser Eigenschaft.
+Finden Sie die Summe der einzigen geordneten Menge mit sechs zyklischen 4-stelligen Zahlen, von denen alle Polygonal-Typen (Dreieck, Quadrat, Fünfeck, Sechseck, Siebeneck und Achteck) durch verschiedene Zahlen vertreten sind."
+  )
+
+
+
+(defun euler-62 ()
+  "Kubische Permutationen
+Aufgabe 62
+Die Kubikzahl 41063625 (345³) kann permutiert werden, um zwei andere Kubikzahlen zu produzieren: 56623104 (384³) and 66430125 (405³). In der Tat ist 41063625 die kleinste Kubikzahl, die genau drei Permutationen ihrer Ziffern hat, die auch Kubikzahlen sind.
+Finden Sie die kleinste Kubikzahl, für die genau 5 Permutationen ihrer Ziffern selbst Kubikzahlen sind.
+Antwort: 127035954683 (5027³)"
+  (flet ((finde-permutationen (gesuchte-anzahl)
+		   (let ((hash-tabelle (make-hash-table :test 'equal)))
+			 (do ((i 1 (1+ i)))
+				 (nil)
+			   (let* ((ziffern (sortierte-ziffern (expt i 3)))
+					  (neueintrag (push i (gethash ziffern hash-tabelle))))
+				 (when (>= (length neueintrag) gesuchte-anzahl)
+					 (return (expt (first (last neueintrag)) 3))))))))
+	(finde-permutationen 5)))
+			   
+						
 
   
 (defun euler-67 ()

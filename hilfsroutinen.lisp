@@ -310,6 +310,11 @@ Beispiele:
 
 
 
+(defun sortierte-ziffern (zahl)
+  "Nimmt eine Zahl entgegen und gibt sie als Liste zurück, die Ziffern aufsteigend sortiert."
+  (sort (zahl->liste zahl) #'<))
+
+
 (defun tausche-ziffer (zahl original-ziffer neue-ziffer)
   "Vertauscht alle Vorkommen einer bestimmten Ziffer einer Zahl gegen eine andere aus."
   (liste->zahl
