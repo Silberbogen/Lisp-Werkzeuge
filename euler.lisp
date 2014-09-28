@@ -1868,7 +1868,7 @@ Antwort: 272"
 
 
 
-(defun euler-66 ()
+(defun euler-66 (&optional (limit 1000))
   "Diophantische Gleichung
 Aufgabe 66
 Betrachten wir die quadratische Diophantische Gleichung der Form:
@@ -1884,7 +1884,30 @@ Wenn wir die Lösungen mit minimalem x für D = {2,3,5,6,7} suchen, erhalten wir
 Somit, wenn wir die Lösungen mit minimalem x für D ≤ 7 betrachten, erhalten wir bei D=5 das größte x.
 Finden Sie den Wert von D ≤ 1000, für den das minimale x den größten Wert produziert.
 Antwort: 661"
- )  
+  (flet ((pellsche-gleichung (n)
+		   (do* ((b0 (isqrt n))
+				 (l b0 (- (* b p) l))
+				 (p (- n (expt b0 2)) (/ (- n (expt l 2)) p))
+				 (b (if (zerop p)
+						(return 0)
+						(floor (+ b0 l) p))
+					(floor (+ b0 l) p))
+				 (x-1 b0)
+				 (x (1+ (* b b0)) (+ (shiftf x-1 x) (* b x)))
+				 (y-1 1)
+				 (y b (+ (shiftf y-1 y) (* b y))))
+				((= 1 (- (expt x 2) (* n (expt y 2))))
+				 x))))
+	(let ((maximum-x 0)
+		  (d 0))
+	  (do ((i 2 (1+ i)))
+		  ((> i limit)
+		   d)
+		(let ((x (pellsche-gleichung i)))
+		  (when (> x maximum-x)
+			(setf maximum-x x
+				  d i)))))))
+
 
   
 (defun euler-67 ()
