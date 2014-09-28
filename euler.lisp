@@ -1970,6 +1970,53 @@ Antwort: 7273"
 
 
 
+(defun euler-81 ()
+  "Wegsumme: 2 Richtungen
+Aufgabe 81
+In der 5 x 5 Matrix unten ist die minimale Wegsumme von der oberen linken zur unteren rechten Ecke, indem nur nach rechts und nach unten gezogen wird, dick und blau dargestellt und enspricht 2427.
+131 673	234	103	18
+201	96	342	965	150
+630	803	746	422	111
+537	699	497	121	956
+805	732	524	37	331
+Finden Sie die minimale Wegsumme in matrix.txt (Rechtsklick und 'Ziel speichern unter...'), einer 31K Textdatei, die eine 80 x 80 Matrix enthält, von der oberen linken zur unteren rechten Ecke, indem sich nur nach rechts und nach unten bewegt wird.
+Antwort: 427337"
+  (labels ((read-matrix (zeilen spalten dateiname)
+		   (let ((matrix (make-array (list zeilen spalten)))
+				 (*readtable* (copy-readtable)))
+			 (set-syntax-from-char #\, #\Space)
+			 (with-open-file (stream dateiname)
+			   (do ((i 0 (1+ i)))
+				   ((>= i 80)
+					matrix)
+				 (do ((j 0 (1+ j)))
+					 ((>= j 80))
+				   (setf (aref matrix i j) (read stream)))))))
+		 (filtere-kosten (zeilen spalten matrix)
+		   (let ((kosten (make-array (list zeilen spalten))))
+			 (setf (aref kosten 0 0) (aref matrix 0 0))
+			 (do ((j 1 (1+ j)))
+				 ((>= j spalten))
+			   (setf (aref kosten 0 j) (+ (aref kosten 0 (1- j)) (aref matrix 0 j))))
+			 (do ((i 1 (1+ i)))
+				 ((>= i zeilen))
+			   (setf (aref kosten i 0) (+ (aref kosten (1- i) 0) (aref matrix i 0))))
+			 (do ((j 1 (1+ j)))
+				 ((>= j spalten)
+				  kosten)
+			   (do ((i 1 (1+ i)))
+				   ((>= i zeilen))
+				 (setf (aref kosten i j)
+					   (+ (aref matrix i j)
+						  (min (aref kosten (1- i) j) (aref kosten i (1- j)))))))))
+		 (berechne-minimale-kosten (zeilen spalten dateiname)
+		   (let ((matrix (read-matrix zeilen spalten dateiname)))
+			 (aref (filtere-kosten zeilen spalten matrix) (1- zeilen) (1- spalten)))))
+	(berechne-minimale-kosten 80 80 "~/lisp/p081_matrix.txt")))
+	  
+	
+  
+
 (defun euler-89 ()
   "Römische Zahlen
 Aufgabe 89
