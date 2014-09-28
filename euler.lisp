@@ -1934,6 +1934,51 @@ Antwort: 7273"
 
 
 
+(defun euler-68 ()
+  "Magischer 5er-Ring
+Aufgabe 68
+Betrachten Sie den folgenden 'magischen' 3er-Ring, ausgefüllt mit den Zahlen 1 bis 6, und jede Linie hat als Summe 9.
+Wenn wir im Uhrzeigersinn arbeiten und bei der Gruppe mit dem kleinsten Außenknoten (4,3,2 in diesem Beispiel) beginnen, können wir jede Lösung eindeutig beschreiben. Beispiel: Die oben gezeigte Lösung kann durch die folgende Gruppe beschrieben werden: 4,3,2; 6,2,1; 5,1,3.
+Es ist möglich, diesen Ring mit 4 verschiedenen Summen zu vervollständigen: 9, 10, 11 und 12. Es gibt insgesamt 8 Lösungen.
+Summe	Lösungsmenge
+9	4,2,3; 5,3,1; 6,1,2
+9	4,3,2; 6,2,1; 5,1,3
+10	2,3,5; 4,5,1; 6,1,3
+10	2,5,3; 6,3,1; 4,1,5
+11	1,4,6; 3,6,2; 5,2,4
+11	1,6,4; 5,4,2; 3,2,6
+12	1,5,6; 2,6,4; 3,4,5
+12	1,6,5; 3,5,4; 2,4,6
+Wenn wir jede Gruppe aneinanderketten, können wir 9-stellige Strings bilden; der maximale String für einen 3er-Ring ist 432621513.
+Wir benutzen die Zahlen 1 bis 10 , und abhängig von der Anordnung ist es möglich, 16- und 17-stellige Strings zu bilden. Was ist der maximale 16-stellige String für einen 'magischen' 5er-Ring?
+Antwort: 6531031914842725"
+  (flet ((finde-lösung ()
+		   (let ((liste '(10 9 8 7 6 5 4 3 2 1)))
+			 (dolist (d1 liste)
+			   (dolist (d2 (set-difference liste (list d1)))
+				 (dolist (d3 (set-difference liste (list d1 d2)))
+				   (dolist (d4 (set-difference liste (list d1 d2 d3)))
+					 (dolist (d5 (set-difference liste (list d1 d2 d3 d4)))
+					   (dolist (d6 (set-difference liste (list d1 d2 d3 d4 d5)))
+						 (dolist (d7 (set-difference liste (list d1 d2 d3 d4 d5 d6)))
+						   (dolist (d8 (set-difference liste (list d1 d2 d3 d4 d5 d6 d7)))
+							 (dolist (d9 (set-difference liste (list d1 d2 d3 d4 d5 d6 d7 d8)))
+							   (dolist (d10 (set-difference liste (list d1 d2 d3 d4 d5 d6 d7 d8 d9)))
+								 (when (and (< d1 d5 d4 d3 d2)
+											(= (+ d1 d6 d7)
+											   (+ d2 d7 d8)
+											   (+ d3 d8 d9)
+											   (+ d4 d9 d10)
+											   (+ d5 d10 d6)))
+								   (return-from finde-lösung (list (list d1 d6 d7)
+																   (list d2 d7 d8)
+																   (list d3 d8 d9)
+																   (list d4 d9 d10)
+																   (list d5 d10 d6)))))))))))))))))
+	(finde-lösung)))
+
+
+
 (defun euler-69 ()
   "Phi-Maximum
 Aufgabe 69
