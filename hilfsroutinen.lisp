@@ -60,6 +60,12 @@
 
 
 
+(defun arabisch->römisch (zahl)
+  "Übersetzt eine Zahl mit arabischen Ziffern in einen String mit römische Ziffern um."
+  (format nil "~@R" zahl))
+
+
+
 (defun befreundete-zahl-p (n)
   "Zwei verschiedene natürliche Zahlen, von denen wechselseitig jeweils eine Zahl gleich der Summe der echten Teiler der anderen Zahl ist, bilden ein Paar befreundeter Zahlen.
 Das kleinste befreundete Zahlenpaar wird von den Zahlen 220 und 284 gebildet. Man rechnet leicht nach, dass die beiden Zahlen der Definition genügen:
@@ -282,6 +288,19 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 			  (if (and (integerp p) (zerop p)) t nil)))
 	(list (equal (sort n #'<) '(1 2 3 4 5 6 7 8 9)))
 	(otherwise nil)))
+
+
+
+(defun römisch->arabisch (zahlen-string)
+  "Übersetzt eine String, der eine Zahl als römische Ziffern enthält und wand diese in einer Zahl mit arabischen Ziffern um."
+  (let ((römische-ziffern "IVXLCDM")
+		(arabische-werte (list 1 5 10 50 100 500 1000)))
+	(flet ((übersetze (string)
+			 (loop as zeichen across string
+				as i = (position zeichen römische-ziffern)
+				collect (and i (nth i arabische-werte)))))
+  (loop with zahlen = (übersetze zahlen-string)
+        as (a b) on zahlen if a sum (if (and b (< a b)) (- a) a)))))
 
 
 

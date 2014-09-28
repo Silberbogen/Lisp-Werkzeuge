@@ -1933,6 +1933,7 @@ Antwort: 7273"
 	(first (route-dreieck (erstelle-zahlenpyramide "/home/sascha/lisp/p067_triangle.txt")))))
 
 
+
 (defun euler-79 ()
   (labels ((erstelle-keylogliste (stream-name)
 			 (let ((zahlenliste nil))
@@ -1984,7 +1985,25 @@ Das letzte Beispiel wird als am effizientesten betrachet, da es am wenigsten Zei
 Die 11K Textdatei roman.txt (Rechtsklick und 'Ziel speichern unter...'), enthält eintausend Zahlen, geschrieben als gültige, aber nicht zwingend minimale römische Zahlen; das heißt, sie sind in absteigenden Einheiten angeordnet und erfüllen die Subtraktionsregel (siehe Über römische Zahlen... für die definitiven Regeln für diese Aufgabe).
 Finden Sie die Anzahl von gesparten Zeichen, wenn an jede davon in ihrer minimalen Form schreibt.
 HINWEIS: Sie können annehmen, dass all die römischen Zahlen in der Datei nicht mehr als vier aufeinanderfolgende identische Einheiten enthalten."
-  )
+  (labels ((erstelle-ziffernliste (stream-name)
+			 (let ((ziffernliste nil))
+			   (with-open-file (stream stream-name)
+				 (do ((i (read stream nil)
+						 (read stream nil)))
+					 ((null i)
+					  ziffernliste)
+				   (push (prin1-to-string i) ziffernliste)))))
+		   (kleiner-als-4000 (römische-zahl)
+			 (- (length römische-zahl) (length (arabisch->römisch (römisch->arabisch römische-zahl)))))
+		   (berechne-wert (römische-zahl)
+			 (let ((zahl (römisch->arabisch römische-zahl)))
+			   (if (< zahl 4000)
+				   (kleiner-als-4000 römische-zahl)
+				   (kleiner-als-4000 (remove #\M römische-zahl :count 1)))))) 
+	(let ((lang-liste (erstelle-ziffernliste "~/lisp/p089_roman.txt"))
+		  (gespart 0))
+	  (dolist (i lang-liste gespart)
+		(incf gespart (berechne-wert i))))))
 
 
 
