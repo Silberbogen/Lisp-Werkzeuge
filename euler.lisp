@@ -2003,8 +2003,19 @@ Antwort: 510510"
 			   (when (> (* n p) l)
 				 (return-from finde-maximales-n n))
 			   (setf n (* n p))))))
-	(finde-maximales-n 1000000)))  
+	(finde-maximales-n 1000000)))
 
+
+
+(defun euler-70 ()
+  "Phi-Permutation
+Aufgabe 70
+Die Eulersche φ-Funktion φ(n) [manchmal auch Phi-Funktion genannt] wird benutzt, um die Anzahl von Zahlen kleiner als n zurückzugeben, die teilerfremd zu n sind. Beispiel: Da 1, 2, 4, 5, 7 und 8 kleiner als neun sind und teilerfremd zu neun sind, ist φ(9)=6.
+Die Zahl 1 wird als teilerfremd zu jeder positiven Zahl angenommen, also ist φ(1)=1.
+Interessanterweise ist φ(87109)=79180, und es ist zu sehen, dass 79180 eine Permutation von 87109 ist.
+Finden Sie den Wert von n 1 < n < 107, für den φ(n) eine Permutation von n ist und der Bruch n/φ(n) ein Minimum bildet."
+  )
+  
 
 (defun euler-79 ()
   (labels ((erstelle-keylogliste (stream-name)
@@ -2152,6 +2163,31 @@ Antwort: 8581146"
 				 (when (= 89 (prüfe-zahl i))
 				   (incf anzahl))))))
 	(zähle-quadrat-ziffern-ketten limit)))
+
+
+
+(defun euler-125 ()
+  "Palindromic sums
+Problem 125
+The palindromic number 595 is interesting because it can be written as the sum of consecutive squares: 62 + 72 + 82 + 92 + 102 + 112 + 122.
+There are exactly eleven palindromes below one-thousand that can be written as consecutive square sums, and the sum of these palindromes is 4164. Note that 1 = 02 + 12 has not been included as this problem is concerned with the squares of positive integers.
+Find the sum of all the numbers less than 108 that are both palindromic and can be written as the sum of consecutive squares.
+Antwort: 2906969179"
+  (flet ((finde-summe (limit)
+		   (let ((sqrt-limit (truncate (sqrt limit)))
+				 (liste nil))
+			 (do ((i 1 (1+ i)))
+				 ((> i (1- sqrt-limit))
+				  (reduce #'+ (remove-duplicates liste)))
+			   (let ((x (expt i 2)))
+				 (do ((j (1+ i) (1+ j)))
+					 ((> j (1- sqrt-limit)))
+				   (incf x (expt j 2))
+				   (when (>= x limit)
+					 (return))
+				   (when (palindromp x)
+					 (push x liste))))))))
+	(finde-summe 100000000)))
 
 
 
