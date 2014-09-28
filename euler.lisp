@@ -2007,4 +2007,32 @@ HINWEIS: Sie können annehmen, dass all die römischen Zahlen in der Datei nicht
 
 
 
+(defun euler-92 (&optional (limit 10000000))
+  "Quadrat-Ziffern-Ketten
+Aufgabe 92
+Eine Zahlenkette wird gebildet, indem ständig die Quadrate der Ziffern einer Zahl addiert werden und diese eine neue Zahl bilden, bis diese schon vorher einmal aufgetreten ist.
+Beispiel:
+44 → 32 → 13 → 10 → 1 → 1
+85 → 89 → 145 → 42 → 20 → 4 → 16 → 37 → 58 → 89
+Folglich wird jede Kette, die bei 1 oder 89 ankommt, in einer endlosen Schleife stecken bleiben. Was am erstaunlichsten ist, ist, dass JEDE Anfangszahl irgendwann bei 1 oder 89 ankommt.
+Wie viele Anfangszahlen kleiner als 10 Millionen werden bei 89 ankommen?
+Antwort: 8581146"
+  (labels ((prüfe-zahl (zahl)
+			 (cond ((= zahl 1)
+					1)
+				   ((= zahl 89)
+					89)
+				   (t
+					(prüfe-zahl (reduce #'+ (mapcar #'(lambda (x) (expt x 2))
+													(zahl->liste zahl)))))))
+		   (zähle-quadrat-ziffern-ketten (limit)
+			 (let ((anzahl 0))
+			   (do ((i 1 (1+ i)))
+				   ((> i limit)
+					anzahl)
+				 (when (= 89 (prüfe-zahl i))
+				   (incf anzahl))))))
+	(zähle-quadrat-ziffern-ketten limit)))
+
+
 
