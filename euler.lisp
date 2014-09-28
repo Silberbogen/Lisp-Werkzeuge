@@ -1934,6 +1934,33 @@ Antwort: 7273"
 
 
 
+(defun euler-69 ()
+  "Phi-Maximum
+Aufgabe 69
+Die Eulersche φ-Funktion φ(n) [manchmal auch Phi-Funktion genannt] wird benutzt, um die Anzahl von Zahlen kleiner als n zurückzugeben, die teilerfremd zu n sind. Beispiel: Da 1, 2, 4, 5, 7 und 8 kleiner als neun sind und teilerfremd zu neun sind, ist φ(9)=6.
+n 	Teilerfremd 	φ(n) 	n/φ(n)
+2 	1 	1 	2
+3 	1,2 	2 	1.5
+4 	1,3 	2 	2
+5 	1,2,3,4 	4 	1.25
+6 	1,5 	2 	3
+7 	1,2,3,4,5,6 	6 	1.1666...
+8 	1,3,5,7 	4 	2
+9 	1,2,4,5,7,8 	6 	1.5
+10 	1,3,7,9 	4 	2.5
+Es ist zu sehen, dass n=6 ein Maximum von n/φ(n) für n ≤ 10 produziert.
+Finden Sie den Wert von n ≤ 1,000,000, für den n/φ(n) ein Maximum ist.
+Antwort: 510510"
+  (flet ((finde-maximales-n (l)
+		   (let ((n 1))
+			 (do ((p (nächste-primzahl) (nächste-primzahl p)))
+				 (nil)
+			   (when (> (* n p) l)
+				 (return-from finde-maximales-n n))
+			   (setf n (* n p))))))
+	(finde-maximales-n 1000000)))  
+
+
 (defun euler-79 ()
   (labels ((erstelle-keylogliste (stream-name)
 			 (let ((zahlenliste nil))
