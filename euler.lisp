@@ -2007,14 +2007,33 @@ Antwort: 510510"
 
 
 
-(defun euler-70 ()
+(defun euler-70 (&optional (limit (expt 10 7)))
   "Phi-Permutation
 Aufgabe 70
 Die Eulersche φ-Funktion φ(n) [manchmal auch Phi-Funktion genannt] wird benutzt, um die Anzahl von Zahlen kleiner als n zurückzugeben, die teilerfremd zu n sind. Beispiel: Da 1, 2, 4, 5, 7 und 8 kleiner als neun sind und teilerfremd zu neun sind, ist φ(9)=6.
 Die Zahl 1 wird als teilerfremd zu jeder positiven Zahl angenommen, also ist φ(1)=1.
 Interessanterweise ist φ(87109)=79180, und es ist zu sehen, dass 79180 eine Permutation von 87109 ist.
-Finden Sie den Wert von n 1 < n < 107, für den φ(n) eine Permutation von n ist und der Bruch n/φ(n) ein Minimum bildet."
-  )
+Finden Sie den Wert von n 1 < n < 107, für den φ(n) eine Permutation von n ist und der Bruch n/φ(n) ein Minimum bildet.
+Antwort: 8319823"
+  (let ((best 6)
+        (ratio 3.0)
+		(primzahlen (sieb-des-eratosthenes limit)))
+	(labels ((ist-permutation-p (a b)
+			   (equal (sort (zahl->liste a) #'<) (sort (zahl->liste b) #'<)))
+			 (finde-ratio (limit)
+			   (loop for a in primzahlen
+				  do (loop for b in primzahlen
+						as n = (* b a)
+						as phi = (1+ (- n a b))
+						while (< b a)
+						while (< n limit)
+						if (and (< (/ n phi) ratio) (ist-permutation-p n phi))
+						do (progn
+							 (setf ratio (/ n phi)
+								   best n)))
+				  finally (return best))))
+	  (finde-ratio limit))))
+
   
 
 (defun euler-79 ()
