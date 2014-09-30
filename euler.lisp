@@ -1608,7 +1608,7 @@ Antwort: 376"
 														(höchste-karte< (remove paar0 h0 :test #'karte=)
 																		(remove paar1 h1 :test #'karte=)))))))
 				 ;; Höchste Karte
-				 (blatt-test (lambda (h) t) #'höchste-karte<))))
+				 (blatt-test (lambda () t) #'höchste-karte<))))
 	
 		   (erstelle-kartenliste (stream-name)
 			 "Einleseformat: 10 durch Leerzeichen getrennte Daten je Zeile"
@@ -2071,8 +2071,55 @@ Wenn wir die Menge aller gekürzten echten Brüche mit d≤8 aufsteigend der Gr�
 Es ist zu sehen, dass 3 Brüche zwischen 1/3 und 1/2 liegen.
 Wie viele Brüche liegen zwischen 1/3 und 1/2 in einer geordneten Menge von gekürzten echten Brüchen mit d ≤ 12000?
 HINWEIS: Die obere Grenze wurde auf projecteuler.net kürzlich geändert.
-Antwort: "
-  )
+Antwort: 7295372"
+    (let ((ratiohash (make-hash-table)))
+	(labels ((fill-ratio-hash (limit)
+			   (loop for d from 1 to limit
+				  do (loop for n from (ceiling (/ d 3)) to (floor (/ d 2))
+						do (incf (gethash (/ n d) ratiohash 0)))))
+			 (zähle-brüche (limit)
+			   (fill-ratio-hash limit)
+			   (remhash (/ 1 3) ratiohash)
+			   (remhash (/ 1 2) ratiohash)
+			   (hash-table-count ratiohash)))
+	  (zähle-brüche 12000))))
+
+
+
+(defun euler-74 ()
+  "Ketten von Ziffer-Fakultäten
+Aufgabe 74
+Die Zahl 145 ist bekannt für die Eigenschaft, dass die Summe der Fakultäten ihrer Ziffern 145 beträgt:
+1! + 4! + 5! = 1 + 24 + 120 = 145
+Vielleicht weniger bekannt ist die Zahl 169 dafür, dass sie die längste Kette von Zahlen bildet, die wieder zu 169 führen; es stellt sich heraus, dass nur drei solcher Schleifen existieren:
+169 → 363601 → 1454 → 169
+871 → 45361 → 871
+872 → 45362 → 872
+Es ist nicht schwer zu beweisen, dass JEDE Anfangszahl letztendlich in einer Schleife stecken bleibt. Beispiele:
+69 → 363600 → 1454 → 169 → 363601 (→ 1454)
+78 → 45360 → 871 → 45361 (→ 871)
+540 → 145 (→ 145)
+Wenn man mit 69 beginnt, erhält man eine Kette mit 5 wiederholungsfreien Werten, aber die längste wiederholungsfreie Kette mit einer Anfangszahl unter 1 Million enthält 60 Terme.
+Wie viele Ketten mit einer Anfangszahl unter 1 Million enthalten genau 60 wiederholungsfreie Terme?
+Antwort: 402"
+  (labels ((faktor-ziffer-summe (n)
+			 (reduce #'+ (mapcar #'faktor (zahl->liste n))))
+
+		   (ziffer-faktoren-kette (n)
+			 (let ((liste (list n)))
+			   (do ((i (faktor-ziffer-summe n) (faktor-ziffer-summe i)))
+				   ((member i liste)
+					(length liste))
+				 (push i liste))))
+		   (zähle-treffer (limit)
+			 (let ((anzahl 0))
+			   (do ((i 1 (1+ i)))
+				   ((> i limit)
+					anzahl)
+				 (when (= (ziffer-faktoren-kette i) 60)
+				   (incf anzahl))))))
+	(zähle-treffer (1- (expt 10 6)))))
+
 
 
 (defun euler-79 ()
