@@ -2131,6 +2131,65 @@ Antwort: 402"
 
 
 
+(defun euler-75 ()
+  "Einzigartige ganzzahlige rechtwinklige Dreiecke
+Aufgabe 75
+Es stellt sich heraus, dass 12 cm die kleinste Länge eines Seils ist, das durch Verbiegen auf genau eine Weise ein rechtwinkliges Dreieck mit ganzzahligen Seitenlängen formen kann, aber es gibt viele weitere Beispiele.
+12 cm: (3,4,5)
+24 cm: (6,8,10)
+30 cm: (5,12,13)
+36 cm: (9,12,15)
+40 cm: (8,15,17)
+48 cm: (12,16,20)
+Im Gegensatz dazu gibt es Seillängen, wie 20 cm, die nicht zu einem rechtwinkligen Dreieck mit ganzzahligen Seitenlängen geformt werden können, und andere Seillängen erlauben mehr als eine Lösung; Beispiel: mit der Seillänge 120 cm ist es möglich, genau drei verschiedene rechtwinklige Dreiecke mit ganzzahligen Seitenlängen zu formen.
+120 cm: (30,40,50), (20,48,52), (24,45,51)
+Wenn L die Länge des Seils ist, für wie viele Werte von L ≤ 1500000 kann genau ein rechtwinkliges Dreieck mit ganzzahligen Seitenlängen geformt werden?
+HINWEIS: Diese Aufgabe wurde auf projecteuler.net kürzlich verändert, bitte überprüfen Sie, ob sie die richtigen Parameter verwenden.
+Antwort: 161667"
+  (flet ((zähle-dreiecke (limit)
+		   (let ((dreieck (make-array (1+ limit)))
+				 (mlimit (isqrt (/ limit 2)))
+				 (anzahl 0))
+			 (do ((m 2 (1+ m)))
+				 ((>= m mlimit)
+				  anzahl)
+			   (do ((n 1 (1+ n)))
+				   ((>= n m))
+				 (when (and (= 1 (mod (+ n m) 2))
+							(= 1 (gcd n m)))
+				   (let* ((m² (expt m 2))
+						  (n² (expt n 2))
+						  (a (+ m² n²))
+						  (b (- m² n²))
+						  (c (* 2 m n))
+						  (p (+ a b c)))
+					 (do ()
+						 ((> p limit))
+					   (incf (elt dreieck p))
+					   (when (= 1 (elt dreieck p))
+						 (incf anzahl))
+					   (when (= 2 (elt dreieck p))
+						 (decf anzahl))
+					   (incf p (+ a b c))))))))))
+	(zähle-dreiecke 1500000)))
+
+
+
+(defun euler-76 ()
+  "Summen zählen
+Aufgabe 76
+Es ist möglich, 5 auf genau 6 Weisen als Summe zu schreiben:
+4 + 1
+3 + 2
+3 + 1 + 1
+2 + 2 + 1
+2 + 1 + 1 + 1
+1 + 1 + 1 + 1 + 1
+Auf wie viele Weisen kann 100 als Summe von mindestens zwei positiven ganzen Zahlen geschrieben werden?
+Antwort: "
+  )
+
+
 (defun euler-79 ()
   (labels ((erstelle-keylogliste (stream-name)
 			 (let ((zahlenliste nil))
