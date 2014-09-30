@@ -2043,10 +2043,37 @@ Betrachten Sie den Bruch n/d, wobei n und d natürliche Zahlen sind. Wenn n<d un
 Wenn wir die Menge aller gekürzten echten Brüche mit d≤8 aufsteigend der Größe nach ordnen, erhalten wir:
 1/8, 1/7, 1/6, 1/5, 1/4, 2/7, 1/3, 3/8, 2/5, 3/7, 1/2, 4/7, 3/5, 5/8, 2/3, 5/7, 3/4, 4/5, 5/6, 6/7, 7/8
 Es ist zu sehen, dass 2/5 der Bruch direkt links von 3/7 ist.
-Indem Sie alle gekürzten echten Brüche für d ≤ 1000000 aufsteigend der Größe nach sortieren, finden Sie den Zähler des Bruches, der direkt links von 3/7 ist."
+Indem Sie alle gekürzten echten Brüche für d ≤ 1000000 aufsteigend der Größe nach sortieren, finden Sie den Zähler des Bruches, der direkt links von 3/7 ist.
+Antwort: 428570"
   (1- (truncate (* 3/7 (expt 10 6)))))
-		   
-  
+
+
+
+(defun euler-72 ()
+  "Brüche zählen
+Aufgabe 72
+Betrachten Sie den Bruch n/d, wobei n und d natürliche Zahlen sind. Wenn n<d und n und d teilerfremd sind, spricht man von einem gekürzten echten Bruch.
+Wenn wir die Menge aller gekürzten echten Brüche mit d≤8 aufsteigend der Größe nach ordnen, erhalten wir:
+1/8, 1/7, 1/6, 1/5, 1/4, 2/7, 1/3, 3/8, 2/5, 3/7, 1/2, 4/7, 3/5, 5/8, 2/3, 5/7, 3/4, 4/5, 5/6, 6/7, 7/8
+Es ist zu sehen, dass in dieser Menge 21 Elemente enthalten sind.
+Wieviele Elemente enthält die Menge der gekürzten echten Brüche mit d ≤ 1000000?
+Antwort: 303963552391"
+  (- (summe-der-farey-folge (expt 10 6)) 2))
+
+
+
+(defun euler-73 ()
+  "Brüche in einem Bereich zählen
+Aufgabe 73
+Betrachten Sie den Bruch n/d, wobei n und d natürliche Zahlen sind. Wenn n<d und n und d teilerfremd sind, spricht man von einem gekürzten echten Bruch.
+Wenn wir die Menge aller gekürzten echten Brüche mit d≤8 aufsteigend der Größe nach ordnen, erhalten wir:
+1/8, 1/7, 1/6, 1/5, 1/4, 2/7, 1/3, 3/8, 2/5, 3/7, 1/2, 4/7, 3/5, 5/8, 2/3, 5/7, 3/4, 4/5, 5/6, 6/7, 7/8
+Es ist zu sehen, dass 3 Brüche zwischen 1/3 und 1/2 liegen.
+Wie viele Brüche liegen zwischen 1/3 und 1/2 in einer geordneten Menge von gekürzten echten Brüchen mit d ≤ 12000?
+HINWEIS: Die obere Grenze wurde auf projecteuler.net kürzlich geändert.
+Antwort: "
+  )
+
 
 (defun euler-79 ()
   (labels ((erstelle-keylogliste (stream-name)

@@ -291,6 +291,23 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 
 
 
+(defun phi-tabelle (n)
+  "Erstellt eine Tabelle der phi-Werte bis n"
+  (let* ((n+1 (1+ n))
+		 (phi (make-array n+1 :initial-element 1)))
+    (do ((k 2 (1+ k)))
+        ((>= k n+1))
+      (if (= 1 (aref phi k))
+          (let ((m (/ (1- k) k)))
+            (do ((i k (+ k i)))
+                ((>= i n+1))
+              (setf (aref phi i) (* (aref phi i) m))))))
+    (dotimes (i n+1)
+      (setf (aref phi i) (* i (aref phi i))))
+    phi))
+
+
+
 (defun römisch->arabisch (zahlen-string)
   "Übersetzt eine String, der eine Zahl als römische Ziffern enthält und wand diese in einer Zahl mit arabischen Ziffern um."
   (let ((römische-ziffern "IVXLCDM")
@@ -332,6 +349,18 @@ Beispiele:
 (defun sortierte-ziffern (zahl)
   "Nimmt eine Zahl entgegen und gibt sie als Liste zurück, die Ziffern aufsteigend sortiert."
   (sort (zahl->liste zahl) #'<))
+
+
+
+(defun summe-der-farey-folge (n)
+  "Bildet die Summe der Farey-Folge 1 bis n"
+  (let* ((n+1 (1+ n))
+		 (phi (phi-tabelle n)))
+    (do ((i 1 (1+ i))
+         (summe 1))
+        ((>= i n+1) summe)
+      (incf summe (aref phi i)))))
+
 
 
 (defun tausche-ziffer (zahl original-ziffer neue-ziffer)
