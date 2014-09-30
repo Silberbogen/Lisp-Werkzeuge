@@ -2205,6 +2205,34 @@ Antwort: 190569291"
 
 
 
+(defun euler-77 ()
+  "Primzahl-Summen
+Aufgabe 77
+Es ist möglich, zehn auf genau fünf Weisen als Summe von Primzahlen zu schreiben:
+7 + 3
+5 + 5
+5 + 3 + 2
+3 + 3 + 2 + 2
+2 + 2 + 2 + 2 + 2
+Was ist der erste Wert, der auf mehr als 5000 Weisen als Summe von Primzahlen geschrieben werden kann?
+Antwort: 71"
+  (let ((partitionen (make-hash-table :test #'equal))
+		(primzahlen  (sieb-des-eratosthenes 100)))
+	(labels ((füll-helfer (n maximum)
+			   (let ((memo (gethash (list n maximum) partitionen)))
+				 (if memo memo (loop for i in primzahlen while (<= i maximum)
+								  sum (füll-helfer (- n i) (min i (- n i) maximum)) into p finally
+									(return (setf (gethash (list n maximum) partitionen) p))))))
+			 (fülle-partitionen (maximum)
+			   (setf (gethash (list 0 0) partitionen) 1)
+			   (setf (gethash (list 1 1) partitionen) 0)
+			   (loop for n from 1 to maximum do (füll-helfer n n))))
+	  (fülle-partitionen 10)
+	  (loop for i from 10 do (füll-helfer i i)
+		 if (> (gethash (list i i) partitionen) 5000) return i))))
+
+
+
 (defun euler-79 ()
   (labels ((erstelle-keylogliste (stream-name)
 			 (let ((zahlenliste nil))
