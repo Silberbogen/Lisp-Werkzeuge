@@ -2186,8 +2186,23 @@ Es ist möglich, 5 auf genau 6 Weisen als Summe zu schreiben:
 2 + 1 + 1 + 1
 1 + 1 + 1 + 1 + 1
 Auf wie viele Weisen kann 100 als Summe von mindestens zwei positiven ganzen Zahlen geschrieben werden?
-Antwort: "
-  )
+Antwort: 190569291"
+  (let ((partitionen (make-hash-table :test #'equal)))
+	(labels ((füll-helfer (n maximum)
+			   (let ((memo (gethash (list n maximum) partitionen)))
+				 (if memo
+					 memo
+					 (loop for i from 1 to maximum
+						sum (füll-helfer (- n i) (min i (- n i) maximum)) into p
+						finally (return (setf (gethash (list n maximum) partitionen) p))))))
+			 (fülle-partitionen (maximum)
+			   (setf (gethash (list 0 0) partitionen) 1
+					 (gethash (list 1 1) partitionen) 1)
+			   (loop for n from 1 to maximum
+				  do (füll-helfer n n))))
+	  (fülle-partitionen 200)
+	  (gethash (list 100 99) partitionen))))  
+
 
 
 (defun euler-79 ()
