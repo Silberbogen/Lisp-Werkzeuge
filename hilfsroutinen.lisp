@@ -31,7 +31,8 @@
 
 
 (defun addiere-ziffern (n &optional (summe 0))
-  "Nimmt eine Zahl entgegen und gibt die Summe all ihrer Ziffern zurück."
+  "Nimmt eine Zahl entgegen und gibt die Summe all ihrer Ziffern zurück.
+Beispiel: (addiere-ziffern 125) => 8"
   (cond
 	((zerop n)
 	 summe)
@@ -49,19 +50,20 @@
 
 
 
-(defun alphabetischer-wert (string)
-  "Errechnet den alphabetischen Wert eines Strings, momentan nur für Großbuchstaben korrekt."
-  (let ((länge (length string))
-		(summe 0))
-	(do ((i 0 (1+ i)))
-		((= i länge)
-		 summe)
-	  (incf summe (- (char-int (aref string i)) 64)))))
+(defun alphabetischer-wert (string &aux (länge (length string)))
+  "Errechnet den alphabetischen Wert eines Strings, momentan nur für Großbuchstaben korrekt.
+Beispiel: (alphabetischer-wert \"abc\") => 102"
+  (do ((i 0 (1+ i))
+	   (summe 0))
+	  ((= i länge)
+	   summe)
+	(incf summe (- (char-int (aref string i)) 64))))
 
 
 
 (defun arabisch->römisch (zahl)
-  "Übersetzt eine Zahl mit arabischen Ziffern in einen String mit römische Ziffern um."
+  "Übersetzt eine Zahl mit arabischen Ziffern in einen String mit römische Ziffern um.
+Beispiel: (arabisch->römisch 1968) => \"MCMLXVIII\""
   (format nil "~@R" zahl))
 
 
@@ -79,7 +81,8 @@ In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die gr
 
 
 (defun but-nth (n liste)
-  "Gibt die Liste, ohne das nte Element zurück. Die Zählung der Liste beginnt bei NULL."
+  "Gibt die Liste, ohne das nte Element zurück. Die Zählung der Liste beginnt bei NULL.
+Beispiel: (but-nth 4 '(1 2 3 4 5 6 7 8 9)) => (1 2 3 4 6 7 8 9)"
   (if (zerop n)
 	  (rest liste)
 	  (cons (first liste)
@@ -99,7 +102,8 @@ In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die gr
 
 
 (defun collatz-sequenz (n &optional (liste nil))
-  "Gibt die Collatz-Sequenz einer gegebenen Zahl n als Liste zurück."
+  "Gibt die Collatz-Sequenz einer gegebenen Zahl n als Liste zurück.
+Beispiel: (collatz-sequenz 19) => (19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 5 16 8 4 2 1)"
   (push n liste)
   (cond
 	((= n 1)
@@ -129,8 +133,7 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 
 (defun dreieckszahlp (zahl)
   "Prüft ob eine Zahl eine Dreieckszahl ist."
-  (let
-	  ((wert (sqrt (1+ (* 8 zahl)))))
+  (let ((wert (sqrt (1+ (* 8 zahl)))))
 	(= wert (truncate wert))))
 
 
@@ -172,14 +175,14 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 Gibt eine Liste der Faktoren der Zahl N zurück.
 Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"  
   (when (> zahl 1)
-    (let
-		((limit (1+ (isqrt zahl))))
-      (do ((i 2 (1+ i)))
-		  ((> i limit)
-		   (list zahl))
-        (when (zerop (mod zahl i))
-          (return-from faktorisiere
-            (cons i (faktorisiere (/ zahl i)))))))))
+	(do ((i 2 (1+ i))
+		 (limit (1+ (isqrt zahl))))
+		((> i limit)
+		 (list zahl))
+	  (when (zerop (mod zahl i))
+		(return-from faktorisiere
+		  (cons i (faktorisiere (/ zahl i))))))))
+
 
 
 (defun fibonacci-folge (n &optional (a 0) (b 1))
@@ -421,8 +424,7 @@ Beispiele:
    (primzahlp 29) => T
    (primzahlp 1299709) => T"  
   (when (and (integerp x) (> x 1))
-	(let
-		((max-d (isqrt x)))
+	(let ((max-d (isqrt x)))
 	  (do ((d 2 (incf d (if (evenp d)
 							1
 							2))))
@@ -470,27 +472,24 @@ Beispiele:
   "Die Primzahl bleibt eine Primzahl, selbst wenn die Ziffern von vorne oder von hinten abgetrennt werden."
   (if (< zahl 10)
 	  nil
-	  (let
-		  ((länge (length (zahl->liste zahl))))
-		(do ((i 1 (1+ i)))
-			((= i länge)
-			 t)
-		  (unless (and (primzahlp (truncate (/ zahl (expt 10 i))))
-					   (primzahlp (rem zahl (expt 10 i))))
-			(return nil))))))
+	  (do ((i 1 (1+ i))
+		   (länge (length (zahl->liste zahl))))
+		  ((= i länge)
+		   t)
+		(unless (and (primzahlp (truncate (/ zahl (expt 10 i))))
+					 (primzahlp (rem zahl (expt 10 i))))
+		  (return nil)))))
 
 
 
 (defun kreisförmige-primzahl-p (zahl)
   "Die Ziffern können rotiert werden, vorne raus, hinten rein - und es ergibt sich dennoch immer eine Primzahl."
-  (let
-	  ((länge (length (zahl->liste zahl))))
+  (let ((länge (length (zahl->liste zahl))))
 	(if (= länge 1)
 		(when (primzahlp zahl)
 		  t)
-		(let
-			((temp-zahl zahl)
-			 (temp-liste (zahl->liste zahl)))
+		(let ((temp-zahl zahl)
+			  (temp-liste (zahl->liste zahl)))
 		  (do ((i 1 (1+ i)))
 			  ((= i länge)
 			   t)
@@ -502,16 +501,15 @@ Beispiele:
 
 
 (defun summe-fortlaufender-primzahlen (start maximum)
-  (let
-	  ((summe 0)
+  (unless (primzahlp start)
+	(setf start (nächste-primzahl start)))
+  (do ((i start (nächste-primzahl i))
+	   (summe 0)
 	   (anzahl 0))
-	(unless (primzahlp start)
-	  (setf start (nächste-primzahl start)))
-	(do ((i start (nächste-primzahl i)))
-		((> (+ summe i) maximum)
-		 (list summe anzahl))
-	  (incf summe i)
-	  (incf anzahl))))
+	  ((> (+ summe i) maximum)
+	   (list summe anzahl))
+	(incf summe i)
+	(incf anzahl)))
 
 
 
@@ -630,12 +628,10 @@ Beispiele:
 
 (defun goldbach-aufgliedern (zahl)
   "Aufgliederung einer Zahl nach Goldbach's anderer Vermutung"
-  (let
-	  ((maximum (isqrt zahl)))
+  (let ((maximum (isqrt zahl)))
 	(do ((i 1 (1+ i)))
 		((> i maximum))
-	  (let
-		  ((p (- zahl (* 2 (expt i 2)))))
+	  (let ((p (- zahl (* 2 (expt i 2)))))
 		(when (primzahlp p)
 		  (return (list p i)))))))
 

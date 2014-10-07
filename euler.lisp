@@ -39,12 +39,12 @@ Aufgabe 1
 Wenn wir alle natürlichen Zahlen unter 10 auflisten, die Vielfache von 3 oder 5 sind, so erhalten wir 3, 5, 6 und 9. Die Summe dieser Vielfachen ist 23.
 Finden Sie die Summe aller Vielfachen von 3 oder 5 unter 1000.
 Antwort: 233168"
-  (let ((summe 0))
-	(do ((i 1 (1+ i)))
-		((>= i 1000)
-		 summe)
-	  (when (or (zerop (mod i 3)) (zerop (mod i 5)))
-		(incf summe i)))))
+  (do ((i 1 (1+ i))
+	   (summe 0))
+	  ((>= i 1000)
+	   summe)
+	(when (or (zerop (mod i 3)) (zerop (mod i 5)))
+	  (incf summe i))))
 
 		 
 
@@ -56,24 +56,23 @@ Jeder neue Term in der Fibonacci-Reihe wird gebildet, indem die beiden vorherige
 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ...
 Finden Sie die Summe aller geraden Terme der Fibonacci-Reihe, die 4 Millionen nicht überschreiten.
 Antwort: 4613732"
-  (let ((summe 0))
-	(do* ((i 1 (1+ i))
-		  (x (fibonacci-folge i) (fibonacci-folge i)))
-		 ((>= x 4000000)
-		  summe)
-	  (when (evenp x)
-		(incf summe x)))))
+  (do* ((i 1 (1+ i))
+		(x (fibonacci-folge i) (fibonacci-folge i))
+		(summe 0))
+	   ((>= x 4000000)
+		summe)
+	(when (evenp x)
+	  (incf summe x))))
 
 
 
-(defun euler-3 ()
+(defun euler-3 (&optional (limit 600851475143))
   "Größter Primfaktor
 Aufgabe 3
 Die Primfaktoren von 13195 sind 5,7,13 und 29.
 Welcher ist der größte Primfaktor der Zahl 600851475143?
 Antwort: 6857"
-  (let ((x (faktorisiere 600851475143)))
-	(apply #'max x)))
+  (apply #'max (faktorisiere limit)))
 
 
 
@@ -83,16 +82,15 @@ Aufgabe 4
 Eine Palindrom-Zahl liest sich rückwärts so wie vorwärts. Das größte Palindrom, das ein Produkt von 2 zweistelligen Zahlen ist, ist 9009=91*99.
 Finden sie das größte Palindrom, das das Produkt von 2 dreistelligen Zahlen ist.
 Antwort: 906609"
-  (let ((n 0) ; die zu probierende Zahl
-		(x 0)) ; die gesuchte Zahl
-	(do ((i 999 (1- i)))
-		((< i 100)
-		 x)
-	  (do ((j i (1- j)))
-		  ((< j 100))
-		(setf n (* i j))
-		(when (and (> n x) (palindromp n))
-		  (setf x n))))))
+  (do ((i 999 (1- i))
+	   (max-palindrom 0))
+	  ((< i 100)
+	   max-palindrom)
+	(do* ((j i (1- j)))
+		 ((< j 100))
+	  (let ((n (* i j)))
+		(when (and (> n max-palindrom) (palindromp n))
+		  (setf max-palindrom n))))))
 
 
 
@@ -116,15 +114,13 @@ Das Quadrat der Summe der ersten 10 natürlichen Zahlen ist
 Somit ist die Differenz aus der Summe der Quadrate der ersten 10 natürlichen Zahlen und dem Quadrat der Summe 3025 - 385 = 2640.
 Finden Sie die Differenz aus der Summe der Quadrate der ersten 100 natürlichen Zahlen und dem Quadrat der Summe.
 Antwort: 25164150"
-  (let ((summe 0) ; enthält am Ende (1+2+...+100)
-		(quadratsumme 0) ; enthält am Ende 1²+2²+...+100²
-		(summenquadrat 0)) ; enthält am Ende (1+2+...+100)²
-	(do ((i 1 (1+ i)))
-		((> i 100)
-		 (setf summenquadrat (expt summe 2))
-		 (- summenquadrat quadratsumme))
-	  (incf summe i)
-	  (incf quadratsumme (expt i 2)))))
+  (do ((i 1 (1+ i))
+	   (summe 0)
+	   (summe-der-quadrate 0))
+	  ((> i 100)
+	   (- (expt summe 2) summe-der-quadrate))
+	(incf summe i)
+	(incf summe-der-quadrate (expt i 2))))
 
 
 
@@ -138,7 +134,7 @@ Antwort: 104743"
 
 
 
-(defun euler-8 ()
+(defun euler-8 (&optional (limit 13))
   "Größtes Produkt in einer Reihe
 Aufgabe 8
 Die vier aufeinanderfolgenden Ziffern in der 1000-stelligen Zahl, die das größte Produkt haben, sind 9 × 9 × 8 × 9 = 5832.
@@ -163,27 +159,31 @@ Die vier aufeinanderfolgenden Ziffern in der 1000-stelligen Zahl, die das größ
 05886116467109405077541002256983155200055935729725
 71636269561882670428252483600823257530420752963450
 Finden Sie die dreizehn aufeinanderfolgenden Ziffern in der 1000-stelligen Zahl, die das größte Produkt haben. Was ist der Wert dieses Produkts?
+Alte Antwort: 40824 (mit 5 Stellen)
 Antwort: 23514624000"
-  (flet ((wert (x s) (digit-char-p (char s x))))
+  (labels ((wert (x s)
+			 (digit-char-p (char s x)))
+		   (berechne-produkt (index limit zahl &aux (wert 1))
+			 (do ((i 0 (1+ i)))
+				 ((= i limit)
+				  wert)
+			   (let ((m (wert (+ index i) zahl)))
+				 (if (zerop m)
+					 (return-from berechne-produkt 0)
+					 (setf wert (* wert m)))))))
 	(let* ((zahl "7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450")
-		   (n (* (wert 0 zahl) (wert 1 zahl) (wert 2 zahl) (wert 3 zahl) (wert 4 zahl))) ; das temporäre Produkt
-		   (x n) ; das gesuchte Produkt
-		   (zlength (length zahl))) ; die Länge von zahl
-	  (do ((i 5 (1+ i)))
-		  ((>= i zlength)
-		   x)
-		(let ((l (wert (- i 5) zahl)) ; zu entfernende Ziffer
-			  (m (wert i zahl))) ; hinzuzufügende Ziffer
-		  (unless (zerop l)
-			(setf n (/ n l)))
-		  (unless (zerop m)
-			(setf n (* n m)))
-		  (when (> n x)
-			(setf x n)))))))
+		   (zahl-länge (length zahl)))
+	  (do ((i 0 (1+ i))
+		   (max-produkt 0))
+		  ((= i (- zahl-länge limit))
+		   max-produkt)
+		(let ((produkt (berechne-produkt i limit zahl)))
+		  (when (> produkt max-produkt)
+			(setf max-produkt produkt)))))))
 
 
 
-(defun euler-9 ()
+(defun euler-9 (&optional (wert 1000))
   "Spezielles pythagoreisches Tripel
 Aufgabe 9
 Ein pythagoreisches Tripel ist eine Menge von 3 natürlichen Zahlen, a < b < c, für die gilt:
@@ -192,16 +192,18 @@ Beispiel: 3² + 4² = 9 + 16 = 25 = 5².
 Es existiert genau ein pythagoreisches Tripel, für das a + b + c = 1000 gilt.
 Finden Sie das Produkt abc.
 Antwort: 31875000"
-  (let ((c 0))
-	(do ((a 1 (1+ a)))
-		((>= a 500))
-	  (do ((b a (1+ b)))
-		  ((>= b 500))
-		(setf c (- 1000 a b))
-		(when (and (> c b)
-				   (= (+ (expt a 2) (expt b 2))
-					  (expt c 2)))
-		  (return-from euler-9 (* a b c)))))))
+  (flet ((finde-tripel (wert)
+		   (let ((halb-wert (/ wert 2)))
+			 (do ((a 1 (1+ a)))
+				 ((>= a halb-wert))
+			   (do ((b a (1+ b)))
+				   ((>= b halb-wert))
+				 (let ((c (- wert a b)))
+				   (when (and (> c b)
+							  (= (+ (expt a 2) (expt b 2))
+								 (expt c 2)))
+					 (return-from finde-tripel (* a b c)))))))))
+	(finde-tripel wert)))
 
 
 
@@ -244,10 +246,7 @@ Im 20x20 Gitter unten wurden vier Zahlen, die eine diagonale Linie bilden, rot m
 Das Produkt dieser Zahlen ist 26 x 63 x 78 x 14 = 1788696.
 Was ist das größte Produkt von vier in irgendeiner Richtung (hoch, runter, links, rechts oder diagonal) benachbarten Zahlen im 20x20 Gitter?
 Antwort: 70600674"
-  (let ((zahlen nil)
-		(n 0)
-		(maximum 0))
-	(setf zahlen
+  (let ((zahlen
 		  (make-array '(20 20) :initial-contents
 					  '(( 8  2 22 97 38 15  0 40  0 75  4  5  7 78 52 12 50 77 91  8)
 						(49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48  4 56 62  0)
@@ -269,7 +268,10 @@ Antwort: 70600674"
 						(20 69 36 41 72 30 23 88 34 62 99 69 82 67 59 85 74  4 36 16 ) 
 						(20 73 35 29 78 31 90  1 74 31 49 71 48 86 81 16 23 57  5 54 ) 
 						( 1 70 54 71 83 51 54 69 16 92 33 48 61 43 52  1 89 19 67 48 ))))
-	(labels ((zelle (x y) (aref zahlen x y))
+		(n 0)
+		(max-n 0))
+	(labels ((zelle (x y)
+			   (aref zahlen x y))
 			 (sequenz-horizontal (x y)
 			   (* (zelle x y)
 				  (zelle (+ x 1) y)
@@ -290,25 +292,25 @@ Antwort: 70600674"
 				  (zelle (+ x 1) (+ y 1))
 				  (zelle (+ x 2) (+ y 2))
 				  (zelle (+ x 3) (+ y 3))))
-			 (test-n ()
-			   (when (> n maximum)
-				 (setf maximum n))))
+			 (teste ()
+			   (when (> n max-n)
+				 (setf max-n n))))
 	  (do ((i 0 (1+ i)))
 		  ((>= i 20)
-		   maximum)
+		   max-n)
 		(do ((j 0 (1+ j)))
 			((>= j 20))
 		  (when (<= i 16)
 			(setf n (sequenz-horizontal i j))
-			(test-n))
+			(teste)
 		  (when (<= j 16)
 			(setf n (sequenz-vertikal i j))
-			(test-n))
+			(teste)
 		  (when (and (<= i 16) (<= j 16))
 			(setf n (sequenz-lu-ro i j))
-			(test-n)
+			(teste)
 			(setf n (sequenz-lo-ru i j))
-			(test-n)))))))
+			(teste)))))))))
 
 
 
@@ -441,111 +443,109 @@ Berechnen Sie die ersten zehn Ziffern der Summe der folgenden einhundert 50-stel
 20849603980134001723930671666823555245252804609722
 53503534226472524250874054075591789781264330331690
 Antwort: 5537376230"
-  (let ((zahlen (list 37107287533902102798797998220837590246510135740250 
-				  46376937677490009712648124896970078050417018260538 
-				  74324986199524741059474233309513058123726617309629 
-				  91942213363574161572522430563301811072406154908250 
-				  23067588207539346171171980310421047513778063246676 
-				  89261670696623633820136378418383684178734361726757 
-				  28112879812849979408065481931592621691275889832738 
-				  44274228917432520321923589422876796487670272189318 
-				  47451445736001306439091167216856844588711603153276 
-				  70386486105843025439939619828917593665686757934951 
-				  62176457141856560629502157223196586755079324193331 
-				  64906352462741904929101432445813822663347944758178 
-				  92575867718337217661963751590579239728245598838407 
-				  58203565325359399008402633568948830189458628227828 
-				  80181199384826282014278194139940567587151170094390 
-				  35398664372827112653829987240784473053190104293586 
-				  86515506006295864861532075273371959191420517255829 
-				  71693888707715466499115593487603532921714970056938 
-				  54370070576826684624621495650076471787294438377604 
-				  53282654108756828443191190634694037855217779295145 
-				  36123272525000296071075082563815656710885258350721 
-				  45876576172410976447339110607218265236877223636045 
-				  17423706905851860660448207621209813287860733969412 
-				  81142660418086830619328460811191061556940512689692 
-				  51934325451728388641918047049293215058642563049483 
-				  62467221648435076201727918039944693004732956340691 
-				  15732444386908125794514089057706229429197107928209 
-				  55037687525678773091862540744969844508330393682126 
-				  18336384825330154686196124348767681297534375946515 
-				  80386287592878490201521685554828717201219257766954 
-				  78182833757993103614740356856449095527097864797581 
-				  16726320100436897842553539920931837441497806860984 
-				  48403098129077791799088218795327364475675590848030 
-				  87086987551392711854517078544161852424320693150332 
-				  59959406895756536782107074926966537676326235447210 
-				  69793950679652694742597709739166693763042633987085 
-				  41052684708299085211399427365734116182760315001271 
-				  65378607361501080857009149939512557028198746004375 
-				  35829035317434717326932123578154982629742552737307 
-				  94953759765105305946966067683156574377167401875275 
-				  88902802571733229619176668713819931811048770190271 
-				  25267680276078003013678680992525463401061632866526 
-				  36270218540497705585629946580636237993140746255962 
-				  24074486908231174977792365466257246923322810917141 
-				  91430288197103288597806669760892938638285025333403 
-				  34413065578016127815921815005561868836468420090470 
-				  23053081172816430487623791969842487255036638784583 
-				  11487696932154902810424020138335124462181441773470 
-				  63783299490636259666498587618221225225512486764533 
-				  67720186971698544312419572409913959008952310058822 
-				  95548255300263520781532296796249481641953868218774 
-				  76085327132285723110424803456124867697064507995236 
-				  37774242535411291684276865538926205024910326572967 
-				  23701913275725675285653248258265463092207058596522 
-				  29798860272258331913126375147341994889534765745501 
-				  18495701454879288984856827726077713721403798879715 
-				  38298203783031473527721580348144513491373226651381 
-				  34829543829199918180278916522431027392251122869539 
-				  40957953066405232632538044100059654939159879593635 
-				  29746152185502371307642255121183693803580388584903 
-				  41698116222072977186158236678424689157993532961922 
-				  62467957194401269043877107275048102390895523597457 
-				  23189706772547915061505504953922979530901129967519 
-				  86188088225875314529584099251203829009407770775672 
-				  11306739708304724483816533873502340845647058077308 
-				  82959174767140363198008187129011875491310547126581 
-				  97623331044818386269515456334926366572897563400500 
-				  42846280183517070527831839425882145521227251250327 
-				  55121603546981200581762165212827652751691296897789 
-				  32238195734329339946437501907836945765883352399886 
-				  75506164965184775180738168837861091527357929701337 
-				  62177842752192623401942399639168044983993173312731 
-				  32924185707147349566916674687634660915035914677504 
-				  99518671430235219628894890102423325116913619626622 
-				  73267460800591547471830798392868535206946944540724 
-				  76841822524674417161514036427982273348055556214818 
-				  97142617910342598647204516893989422179826088076852 
-				  87783646182799346313767754307809363333018982642090 
-				  10848802521674670883215120185883543223812876952786 
-				  71329612474782464538636993009049310363619763878039 
-				  62184073572399794223406235393808339651327408011116 
-				  66627891981488087797941876876144230030984490851411 
-				  60661826293682836764744779239180335110989069790714 
-				  85786944089552990653640447425576083659976645795096 
-				  66024396409905389607120198219976047599490197230297 
-				  64913982680032973156037120041377903785566085089252 
-				  16730939319872750275468906903707539413042652315011 
-				  94809377245048795150954100921645863754710598436791 
-				  78639167021187492431995700641917969777599028300699 
-				  15368713711936614952811305876380278410754449733078 
-				  40789923115535562561142322423255033685442488917353 
-				  44889911501440648020369068063960672322193204149535 
-				  41503128880339536053299340368006977710650566631954 
-				  81234880673210146739058568557934581403627822703280 
-				  82616570773948327592232845941706525094512325230608 
-				  22918802058777319719839450180888072429661980811197 
-				  77158542502016545090413245809786882778948721859617 
-				  72107838435069186155435662884062257473692284509516 
-				  20849603980134001723930671666823555245252804609722 
-				  53503534226472524250874054075591789781264330331690))
-		(summe 0)
-		(zeichenkette nil)
-		(x nil))
-	(setf summe (apply #'+ zahlen))
-	(setf zeichenkette (princ-to-string summe))
+  (let* ((zahlen (list 37107287533902102798797998220837590246510135740250 
+					   46376937677490009712648124896970078050417018260538 
+					   74324986199524741059474233309513058123726617309629 
+					   91942213363574161572522430563301811072406154908250 
+					   23067588207539346171171980310421047513778063246676 
+					   89261670696623633820136378418383684178734361726757 
+					   28112879812849979408065481931592621691275889832738 
+					   44274228917432520321923589422876796487670272189318 
+					   47451445736001306439091167216856844588711603153276 
+					   70386486105843025439939619828917593665686757934951 
+					   62176457141856560629502157223196586755079324193331 
+					   64906352462741904929101432445813822663347944758178 
+					   92575867718337217661963751590579239728245598838407 
+					   58203565325359399008402633568948830189458628227828 
+					   80181199384826282014278194139940567587151170094390 
+					   35398664372827112653829987240784473053190104293586 
+					   86515506006295864861532075273371959191420517255829 
+					   71693888707715466499115593487603532921714970056938 
+					   54370070576826684624621495650076471787294438377604 
+					   53282654108756828443191190634694037855217779295145 
+					   36123272525000296071075082563815656710885258350721 
+					   45876576172410976447339110607218265236877223636045 
+					   17423706905851860660448207621209813287860733969412 
+					   81142660418086830619328460811191061556940512689692 
+					   51934325451728388641918047049293215058642563049483 
+					   62467221648435076201727918039944693004732956340691 
+					   15732444386908125794514089057706229429197107928209 
+					   55037687525678773091862540744969844508330393682126 
+					   18336384825330154686196124348767681297534375946515 
+					   80386287592878490201521685554828717201219257766954 
+					   78182833757993103614740356856449095527097864797581 
+					   16726320100436897842553539920931837441497806860984 
+					   48403098129077791799088218795327364475675590848030 
+					   87086987551392711854517078544161852424320693150332 
+					   59959406895756536782107074926966537676326235447210 
+					   69793950679652694742597709739166693763042633987085 
+					   41052684708299085211399427365734116182760315001271 
+					   65378607361501080857009149939512557028198746004375 
+					   35829035317434717326932123578154982629742552737307 
+					   94953759765105305946966067683156574377167401875275 
+					   88902802571733229619176668713819931811048770190271 
+					   25267680276078003013678680992525463401061632866526 
+					   36270218540497705585629946580636237993140746255962 
+					   24074486908231174977792365466257246923322810917141 
+					   91430288197103288597806669760892938638285025333403 
+					   34413065578016127815921815005561868836468420090470 
+					   23053081172816430487623791969842487255036638784583 
+					   11487696932154902810424020138335124462181441773470 
+					   63783299490636259666498587618221225225512486764533 
+					   67720186971698544312419572409913959008952310058822 
+					   95548255300263520781532296796249481641953868218774 
+					   76085327132285723110424803456124867697064507995236 
+					   37774242535411291684276865538926205024910326572967 
+					   23701913275725675285653248258265463092207058596522 
+					   29798860272258331913126375147341994889534765745501 
+					   18495701454879288984856827726077713721403798879715 
+					   38298203783031473527721580348144513491373226651381 
+					   34829543829199918180278916522431027392251122869539 
+					   40957953066405232632538044100059654939159879593635 
+					   29746152185502371307642255121183693803580388584903 
+					   41698116222072977186158236678424689157993532961922 
+					   62467957194401269043877107275048102390895523597457 
+					   23189706772547915061505504953922979530901129967519 
+					   86188088225875314529584099251203829009407770775672 
+					   11306739708304724483816533873502340845647058077308 
+					   82959174767140363198008187129011875491310547126581 
+					   97623331044818386269515456334926366572897563400500 
+					   42846280183517070527831839425882145521227251250327 
+					   55121603546981200581762165212827652751691296897789 
+					   32238195734329339946437501907836945765883352399886 
+					   75506164965184775180738168837861091527357929701337 
+					   62177842752192623401942399639168044983993173312731 
+					   32924185707147349566916674687634660915035914677504 
+					   99518671430235219628894890102423325116913619626622 
+					   73267460800591547471830798392868535206946944540724 
+					   76841822524674417161514036427982273348055556214818 
+					   97142617910342598647204516893989422179826088076852 
+					   87783646182799346313767754307809363333018982642090 
+					   10848802521674670883215120185883543223812876952786 
+					   71329612474782464538636993009049310363619763878039 
+					   62184073572399794223406235393808339651327408011116 
+					   66627891981488087797941876876144230030984490851411 
+					   60661826293682836764744779239180335110989069790714 
+					   85786944089552990653640447425576083659976645795096 
+					   66024396409905389607120198219976047599490197230297 
+					   64913982680032973156037120041377903785566085089252 
+					   16730939319872750275468906903707539413042652315011 
+					   94809377245048795150954100921645863754710598436791 
+					   78639167021187492431995700641917969777599028300699 
+					   15368713711936614952811305876380278410754449733078 
+					   40789923115535562561142322423255033685442488917353 
+					   44889911501440648020369068063960672322193204149535 
+					   41503128880339536053299340368006977710650566631954 
+					   81234880673210146739058568557934581403627822703280 
+					   82616570773948327592232845941706525094512325230608 
+					   22918802058777319719839450180888072429661980811197 
+					   77158542502016545090413245809786882778948721859617 
+					   72107838435069186155435662884062257473692284509516 
+					   20849603980134001723930671666823555245252804609722 
+					   53503534226472524250874054075591789781264330331690))
+		 (summe (apply #'+ zahlen))
+		 (zeichenkette (princ-to-string summe))
+		 (x nil))
 	(do ((i 9 (1- i)))
 		((< i 0)
 		 x)
@@ -565,15 +565,15 @@ Es ist zu sehen, dass diese Folge (beginnend bei 13 und endend bei 1) 10 Terme e
 Welche Anfangszahl unter 1 Million erzeugt die längste Folge?
 HINWEIS: Sobald die Folge begonnen hat, dürfen die Terme auch 1 Million überschreiten.
 Antwort: 837799"
-  (let ((gesuchte-zahl 0)
-		(maximale-länge 0))
-	(do ((i 1 (1+ i)))
-		((>= i 1000000)
-		 gesuchte-zahl)
-	  (let ((länge (collatz-rang i)))
-		(when (> länge maximale-länge)
-		  (setf maximale-länge länge
-				gesuchte-zahl i))))))
+  (do ((i 1 (1+ i))
+	   (gesuchte-zahl 0)
+	   (maximale-länge 0))
+	  ((>= i 1000000)
+	   gesuchte-zahl)
+	(let ((länge (collatz-rang i)))
+	  (when (> länge maximale-länge)
+		(setf maximale-länge länge
+			  gesuchte-zahl i)))))
 
 
 
@@ -606,12 +606,12 @@ Wenn wir die Zahlen von 1 bis 5 als Worte ausschreiben (auf Englisch): one, two,
 Wie viele Buchstaben wären nötig, um alle Zahlen von 1 bis 1000 auf Englisch als Wörter zu schreiben?
 HINWEIS: Zählen Sie weder Leerzeichen noch Bindestriche. Beispiel: 342 (three hundred and forty-two) enthält 23 Buchstaben und 115 (one hundred and fifteen) enthält 20 Buchstaben. Die Benutzung von \"and\" beim Ausschreiben der Zahlen ist Teil der britischen Schreibweise.
 Antwort: 21124"
-  (let ((x 0)
-		(fehlende-and (* 3 9 99)))		; CL kann das von Haus aus, aber auf Amerikanisch. Wir müssen die fehlenden and des Britischen ergänzen
-	(do ((i 1 (1+ i)))
-		((> i 1000)
-		 (+ x fehlende-and))
-	  (incf x (zähle-buchstaben (format nil "~R" i))))))
+  (do ((i 1 (1+ i))
+	   (anzahl 0)
+	   (fehlende-and (* 3 9 99)))		; die britischen and
+	  ((> i 1000)
+	   (+ anzahl fehlende-and))
+	(incf anzahl (zähle-buchstaben (format nil "~R" i)))))
 
 
 
@@ -676,14 +676,14 @@ Ihnen werden die folgenden Informationen gegeben, es steht Ihnen aber frei, selb
     Schaltjahr ist, wenn das Jahr ohne Rest durch 4 teilbar ist, aber nicht zu den Jahrhundertwenden, es sei denn, es ist durch 400 teilbar.
 Wie viele Sonntage fielen im 20. Jahrhundert (1. Januar 1901 bis 31. Dezember 2000) auf den Ersten des Monats?
 Antwort: 171"
-  (let ((anzahl 0))
-	(do ((jahr 1901 (1+ jahr)))
+  (do ((jahr 1901 (1+ jahr))
+	   (anzahl 0))
 	  ((> jahr 2000)
 	   anzahl)
-	  (do ((monat 1 (1+ monat)))
-		  ((> monat 12))
-		(when (sonntagp 1 monat jahr)
-		  (incf anzahl))))))
+	(do ((monat 1 (1+ monat)))
+		((> monat 12))
+	  (when (sonntagp 1 monat jahr)
+		(incf anzahl)))))
 
 
 
@@ -709,12 +709,11 @@ Beispiele:
 - Die echten Teiler von 284 sind 1, 2, 4, 71 und 142; also ist d(284) = 220.
 Bilden Sie die Summe aller freundlichen Zahlen unter 10000.
 Antwort: 31626"
-  (let ((summe 0)
-		(befreundete-zahl nil))
-	(do ((i 1 (1+ i)))
-		((>= i 10000)
-		 summe)
-	  (setf befreundete-zahl (befreundete-zahl-p i))
+  (do ((i 1 (1+ i))
+	   (summe 0))
+	  ((>= i 10000)
+	   summe)
+	(let ((befreundete-zahl (befreundete-zahl-p i)))
 	  (when (and befreundete-zahl (/= befreundete-zahl i) (< befreundete-zahl 10000))
 		(incf summe i)))))
 
@@ -728,16 +727,16 @@ Beispiel: Nachdem die Liste alphabetisch geordnet wurde, ist COLIN, was einen Na
 Welches ist die Summe aller Namenswerte der Datei?
 Antwort: 871198282"
   (let* ((namensliste (erstelle-wortliste "~/lisp/p022_names.txt"))
-		 (länge (length namensliste))
+		 (länge (length namensliste)))
+	(do ((i 1 (1+ i))
 		 (summe 0))
-	(do ((i 1 (1+ i)))
 		((> i länge)
 		 summe)
 	  (incf summe (* i (alphabetischer-wert (pop namensliste)))))))
 	
 
 
-(defun euler-23 ()
+(defun euler-23 (&optional (maximum 28123))
   "Nicht-abundante Summen
 Aufgabe 23
 Eine perfekte Zahl ist eine Zahl, für die die Summe seiner echten Teiler gleich der Zahl selbst ist. Beispiel: Die Summe der echten Teiler von 28 ist 1 + 2 + 4 + 7 + 14 = 28, also ist 28 eine vollkommene Zahl.
@@ -746,12 +745,12 @@ Da 12 die kleinste abundante Zahl ist, 1 + 2 + 3 + 4 + 6 = 16, ist die kleinste 
 Finden Sie die Summe aller natürlichen Zahlen, die nicht als die Summe von zwei abundanten Zahlen geschrieben werden können.
 Antwort: 4179871"
   (let ((liste-abundanter-zahlen nil)
-		(summe 0)
-		(maximum 28123)) ; vereinbartes Maximum
-	;; Erstellen einer Liste aller abundanter Zahlen und der Summe aller Zahlen von 1 bis 28123
+		(summe 0))
+	;; Summe aller Zahlen von 1-Maximum in summe speichern und
+	;; eine Liste aller abundanten Zahlen erstellen
 	(do ((i 1 (1+ i)))
 		((> i maximum)
-		 (setf liste-abundanter-zahlen (reverse liste-abundanter-zahlen)))
+		 (setf liste-abundanter-zahlen (nreverse liste-abundanter-zahlen)))
 	  (incf summe i)
 	  (when (abundante-zahl-p i)
 		(push i liste-abundanter-zahlen)))
@@ -765,6 +764,7 @@ Antwort: 4179871"
 		(when (abundante-zahl-p (- i j))
 		  (decf summe i) ; bei jedem Treffer Reduzierung der Summe um i
 		  (return))))))
+
 
 
 (defun euler-24 ()
@@ -832,16 +832,17 @@ Antwort: 983"
 						((zerop (rem (1- (expt 10 i)) n))
 						 i)
 					  (incf i)))))))
-	(let ((maximallänge 0)
-		  (maximales-i 0)
-		  (länge-i 0))
-	  (do ((i 1 (1+ i)))
+	  (do ((i 1 (1+ i))
+		   (länge 0)
+		   (max-i 0)
+		   (max-länge 0))
 		  ((= i 1000)
-		   maximales-i)
-		(when (and (= 1 (gcd i 10))
-				   (< maximallänge (setf länge-i (kehrwert-zyklus-länge i))))
-		  (setf maximallänge länge-i
-				maximales-i i))))))
+		   max-i)
+		(when (= 1 (gcd i 10))
+		  (setf länge (kehrwert-zyklus-länge i))
+		  (when (> länge max-länge)
+			(setf max-länge länge
+				  max-i i))))))
 
 
 
@@ -938,16 +939,16 @@ Da 1 = 1^4 keine Summe ist, ist es nicht enthalten.
 Die Summe dieser Zahlen ist 1634 + 8208 + 9474 = 19316.
 Finden Sie die Summe aller Zahlen, die als Summe der 5. Potenzen ihrer Ziffern geschrieben werden können.
 Antwort: 443839"
-  (let ((summe 0))
-	(do ((i 2 (1+ i)))
-		((>= i 200000)
-		 summe)
-	  (if (= i (expt-ziffern i 5))
-		  (incf summe i)))))
+  (do ((i 2 (1+ i))
+	   (summe 0))
+	  ((>= i 200000)
+	   summe)
+	(if (= i (expt-ziffern i 5))
+		(incf summe i))))
 
 
 
-(defun euler-31 (&optional (ziel 200) (münztyp 0) (möglichkeiten 0))
+(defun euler-31 (&optional (ziel 200))
   "Münzsummen
 Aufgabe 31
 In England besteht die Währung aus Pfund, £, und Pence, p, und es sind acht Münzen in Umlauf:
@@ -957,16 +958,20 @@ Es ist möglich, 2 £ auf die folgende Art darzustellen:
 Auf wie viele verschiedene Arten können 2 £ mit einer beliebigen Anzahl an Münzen dargestellt werden?
 Antwort: 73682"
   (let ((münzen #(200 100 50 20 10 5 2 1)))
-	(if (= münztyp 7)
-		(incf möglichkeiten)
-		(do ((i münztyp (1+ i)))
-			((> i 7)
-			 möglichkeiten)
-		  (let ((hand (- ziel (svref münzen i))))
-			(when (zerop hand)
-			  (incf möglichkeiten))
-			(when (plusp hand)
-			  (incf möglichkeiten (euler-31 hand i 0))))))))
+	(labels ((zähle-möglichkeiten (&optional (ziel 0)
+											 (münztyp 0)
+											 (möglichkeiten 0))
+			   (if (= münztyp 7)
+				   (incf möglichkeiten)
+				   (do ((i münztyp (1+ i)))
+					   ((> i 7)
+						möglichkeiten)
+					 (let ((hand (- ziel (svref münzen i))))
+					   (when (zerop hand)
+						 (incf möglichkeiten))
+					   (when (plusp hand)
+						 (incf möglichkeiten (zähle-möglichkeiten hand i 0))))))))
+	  (zähle-möglichkeiten ziel))))
 
 
 
@@ -1028,12 +1033,12 @@ Aufgabe 34
 Finden Sie die Summe aller Zahlen, die gleich der Summe der Fakultäten ihrer Ziffern sind.
 HINWEIS: Da 1! = 1 und 2! = 2 keine Summen sind, werden sie nicht dazugezählt.
 Antwort: 40730"
-  (let ((summe 0))
-	(do ((i 3 (1+ i)))
-		((> i 50000)
-		 summe)
-	  (if (= i (reduce #'+ (mapcar #'faktor (zahl->liste i))))
-		  (incf summe i)))))
+  (do ((i 3 (1+ i))
+	   (summe 0))
+	  ((> i 50000)
+	   summe)
+	(if (= i (reduce #'+ (mapcar #'faktor (zahl->liste i))))
+		(incf summe i))))
 
 
 
@@ -1060,12 +1065,12 @@ Finden Sie die Summe aller Zahlen unter 1 Million, die sowohl zur Basis 10 als a
 Antwort: 872187"
   (flet ((zweibasiges-palindrom-p (zahl)
 		   (and (palindromp zahl) (palindromp (format nil "~B" zahl)))))
-	(let ((summe 0))
-	  (do ((i 1 (1+ i)))
-		  ((>= i 1000000)
-		   summe)
-		(when (zweibasiges-palindrom-p i)
-		  (incf summe i))))))
+	(do ((i 1 (1+ i))
+		 (summe 0))
+		((>= i 1000000)
+		 summe)
+	  (when (zweibasiges-palindrom-p i)
+		(incf summe i)))))
 
 
 
@@ -1111,23 +1116,23 @@ Wenn p der Umfang eines rechtwinkligen Dreiecks mit ganzzahligen Seitenlängen {
 {20,48,52}, {24,45,51}, {30,40,50}
 Für welchen Wert p ≤ 1000 ist die Anzahl an Lösungen maximiert?
 Antwort: 840"
-  (let ((max-anzahl 0)
-		(max-p 0))
-	(do ((p 12 (+ p 2)))
-		((> p 1000)
-		 max-p)
-	  (let ((anzahl 0))
-		(do ((a 1 (1+ a)))
-			((> a (/ p 3)))
-		  (let ((a-quadrat (expt a 2)))
-			(do ((b a (1+ b)))
-				((> b (/ (- p a) 2)))
-			  (let ((c (- p a b)))
-				(when (= (+ a-quadrat (expt b 2)) (expt c 2))
-				  (incf anzahl))))))
-		(when (> anzahl max-anzahl)
-		  (setf max-anzahl anzahl
-				max-p p))))))
+  (do ((p 12 (+ p 2))
+	   (max-p 0)
+	   (max-anzahl 0))
+	  ((> p 1000)
+	   max-p)
+	(do ((a 1 (1+ a))
+		 (anzahl 0))
+		((> a (/ p 3))
+		 (when (> anzahl max-anzahl)
+		   (setf max-anzahl anzahl
+				 max-p p)))
+	  (do ((b a (1+ b))
+		   (a² (expt a 2)))
+		  ((> b (/ (- p a) 2)))
+		(let ((c (- p a b)))
+		  (when (= (+ a² (expt b 2)) (expt c 2))
+			(incf anzahl)))))))
 
 
 
@@ -1167,14 +1172,12 @@ Indem wir jeden Buchstaben eines Wortes zu einer Zahl entsprechend seiner Positi
 Benutzen Sie words.txt (Rechtsklick und 'Ziel speichern unter...'), eine 16K Datei, die nahezu 2000 englische Wörter enthält, und finden Sie die Anzahl von Dreieckswörtern.
 Antwort: 162"
   (let* ((wortliste (erstelle-wortliste "~/lisp/p042_words.txt"))
-		 (länge (length wortliste))
-		 (anzahl 0)
-		 (aktueller-wert 0))
-	(do ((i 1 (1+ i)))
+		 (länge (length wortliste)))
+	(do ((i 1 (1+ i))
+		 (anzahl 0))
 		((> i länge)
 		 anzahl)
-	  (setf aktueller-wert (alphabetischer-wert (pop wortliste)))
-	  (when (dreieckszahlp aktueller-wert)
+	  (when (dreieckszahlp (alphabetischer-wert (pop wortliste)))
 		(incf anzahl)))))
 
 
@@ -1322,12 +1325,11 @@ Aufgabe 48
 Die Reihe 1¹ + 2² + ... + 10¹° = 10405071317.
 Finden Sie die letzten zehn Stellen der Reihe 1¹ + 2² + ... + 1000¹°°°.
 Antwort: 9110846700"
-  (let
-	  ((summe 0))
-	(do ((i 1 (1+ i)))
-		((> i 1000)
-		 (last (zahl->liste summe) 10))
-	  (incf summe (expt i i)))))
+  (do ((i 1 (1+ i))
+	   (summe 0))
+	  ((> i 1000)
+	   (last (zahl->liste summe) 10))
+	(incf summe (expt i i))))
 
 
 
@@ -1437,13 +1439,13 @@ Wie viele, nicht zwingend verschiedene, Werte von C(n,r) mit 1 ≤ n ≤ 100 sin
 Antwort: 4075"
   (labels ((möglichkeit (n r)
 			 (/ (faktor n) (faktor r) (faktor (- n r)))))
-	(let ((summe 0))
-	  (do ((i 1 (1+ i)))
-		  ((> i limit)
-		   summe)
-		(dotimes (j i)
-		  (when (> (möglichkeit i j) minimum)
-			(incf summe)))))))
+	(do ((i 1 (1+ i))
+		 (summe 0))
+		((> i limit)
+		 summe)
+	  (dotimes (j i)
+		(when (> (möglichkeit i j) minimum)
+		  (incf summe))))))
 
 
 
@@ -1653,15 +1655,15 @@ Aufgabe 56
 Ein Googol (10¹°°) ist eine gewaltige Zahl: eine 1 gefolgt von 100 Nullen; 100¹°° ist nahezu unvorstellbar groß, eine 1 gefolgt von 200 Nullen. Trotz ihrer Größe ist die Quersumme jeder der Zahlen nur 1.
 Wir betrachten natürliche Zahlen der Form ab mit a, b < 100, was ist die maximale Quersumme?
 Antwort: 972"
-  (let ((maximum 0))
-	(do ((a 1 (1+ a)))
-		((>= a 100)
-		 maximum)
-	  (do ((b 1 (1+ b)))
-		  ((>= b 100))
-		(let ((wert (ziffer-summe (expt a b))))
-		  (when (> wert maximum)
-			(setf maximum wert)))))))
+  (do ((a 1 (1+ a))
+	   (maximum 0))
+	  ((>= a 100)
+	   maximum)
+	(do ((b 1 (1+ b)))
+		((>= b 100))
+	  (let ((wert (ziffer-summe (expt a b))))
+		(when (> wert maximum)
+		  (setf maximum wert))))))
 
 
 
@@ -1815,14 +1817,14 @@ Die 5-stellige Zahl 16807=75 ist auch eine fünfte Potenz. Auf die gleiche Weise
 Wie viele n-stellige positive Zahlen gibt es, die auch eine nte Potenz sind?
 Antwort: 49"
   (flet ((finde-anzahl ()
-		   (let ((anzahl 0))
-			 (do ((i 1 (1+ i)))
-				 ((> i 100)
-				  anzahl)
-			   (do ((j 1 (1+ j)))
-				   ((> j 100))
-				 (when (= j (length (zahl->liste (expt i j))))
-				   (incf anzahl)))))))
+		   (do ((i 1 (1+ i))
+				(anzahl 0))
+			   ((> i 100)
+				anzahl)
+			 (do ((j 1 (1+ j)))
+				 ((> j 100))
+			   (when (= j (length (zahl->liste (expt i j))))
+				 (incf anzahl))))))
 	(finde-anzahl)))
 
 
@@ -1898,15 +1900,15 @@ Antwort: 661"
 				 (y b (+ (shiftf y-1 y) (* b y))))
 				((= 1 (- (expt x 2) (* n (expt y 2))))
 				 x))))
-	(let ((maximum-x 0)
-		  (d 0))
-	  (do ((i 2 (1+ i)))
-		  ((> i limit)
-		   d)
-		(let ((x (pellsche-gleichung i)))
-		  (when (> x maximum-x)
-			(setf maximum-x x
-				  d i)))))))
+	(do ((i 2 (1+ i))
+		 (max-x 0)
+		 (d 0))
+		((> i limit)
+		 d)
+	  (let ((x (pellsche-gleichung i)))
+		(when (> x max-x)
+		  (setf max-x x
+				d i))))))
 
 
   
@@ -1997,12 +1999,12 @@ Es ist zu sehen, dass n=6 ein Maximum von n/φ(n) für n ≤ 10 produziert.
 Finden Sie den Wert von n ≤ 1,000,000, für den n/φ(n) ein Maximum ist.
 Antwort: 510510"
   (flet ((finde-maximales-n (l)
-		   (let ((n 1))
-			 (do ((p (nächste-primzahl) (nächste-primzahl p)))
-				 (nil)
-			   (when (> (* n p) l)
-				 (return-from finde-maximales-n n))
-			   (setf n (* n p))))))
+		   (do ((p (nächste-primzahl) (nächste-primzahl p))
+				(n 1))
+			   (nil)
+			 (when (> (* n p) l)
+			   (return-from finde-maximales-n n))
+			 (setf n (* n p)))))
 	(finde-maximales-n 1000000)))
 
 
@@ -2104,10 +2106,10 @@ Wie viele Ketten mit einer Anfangszahl unter 1 Million enthalten genau 60 wieder
 Antwort: 402"
   (let ((kette (make-hash-table)))
 	(labels ((speichere-längen (liste &optional (zusatz 0))
-			   (let ((l (length liste)))
-				 (do ((i 0 (1+ i)))
-					 ((= i l))
-				   (setf (gethash (elt liste i) kette 0) (+ (- l i) zusatz)))))
+			   (do ((i 0 (1+ i))
+					(l (length liste)))
+				   ((= i l))
+				 (setf (gethash (elt liste i) kette 0) (+ (- l i) zusatz))))
 			 (faktor-ziffer-summe (n)
 			   (reduce #'+ (mapcar #'faktor (zahl->liste n))))
 			 (ziffer-faktoren-kette (n &optional (liste nil))
@@ -2121,12 +2123,12 @@ Antwort: 402"
 			   (push n liste)
 			   (ziffer-faktoren-kette (faktor-ziffer-summe n) liste))
 			 (zähle-treffer (limit)
-			   (let ((anzahl 0))
-				 (do ((i 1 (1+ i)))
-					 ((> i limit)
-					  anzahl)
-				   (when (= (ziffer-faktoren-kette i) 60)
-					 (incf anzahl))))))
+			   (do ((i 1 (1+ i))
+					(anzahl 0))
+				   ((> i limit)
+					anzahl)
+				 (when (= (ziffer-faktoren-kette i) 60)
+				   (incf anzahl)))))
 	  (zähle-treffer (1- (expt 10 6))))))
 
 
@@ -2148,9 +2150,9 @@ HINWEIS: Diese Aufgabe wurde auf projecteuler.net kürzlich verändert, bitte ü
 Antwort: 161667"
   (flet ((zähle-dreiecke (limit)
 		   (let ((dreieck (make-array (1+ limit)))
-				 (mlimit (isqrt (/ limit 2)))
-				 (anzahl 0))
-			 (do ((m 2 (1+ m)))
+				 (mlimit (isqrt (/ limit 2))))
+			 (do ((m 2 (1+ m))
+				  (anzahl 0))
 				 ((>= m mlimit)
 				  anzahl)
 			   (do ((n 1 (1+ n)))
@@ -2233,7 +2235,30 @@ Antwort: 71"
 
 
 
+(defun euler-78 ()
+  "Münz-Zerlegungen
+Aufgabe 78
+p(n) steht für die Anzahl verschiedener Möglichkeiten, wie n Münzen in Haufen geteilt werden können. Beispiel: fünf Münzen können auf genau sieben Weisen in Haufen geteilt werden, also ist p(5)=7.
+OOOOO
+OOOO   O
+OOO   OO
+OOO   O   O
+OO   OO   O
+OO   O   O   O
+O   O   O   O   O
+Finden Sie den kleinsten Wert von n, für den p(n) durch 1 Million teilbar ist.
+Antwort: 55374"
+  )
+
+
+
 (defun euler-79 ()
+  "Passcode-Ableitung
+Aufgabe 79
+Eine bekannte Sicherheitsmethode, die beim Online-Banking benutzt wird, ist es, den Benutzer nach drei zufälligen Zeichen eines Passcodes zu fragen. Beispiel: wenn der Passcode 531278 ist, könnten sie nach dem 2., 3. und 5. Zeichen fragen; die erwartete Antwort wäre: 317.
+Die Textdatei keylog.txt enthält fünfzig erfolgreiche Login-Versuche.
+Gegeben ist, dass die drei Zeichen in ihrer Reihenfolge abgefragt werden; Analysieren Sie die Datei, um den kürzesten möglichen geheimen Passcode mit unbekannter Länge zu bestimmen.
+Antwort: 73162890"
   (labels ((erstelle-keylogliste (stream-name)
 			 (let ((zahlenliste nil))
 			   (with-open-file (stream stream-name)
@@ -2258,9 +2283,9 @@ Antwort: 71"
 			   (when (teste-ziffer-p i liste)
 				 (return i)))))
 	(let ((keylog (mapcar #'zahl->liste (erstelle-keylogliste "/home/sascha/lisp/p079_keylog.txt")))
-		  (kandidaten '(1 2 3 4 5 6 7 8 9 0))
-		  (lösung nil))
-	  (do ((i 1 (1+ i)))
+		  (kandidaten '(1 2 3 4 5 6 7 8 9 0)))
+	  (do ((i 1 (1+ i))
+		   (lösung nil))
 		  ((> i 10)
 		   (delete nil (reverse lösung)))
 		(push (suche-ziffer kandidaten keylog) lösung)
@@ -2419,16 +2444,14 @@ In fact, d = 12 is the smallest denominator having a resilience R(d) < 4/10 
 Find the smallest denominator d, having a resilience R(d) < 15499/94744 .
 Answer:	892371480"
   (flet ((finde-d (r)
-		   (let ((d 1)
-				 (s 1))
-			 (do ((p (nächste-primzahl) (nächste-primzahl p)))
-				 (nil)
-			   (setf d (* d p)
-					 s (* s (1- p)))
-			   (do ((i 2 (1+ i)))
-				   ((> i p))
-				 (when (< (/ (* s i) (1- (* d i))) r)
-				   (return-from finde-d (* d i))))))))
+		   (do ((p (nächste-primzahl) (nächste-primzahl p))
+				(d 1 (* d p))
+				(s 1 (* s (1- p))))
+			   (nil)
+			 (do ((i 2 (1+ i)))
+				 ((> i p))
+			   (when (< (/ (* s i) (1- (* d i))) r)
+				 (return-from finde-d (* d i)))))))
 	(finde-d r)))
 
 
