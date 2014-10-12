@@ -78,6 +78,13 @@ Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
 
 
 
+(defun nur-buchstaben (text)
+  "Entfernt die Nicht-Buchstaben eines Textes."
+  (remove-if #'(lambda (string) (not (alpha-char-p string)))
+			 text))
+
+
+
 (defun würfelwurf (&optional (seiten 6))
   "(würfelwurf &optional seiten)
 WÜRFELWURF bildet den Wurf mit einem in Spieleboxen üblichen, voreingestellt 6-seitigen, Würfel nach. Durch einen Aufruf mit einer anderen Seitenzahl wird ein entsprechender über Seiten verfügender Würfel angenommen.
@@ -364,7 +371,10 @@ Beispiel: (würfelwurf) => 4"
 			 (format t "Dein Tip? ")
 			 (let ((eingabe (versuch)))
 			   (typecase eingabe
-				 (character (push eingabe bekannt))
+				 (character (push eingabe bekannt)
+							(when (subsetp (coerce (string-downcase (nur-buchstaben gesucht)) 'list) bekannt)
+							  (format t "~%Glückwunsch!~%Du hast es geschafft!~%")
+							  (return-from spiele)))
 				 (string (when (equalp eingabe fgesucht)
 						   (format t "~%Glückwunsch!~%Du hast es geschafft!~%")
 						   (return-from spiele))
