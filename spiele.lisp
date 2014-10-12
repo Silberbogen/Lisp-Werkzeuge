@@ -342,7 +342,7 @@ Beispiel: (würfelwurf) => 4"
 
 
 
-(defun begriffe-raten ()
+(defun begriffe-raten (&optional (dateiname "begriffe.txt"))
   "Errate einen Begriff, den sich der Computer ausgedacht hat!"
   (labels ((versuch ()
 			 (let ((eingabe (string-trim " " (read-line))))
@@ -380,7 +380,7 @@ Beispiel: (würfelwurf) => 4"
 					 ((null i)
 					  liste)
 				   (push (string-trim " " i) liste))))))
-	(do* ((begriffe (mischen (erstelle-suchliste "~/lisp/begriffe-raten.txt")))
+	(do* ((begriffe (mischen (erstelle-suchliste dateiname)))
 		  (beenden nil))
 		 ((or (null begriffe) beenden)
 		  (format t "Vielen Dank für's Spielen!~%"))
