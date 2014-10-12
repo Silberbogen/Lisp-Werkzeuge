@@ -80,17 +80,19 @@ Beispiel: (würfelwurf) => 4"
 		 (beenden nil))
 	(do ()
 		(beenden)
-	  (format t "~%Dir stehen folgende Möglichkeiten zur Auswahl:~%")
+	  (format t "~%Dir stehen folgende Möglichkeiten zur Auswahl:~%~%")
 	  (do ((i 0 (1+ i)))
 		  ((= i anzahl))
-		(format t "~2D ~A~%" (1+ i) (documentation (elt spiele-liste i) 'function)))
-	  (format t "99 Beenden~%")
+		(format t "   ~2D ~A~%" (1+ i) (documentation (elt spiele-liste i) 'function)))
+	  (format t "   99 Beenden~%~%")
 	  (let ((eingabe (hole-zahl "Deine Wahl? ")))
 		(when (numberp eingabe)
 		  (when (= eingabe 99)
 			(setf beenden t))
 		  (when (and (>= eingabe 1) (<= eingabe anzahl))
+			(terpri)
 			(funcall (elt spiele-liste (1- eingabe)))))))))
+
 
 	
    
@@ -190,8 +192,8 @@ Beispiel: (würfelwurf) => 4"
 					  (append geworfen liste))
 					 (t
 					  (setf liste (list '-- (apply #'+ wurf) '-- 'würfle 'nochmal))
-					  (princ (append geworfen liste))
-					  (terpri)
+					  (format t "~A~%" (append geworfen liste))
+;;;					  (terpri)
 					  (versuche-zu-punkten zahl))))))
 	(let* ((wurf (werfe-zwei-würfel))
 		   (liste ())
@@ -204,8 +206,9 @@ Beispiel: (würfelwurf) => 4"
 			 (append geworfen liste))
 			(t
 			 (setf liste (list '-- 'du 'hast (apply #'+ wurf) 'punkte))
-			 (princ (append geworfen liste))
-			 (terpri)
+			 (format t "~A~%" (append geworfen liste))
+;;;			 (princ (append geworfen liste))
+;;;			 (terpri)
 			 (versuche-zu-punkten (apply #'+ wurf)))))))
    
 
@@ -227,10 +230,13 @@ Beispiel: (würfelwurf) => 4"
 		  (t
 		   (setf zahl (+ zahl eingabe)
 				 anzahl (1+ anzahl))
-		   (if (= zahl 999)
-			   (values zahl (/ zahl anzahl 1.0))
-			   (addiere-bis-999 zahl anzahl))))))
-
+		   (when (= zahl 999)
+			 (format t "Du hast die Zahl 999 mit ~A Eingaben erreicht.~%" anzahl)
+			 (return-from addiere-bis-999 (values zahl (/ zahl anzahl 1.0))))
+;;;		   (if (= zahl 999)
+;;;			   (values zahl (/ zahl anzahl 1.0))
+;;;			   (addiere-bis-999 zahl anzahl))))))
+		   (addiere-bis-999 zahl anzahl)))))
 
 
 ;;; --------------------------------------
@@ -275,13 +281,13 @@ Beispiel: (würfelwurf) => 4"
 		   (spielerwahl (&optional (tbbt nil))
 			 (format t "Du hast zur Auswahl:~%1. Schere~%2. Stein~%3. Papier~%")
 			 (unless (null tbbt)
-			   (format t "4. Echse~%5. Spock~%"))
-			 (case (hole-zahl "Bitte triff deine Entscheidung: ")
-			   ((1) 'schere)
-			   ((2) 'stein)
-			   ((3) 'papier)
-			   ((4) 'echse)
-			   ((5) 'spock)
+			   (format t "4. Echse~%5. Spock~%~%Bitte triff deine Entscheidung: "))
+			 (case (read)
+			   ((1 schere) 'schere)
+			   ((2 stein) 'stein)
+			   ((3 papier) 'papier)
+			   ((4 echse) 'echse)
+			   ((5 spock) 'spock)
 			   (otherwise (spielerwahl tbbt))))
 		   (ssp (spieler &optional (tbbt nil))
 			 (let* ((computer (computerwahl tbbt))
@@ -304,3 +310,5 @@ Beispiel: (würfelwurf) => 4"
 		   (unless (j-oder-n-p "Nochmal? [j/n]: ") (return))))
 	  (format t "Danke für's mitspielen!~%")
 	  'ciao!)))
+
+
