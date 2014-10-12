@@ -56,6 +56,28 @@ T"
 
 
 
+(defun mischen (liste &optional (durchgang (* 2 (length liste))) &aux (länge (length liste)))
+  "(mischen liste &optional durchgang)
+MISCHEN dient dazu, eine Liste mit einer frei wählbaren Anzahl an Durchgängen zu mischen. Wird keine Anzahl an Durchgängen genannt, so wird der Vorgang 20 Mal durchgeführt.
+Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
+  (let ((zufallszahl (random länge)))
+	(cond ((zerop durchgang)
+		   liste)
+	  ((oddp zufallszahl)
+	   (mischen (append (reverse (nthcdr zufallszahl liste))
+						(butlast liste (- länge zufallszahl)))
+				(1- durchgang)))
+	  ((evenp zufallszahl)
+	   (mischen (append (nthcdr zufallszahl liste)
+						(butlast liste (- länge zufallszahl)))
+				(1- durchgang)))
+	  (t
+	   (mischen (append (nthcdr zufallszahl liste)
+						(reverse (butlast liste (- länge zufallszahl)))
+						(1- durchgang)))))))
+
+
+
 (defun würfelwurf (&optional (seiten 6))
   "(würfelwurf &optional seiten)
 WÜRFELWURF bildet den Wurf mit einem in Spieleboxen üblichen, voreingestellt 6-seitigen, Würfel nach. Durch einen Aufruf mit einer anderen Seitenzahl wird ein entsprechender über Seiten verfügender Würfel angenommen.
@@ -75,7 +97,8 @@ Beispiel: (würfelwurf) => 4"
 							 #'spiele-rate-meine-zahl
 							 #'craps
 							 #'addiere-bis-999
-							 #'schere-stein-papier))
+							 #'schere-stein-papier
+							 #'begriffe-raten))
 		 (anzahl (length spiele-liste))
 		 (beenden nil))
 	(do ()
@@ -310,5 +333,59 @@ Beispiel: (würfelwurf) => 4"
 		   (unless (j-oder-n-p "Nochmal? [j/n]: ") (return))))
 	  (format t "Danke für's mitspielen!~%")
 	  'ciao!)))
+
+
+
+;;; --------------------
+;;;    Begriffe raten
+;;; --------------------
+
+
+
+(defun begriffe-raten ()
+  "Errate einen Begriff, den sich der Computer ausgedacht hat!"
+  (labels ((versuch ()
+			 (let ((eingabe (string-trim " " (read-line))))
+			   (if (= 1 (length eingabe))
+				   (coerce (string-downcase (elt eingabe 0)) 'character)
+				   eingabe)))
+		   (ausgabe (bekannt gesucht)
+			 (let ((anzahl (length gesucht))
+				   (kleingeschrieben (string-downcase gesucht)))
+			   (do ((i 0 (1+ i)))
+				   ((= i anzahl)
+					kleingeschrieben)
+				 (unless (subsetp (list (elt kleingeschrieben i)) bekannt)
+				   (setf (elt kleingeschrieben i) #\_)))))
+		   (spiele (gesucht &optional (bekannt (list #\space #\, #\. #\; #\? #\!))
+							(runde 1)
+							(fgesucht (string-trim " " gesucht)))
+			 (format t "~%*** ~A. Runde ***~%~A~%" runde (ausgabe bekannt fgesucht))
+			 (format t "Dein Tip? ")
+			 (let ((eingabe (versuch)))
+			   (typecase eingabe
+				 (character (push eingabe bekannt))
+				 (string (when (equalp eingabe fgesucht)
+						   (format t "~%Glückwunsch!~%Du hast es geschafft!~%")
+						   (return-from spiele))
+						 (spiele fgesucht bekannt (1+ runde)))
+				 (otherwise (format t "Bitte gib einen einzelnen Buchstaben oder die gesamte Lösung ein!~%")))
+			   (spiele fgesucht bekannt (1+ runde))))
+		   (erstelle-suchliste (stream-name)
+			 "Suchbegriffe zeilenweise einlesen"
+			 (let ((liste ()))
+			   (with-open-file (stream stream-name)
+				 (do ((i (read-line stream nil)
+						 (read-line stream nil)))
+					 ((null i)
+					  liste)
+				   (push (string-trim " " i) liste))))))
+	(do* ((begriffe (mischen (erstelle-suchliste "~/lisp/begriffe-raten.txt")))
+		  (beenden nil))
+		 ((or (null begriffe) beenden)
+		  (format t "Vielen Dank für's Spielen!~%"))
+	  (spiele (pop begriffe))
+	  (when begriffe
+		(setf beenden (not (j-oder-n-p "Willst du ein weiteres Spiel spielen (j/n)? ")))))))
 
 

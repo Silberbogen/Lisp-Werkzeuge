@@ -239,6 +239,28 @@ Beispiele
 
 
 
+(defun mischen (liste &optional (durchgang (* 2 (length liste))) &aux (länge (length liste)))
+  "(mischen liste &optional durchgang)
+MISCHEN dient dazu, eine Liste mit einer frei wählbaren Anzahl an Durchgängen zu mischen. Wird keine Anzahl an Durchgängen genannt, so wird der Vorgang 20 Mal durchgeführt.
+Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
+  (let ((zufallszahl (random länge)))
+	(cond ((zerop durchgang)
+		   liste)
+		  ((oddp zufallszahl)
+		   (mischen (append (reverse (nthcdr zufallszahl liste))
+							(butlast liste (- länge zufallszahl)))
+					(1- durchgang)))
+		  ((evenp zufallszahl)
+		   (mischen (append (nthcdr zufallszahl liste)
+							(butlast liste (- länge zufallszahl)))
+					(1- durchgang)))
+		  (t
+		   (mischen (append (nthcdr zufallszahl liste)
+							(reverse (butlast liste (- länge zufallszahl)))
+							(1- durchgang)))))))
+
+
+
 (defun nth-permutation (x liste)
   "Gibt die nte Permutation einer Liste zurück. Die Zählung beginnt bei NULL."
   (if (zerop x)
@@ -252,10 +274,6 @@ Beispiele
 				(floor x modulus)
 			  (cons (nth quotient liste)
 					(nth-permutation remainder (but-nth quotient liste))))))))
-
-(defmacro permutations-rang (x liste)
-  "Translator zwischen Mensch und Maschine, um die Zählung bei 1 (Mensch) gegen die Zählung bei 0 (Maschine) auszutauschen"
-  `(nth-permutation (1- ,x) ,liste))
 
 
 
@@ -291,6 +309,12 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 			  (if (and (integerp p) (zerop p)) t nil)))
 	(list (equal (sort n #'<) '(1 2 3 4 5 6 7 8 9)))
 	(otherwise nil)))
+
+
+
+(defmacro permutations-rang (x liste)
+  "Translator zwischen Mensch und Maschine, um die Zählung bei 1 (Mensch) gegen die Zählung bei 0 (Maschine) auszutauschen"
+  `(nth-permutation (1- ,x) ,liste))
 
 
 
