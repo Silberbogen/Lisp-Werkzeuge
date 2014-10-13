@@ -223,7 +223,6 @@ Beispiel: (würfelwurf) => 4"
 					 (t
 					  (setf liste (list '-- (apply #'+ wurf) '-- 'würfle 'nochmal))
 					  (format t "~A~%" (append geworfen liste))
-;;;					  (terpri)
 					  (versuche-zu-punkten zahl))))))
 	(let* ((wurf (werfe-zwei-würfel))
 		   (liste ())
@@ -237,8 +236,6 @@ Beispiel: (würfelwurf) => 4"
 			(t
 			 (setf liste (list '-- 'du 'hast (apply #'+ wurf) 'punkte))
 			 (format t "~A~%" (append geworfen liste))
-;;;			 (princ (append geworfen liste))
-;;;			 (terpri)
 			 (versuche-zu-punkten (apply #'+ wurf)))))))
    
 
@@ -249,23 +246,19 @@ Beispiel: (würfelwurf) => 4"
 
 (defun addiere-bis-999 (&optional (zahl 0) (anzahl 0))
   "Addiere Zahlen, bis du auf 999 kommst!"
-  (princ "Bitte gib eine Zahl ein: ")
-  (terpri)
+  (format t "Bitte gib eine Zahl ein: ")
   (let ((eingabe (read)))
     (cond ((not (integerp eingabe))
 		   (addiere-bis-999 zahl anzahl))
-		  ((= eingabe 999) ;; austauschen gegen -999 falls für die Aufgabe notwendig
+		  ((= eingabe 999)
 		   (format t "Momentan bist du bei ~A und hast bisher ~A Eingaben getätigt.~%" zahl anzahl)
 		   (addiere-bis-999 zahl anzahl))
 		  (t
-		   (setf zahl (+ zahl eingabe)
-				 anzahl (1+ anzahl))
+		   (incf zahl eingabe)
+		   (incf anzahl)
 		   (when (= zahl 999)
 			 (format t "Du hast die Zahl 999 mit ~A Eingaben erreicht.~%" anzahl)
 			 (return-from addiere-bis-999 (values zahl (/ zahl anzahl 1.0))))
-;;;		   (if (= zahl 999)
-;;;			   (values zahl (/ zahl anzahl 1.0))
-;;;			   (addiere-bis-999 zahl anzahl))))))
 		   (addiere-bis-999 zahl anzahl)))))
 
 
