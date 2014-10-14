@@ -131,9 +131,7 @@
 
 
 
-
-
-(defun pprint-sudoku (tab)
+(defun pprint-sudoku (tab &optional (koordinaten 'nil))
   "Gibt ein Sudoku-Array als formatiertes Sudoku aus"
   (flet ((2d-array->list (array)
 		   (loop for i below (array-dimension array 0)
@@ -141,7 +139,12 @@
 						 collect (aref array i j)))))
 	(let ((i 0))
 	  (dolist (zeile (2d-array->list tab))
-		(format t "~{ ~A ~A ~A | ~A ~A ~A | ~A ~A ~A ~}~%" zeile)
+		(format t "~{ ~A ~A ~A | ~A ~A ~A | ~A ~A ~A ~}" zeile)
 		(incf i)
+		(if koordinaten
+			(format t " ~A~%" i)
+			(format t "~%"))
 		(when (and (zerop (rem i 3)) (/= i 9))
-		  (format t "-------+-------+-------~%"))))))
+		  (format t "-------+-------+-------~%"))
+		(when (= i 9)
+		  (format t "~% A B C   D E F   G H I~%~%"))))))
