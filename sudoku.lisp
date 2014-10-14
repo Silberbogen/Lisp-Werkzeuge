@@ -1,50 +1,60 @@
-(defparameter *tabelle* (make-array '(9 9) :initial-contents
-									'((3 9 4  8 5 2  6 7 1)
-									  (2 6 8  3 7 1  4 5 9)
-									  (5 7 1  6 9 4  8 2 3)
-									  (1 4 5  7 8 3  9 6 2)
-									  (6 8 2  9 4 5  3 1 7)
-									  (9 3 7  1 2 6  5 8 4)
-									  (4 1 3  5 6 7  2 9 8)
-									  (7 5 9  2 3 8  1 4 6)
-									  (8 2 6  4 1 9  7 3 5))))
-
-(defun gültige-sequenz-p (seq)
-  (let* ((sortiert (sort seq #'<))
-		 (gültig (apply #'< sortiert))
-		 (länge (length sortiert)))
-	(format t "Sortiert: ~A, gültig: ~A, Länge: ~A~%" sortiert gültig länge)
-	(and gültig (= 9 länge))))
-
-
-(defun zeile (nr tab)
-  (let ((lst '()))
-	(dotimes (i 9 lst)
-	  (push (aref tab nr i) lst))))
-
-(defun spalte (nr tab)
-  (let ((lst '()))
-	(dotimes (i 9 lst)
-	  (push (aref tab i nr) lst))))
-
-(defun box (nr tab)
-  (let ((lst '())
-		(x-kor (* 3 (rem nr 3)))
-		(y-kor (* 3 (truncate (/ nr 3)))))
-	(dotimes (i 3 lst)
-	  (dotimes (j 3)
-		(push (aref tab (+ i x-kor) (+ j y-kor)) lst)))))
-
-(defun gültige-lösung-p (tab)
-  (dotimes (i 9 t)
-	  (unless (and (gültige-sequenz-p (zeile i tab))
-				   (gültige-sequenz-p (spalte i tab))
-				   (gültige-sequenz-p (box i tab)))
-		(return-from gültige-lösung-p 'nil))))
+;-*- coding: utf-8 -*-
+;;;; Dateiname: sudoku.lisp
+;;;; Beschreibung: Routinen, um ein Sudoku, ein Sudok-Rätsel eine Sudoku-
+;;;;               Lösung zu erstellen
+;;;; ------------------------------------------------------------------------
+;;;; Author: Sascha Biermanns, <skkd.h4k1n9@yahoo.de>
+;;;; Lizenz: ISC
+;;;; Copyright (C) 2014 Sascha Biermanns
+;;;; Permission to use, copy, modify, and/or distribute this software for any
+;;;; purpose with or without fee is hereby granted, provided that the above
+;;;; copyright notice and this permission notice appear in all copies.
+;;;; THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+;;;; WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+;;;; MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+;;;; ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+;;;; WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+;;;; ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+;;;; OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+;;;; ------------------------------------------------------------------------
+;;;; Hinweis:
+;;;; Das Laden dieser Datei in Common Lisp erfolgt per:
+;;;; (load "sudoku.lisp")
+;;;; Zur Verbesserung der Geschwinidkeit bitte vorher compilieren per:
+;;;; (compile-file "sudoku.lisp")
 
 
 
-(defun erzeuge-rätsel-aus-vorgabe (tab &optional (anz 25) &aux (max 9) (felder 81))
+(defun möglichkeiten (zeile spalte tab)
+  "Gibt eine Liste aller Möglichkeiten einer Position zurück"
+  (flet ((zeile-nachbarn (zeile spalte &aux (nachbarn '()))
+		   (dotimes (i 9 nachbarn)
+			 (let ((x (aref tab zeile i)))
+			   (unless (or (eq '_ x) (= i spalte))
+				 (push x nachbarn)))))
+		 (spalte-nachbarn (zeile spalte &aux (nachbarn '()))
+		   (dotimes (i 9 nachbarn)
+			 (let ((x (aref tab i spalte)))
+			   (unless (or (eq x '_) (= i zeile))
+				 (push x nachbarn)))))
+		 (box-nachbarn (zeile spalte &aux (nachbarn '()))
+		   (let* ((zeile-min (* 3 (floor zeile 3)))    (zeile-max (+ zeile-min 3))
+				  (spalte-min (* 3 (floor spalte 3))) (spalte-max (+ spalte-min 3)))
+			 (do ((r zeile-min (1+ r))) ((= r zeile-max) nachbarn)
+			   (do ((c spalte-min (1+ c))) ((= c spalte-max))
+				 (let ((x (aref tab r c)))
+				   (unless (or (eq x '_) (= r zeile) (= c spalte))
+					 (push x nachbarn))))))))
+	(nset-difference
+	 (list 1 2 3 4 5 6 7 8 9)
+	 (nconc (zeile-nachbarn zeile spalte)
+			(spalte-nachbarn zeile spalte)
+			(box-nachbarn zeile spalte)))))
+
+
+
+(defun erzeuge-rätsel (tab &optional (anz 25) &aux (max 9) (felder 81))
+  "Erstelle aus einem gültigen Sudoku ein Rätsel zum Ausfüllen"
   (let ((rätsel (make-array '(9 9) :initial-element '_)))
 	(dotimes (i max rätsel)
 	  (dotimes (j max)
@@ -53,29 +63,68 @@
 
 
 
-(defun suche-sudoku ()
-  (let ((rätsel (make-array '(9 9) :initial-element '_)))
-	(flet ((setze-feld (i j)
-			 (let ((lst '(1 2 3 4 5 6 7 8 9)))
-			   (setf lst (set-difference lst (zeile i rätsel)))
-			   (setf lst (set-difference lst (spalte j rätsel)))
-			   (setf lst (set-difference lst (box (+ (truncate (/ i 3))
-													 (* (truncate (/ j 3)) 3)) rätsel)))
-			   (remove '_ lst)
-			   (when (null lst)
-				 (return-from suche-sudoku 'nil))
-			   (setf (aref rätsel i j) (elt lst (random (length lst)))))))
-	  (dotimes (i 9 rätsel)
-		(do ((j i (1+ j)))
-			((= j 9))
-		  (setze-feld i j)
-		  (when (eql '_ (aref rätsel j i))
-			(setze-feld j i)))))))
+(defun erzeuge-sudoku (&aux (max 9))
+  "Erzeugt ein gültiges Sudoku"
+  (flet ((suche-sudoku ()
+		   (let ((tab (make-array '(9 9) :initial-element '_)))
+			 (flet ((setze-feld (i j)
+					  (let ((lst (möglichkeiten i j tab)))
+						(when (null lst)
+						  (return-from suche-sudoku 'nil))
+						(setf (aref tab i j) (elt lst (random (length lst)))))))
+			   (dotimes (i max tab)
+				 (do ((j i (1+ j)))
+					 ((= j max))
+				   (setze-feld i j)
+				   (when (eql '_ (aref tab j i))
+					 (setze-feld j i))))))))
+	(let ((tab (suche-sudoku)))
+	  (when tab
+		(return-from erzeuge-sudoku tab))
+	  (erzeuge-sudoku))))
 
 
-(defun erzeuge-sudoku ()
-  (let ((rätsel (suche-sudoku)))
-	(when rätsel
-	  (return-from erzeuge-sudoku rätsel))
-	(erzeuge-sudoku)))
 
+(defun gültige-lösung-p (tab &aux (max 9))
+  "Prüft ob die übergebene Lösung ein gültiges Sudoku ist"
+  (flet ((zeile (nr)
+		   (let ((lst '()))
+			 (dotimes (i max lst)
+			   (push (aref tab nr i) lst))))
+		 (spalte (nr)
+		   (let ((lst '()))
+			 (dotimes (i max lst)
+			   (push (aref tab i nr) lst))))
+		 (box (nr)
+		   (let ((lst '())
+				 (x-kor (* 3 (rem nr 3)))
+				 (y-kor (* 3 (truncate (/ nr 3)))))
+			 (dotimes (i 3 lst)
+			   (dotimes (j 3)
+				 (push (aref tab (+ i x-kor) (+ j y-kor)) lst)))))
+		 (gültige-sequenz-p (seq)
+		   (let* ((sortiert (sort seq #'<))
+				  (gültig (apply #'< sortiert))
+				  (länge (length sortiert)))
+			 (and gültig (= max länge)))))
+	(dotimes (i max t)
+	  (unless (and (gültige-sequenz-p (zeile i))
+				   (gültige-sequenz-p (spalte i))
+				   (gültige-sequenz-p (box i)))
+		(return-from gültige-lösung-p 'nil)))))
+
+
+
+(defun löse-sudoku (tab &optional (zeile 0) (spalte 0) &aux (max 9))
+  "Löst ein Sudoku"
+  (cond
+   ((= zeile max)
+    tab)
+   ((= spalte max)
+    (löse-sudoku tab (1+ zeile) 0))
+   ((not (eq '_ (aref tab zeile spalte)))
+    (löse-sudoku tab zeile (1+ spalte)))
+   (t (dolist (auswahl (möglichkeiten zeile spalte tab) (setf (aref tab zeile spalte) '_))
+        (setf (aref tab zeile spalte) auswahl)
+        (when (eq tab (löse-sudoku tab zeile (1+ spalte)))
+          (return tab))))))
