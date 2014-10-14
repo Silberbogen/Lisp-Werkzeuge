@@ -25,6 +25,15 @@
 
 
 
+(defun erstelle-kopie (orig)
+  "Erzeugt eine Kopie des übergebenen Sudoku-Arrays"
+  (let ((kopie (make-array '(9 9))))
+	(dotimes (i 9 kopie)
+	  (dotimes (j 9)
+		(setf (aref kopie i j) (aref orig i j))))))
+
+
+
 (defun möglichkeiten (zeile spalte tab)
   "Gibt eine Liste aller Möglichkeiten einer Position zurück"
   (flet ((zeile-nachbarn (zeile spalte &aux (nachbarn '()))
@@ -75,13 +84,29 @@
 
 
 
-(defun erzeuge-rätsel (&optional (tab (erzeuge-sudoku)) (anz 25) &aux (max 9) (felder 81))
-  "Erstelle aus einem gültigen Sudoku ein Rätsel zum Ausfüllen"
-  (let ((rätsel (make-array '(9 9) :initial-element '_)))
-	(dotimes (i max rätsel)
-	  (dotimes (j max)
-		(when (< (random felder) anz)
-		  (setf (aref rätsel i j) (aref tab i j)))))))
+(defun erzeuge-rätsel (&optional (tab '()) (anz 25) (versuch '()) (runde 81))
+  (labels ((entferne-zahl (orig)
+			 (let ((i (random 9))
+				   (j (random 9)))
+			   (if (not (eq '_ (aref orig i j)))
+				   (let ((kopie (erstelle-kopie orig)))
+					 (setf (aref kopie i j) '_)
+					 (return-from entferne-zahl kopie))
+				   (entferne-zahl orig)))))
+	(cond ((null tab)
+		   (erzeuge-rätsel (erzeuge-sudoku) anz versuch runde))
+		  ((null versuch)
+		   (let ((versuch (erstelle-kopie tab)))
+			 (erzeuge-rätsel tab anz versuch runde)))
+		  ((= runde anz)
+		   (if (equalp (löse-sudoku (erstelle-kopie versuch)) tab)
+			   (return-from erzeuge-rätsel (values versuch tab))
+			   nil))
+		  (t
+		   (let ((temp (entferne-zahl (erstelle-kopie versuch))))
+			 (if (equalp (löse-sudoku (erstelle-kopie temp)) tab)
+				 (erzeuge-rätsel tab anz temp (1- runde))
+				 (erzeuge-rätsel tab anz versuch runde)))))))
 
 
 
@@ -148,3 +173,28 @@
 		  (format t "-------+-------+-------~%"))
 		(when (= i 9)
 		  (format t "~% A B C   D E F   G H I~%~%"))))))
+
+
+
+(defun hole-koordinaten ()
+  "Holt aus einer Eingabe 2 Koordinaten und einen Wert heraus"
+  (format t "Bitte gib die Koordinaten (z.B: A 3) und den Wert ein: ")
+  (let* ((eingabe (string-upcase (string-trim " " (read-line))))
+		 (y (- (char-int (aref eingabe 0)) 65)) ; 1 mehr, da Zählung bei 0 beginnt
+		 (lst (coerce (string-trim " " (subseq eingabe 1)) 'list))
+		 (x (- (char-int (first lst)) 49)) ; 1 mehr, da Zählung bei 9 beginnt
+		 (wert (- (char-int (first (last lst))) 48)))
+	(values x y wert)))
+
+
+
+(defun spiele-sudoku ()
+	(let* ((original (erzeuge-rätsel))
+		   (spiel (erstelle-kopie original))
+		   (beenden nil))
+	  (do ()
+		  (beenden)
+		(pprint-sudoku spiel t)
+		(multiple-value-bind (x y wert)
+			(hole-koordinaten)
+		  (setf (aref spiel x y) wert)))))
