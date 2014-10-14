@@ -53,16 +53,6 @@
 
 
 
-(defun erzeuge-rätsel (tab &optional (anz 25) &aux (max 9) (felder 81))
-  "Erstelle aus einem gültigen Sudoku ein Rätsel zum Ausfüllen"
-  (let ((rätsel (make-array '(9 9) :initial-element '_)))
-	(dotimes (i max rätsel)
-	  (dotimes (j max)
-		(when (< (random felder) anz)
-		  (setf (aref rätsel i j) (aref tab i j)))))))
-
-
-
 (defun erzeuge-sudoku (&aux (max 9))
   "Erzeugt ein gültiges Sudoku"
   (flet ((suche-sudoku ()
@@ -82,6 +72,16 @@
 	  (when tab
 		(return-from erzeuge-sudoku tab))
 	  (erzeuge-sudoku))))
+
+
+
+(defun erzeuge-rätsel (&optional (tab (erzeuge-sudoku)) (anz 25) &aux (max 9) (felder 81))
+  "Erstelle aus einem gültigen Sudoku ein Rätsel zum Ausfüllen"
+  (let ((rätsel (make-array '(9 9) :initial-element '_)))
+	(dotimes (i max rätsel)
+	  (dotimes (j max)
+		(when (< (random felder) anz)
+		  (setf (aref rätsel i j) (aref tab i j)))))))
 
 
 
