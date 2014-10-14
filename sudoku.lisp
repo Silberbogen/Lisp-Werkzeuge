@@ -128,3 +128,20 @@
         (setf (aref tab zeile spalte) auswahl)
         (when (eq tab (löse-sudoku tab zeile (1+ spalte)))
           (return tab))))))
+
+
+
+
+
+(defun pprint-sudoku (tab)
+  "Gibt ein Sudoku-Array als formatiertes Sudoku aus"
+  (flet ((2d-array->list (array)
+		   (loop for i below (array-dimension array 0)
+			  collect (loop for j below (array-dimension array 1)
+						 collect (aref array i j)))))
+	(let ((i 0))
+	  (dolist (zeile (2d-array->list tab))
+		(format t "~{ ~A ~A ~A | ~A ~A ~A | ~A ~A ~A ~}~%" zeile)
+		(incf i)
+		(when (and (zerop (rem i 3)) (/= i 9))
+		  (format t "-------+-------+-------~%"))))))

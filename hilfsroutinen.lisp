@@ -24,6 +24,14 @@
 
 
 
+(defun 2d-array->list (array)
+  "Macht aus einem zweidimensionalem Array eine Liste"
+  (loop for i below (array-dimension array 0)
+        collect (loop for j below (array-dimension array 1)
+                      collect (aref array i j))))
+
+
+
 (defun abundante-zahl-p (n)
   "Eine natürliche Zahl heißt abundant (lat. abundans „überladen“), wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) größer ist als die Zahl selbst. Die kleinste abundante Zahl ist 12 (1+2+3+4+6 = 16 > 12). Die ersten geraden abundanten Zahlen lauten 12, 18, 20, 24, 30, 36, 40, 42, …"
   (> (apply #'+ (sammle-divisoren n t)) n))
