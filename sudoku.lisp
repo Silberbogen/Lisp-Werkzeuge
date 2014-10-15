@@ -198,8 +198,8 @@
 	
 
 
-
 (defun spiele-sudoku ()
+  "Ein vollständiges Sudoku-Spiel, inklusive Hinweisen und Zugrücknahme"
   (format t "Erzeuge neues Rätsel, bitte warten!~%")
   (let* ((original (erzeuge-sudoku))
 		 (spiel (erzeuge-rätsel (erstelle-kopie original)))
@@ -208,7 +208,7 @@
 	(flet ((zeige-anleitung ()
 			 (format t "--- ANLEITUNG ---~%")
 			 (format t "Durch Eingabe von ?, MENÜ, ANLEITUNG oder ANWEISUNG bekommst du diese Übersicht angezeigt.~%")
-			 (format t "Die Eingabe von HINWEIS, TIP oder HILFE deckt genau eine weitere Zahl auf.~%")
+			 (format t "Die Eingabe von >, HINWEIS, TIP oder HILFE deckt genau eine weitere Zahl auf.~%")
 			 (format t "Die Eingabe von AUFLÖSUNG, BEENDEN, ENDE, SCHLUß, QUIT oder EXIT beendet das Spiel und zeigt~%dir die vollständige Auflösung an.~%")
 			 (format t "Die Eingabe von <, ZURÜCK, UNDO, UPS, ENTSCHULDIGUNG, DAVOR nimmt die letzte Änderung zurück.~%")
 			 (format t "Um einen Wert in ein Feld einzutragen, mußt du eine Eingabe in der Form der Koordinaten (erst~%Buchstabe, dann Zahl) gefolgt von einem Leerzeichen und der Zahl die du an dieser Stelle~%wünschst.~%~%"))
@@ -242,17 +242,22 @@
 						(i (first zug))
 						(j (second zug))
 						(wert (third zug)))
-				   (setf (aref spiel i j) wert)))))			 
+				   (setf (aref spiel i j) wert))))
+		   (print-lösbarkeit ()
+			 (if (equalp (löse-sudoku (erstelle-kopie spiel)) original)
+				 (format t "(lösbar) ")
+				 (format t "(unlösbar) "))))
 	  (do ()
 		  (nil)
 		(pprint-sudoku spiel t)
+		(print-lösbarkeit)
 		(let ((ergebnis (hole-eingabe)))
 		  (case (first ergebnis)
 			((? menü anleitung anweisung)
 			 (zeige-anleitung))
 			((koordinaten)
 			 (mache-zug ergebnis))
-			((hinweis tip hilfe)
+			((> hinweis tip hilfe)
 			 (gebe-hinweis))
 			((löse auflösung beenden ende schluß quit exit)
 			 (return-from spiele-sudoku (pprint-sudoku original t)))
