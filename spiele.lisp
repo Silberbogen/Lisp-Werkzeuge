@@ -49,10 +49,12 @@ Ist jetzt Sommer (j/n)? j
 T"
   (princ zeichenkette)
   (let ((eingabe (read)))
-    (case eingabe
-      ((j J ja Ja JA) t)
-      ((n N nein Nein NEIN) nil)
-      (otherwise (j-oder-n-p zeichenkette)))))
+	(if (symbolp eingabe)
+		(case eingabe
+		  ((j ja) t)
+		  ((n ne nei nein) nil)
+		  (otherwise (j-oder-n-p zeichenkette)))
+		(j-oder-n-p zeichenkette))))
 
 
 
@@ -63,18 +65,18 @@ Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
   (let ((zufallszahl (random länge)))
 	(cond ((zerop durchgang)
 		   liste)
-	  ((oddp zufallszahl)
-	   (mischen (append (reverse (nthcdr zufallszahl liste))
-						(butlast liste (- länge zufallszahl)))
-				(1- durchgang)))
-	  ((evenp zufallszahl)
-	   (mischen (append (nthcdr zufallszahl liste)
-						(butlast liste (- länge zufallszahl)))
-				(1- durchgang)))
-	  (t
-	   (mischen (append (nthcdr zufallszahl liste)
-						(reverse (butlast liste (- länge zufallszahl)))
-						(1- durchgang)))))))
+		  ((oddp zufallszahl)
+		   (mischen (append (reverse (nthcdr zufallszahl liste))
+							(butlast liste (- länge zufallszahl)))
+					(1- durchgang)))
+		  ((evenp zufallszahl)
+		   (mischen (append (nthcdr zufallszahl liste)
+							(butlast liste (- länge zufallszahl)))
+					(1- durchgang)))
+		  (t
+		   (mischen (append (nthcdr zufallszahl liste)
+							(reverse (butlast liste (- länge zufallszahl)))
+							(1- durchgang)))))))
 
 
 
@@ -106,9 +108,8 @@ Beispiel: (würfelwurf) => 4"
 							 #'addiere-bis-999
 							 #'schere-stein-papier
 							 #'begriffe-raten))
-		 (anzahl (length spiele-liste))
-		 (beenden nil))
-	(do ()
+		 (anzahl (length spiele-liste)))
+	(do (beenden)
 		(beenden)
 	  (format t "~%Dir stehen folgende Möglichkeiten zur Auswahl:~%~%")
 	  (do ((i 0 (1+ i)))
@@ -138,7 +139,7 @@ Beispiel: (würfelwurf) => 4"
   (format t "Versuche eine Zahl zwischen ~:d und ~:d zu erraten!~%" minimum maximum)
   (do ((anzahl 0 (1+ anzahl))
 	   (zahl (+ (random (1+ (- maximum minimum))) minimum))
-	   (versuch))
+	   versuch)
 	  ((and (numberp versuch) (= versuch zahl))
 	   (format t "Du hast die richtige Zahl in ~A Versuchen erraten!~%" anzahl))
 	(princ "Dein Versuch? ")
@@ -225,7 +226,7 @@ Beispiel: (würfelwurf) => 4"
 					  (format t "~A~%" (append geworfen liste))
 					  (versuche-zu-punkten zahl))))))
 	(let* ((wurf (werfe-zwei-würfel))
-		   (liste ())
+		   liste
 		   (geworfen (list (first wurf) 'und (second wurf) 'gewürfelt)))
 	  (cond ((sofort-gewinn-p wurf)
 			 (setf liste (list '-- (sage-wurf wurf) '-- 'du 'gewinnst))
@@ -394,7 +395,7 @@ Beispiel: (würfelwurf) => 4"
 					  liste)
 				   (push (string-trim " " i) liste))))))
 	(do* ((begriffe (mischen (erstelle-suchliste dateiname)))
-		  (beenden nil))
+		  beenden)
 		 ((or (null begriffe) beenden)
 		  (format t "Vielen Dank für's Spielen!~%"))
 	  (spiele (pop begriffe))

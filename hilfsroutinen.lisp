@@ -41,11 +41,10 @@
 (defun addiere-ziffern (n &optional (summe 0))
   "Nimmt eine Zahl entgegen und gibt die Summe all ihrer Ziffern zurück.
 Beispiel: (addiere-ziffern 125) => 8"
-  (cond
-	((zerop n)
-	 summe)
-	(t
-	 (addiere-ziffern (truncate (/ n 10)) (+ summe (rem n 10))))))
+  (cond	((zerop n)
+		 summe)
+		(t
+		 (addiere-ziffern (truncate (/ n 10)) (+ summe (rem n 10))))))
 
 
 
@@ -82,9 +81,9 @@ Das kleinste befreundete Zahlenpaar wird von den Zahlen 220 und 284 gebildet. Ma
     Die Summe der echten Teiler von 220 ergibt 1 + 2 + 4 + 5 + 10 + 11 + 20 + 22 + 44 + 55 + 110 = 284 und die Summe der echten Teiler von 284 ergibt 1 + 2 + 4 + 71 + 142 = 220.
 In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die größere Zahl defizient."
   (let* ((bz (apply #'+ (sammle-divisoren n t)))
-		(bz-summe (apply #'+ (sammle-divisoren bz t))))
+		 (bz-summe (apply #'+ (sammle-divisoren bz t))))
 	(when (= n bz-summe)
-		bz)))
+	  bz)))
 
 
 
@@ -113,15 +112,14 @@ Beispiel: (but-nth 4 '(1 2 3 4 5 6 7 8 9)) => (1 2 3 4 6 7 8 9)"
   "Gibt die Collatz-Sequenz einer gegebenen Zahl n als Liste zurück.
 Beispiel: (collatz-sequenz 19) => (19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 5 16 8 4 2 1)"
   (push n liste)
-  (cond
-	((= n 1)
-	 (reverse liste))
-	((evenp n)
-	 (setf n (/ n 2))
-	 (collatz-sequenz n liste))
-	(t
-	 (setf n (1+ (* 3 n)))
-	 (collatz-sequenz n liste))))
+  (cond	((= n 1)
+		 (reverse liste))
+		((evenp n)
+		 (setf n (/ n 2))
+		 (collatz-sequenz n liste))
+		(t
+		 (setf n (1+ (* 3 n)))
+		 (collatz-sequenz n liste))))
 
 
 
@@ -671,11 +669,10 @@ Beispiele:
 
 (defun teil-der-liste (zahl liste)
   (dolist (i liste)
-	(cond
-	  ((= i zahl)
-	   (return t))
-	  ((> i zahl)
-	   (return nil)))))
+	(cond ((= i zahl)
+		   (return t))
+		  ((> i zahl)
+		   (return nil)))))
 
 
 

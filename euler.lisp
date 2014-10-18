@@ -545,7 +545,7 @@ Antwort: 5537376230"
 					   53503534226472524250874054075591789781264330331690))
 		 (summe (apply #'+ zahlen))
 		 (zeichenkette (princ-to-string summe))
-		 (x nil))
+		 x)
 	(do ((i 9 (1- i)))
 		((< i 0)
 		 x)
@@ -744,7 +744,7 @@ Eine Zahl n wird unzulänglich genannt, wenn die Summe seiner echten Teiler klei
 Da 12 die kleinste abundante Zahl ist, 1 + 2 + 3 + 4 + 6 = 16, ist die kleinste Zahl, die als die Summe von zwei abundanten Zahlen geschrieben werden kann, 24. Durch mathematische Analyse kann gezeigt werden, dass alle ganzen Zahlen, die größer als 28123 sind, als Summe von zwei abundanten Zahlen geschrieben werden können. Jedoch kann diese obere Begrenzung nicht durch Analyse weiter verringert werden, obwohl bekannt ist, dass die größte Zahl, die nicht als Summe von zwei abundanten Zahlen ausgedrückt werden kann, kleiner als diese Begrenzung ist.
 Finden Sie die Summe aller natürlichen Zahlen, die nicht als die Summe von zwei abundanten Zahlen geschrieben werden können.
 Antwort: 4179871"
-  (let ((liste-abundanter-zahlen nil)
+  (let (liste-abundanter-zahlen
 		(summe 0))
 	;; Summe aller Zahlen von 1-Maximum in summe speichern und
 	;; eine Liste aller abundanten Zahlen erstellen
@@ -867,7 +867,7 @@ Antwort: -59231"
 	(let ((zahl1 0)
 		  (zahl2 0)
 		  (gezählte-primzahlen 0)
-		  (aktuelle-primzahlen))
+		  aktuelle-primzahlen)
 	  (do ((a -999 (1+ a)))
 		  ((zerop a)
 		   (* zahl1 zahl2))
@@ -918,7 +918,7 @@ Wenn wir diese numerisch ordnen und alle Wiederholungen entfernen, erhalten wir 
 4, 8, 9, 16, 25, 27, 32, 64, 81, 125, 243, 256, 625, 1024, 3125
 Wie viele verschiedene Terme sind in der Folge ab mit 2 ≤ a ≤ 100 und 2 ≤ b ≤ 100?
 Antwort: 9183"
-  (let ((menge nil))
+  (let (menge)
 	(do ((a 2 (1+ a)))
 		((> a 100)
 		 (length menge))
@@ -984,7 +984,7 @@ Finden Sie die Summe aller Produkte, deren Multiplikand/Multiplikator/Produkt-Gl
 HINWEIS: Einige Produkte können auf mehr als nur eine Weise pandigital dargestellt werden, also stellen Sie sicher, dass Sie diese nur einmal zählen.
 Antwort: 45228"
   (flet ((alle-pandigitalen-produkte ()
-		   (let ((liste nil)
+		   (let (liste
 				 (produkt 0))
 			 (do ((i 1 (1+ i)))
 				 ((> i 99)
@@ -1009,7 +1009,7 @@ Wir zählen Brüche wie 30/50 = 3/5 als triviale Beispiele.
 Es gibt genau 4 nicht-triviale Beispiele solcher Brüche, die kleiner als 1 sind und sowohl einen zweistelligen Zähler als auch einen zweistelligen Nenner haben.
 Wenn das Produkt dieser vier Brüche so weit wie möglich gekürzt ist, finden Sie den Wert des Nenners.
 Antwort: 100"
-  (let ((liste '()))
+  (let (liste)
     (do ((zähler 11 (1+ zähler)))
 		((> zähler 98))
       (do ((nenner (1+ zähler) (1+ nenner)))
@@ -1049,7 +1049,7 @@ Die Zahl 197 wird kreisförmige Primzahl genannt, denn alle Rotationen ihrer Zif
 Es gibt 13 solche Primzahlen unter 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, und 97.
 Wie viele kreisförmige Primzahlen unter 1 Million gibt es?
 Antwort: 55"
-  (let ((liste nil))
+  (let (liste)
 	(dolist (i (sieb-des-eratosthenes 999999) (length liste))
 	  (when (kreisförmige-primzahl-p i) 
 		(push i liste)))))
@@ -1614,7 +1614,7 @@ Antwort: 376"
 	
 		   (erstelle-kartenliste (stream-name)
 			 "Einleseformat: 10 durch Leerzeichen getrennte Daten je Zeile"
-			 (let ((kartenliste nil))
+			 (let (kartenliste)
 			   (with-open-file (stream stream-name)
 				 (do ((i (read-line stream nil)
 						 (read-line stream nil)))
@@ -1732,18 +1732,17 @@ Ihnen wurde Ihre Aufgabe einfach gemacht, denn der Schlüssel besteht aus drei K
 Antwort: 107359"
   (labels ((mögliche-entschlüsselung (pw1 pw2 pw3 crypto-text)
 			 (let* ((summe 0)
-					(entschlüsselt
-					 (with-output-to-string (sstr)
-					   (let ((p crypto-text))
-						 (dotimes (i 400)
-						   (let ((d1 (logxor (pop p) pw1))
-								 (d2 (logxor (pop p) pw2))
-								 (d3 (logxor (pop p) pw3)))
-							 (incf summe (+ d1 d2 d3))
-							 (format sstr "~C~C~C" (code-char d1) (code-char d2) (code-char d3))))
-						 (let ((d (logxor (first p) pw1)))
-						   (incf summe d)
-						   (write-char (code-char d) sstr))))))
+					(entschlüsselt (with-output-to-string (sstr)
+									 (let ((p crypto-text))
+									   (dotimes (i 400)
+										 (let ((d1 (logxor (pop p) pw1))
+											   (d2 (logxor (pop p) pw2))
+											   (d3 (logxor (pop p) pw3)))
+										   (incf summe (+ d1 d2 d3))
+										   (format sstr "~C~C~C" (code-char d1) (code-char d2) (code-char d3))))
+									   (let ((d (logxor (first p) pw1)))
+										 (incf summe d)
+										 (write-char (code-char d) sstr))))))
 			   (if (and (search " the " entschlüsselt) (search ". " entschlüsselt))
 				   (list summe entschlüsselt)
 				   nil)))
@@ -1925,7 +1924,7 @@ Finden Sie die maximale Summe von der Spitze bis zum Boden in triangle.txt (Rech
 HINWEIS: Dies ist eine deutlich schwerere Version von Aufgabe 18. Es ist nicht möglich, jede einzelne Route auszuprobieren, um diese Aufgabe zu lösen, da es insgesamt 299 Routen gibt! Wenn man eine Billion (1012) Routen pro Sekunde berechnen könnte, würde es über 20 Milliarden Jahre dauern, um diese alle zu berechnen. Es gibt einen effizienten Algorithmus, um das Problem zu lösen. ;o)
 Antwort: 7273"
   (flet ((erstelle-zahlenpyramide (stream-name)
-		   (let ((zahlenliste nil))
+		   (let (zahlenliste)
 			 (with-open-file (stream stream-name)
 			   (do ((i (read-line stream nil)
 					   (read-line stream nil)))
@@ -2112,7 +2111,7 @@ Antwort: 402"
 				 (setf (gethash (elt liste i) kette 0) (+ (- l i) zusatz))))
 			 (faktor-ziffer-summe (n)
 			   (reduce #'+ (mapcar #'faktor (zahl->liste n))))
-			 (ziffer-faktoren-kette (n &optional (liste nil))
+			 (ziffer-faktoren-kette (n &optional liste)
 			   (when (member n liste)
 				 (speichere-längen (reverse liste))
 				 (return-from ziffer-faktoren-kette (length liste)))
@@ -2260,7 +2259,7 @@ Die Textdatei keylog.txt enthält fünfzig erfolgreiche Login-Versuche.
 Gegeben ist, dass die drei Zeichen in ihrer Reihenfolge abgefragt werden; Analysieren Sie die Datei, um den kürzesten möglichen geheimen Passcode mit unbekannter Länge zu bestimmen.
 Antwort: 73162890"
   (labels ((erstelle-keylogliste (stream-name)
-			 (let ((zahlenliste nil))
+			 (let (zahlenliste)
 			   (with-open-file (stream stream-name)
 				 (do ((i (read stream nil)
 						 (read stream nil)))
@@ -2268,14 +2267,14 @@ Antwort: 73162890"
 					  zahlenliste)
 				   (push i zahlenliste)))))
 		   (teste-ziffer-p (ziffer liste)
-			 (let ((vorhanden nil))
+			 (let (vorhanden)
 			   (dolist (i liste vorhanden)
 				 (when (eql ziffer (first i))
 				   (setf vorhanden t))
 				 (when (or (eql ziffer (second i)) (eql ziffer (third i)))
 				   (return nil)))))
 		   (entferne-ziffer (ziffer liste)
-			 (let ((neue-liste nil))
+			 (let (neue-liste)
 			   (dolist (i liste neue-liste)
 				 (push (delete ziffer i) neue-liste))))
 		   (suche-ziffer (kandidaten liste)
@@ -2285,7 +2284,7 @@ Antwort: 73162890"
 	(let ((keylog (mapcar #'zahl->liste (erstelle-keylogliste "/home/sascha/lisp/p079_keylog.txt")))
 		  (kandidaten '(1 2 3 4 5 6 7 8 9 0)))
 	  (do ((i 1 (1+ i))
-		   (lösung nil))
+		   lösung)
 		  ((> i 10)
 		   (delete nil (reverse lösung)))
 		(push (suche-ziffer kandidaten keylog) lösung)
@@ -2357,7 +2356,7 @@ Die 11K Textdatei roman.txt (Rechtsklick und 'Ziel speichern unter...'), enthäl
 Finden Sie die Anzahl von gesparten Zeichen, wenn an jede davon in ihrer minimalen Form schreibt.
 HINWEIS: Sie können annehmen, dass all die römischen Zahlen in der Datei nicht mehr als vier aufeinanderfolgende identische Einheiten enthalten."
   (labels ((erstelle-ziffernliste (stream-name)
-			 (let ((ziffernliste nil))
+			 (let (ziffernliste)
 			   (with-open-file (stream stream-name)
 				 (do ((i (read stream nil)
 						 (read stream nil)))
@@ -2416,7 +2415,7 @@ Find the sum of all the numbers less than 108 that are both palindromic and can 
 Antwort: 2906969179"
   (flet ((finde-summe (limit)
 		   (let ((sqrt-limit (truncate (sqrt limit)))
-				 (liste nil))
+				 liste)
 			 (do ((i 1 (1+ i)))
 				 ((> i (1- sqrt-limit))
 				  (reduce #'+ (remove-duplicates liste)))
