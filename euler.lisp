@@ -2414,19 +2414,19 @@ Ein gut konstruiertes Su-Doku-Rätsel hat eine eindeutige Lösung und kann mit L
 Die 6K Textdatei sudoku.txt (Rechtsklick und 'Ziel speichern unter...'), enthält fünfig verschiedene Su-Doku-Puzzles in verschiedenen Schwierigkeiten, aber alle mit eindeutigen Lösungen (Das erste Puzzle in der Datei ist das Beispiel oben).
 Lösen Sie alle fünfzig Puzzles und finden Sie die Summe der dreistelligen Zahlen, die in der linken oberen Ecke jedes Lösungs-Gitters zu finden sind; Beispiel: 483 ist die dreistellige Zahl, die in der linken oberen Ecke im Lösungs-Gitter oben gefunden werden kann.
 Antwort: 24702"
-  (labels ((möglichkeiten (zeile spalte tab)
+  (labels ((möglichkeiten (tab spalte zeile)
 			 "Gibt eine Liste aller Möglichkeiten einer Position zurück"
-			 (flet ((zeile-nachbarn (zeile spalte &aux (nachbarn '()))
+			 (flet ((zeile-nachbarn (zeile spalte &aux nachbarn)
 					  (dotimes (i 9 nachbarn)
 						(let ((x (aref tab zeile i)))
 						  (unless (or (zerop x) (= i spalte))
 							(push x nachbarn)))))
-					(spalte-nachbarn (zeile spalte &aux (nachbarn '()))
+					(spalte-nachbarn (zeile spalte &aux nachbarn)
 					  (dotimes (i 9 nachbarn)
 						(let ((x (aref tab i spalte)))
 						  (unless (or (zerop x) (= i zeile))
 							(push x nachbarn)))))
-					(box-nachbarn (zeile spalte &aux (nachbarn '()))
+					(box-nachbarn (zeile spalte &aux nachbarn)
 					  (let* ((zeile-min (* 3 (floor zeile 3)))    (zeile-max (+ zeile-min 3))
 							 (spalte-min (* 3 (floor spalte 3))) (spalte-max (+ spalte-min 3)))
 						(do ((r zeile-min (1+ r))) ((= r zeile-max) nachbarn)
@@ -2447,7 +2447,7 @@ Antwort: 24702"
 					(löse-sudoku tab (1+ zeile) 0))
 				   ((not (zerop (aref tab zeile spalte)))
 					(löse-sudoku tab zeile (1+ spalte)))
-				   (t (dolist (auswahl (möglichkeiten zeile spalte tab) (setf (aref tab zeile spalte) 0))
+				   (t (dolist (auswahl (möglichkeiten tab spalte zeile) (setf (aref tab zeile spalte) 0))
 						(setf (aref tab zeile spalte) auswahl)
 						(when (eq tab (löse-sudoku tab zeile (1+ spalte)))
 						  (return tab))))))
