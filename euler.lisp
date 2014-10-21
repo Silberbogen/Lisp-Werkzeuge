@@ -2445,7 +2445,7 @@ Antwort: 24702"
 					tab)
 				   ((= spalte max)
 					(löse-sudoku tab (1+ zeile) 0))
-				   ((not (zerop (aref tab zeile spalte)))
+				   ((plusp (aref tab zeile spalte))
 					(löse-sudoku tab zeile (1+ spalte)))
 				   (t (dolist (auswahl (möglichkeiten tab spalte zeile) (setf (aref tab zeile spalte) 0))
 						(setf (aref tab zeile spalte) auswahl)
