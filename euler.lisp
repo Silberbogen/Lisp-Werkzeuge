@@ -2406,6 +2406,79 @@ Antwort: 8581146"
 
 
 
+(defun euler-96 ()
+  "Su Doku
+Aufgabe 96
+Su Doku (japanisch für Zahlen platzieren) ist der Name eines bekannten Puzzle-Konzepts. Sein Ursprung ist unklar, aber Anerkennung muss Leonhard Euler gezollt werden, der eine ähnliche und deutlich schwierigere Puzzle-Idee namens Lateinische Quadrate erfand. Aber das Ziel bei Su-Doku-Rätseln ist es, alle Leerstellen (oder Nullen) in einem 9 mal 9 Gittter so zu ersetzen, dass jede Reihe, Spalte und 3 mal 3 Box jede der Ziffern von 1 bis 9 enthält. Unten ist ein Beispiel eines typischen Anfangs-Puzzle-Gitters und sein Lösungs-Gitter.
+Ein gut konstruiertes Su-Doku-Rätsel hat eine eindeutige Lösung und kann mit Logik gelöst werden, obwohl es notwendig sein kann, 'Raten und testen'-Methoden zu benutzen, um Möglichkeiten zu eliminieren (es gibt viele umstrittene Meinungen dazu). Die Komplexität der Suche bestimmt die Schwierigkeit des Puzzle; das Beispiel oben wird als einfach betrachtet, da es durch direkte Ableitung gelöst werden kann.
+Die 6K Textdatei sudoku.txt (Rechtsklick und 'Ziel speichern unter...'), enthält fünfig verschiedene Su-Doku-Puzzles in verschiedenen Schwierigkeiten, aber alle mit eindeutigen Lösungen (Das erste Puzzle in der Datei ist das Beispiel oben).
+Lösen Sie alle fünfzig Puzzles und finden Sie die Summe der dreistelligen Zahlen, die in der linken oberen Ecke jedes Lösungs-Gitters zu finden sind; Beispiel: 483 ist die dreistellige Zahl, die in der linken oberen Ecke im Lösungs-Gitter oben gefunden werden kann.
+Antwort: 24702"
+  (labels ((möglichkeiten (zeile spalte tab)
+			 "Gibt eine Liste aller Möglichkeiten einer Position zurück"
+			 (flet ((zeile-nachbarn (zeile spalte &aux (nachbarn '()))
+					  (dotimes (i 9 nachbarn)
+						(let ((x (aref tab zeile i)))
+						  (unless (or (zerop x) (= i spalte))
+							(push x nachbarn)))))
+					(spalte-nachbarn (zeile spalte &aux (nachbarn '()))
+					  (dotimes (i 9 nachbarn)
+						(let ((x (aref tab i spalte)))
+						  (unless (or (zerop x) (= i zeile))
+							(push x nachbarn)))))
+					(box-nachbarn (zeile spalte &aux (nachbarn '()))
+					  (let* ((zeile-min (* 3 (floor zeile 3)))    (zeile-max (+ zeile-min 3))
+							 (spalte-min (* 3 (floor spalte 3))) (spalte-max (+ spalte-min 3)))
+						(do ((r zeile-min (1+ r))) ((= r zeile-max) nachbarn)
+						  (do ((c spalte-min (1+ c))) ((= c spalte-max))
+							(let ((x (aref tab r c)))
+							  (unless (or (zerop x) (= r zeile) (= c spalte))
+								(push x nachbarn))))))))
+			   (nset-difference
+				(list 1 2 3 4 5 6 7 8 9)
+				(nconc (zeile-nachbarn zeile spalte)
+					   (spalte-nachbarn zeile spalte)
+					   (box-nachbarn zeile spalte)))))
+		   (löse-sudoku (tab &optional (zeile 0) (spalte 0) &aux (max 9))
+			 "Löst ein Sudoku"
+			 (cond ((= zeile max)
+					tab)
+				   ((= spalte max)
+					(löse-sudoku tab (1+ zeile) 0))
+				   ((not (zerop (aref tab zeile spalte)))
+					(löse-sudoku tab zeile (1+ spalte)))
+				   (t (dolist (auswahl (möglichkeiten zeile spalte tab) (setf (aref tab zeile spalte) 0))
+						(setf (aref tab zeile spalte) auswahl)
+						(when (eq tab (löse-sudoku tab zeile (1+ spalte)))
+						  (return tab))))))
+		   (erstelle-sudokuliste (stream-name)
+			 "Einleseformat: 1.Zeile: Sudokuname, 2.-10. Zeile je 9 Ziffern pro Zeile"
+			 (let (sudokuliste)
+			   (with-open-file (stream stream-name)
+				 (dotimes (i 50 (nreverse sudokuliste))
+				   (read-line stream nil)
+				   (let ((sudoku (make-array '(9 9))))
+					 (dotimes (x 9)
+					   (let ((zeile (read-line stream nil)))
+						 (dotimes (y 9)
+						   (setf (aref sudoku x y) (parse-integer (subseq zeile y (1+ y)))))))
+					 (push sudoku sudokuliste))))))
+		   (löse-sudokuliste ()
+			 "Löst alles Sudokus"
+			 (let ((sudoku-liste (erstelle-sudokuliste "/home/sascha/lisp/p096_sudoku.txt"))
+				   gelöste-sudoku)
+			   (dolist (sudoku sudoku-liste (nreverse gelöste-sudoku))
+				 (push (löse-sudoku sudoku) gelöste-sudoku))))
+		   (addiere-sudoku-zahlen ()
+			 "Addiert die Ziffern der Sudokus"
+			 (let ((summe 0)
+				   (gelöste-sudokus (löse-sudokuliste)))
+			   (dolist (sudoku gelöste-sudokus summe)
+				 (incf summe (+ (* 100 (aref sudoku 0 0)) (* 10 (aref sudoku 0 1)) (aref sudoku 0 2)))))))
+	(addiere-sudoku-zahlen)))
+
+
+
 (defun euler-125 ()
   "Palindromic sums
 Problem 125
