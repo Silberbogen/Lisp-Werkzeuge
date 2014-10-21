@@ -412,6 +412,14 @@ Beispiele:
 
 
 
+(defun würfelwurf (&optional (seiten 6))
+  "(würfelwurf &optional seiten)
+WÜRFELWURF bildet den Wurf mit einem in Spieleboxen üblichen, voreingestellt 6-seitigen, Würfel nach. Durch einen Aufruf mit einer anderen Seitenzahl wird ein entsprechender über Seiten verfügender Würfel angenommen.
+Beispiel: (würfelwurf) => 4"
+  (1+ (random seiten)))
+
+
+
 (defun zahl->liste (zahl)
   "Die übergebene Zahl wird als Liste von Ziffern zurückgegeben."
   (map 'list #'(lambda (zeichen) (read-from-string (string zeichen)))
@@ -686,3 +694,92 @@ Beispiele:
 	 :for end = (and beg (position-if trennzeichenp string :start beg))
 	 :when beg :collect (subseq string beg end)
 	 :while end))
+
+
+
+;;; Monopoly
+
+(defun monopoly (&optional (max 1000000) (würfel 4))
+  (let* ((feldnamen '(go a1 cc1 a2 t1 r1 b1 ch1 b2 b3 jail c1 u1 c2 c3 r2 d1 cc2 d2 d3 fp e1 ch2 e2 e3 r3 f1 f2 u2 f3 g2j g1 g2 cc3 g3 r4 ch3 h1 t2 h2))
+		 (felder (make-hash-table))
+		 (anzahl-felder (length feldnamen))
+		 (pos 0)
+		 (pasch 0)
+		 (ziehe-gemeinschaftskarte (let ((zähler 0))
+									 #'(lambda ()
+										 (incf zähler)
+										 (when (> zähler 16)
+										   (setf zähler 1))
+										 zähler)))
+		 (ziehe-ereigniskarte (let ((zähler 0))
+								#'(lambda ()
+									(incf zähler)
+									(when (> zähler 16)
+									  (setf zähler 1))
+									zähler))))
+	(labels ((setze-pos (wert)
+			   (if (>= wert anzahl-felder)
+				   (decf wert anzahl-felder))
+			   (if (< wert 0)
+				   (incf wert anzahl-felder))
+			   (setf pos wert)
+			   (case (elt feldnamen pos)
+				 ((cc1 cc2 cc3) (gemeinschaftskarte))
+				 ((ch1 ch2 ch3) (ereigniskarte))
+				 ((g2j) (setze-ort 'jail))))
+			 (setze-ort (wert)
+			   (setze-pos (position wert feldnamen)))
+			 (setze-nächster-bahnhof ()
+			   (cond ((or (< pos (position 'r1 feldnamen)) (> pos (position 'r4 feldnamen)))
+					  (setze-ort 'r1))
+					 ((< pos (position 'r2 feldnamen))
+					  (setze-ort 'r2))
+					 ((< pos (position 'r3 feldnamen))
+					  (setze-ort 'r3))
+					 (t
+					  (setze-ort 'r4))))
+			 (setze-nächstes-werk ()
+			   (if (or (< pos (position 'u1 feldnamen)) (> pos (position 'u2 feldnamen)))
+				   (setze-ort 'u1)
+				   (setze-ort 'u2)))
+			 (setze-drei-felder-zurück ()
+			   (setze-pos (- pos 3)))
+			 (gemeinschaftskarte ()
+			   (case (funcall ziehe-gemeinschaftskarte)
+				 (1 (setze-ort 'go))
+				 (2 (setze-ort 'jail))
+				 (3 (setze-ort 'c1))
+				 (4 (setze-ort 'e3))
+				 (5 (setze-ort 'h2))
+				 (6 (setze-ort 'r1))
+				 (7 (setze-nächster-bahnhof))
+				 (8 (setze-nächster-bahnhof))
+				 (9 (setze-nächstes-werk))
+				 (10 (setze-drei-felder-zurück))))
+			 (ereigniskarte ()
+			   (case (funcall ziehe-ereigniskarte)
+				 (1 (setze-ort 'go))
+				 (2 (setze-ort 'jail)))))
+	(dotimes (i max)
+		(let ((wurf1 (würfelwurf würfel))
+			  (wurf2 (würfelwurf würfel)))
+		  (if (= wurf1 wurf2)
+			  (incf pasch)
+			  (setf pasch 0))
+		  (if (= pasch 3)
+			  (setze-ort 'jail)
+			  (setze-pos (+ pos wurf1 wurf2))))
+	  (incf (gethash (elt feldnamen pos) felder 0)))
+	(let (lst)
+	  (dotimes (i anzahl-felder)
+		(push (list i (elt feldnamen i) (* (/ (gethash (elt feldnamen i) felder 0) max 1.0) 100)) lst))
+	  (sort lst  #'> :key #'third)))))
+
+	  
+		  
+		
+	
+
+
+
+

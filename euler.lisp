@@ -2336,8 +2336,45 @@ Antwort: 427337"
 		   (let ((matrix (read-matrix zeilen spalten dateiname)))
 			 (aref (filtere-kosten zeilen spalten matrix) (1- zeilen) (1- spalten)))))
 	(berechne-minimale-kosten 80 80 "~/lisp/p081_matrix.txt")))
-	  
-	
+
+
+
+(defun euler-84 ()
+  "Monopoly-Wahrscheinlichkeiten
+Aufgabe 84
+Im Spiel Monopoly ist das Standard-Spielfeld wie folgt aufgebaut:
+GO A1 CC1 A2 T1 R1 B1 CH1 B2 B3	JAIL
+H2 	  	                        C1
+T2 	  	                        U1
+H1 	  	                        C2
+CH3 	  	                    C3
+R4 	  	                        R2
+G3 	  	                        D1
+CC3 	  	                    CC2
+G2 	  	                        D2
+G1 	  	                        D3
+G2J F3 U2 F2 F1 R3 E3 E2 CH2 E1 FP
+Ein Spieler beginnt auf dem GO-Feld (Los-Feld) und addiert die Werte von zwei 6-seitigen Würfeln, um die Zahl an Feldern zu erhalten, die er sich im Uhrzeigersinn fortbewegt. Ohne weitere Regeln würden wir erwarten, dass jedes Feld mit der gleichen Wahrscheinlichkeit betreten wird: 2.5%. Jedoch ändern G2J (Go To Jail - Gehe ins Gefängnis), CC (community chest - Gemeinschaftsfeld) und CH (chance - Ereignisfeld) diese Verteilung.
+Zusätzlich zum Feld G2J und jeweils einer Karte in CC und CH, die den Spieler auffordert, direkt ins Gefängnis zu gehen, wird, wenn ein Spieler drei aufeinanderfolgende Pasche würft, sein dritter Wurf nicht ausgeführt. Stattdessen wandert er direkt ins Gefängnis.
+Zu Beginn des Spiels werden die CC und CH Karten gemischt. Wenn ein Spieler auf CC oder CH landet, nimmt er eine Karte von der Spitze des jeweiligen Stapels und, nach Befolgen der Anweisungen, steckt sie zum Boden des Stapels zurück. Es gibt sechzehn Karten in jedem Stapel, aber für dieses Problem kümmern wir uns nur um Karten, die eine Bewegung erzwingen; alle Anweisungen, die keine Bewegung betreffen, können ignoriert werden, und der Spieler bleibt auf dem CC/CH Feld.
+    Gemeinschaftsfeld (2/16 Karten):
+        Gehe auf GO (Los)
+        Gehe auf JAIL (Gefängnis)
+    Ereignisfeld (10/16 Karten):
+        Gehe auf GO (Los)
+        Gehe auf JAIL (Gefängnis)
+        Gehe auf C1
+        Gehe auf E3
+        Gehe auf H2
+        Gehe auf R1
+        Gehe zum nächsten R (railway company - Bahnhof)
+        Gehe zum nächsten R
+        Gehe zum nächsten U (utility company - Kraftwerk)
+Das Herz dieses Problems betrifft die Wahrscheinlichkeit, ein bestimmtes Quadrat zu betreten. Dies ist die Wahrscheinlichkeit, nach einer Runde auf diesem Feld zu stehen. Aus diesem Grunde sollte klar sein, dass, mit der Ausnahme von G2J, für die die Wahrscheinlichkeit 0 ist, die CH-Felder die kleinste Wahrscheinlichkeiten haben werden, denn 5/8 der Karten erfordern ein Bewegen auf ein anderes Feld, und uns interessiert das Feld, auf dem der Spieler seinen Zug beendet. Wir machen keinen Unterschied zwischen 'Nur zu Besuch' und im Gefängnis sein, genau so wie wir die Regel ignorieren, dass ein Pasch nötig ist, um aus dem Gefängnis zu kommen; wir nehmen an, er zahlt die Kaution, um im nächsten Zug rauszukommen.
+Wenn wir bei GO beginnen und alle Felder von 00 bis 39 nummerieren, können wir diese zweistelligen Zahlen verbinden, um Strings zu erhalten, die Mengen von Feldern darstellen.
+Statistisch kann gezeigt werden, dass die drei häufigsten Felder in ihrer Reihenfolge JAIL (6.24%) = Feld 10, E3 (3.18%) = Feld 24 und GO (3.09%) = Feld 00 sind. Diese drei häufigsten Felder können als 6-stelliger String dargestellt werden: 102400,
+Wenn statt zwei 6-seitigen Würfeln zwei 4-seitige Würfel benutzt werden, finden Sie den 6-stelligen String der drei häufigsten Felder."
+  (monopoly))
   
 
 (defun euler-89 ()
@@ -2403,6 +2440,62 @@ Antwort: 8581146"
 				 (when (= 89 (prüfe-zahl i))
 				   (incf anzahl))))))
 	(zähle-quadrat-ziffern-ketten limit)))
+
+
+
+(defun euler-95 (&optional (max (expt 10 6)))
+  "Freundliche Ketten
+Aufgabe 95
+Die echten Teiler einer Zahl sind alle Teiler außer der Zahl selbst. Beispiel: Die echten Teiler von 28 sind 1, 2, 4, 7 und 14. Da die Summe dieser Teiler 28 beträgt, nennen wir sie eine perfekte Zahl.
+Interessanterweise ist die Summe der echten Teiler von 220 284, und die Summe der echten Teiler von 284 ist 220, was eine Kette von zwei Zahlen bildet. Deshalb werden 220 und 284 als freundliches Paar bezeichnet.
+Wahrscheinlich unbekannter sind längere Ketten. Beispiel: Wenn man mit 12496 beginnt, bilden wir eine Kette von 5 Zahlen:
+12496 → 14288 → 15472 → 14536 → 14264 (→ 12496 → ...)
+Da die Kette zu ihrem Anfangspunkt zurückkehrt, wird sie freundliche Kette genannt.
+Finden Sie das kleinste Glied der längsten freundlichen Kette, bei der kein Element 1 Million überschreitet.
+Antwort: 14316"
+  (let ((teiler (make-array (1+ max) :initial-element 1)))
+	(labels ((fülle-teiler ()
+			   (do ((i 2 (1+ i)))
+				   ((> i max-halbe))
+				 (do ((j (+ i i) (+ j i)))
+					 ((> j max))
+				   (setf (aref teiler j) (+ i (aref teiler j))))))
+			 (entferne-zu-große ()
+			   (do ((i 1 (1+ i)))
+				   ((> i max))
+				 (when (> (aref teiler i) max)
+				   (setf (aref teiler i) 1))))
+			 (bearbeite (schritt sprung)
+			   (cond ((> schritt max) t)
+					 ((and (zerop sprung)
+						   (<= (aref teiler schritt) 1))
+					  (bearbeite (1+ schritt) sprung))
+					 ((zerop sprung)
+					  (setf (aref teiler schritt) (list (aref teiler schritt)))
+					  (bearbeite schritt (first (aref teiler schritt))))
+					 ((= sprung schritt)
+					  (bearbeite (1+ schritt) 0))
+					 ((or (< sprung schritt)
+						  (> (length (member (aref teiler sprung)
+											 (aref teiler schritt)))
+							 1))
+					  (setf (aref teiler schritt) 1) (bearbeite (1+ schritt) 0))
+					 (t
+					  (setf (aref teiler schritt) (cons (aref teiler sprung)
+													 (aref teiler schritt)))
+					  (bearbeite schritt (first (aref teiler schritt)))))))
+	  (fülle-teiler)
+	  (entferne-zu-große)
+	  (bearbeite 1 0)
+	  (do ((i 0 (1+ i)))
+		  ((> i max))
+		(unless (consp (aref teiler i))
+		  (setf (aref teiler i) (list 1))))
+	  (reduce #'(lambda (x y)
+				  (if (> (length x) (length y))
+					  x
+					  y))
+			  teiler))))
 
 
 
