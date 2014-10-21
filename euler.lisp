@@ -2583,6 +2583,30 @@ Antwort: 8739992577"
 
 
 
+(defun euler-99 (&optional (stream-name "/home/sascha/lisp/p099_base_exp.txt"))
+  "Größte Potenz
+Aufgabe 99
+Es ist nicht schwer, zwei Zahlen in Indexform wie 211 und 37 ist nicht schwer, denn jeder Taschenrechner kann bestätigen, dass 211 = 2048 < 37 = 2187.
+Jedoch wäre es deutlich schwieriger, zu bestätigen, dass 632382518061 > 519432525806 denn beide Zahlen bestehen aus über drei Millionen Ziffern.
+Benutzen Sie base_exp.txt (Rechtsklick und 'Ziel speichern unter...'), eine 22K Textdatei, welche eintausend Zeilen mit einem Basis/Exponenten-Paar in jeder Zeile enthält, und bestimmen Sie, welche Zeile den größten numerischen Wert hat.
+HINWEIS: Die ersten zwei Zeilen in der Datei repräsentieren die Zahlen von oben.
+Antwort: 709"
+  (with-open-file (stream stream-name)
+	(let ((max-zahl 1)
+		  (richtige-zeile))
+	  (do ((i (read-line stream nil)
+			  (read-line stream nil))
+		   (zeile 1 (1+ zeile)))
+		  ((null i)
+		   richtige-zeile)
+		(let* ((basis (parse-integer (subseq i 0 (position #\, i))))
+			   (exponent (parse-integer (subseq i (1+ (position #\, i)))))
+			   (zahl (* (log basis) exponent)))
+		  (when (> zahl max-zahl)
+			(setf max-zahl zahl
+				  richtige-zeile zeile)))))))
+
+
 (defun euler-125 ()
   "Palindromic sums
 Problem 125
