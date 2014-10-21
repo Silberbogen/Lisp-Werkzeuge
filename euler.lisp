@@ -2443,7 +2443,7 @@ Antwort: 8581146"
 
 
 
-(defun euler-95 (&optional (max (expt 10 6)))
+(defun euler-95 (&optional (max (expt 10 6)) &aux (max-halbe (truncate (/ max 2))))
   "Freundliche Ketten
 Aufgabe 95
 Die echten Teiler einer Zahl sind alle Teiler außer der Zahl selbst. Beispiel: Die echten Teiler von 28 sind 1, 2, 4, 7 und 14. Da die Summe dieser Teiler 28 beträgt, nennen wir sie eine perfekte Zahl.
@@ -2569,6 +2569,17 @@ Antwort: 24702"
 			   (dolist (sudoku gelöste-sudokus summe)
 				 (incf summe (+ (* 100 (aref sudoku 0 0)) (* 10 (aref sudoku 0 1)) (aref sudoku 0 2)))))))
 	(addiere-sudoku-zahlen)))
+
+
+
+(defun euler-97 ()
+  "Große Nicht-Mersenne-Primzahl
+Aufgabe 97
+Die erste bekannte Primzahl mit mehr als 1 Million Ziffern wurde 1999 entdeckt, und sie ist eine Mersenne-Primzahl in der Form 26972593−1; sie hat genau 2.098.960 Ziffern. Anschließend wurden andere Mersenne-Primzahlen der Form 2p−1 gefunden, die mehr Ziffern haben.
+Jedoch wurde 2004 eine gewaltige Nicht-Mersenne-Primzahl gefunden, die 2.357.207 Stellen hat: 28433×27830457 + 1.
+Finden Sie die letzten zehn Ziffern dieser Primzahl.
+Antwort: 8739992577"
+  (mod (1+ (* 28433 (expt 2 7830457))) (expt 10 10)))
 
 
 
