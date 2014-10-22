@@ -2607,6 +2607,38 @@ Antwort: 709"
 				  richtige-zeile zeile)))))))
 
 
+
+(defun euler-102 (&optional (stream-name "/home/sascha/lisp/p102_triangles.txt"))
+  "Dreiecks-Beinhaltung
+Aufgabe 102
+Drei verschieden Punkte werden zufällig in einer Kartesischen Ebene platziert, für die -1000 ≤ x, y ≤ 1000, sodass ein Dreieck gebildet wird.
+Betrachten Sie die folgenden zwei Dreiecke:
+A(-340,495), B(-153,-910), C(835,-947)
+X(-175,41), Y(-421,-714), Z(574,-645)
+Es kann bestätigt werden, dass das Dreieck ABC den Ursprung enthält, wohingegen das Dreieck XYZ dies nicht tut.
+Benutzen Sie triangles.txt (Rechtsklick und 'Ziel speichern unter...'), eine 27K Textdatei, welche die Koordinaten von eintausend 'zufälligen' Dreiecken enthält, und finden Sie die Anzahl von Dreiecken, für welche das Innere den Koordinatenursprung enthält.
+Antwort: "
+  (with-open-file (stream stream-name)
+	(let ((anzahl 0))
+	  (do ((i (read-line stream nil)
+			  (read-line stream nil)))
+		  ((null i)
+		   anzahl)
+		(let* ((lst (mapcar #'parse-integer (string-aufteilen i)))
+			   (ax (first lst))
+			   (ay (second lst))
+			   (bx (third lst))
+			   (by (fourth lst))
+			   (cx (fifth lst))
+			   (cy (sixth lst))
+			   (a (plusp (- (* ax by) (* ay bx))))
+			   (b (plusp (- (* bx cy) (* by cx))))
+			   (c (plusp (- (* cx ay) (* cy ax)))))
+		  (when (or (and a b c) (and (not a) (not b) (not c)))
+			(incf anzahl)))))))
+
+
+  
 (defun euler-125 ()
   "Palindromic sums
 Problem 125
