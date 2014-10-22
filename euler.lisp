@@ -57,7 +57,7 @@ Jeder neue Term in der Fibonacci-Reihe wird gebildet, indem die beiden vorherige
 Finden Sie die Summe aller geraden Terme der Fibonacci-Reihe, die 4 Millionen nicht überschreiten.
 Antwort: 4613732"
   (do* ((i 1 (1+ i))
-		(x (fibonacci-folge i) (fibonacci-folge i))
+		(x (fibonacci-rang i) (fibonacci-rang i))
 		(summe 0))
 	   ((>= x 4000000)
 		summe)
@@ -800,7 +800,7 @@ Das 12. Glied, F12, ist das erste, das dreistellig ist.
 Was ist das erste Glied der Fibonacci-Reihe, das 1000 Stellen hat?
 Antwort: 4782"
   (do ((i 1 (1+ i)))
-	  ((= 1000 (length (zahl->liste (fibonacci-folge i))))
+	  ((= 1000 (length (zahl->liste (fibonacci-rang i))))
 	   i)))
 
 
@@ -2638,6 +2638,28 @@ Antwort: "
 			(incf anzahl)))))))
 
 
+
+(defun euler-104 ()
+  "Pandigitale Fibonacci-Enden
+Aufgabe 104
+Die Finobacci-Folge ist durch die folgende rekursive Relation definiert:
+    Fn = Fn−1 + Fn−2, wobei F1 = 1 und F2 = 1.
+Es stellt sich heraus, dass F541, welches aus 113 Stellen besteht, die erste Fibonaccizahl ist, für welche die letzten 9 Ziffern 1-9 pandigital sind (enthalten alle Ziffern von 1 bis 9, aber nicht zwingend geordnet). Und F2749, welche aus 575 Ziffern besteht, ist die erste Fibonaccizahl, für die die ersten 9 Ziffern 1-9 pandigital sind.
+Gegeben, dass Fk die erste Fibonaccizahl ist, für welche die ersten 9 Ziffern UND die letzten 9 Ziffern 1-9 pandigital sind, finden Sie k.
+Antwort: "
+  (flet ((pandigitalp (str)
+		   (let ((p (search (sort str #'char<) "123456789")))
+			 (if (and (integerp p) (zerop p)) t nil))))
+	(do ((i 1 (1+ i))
+		 (a 0 b)
+		 (b 1 (+ a b))) ;; die Fibonacci-Zahl
+		(nil)
+	  (when (> i 2749)
+		(when (and (pandigitalp (write-to-string (mod b 1000000000)))
+				   (pandigitalp (subseq (write-to-string b) 0 9)))
+		  (return-from euler-104 i))))))
+  
+  
   
 (defun euler-125 ()
   "Palindromic sums

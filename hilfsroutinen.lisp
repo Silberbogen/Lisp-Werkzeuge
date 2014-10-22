@@ -191,11 +191,20 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 
-(defun fibonacci-folge (n &optional (a 0) (b 1))
-  "Bildet die Fibonacci-Folge zur n. Zahl; Beispiel: (fibonacci-folge 20) => 6765"
+(defun fibonacci-folge (max)
+  (do ((i 1 (1+ i))
+	   lst)
+	  ((> i max)
+	   (nreverse lst))
+	(push (fibonacci-rang i) lst)))
+
+
+
+(defun fibonacci-rang (n &optional (a 0) (b 1))
+  "Bildet die Fibonacci-Rang zur n. Zahl; Beispiel: (fibonacci-rang 20) => 6765"
   (if (zerop n)
       a
-	  (fibonacci-folge (- n 1) b (+ a b))))
+	  (fibonacci-rang (- n 1) b (+ a b))))
 
 
 
@@ -430,6 +439,14 @@ Beispiel: (würfelwurf) => 4"
 (defun zähle-buchstaben (text)
   "Zählt die Buchstaben eines angegebenen Texts."
 	(length (nur-buchstaben text)))
+
+
+
+(defun zähle-ziffern (n)
+  "Zählt die Ziffern einer Integerzahl"
+  (if (< -10 n 10)
+	  1
+	  (1+ (zähle-ziffern (truncate n 10)))))
 
 
 
