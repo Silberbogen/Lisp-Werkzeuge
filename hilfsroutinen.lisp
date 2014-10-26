@@ -191,20 +191,11 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 
-(defun fibonacci-folge (max)
-  (do ((i 1 (1+ i))
-	   lst)
-	  ((> i max)
-	   (nreverse lst))
-	(push (fibonacci-rang i) lst)))
-
-
-
-(defun fibonacci-rang (n &optional (a 0) (b 1))
-  "Bildet die Fibonacci-Rang zur n. Zahl; Beispiel: (fibonacci-rang 20) => 6765"
+(defun fibonacci-folge (n &optional (a 0) (b 1))
+  "Bildet die Fibonacci-Folge zur n. Zahl; Beispiel: (fibonacci-folge 20) => 6765"
   (if (zerop n)
       a
-	  (fibonacci-rang (- n 1) b (+ a b))))
+	  (fibonacci-folge (- n 1) b (+ a b))))
 
 
 
@@ -226,6 +217,38 @@ GLEICHWERTIGE-ELEMENTE überprüft, ob Liste1 und Liste2 über dieselben Element
 Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 	   (when (and (subsetp a b) (subsetp b a))
 	     t))
+
+
+
+(defun j-oder-n-p (&optional ctrl &rest args)
+  "Erzwingt die Beantwortung einer Eingabe mit j oder n."
+  (do ((danach nil t)
+	   (ctrl (concatenate 'string ctrl " (j oder n) ")))
+	  (nil)
+	(when danach
+	  (format *query-io* "~&Bitte tippe \"j\" für Ja oder  \"n\" für Nein.~%"))
+	(format *query-io* ctrl args)
+	(let ((antw (string-trim " " (read-line *query-io*))))
+	  (cond ((string-equal antw "j")
+			 (return-from j-oder-n-p 't))
+			((string-equal antw "n")
+			 (return-from j-oder-n-p 'nil))))))
+
+
+
+(defun ja-oder-nein-p (&optional ctrl &rest args)
+  "Erzwingt die Beantwortung einer Eingabe mit Ja oder Nein."
+  (do ((danach nil t)
+	   (ctrl (concatenate 'string ctrl " (Ja oder Nein) ")))
+	  (nil)
+	(when danach
+	  (format *query-io* "~&Bitte tippe \"ja\" für Ja oder  \"nein\" für Nein.~%"))
+	(format *query-io* ctrl args)
+	(let ((antw (string-trim " " (read-line *query-io*))))
+	  (cond ((string-equal antw "ja")
+			 (return-from ja-oder-nein-p 't))
+			((string-equal antw "nein")
+			 (return-from ja-oder-nein-p 'nil))))))
 
 
 
@@ -439,14 +462,6 @@ Beispiel: (würfelwurf) => 4"
 (defun zähle-buchstaben (text)
   "Zählt die Buchstaben eines angegebenen Texts."
 	(length (nur-buchstaben text)))
-
-
-
-(defun zähle-ziffern (n)
-  "Zählt die Ziffern einer Integerzahl"
-  (if (< -10 n 10)
-	  1
-	  (1+ (zähle-ziffern (truncate n 10)))))
 
 
 
