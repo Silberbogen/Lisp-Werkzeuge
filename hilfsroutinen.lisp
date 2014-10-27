@@ -633,30 +633,29 @@ Beispiele:
    (nächste-primzahl 19) => 23
    (nächste-primzahl 20) => 23
    (nächste-primzahl 23) => 29"
-  (do ((i (1+ zahl) (1+ i)))
-	  ((primzahlp i)
-	   i)))
+  (cond ((< zahl 2)
+		 2)
+		(t
+		 (do ((i (+ zahl (if (evenp zahl) 1 2)) (+ i 2)))
+			 ((primzahlp i)
+			  i)))))
 
 
 
-(defun nth-primzahl (x &optional (rang 1) (letzte-primzahl 0))
+(defun primzahl-rang (x)
   "Erzeugte die Primzahl eines bestimmten Rangs.
 Beispiele:
-   (nth-primzahl 1) => 2
-   (nth-primzahl 1000) => 7919
-   (nth-primzahl 100000) => 1299709"
-  (cond ((< x 1)
-		 nil)
-		((= x rang)
-		 (nächste-primzahl letzte-primzahl))
-		(t
-		 (nth-primzahl x (1+ rang) (nächste-primzahl letzte-primzahl)))))
-
-
-
-(defmacro primzahl-rang (x)
-  "Mensch -> Maschine Übersetzer"
-  `(nth-primzahl ,x))
+(primzahl-rang 1) => 2
+(primzahl-rang 1000) => 7919
+(primzahl-rang 100000) => 1299709"
+  (labels ((nth-primzahl (x &optional (rang 1) (letzte-primzahl 0))
+			 (cond ((< x 1)
+					nil)
+				   ((= x rang)
+					(nächste-primzahl letzte-primzahl))
+				   (t
+					(nth-primzahl x (1+ rang) (nächste-primzahl letzte-primzahl))))))
+	(nth-primzahl x)))
 
 
 
