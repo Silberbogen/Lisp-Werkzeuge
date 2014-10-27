@@ -192,11 +192,14 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 (defun fibonacci-folge (max)
+  "Erstellt eine Liste aller Fibonacci-Zahlen von der ersten bis zur MAXten."
   (do ((i 1 (1+ i))
+	   (aktuell 1 nächste)
+	   (nächste 1 (+ aktuell nächste))
 	   lst)
 	  ((> i max)
 	   (nreverse lst))
-	(push (fibonacci-rang i) lst)))
+	(push aktuell lst)))
 
 
 
@@ -208,6 +211,17 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 
+(defun fünfeckszahl-folge (max &optional lst (len (length lst)))
+  "Erstellt eine Liste aller Fibonacci-Zahlen von der ersten bis zur MAXten."
+  (when (zerop len)
+	(setf len 1))
+  (do* ((i len (1+ i)))
+	   ((> i max)
+		(nreverse lst))
+	(push (fünfeckszahl-rang i) lst)))
+
+
+
 (defun fünfeckszahl-rang (zahl)
   "Gibt die Fünfeckszahl des gewünschten Rangs aus."
   (/ (* zahl (1- (* 3 zahl))) 2))
@@ -216,7 +230,12 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 (defun fünfeckszahlp (zahl)
   "Prüft ob eine Zahl eine Dreieckszahl ist."
-  (zerop (mod (/ (1+ (sqrt (1+ (* 24 zahl)))) 6) 1)))
+  (let ((lst (do* ((i 10 (+ i 10))
+				   (lst (fünfeckszahl-folge i) (fünfeckszahl-folge i lst)))
+				  ((>= (first (last lst)) zahl)
+				   lst))))
+	(when (member zahl lst)
+	  't)))
 
 
 
@@ -308,6 +327,15 @@ Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
 
 
 
+(defun münzwurf ()
+  "Münzwurf bildet den Wurf einer Münze nach. Es ist möglich, daß die Münze auf der Kante stehen bleibt! Beispiel: (münzwurf) => ZAHL"
+       (let ((wurf (random 101)))
+	 (cond ((< wurf 50) 'kopf)
+	       ((> wurf 50) 'zahl)
+	       (t 'kante))))
+
+
+
 (defun nth-permutation (x liste)
   "Gibt die nte Permutation einer Liste zurück. Die Zählung beginnt bei NULL."
   (if (zerop x)
@@ -327,6 +355,13 @@ Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
 (defun nur-buchstaben (text)
   "Entfernt die Nicht-Buchstaben eines Textes."
   (remove-if #'(lambda (string) (not (alpha-char-p string)))
+			 text))
+
+
+
+(defun nur-ziffern (text)
+  "Entfernt die Nicht-Ziffern eines Textes."
+  (remove-if #'(lambda (string) (not (digit-char-p string)))
 			 text))
 
 
@@ -420,7 +455,7 @@ Beispiele:
 
 
 
-(defun sortierte-ziffern (zahl)
+(defun sortiere-ziffern (zahl)
   "Nimmt eine Zahl entgegen und gibt sie als Liste zurück, die Ziffern aufsteigend sortiert."
   (sort (zahl->liste zahl) #'<))
 
@@ -444,6 +479,84 @@ Beispiele:
 							 neue-ziffer
 							 x))
 	   (zahl->liste zahl))))
+
+
+
+(defun temperatur (wert &optional (größeneinheit 'celsius))
+  "TEMPERATUR wandelt den angegebenen Temperaturwert in eine Liste der Werte aller drei Maßsysteme um."
+  (let ((kelvin (case größeneinheit
+		  ((celsius c) (+ wert 273.15))
+		  ((fahrenheit f) (* (+ wert 459.67) 5/9))
+		  ((kelvin k) wert)
+		  (otherwise nil))))
+    (when kelvin
+      (values (list kelvin 'kelvin) (list (- kelvin 273.15) 'celsius) (list (- (* kelvin 1.8) 459.67) 'fahrenheit)))))
+
+
+
+(defun umwandeln (wert ausgangsgröße ergebnisgröße)
+  "UMWANDELN dient dazu, eine Zahl von einer Maßeinheit in eine andere umzurechnen.
+Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
+  (flet ((faktor-festlegen (wert)
+		   (case wert
+			 ((yoctometer) 10e-24)
+			 ((zeptometer) 10e-21)
+			 ((am attometer) 10e-18)
+			 ((femtometer fm) 10e-15)
+			 ((picometer pm) 1/1000000000000) ; 10e-12
+			 ((Ångström Å) 1/10000000000) ; 10e-10
+			 ((nanometer nm) 1/1000000000) ; 10e-9
+			 ((mikrometer mm2 µm quadratmillimeter) 1/1000000) ; 10e-6
+			 ((cm2 quadratzentimeter) 1/10000) ; 10e-4
+			 ((mm tausendstel) 1/1000) ; 10e-3
+			 ((cm dm2 hundertstel quadratdezimeter zentimeter) 1/100) ; 10e-2
+			 ((inch zoll) 0.0254)
+			 ((dm dezimeter zehntel) 1/10) ; 10e-1
+			 ((foot fuß) 0.3048) ; 12 inches
+			 ((gerte schritt yard yd) 0.9144) ; 3 feet
+			 ((bit g gramm m m2 meter qm quadratmeter) 1)
+			 ((fathom fth) 1.8288) ; 6 feet
+			 ((byte octet oktett) 8)
+			 ((square-foot) 10.7639)
+			 ((dutzend) 12)
+			 ((shackle shot) 27.432) ; 15 fathom
+			 ((a ar hundert) 100) ; 10e2
+			 ((gros gröthen gruessa tylt) 144)
+			 ((pfund) 500)
+			 ((kb kg km kilobyte kilogramm kilometer myriameter tausend) 1000) ; 10e3
+			 ((kib kibibyte) 1024) ; 2e10
+			 ((square-inch) 1550.0031)
+			 ((meile mile) 1609.344) ; 5280 feet
+			 ((großes-gros großgros maß) 1728)
+			 ((seemeile) 1852)
+			 ((international-nautical-mile) 1852.01)
+			 ((acre) 4046.8564)
+			 ((league nautical-league sea-league) 5559.552) ; 3 admirality sea miles
+			 ((ha hektar zehntausend) 10000) ; 10e4
+			 ((zentner ztr) 50000)
+			 ((dezitonne dezitonnen doppelzentner dt dz) 100000) ; 10e5
+			 ((km2 mb megabyte megameter ) 1000000) ; 10e6
+			 ((mib mebibyte) 1048576) ; 2e20
+			 ((square-mile) 2589988.1103)
+			 ((gb gigabyte gigameter gm kilotonne kilotonnen kt milliarde) 1000000000) ; 10e9
+			 ((gib gibibyte) 1073741824) ; 2e30
+			 ((billion megatonne mt tb terabyte terameter tm) 1000000000000) ; 10e12
+			 ((tebibyte tib) 1099511627776) ; 2e40
+			 ((billiarde pb petabyte petameter) 10e15)
+			 ((pebibyte pib) 1125899906842624) ; 2e50
+			 ((eb exabyte em exameter) 10e18)
+			 ((exbibyte eib) 1152921504606846976) ; 2e60
+			 ((zb zettabyte zettameter) 10e21)
+			 ((zebibyte zib) 1180591620717411303424) ; 2e70
+			 ((yb yottabyte yottameter) 10e24)
+			 ((yobibyte yib) 1208925819614629174706176) ; 2e80
+			 (otherwise nil))))
+	(if (eql ausgangsgröße ergebnisgröße)
+		(values wert ergebnisgröße)
+		(let ((faktor1 (faktor-festlegen ausgangsgröße))
+			  (faktor2 (faktor-festlegen ergebnisgröße)))
+		  (values (/ (* wert faktor1) faktor2)
+				  ergebnisgröße))))) 
 
 
 

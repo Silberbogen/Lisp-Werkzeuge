@@ -41,7 +41,7 @@ Finden Sie die Summe aller Vielfachen von 3 oder 5 unter 1000.
 Antwort: 233168"
   (do ((i 1 (1+ i))
 	   (summe 0))
-	  ((>= i 1000)
+	  ((= i 1000)
 	   summe)
 	(when (or (zerop (mod i 3)) (zerop (mod i 5)))
 	  (incf summe i))))
@@ -1408,11 +1408,11 @@ Es ist zu sehen, dass die Zahl 125874 und ihr Doppeltes 251748 die selben Ziffer
 Finden Sie die kleinste natürliche Zahl x, für die 2x, 3x, 4x, 5x und 6x die selben Ziffern in beliebiger Reihenfolge enthalten.
 Antwort: 142857"
   (labels ((gleiche-ziffern (i maxmult)
-			 (let ((d (sortierte-ziffern i)))
+			 (let ((d (sortiere-ziffern i)))
 			   (do ((m 2 (1+ m)))
 				   ((> m maxmult)
 					(return t))
-				 (unless (equal (sortierte-ziffern (* m i)) d)
+				 (unless (equal (sortiere-ziffern (* m i)) d)
 				   (return nil)))))
 		   (finde-gleiche-ziffern (maxmult)
 			 (do ((i 100000 (1+ i)))
@@ -1801,7 +1801,7 @@ Antwort: 127035954683 (5027³)"
 		   (let ((hash-tabelle (make-hash-table :test 'equal)))
 			 (do ((i 1 (1+ i)))
 				 (nil)
-			   (let* ((ziffern (sortierte-ziffern (expt i 3)))
+			   (let* ((ziffern (sortiere-ziffern (expt i 3)))
 					  (neueintrag (push i (gethash ziffern hash-tabelle))))
 				 (when (>= (length neueintrag) gesuchte-anzahl)
 					 (return (expt (first (last neueintrag)) 3))))))))
