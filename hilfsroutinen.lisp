@@ -515,6 +515,39 @@ Beispiele:
 
 
 
+(defun text-auswahl (lst ctrl &rest args &aux mehrfach)
+  "Erzwingt die Auswahl aus einer Liste."
+  (when (member 'alles lst)
+	(setf mehrfach 't
+		  lst (set-difference lst '(alles))))
+  (do ((danach nil t)
+	   (ctrl (concatenate 'string ctrl " > ")))
+	  (nil)
+	(when danach
+	  (if mehrfach
+		  (format *query-io* "~&Bitte wählen sie, was sie benötigen, aus der Liste aus. Geben sie \"nichts\" ein, wenn sie nichts möchten oder \"alles\" wenn sie gerne alles hätten.~%")
+		  (format *query-io* "~&Bitte wählen sie, was sie benötigen, aus der Liste aus. Geben sie \"nichts\" ein, wenn sie nichts möchten.~%")))
+	(apply #'format *query-io* ctrl args)
+	(let* ((antw (string-trim " " (read-line *query-io*)))
+		   (antw-lst (string-aufteilen antw))
+		   antwort)
+	  (dolist (i antw-lst)
+		(push (read-from-string i) antwort))
+	  (unless (null antwort)
+		(cond ((not mehrfach)
+			   (if (null (rest antwort))
+				   (return-from text-auswahl (first antwort))
+				   (format *query-io* "~&Sie dürfen nur eines auswählen!~%")))
+			  ((subsetp antwort lst)
+			   (return-from text-auswahl antwort))
+			  ((eql (first antwort) 'alles)
+			   (return-from text-auswahl lst))
+			  ((eql (first antwort) 'nichts)
+			   (return-from text-auswahl 'nil))
+			  (t (format *query-io* "~&Etwas aus ihrer Eingabe ist mir unbekannt!~%")))))))
+
+
+
 (defun umwandeln (wert ausgangsgröße ergebnisgröße)
   "UMWANDELN dient dazu, eine Zahl von einer Maßeinheit in eine andere umzurechnen.
 Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
