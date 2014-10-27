@@ -4,7 +4,7 @@
 ;;;; ------------------------------------------------------------------------
 ;;;; Author: Sascha Biermanns, <skkd.h4k1n9@yahoo.de>
 ;;;; Lizenz: ISC
-;;;; Copyright (C) 2014 Sascha Biermanns
+;;;; Copyright (C) 2011-2014 Sascha Biermanns
 ;;;; Permission to use, copy, modify, and/or distribute this software for any
 ;;;; purpose with or without fee is hereby granted, provided that the above
 ;;;; copyright notice and this permission notice appear in all copies.
@@ -165,6 +165,20 @@ Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
 
 
 
+(defun eingabe (&optional ctrl &rest args)
+  "Erzwingt eine Eingabe."
+  (do ((danach nil t)
+	   (ctrl (concatenate 'string "~&" ctrl " > ")))
+	  (nil)
+	(when danach
+	  (format *query-io* "~&Bitte tippe deine Antwort ein und drücke dann die Eingabe-Taste.~%"))
+	(apply #'format *query-io* ctrl args)
+	(let ((antw (string-trim " " (read-line *query-io*))))
+	  (unless (string-equal antw "")
+		(return-from eingabe antw)))))
+
+
+
 (defun faktor (n)
   "(faktor zahl)
 FAKTOR berechnet den Faktor einer Zahl.
@@ -255,7 +269,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 	  (nil)
 	(when danach
 	  (format *query-io* "~&Bitte tippe \"j\" für Ja oder  \"n\" für Nein.~%"))
-	(format *query-io* ctrl args)
+	(apply #'format *query-io* ctrl args)
 	(let ((antw (string-trim " " (read-line *query-io*))))
 	  (cond ((string-equal antw "j")
 			 (return-from j-oder-n-p 't))
@@ -271,7 +285,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 	  (nil)
 	(when danach
 	  (format *query-io* "~&Bitte tippe \"ja\" für Ja oder  \"nein\" für Nein.~%"))
-	(format *query-io* ctrl args)
+	(apply #'format *query-io* ctrl args)
 	(let ((antw (string-trim " " (read-line *query-io*))))
 	  (cond ((string-equal antw "ja")
 			 (return-from ja-oder-nein-p 't))
@@ -491,6 +505,13 @@ Beispiele:
 		  (otherwise nil))))
     (when kelvin
       (values (list kelvin 'kelvin) (list (- kelvin 273.15) 'celsius) (list (- (* kelvin 1.8) 459.67) 'fahrenheit)))))
+
+
+
+(defun textausgabe (ctrl &rest args)
+  "Eine vereinfachte Ausgabe, die die Ausgabe stets am Anfang der Zeile beginnt und nach der Ausgabe die Zeile abschließt."
+  (let ((ctrl (concatenate 'string "~&" ctrl "~%")))
+	(apply #'format t ctrl args)))
 
 
 
