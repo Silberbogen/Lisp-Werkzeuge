@@ -34,6 +34,10 @@
 
 
 
+(defparameter *richtung* 0
+  "Hält fest, in welcher Richtung die Plattform rotiert ist")
+
+
 (defparameter *spieler* (make-hash-table)
   "Die Charakterwerte des Spielers")
 
@@ -376,6 +380,13 @@ Beispiel: (würfelwurf) => 4"
 		  (inventar 'proviant -1)
 		  (erhöhe 'stärke 4))
 		(textausgabe "Nachdem du dich versichert hast, das niemand in der Nähe ist, durchwühlst du deinen Rucksack auf der Suche nach einem Proviantpaket. Nach einigen Minuten und mehrfachem aus- und einpacken des Rucksacks gibst du verzweifelt auf. Es ist tatsächlich kein einziger Brotkrummen mehr übrig."))))
+
+
+
+(defun rotiere-plattform ()
+  (if (< 7 *richtung*)
+	  (incf *richtung*)
+	  (setf *richtung* 0)))
 
 
 
@@ -985,27 +996,214 @@ Beispiel: (würfelwurf) => 4"
 		(auswahl '(ort-53 ort-41) "Möchtest du den Gang betreten (1) oder willst du den Raum verlassen und die Treppe hinauf in den Innenhof gehen (2)?"))
 	  (progn
 		(textausgabe "Du steigst die Stufen in der Mitte des Innenhofes hinab und öffnest die Plastikklinge an der Stahltüre. Die Türe öffnet sich problemlos. Der Innenraum riecht muffig, die Wände sind alt und nicht überall eben. Der Raum wird offensichtlich für nichts mehr benutzt. Da es hier nichts weiter zu sehen gibt, drehst du dich um, verläßt den Raum und steigst die Treppe hinauf in den Innenhof.")
-		#'ort41)))
+		#'ort-41)))
 
 
 
 (defun ort-43 ()
-  )
+  (textausgabe "Die Waldhausener Straße war früher das Herzstück der Mönchengladbacher Altstadt. Hier reihten sich die Kneipen und Diskotheken nur so aneinander, doch in den Anfangszeit der 1990er Jahre, hatten die christdemokratischen Hohlbirnen der Stadt dem ein Ende bereitet - und damit nachhaltig dem Flair der Stadt geschadet. Vor deinem geistigen Auge stellst du dir das ehemalige Blumengeschäfft der Schallenburgers vor. Du erinnerst dich daran, wie deine Mutter und ihr Mann oftmals in den Herbstmonaten dort Kränze gebunden hatten. Und daran, wie sie von den Schallenburgers die alte Nähmaschine bekamen, in der 10.000 Mark versteckt waren. Glücklicherweise waren sie so ehrlich, Micky und seiner Mutter das Geld zurückzugeben. Trotzdem wurde Micky nicht alt, und die Schallenburgers und die Geschichte ihres Blumen- und Friedhofsgeschäftes endeten bald darauf.")
+  (if (ereignis 'dreistelzer)
+	  (progn
+		(textausgabe "Zurück in der Gegenwart jedoch mußt du erkennen, das in weiter Entfernung, die Waldhausener Straße entlang in Richtung Hardt, wenigstens 2 Dreistelzer sich an den Häusern und Menschen der Stadt vergehen - während ein weiteres dieser Ungetüme nicht weit bergauf steht.")
+		(auswahl '(ort-52 ort-44) "Am sichersten wäre es wohl, den Fliescherberg hinabzulaufen (1), eventuell wäre auch der Schleichweg die Turmstiege entlang eine Alternative (2)"))
+	  (auswahl '(ort-26 ort-44 ort-52) "Die Straße führt hinauf zum Alten Markt (1), neben dem Dicken Turm verläuft die Turmstiege (2) und ein weiterer Weg führt durch den kleinen Grünbereich des Fliescherberges (3)")))
+
+
 
 (defun ort-44 ()
-  )
+  (textausgabe "Die Turmstiege ist herrlich geschützt. An ihrem Ende zur Waldhausener Straße hin führt eine Treppe neben dem Dicken Turm hinab, von ihr selber eine Stiege den Turm hinauf und die lange Mauer ermöglicht es, dank der hervorragenden Steine an ihr hinaufzuklettern. Das taten deine Freunde und du schon als Kinder - und das tust du auch jetzt noch manchmal, den oben in der kleinen Zinne sieht einen Niemand.")
+  (mahlzeit)
+  (auswahl '(ort-43 ort-26 ort-28 ort-9) "Von hier aus hast du die Möglichkeit zur Waldhausener Straße zu gelangen (1), durch die Passage zum Alten Markt zu gehen (2) oder zum Kapuzinerplatz(3), wenn du schnell genug spurtest schaffst du es vielleicht sogar bis zum Haus deines Großvaters (4)"))
+
+
 
 (defun ort-45 ()
-  )
+  (when (ereignis 'dreistelzer)
+	(textausgabe "Von hier aus kann man sehen, das aus Richtung des Wasserturms sich ein wenigstens 30 Meter hoher Dreibeiner dem Krankenhaus nähert."))
+  (when (> (w6) 4)
+	(textausgabe "Deine Gedanken schweifen ab zu Marios, der früher über dem Cafe wohnte. Oben in seiner Wohnung hattet ihr Commodore Basiclistings in den PC eingehämmert und stundenlang dann mit den Ergebnissen gespielt. Von hier aus seid ihr auch oft mit Dimmi zum Fußballspielen aufgebrochen. In der Bäckerei wohnte Michaela mit ihren Eltern, die die Backstube betrieben. Du hast leider nie erfahren, warum sie nach Ende der dritten Klasse nicht in die Schule zurückkehrte - oder wieso plötzlich die Bäckerei weg war."))
+  (textausgabe "Du hast die Wallstraße immer gerne als Abkürzung benutzt, um zur Hindenburgstraße zu gelangen, nicht zuletzt wegen des Bücherladens, an dem du dir täglich am Schaufenster die Nase platt gedrückt hast, wo du dir das erste mal Michael Moorcocks \"Elric von Melnibone - Die Sage vom Ende der Zeit\" holtest, jenes Buch, das du dir sechs Mal kaufen mußtest, weil niemand es zurückgab, wenn man es ihm auch nur einmal auslieh. Und immer nach seinem Neuerwerb, hast du es nochmal gelesen. Du erinnerst dich auch noch an deine schräge Klassenkameradin, die einerseits total schüchtern her war vom Wesen - und die dennoch wie Boy George herumlief - und auch die Musik die ganze Zeit über hörte.")
+  (auswahl '(ort-34 ort-29 ort-27 ort-28) "Du kannst von hier aus zur Hindenburgstraße (1), die Kaiserstraße hinab (2), den Marktstieg entlang (3) oder am Haus Zoar vorbei zum Kapuzinerplatz (4)"))
+
+
 
 (defun ort-46 ()
-  )
+  (let ((raum (second *zug*)))
+	(if (eql raum 'ort-55)
+		(textausgabe "Mit lange Zügen tauchst du weiter durch das eiskalte Wasser. Deine Lungenflügel leeren sich und beginnen langsam zu brennen. Du weißt, daß du den Rückweg nicht mehr schaffen würdest, also schwimmst du was das Zeug hält. Plötzlich bemerkst du über dir ein Licht - du hältst drauf zu - und durchbrichst die Wasseroberfläche. Luft strömt in deine gequälten Lungenflügel. Du ruderst mit den Armen schaffst es, nicht wieder einzutauchen und ruderst halb benommen zum Ufer, an dem du liegenbleibst. Du mußt etwas verschnaufen. Dann, als du wieder klarer denken kannst, nimmst du deine Umgebung wahr - und erkennst, das du am Ufer des Geroweihers liegst, unter den schützenden Ästen der alten Trauerweide, an denen ihr als Kind immer mit Tarzanschrei ins Wasser geschwunden seid. Du bleibst weiter einfach sitzen und schwelgst in Erinnerungen, bis du dir die aktuelle Gefahr wieder vor Augen führst und dich erhebst.")
+		(textausgabe "Der Geroweiher. Ein kleiner Ort der Ruhe, an dem ein Spielplatz in deiner Jugend für ein gewisses Training deiner Muskeln sorgte, der aber auch der Austragungsort so mancher Keilerei war. Im Zentrum steht ein Stück alter Stadtmauer und wenn man hochguckt, sieht man auf dem Hügel das Münster. Der Weiher ist vielleicht gerade einmal zwei, höchstens drei Meter weit. Wenn du dich recht entsinnst, hatte eure Grundschullehrerin euch früher erzählt, der Geroweiher würde durch den Gladbach gespeist werden. Aber egal wie weit du auch zurückdenkst, den Gladbach hast du hier noch nirgendwo fließen sehen. Vielleicht, ist er ja nur noch eine Erinnerung, an alte Zeiten."))
+	(if (ereignis 'dreistelzer)
+		(progn
+		  (textausgabe "Dank des Regens wäre es dir fast nicht aufgefallen, das zwei Dreistelzer sich nahe der Kreuzung zur Aachener Straße und in Gegenrichtung nahe der Rheydter Straße platziert haben. Zwar gibt es noch den kurzen Tunnel hinüber zur Turmstraße, aber wer weiß, wie es sonst in dem Viertel aussieht? In Anbetracht der Situation - und bei dem Gedanken daran, das noch ein weiterer Dreistelzer oben am Markt lauert, wären die beiden sicheren Routen, um von hier weg zu kommen, wohl nur der Weg den Spatzenberg entlang, oder der Weg hinauf zum Münster. Die Abhänge sind deine Verbündeten. Du kannst dir nicht vorstellen, daß diese 30 Meter hohen mechanischen Ungetüme dort entlangstelzen können.")
+		  (auswahl '(ort-52 ort-37) "Willst du also zum Spatzenberg (1) oder zum Münster (2) hinauf?"))
+		(auswahl '(ort-52 ort-35 ort-37) "Du kannst den Spatzenberg hinauf (1), oder den Abteiberg (2) oder die Treppen zum Münstervorplatz nehmen (3)"))))
+
+
+
+(defun ort-47 ()
+  (if (ereignis 'dreistelzer)
+	  (progn
+		(textausgabe "Von der Ecke der Hindenburgstraße aus kannst du sehen, das zwei Dreistelzer sich an den Bankgebäuden zu schaffen machen. Soldaten bringen aus der Bank heraus Säcke zu einem Panzerwagen. Für deinen Geschmack ist das etwas zu nah, um auch nur im Entferntesten daran zu denken, die Kreuzung zu überqueren. So drehst du dich lieber um und suchst dein Heil in der Flucht, die Hindenburg straße hinauf.")
+		#'ort-51)
+	  (progn
+		(textausgabe "Ein Dreibeiner steht neben der Kaiser-Friedrich-Halle und bedeckt ihr Dach mit einem blau-grünlichen Flamme. Glücklicherweise ist er damit soweit weg, daß wohl kaum die Gefahr besteht, bemerkt zu werden.")
+		(auswahl '(ort-51 ort-48) "Der Weg ist soweit sicher die Hindenburgstraße hinauf (1) oder weiter hinab bis zum Vorplatz des Hauptbahnhofs (2)"))))
+
+
+
+(defun ort-48 ()
+  (when (ereignis 'dreistelzer)
+	(textausgabe "Von überall her, dringen die scheusslichen, mechanischen Geräusche der Dreistelzer auf dich ein, trotzdem ist hier auf dem Europaplatz noch keines dieser haushohen Metallmonster aufgetaucht."))
+  (when (> (w6) 4)
+	(textausgabe "Für die meisten Gladbacher ist das hier einfach der Platz vor dem Hauptbahnhof, für andere der Busbahnhof aber kaum jemand kennt den Namen des Platzes. Früher war da mal die Bank, wo der Mann deiner Mutter arbeitete. Amüsiert mußt du daran denken, wie er fassungslos nach Hause kam und davon erzählte, das die nette Frau aus dem Haus, die manchmal den Bankern etwas zu essen brachte, die Frau war, die ihren Mann zerstückelt und in Dosen im Bunten Garten verstreut hatte."))
+  (textausgabe "Es stehen keinerlei Busse im Busbahnhof herum, auch sind kaum Menschen hier auszumachen. Betrachtet man nur den Platz, so wirkt alles so, wie es sein soll.")
+  (auswahl '(ort-47 ort-49) "Du kannst von hier aus entweder die Hindenburgstraße entlang in Richtung Alter Markt gehen (1) oder das Innere des Hauptbahnhofs betreten (2)"))
+
+
+
+(defun ort-49 ()
+  (ereignis 'dreistelzer-gesehen 't)
+  (when (> (w6) 4)
+	(textausgabe "Während du auf die Doppeltüren des Bahnhofs zuschreitest kommt dir ein Bild aus deiner Erinnerung. Du wolltest dir das neueste Lustige Taschenbuch holen - und es war Sonntag. Normalerweise kam es erst Montags heraus, so wie auch das Yps-Heft, aber am Kiosk des Hauptbahnhofs gab es alles einen Tag früher. Und so fragtest du damals im Kiosk nach, aber dort sagte man, daß die Hefte noch nicht geliefert wurden - das es aber in der nächsten Stunde geschehen würde. Und so ging ich an die Modelleisenbahn, die dort stand - und spielte damit für die nächste Stunde. Und als ich mich schließlich wieder erinnerte warum ich gekommen war, holte mir die Verkäuferin das frisch gedruckte Taschenbuch aus dem Karton heraus. Ich pflückte mir noch das neue Yps mit seinem Gimmick aus dem Verkaufsständer, bezahlte und machte mich freudig auf den Nachhauseweg. Herr Jansen der Wirt war bei meinen Eltern, daran erinnerte ich mich, er hatte mir das Geld für das Taschenbuch gegeben."))
+  (textausgabe "Beim Öffnen der Türe entfaltet sich ein grauenhafter Anblick vor mir, die Bahnhofshalle gleicht eher einem Schlachthaus und riecht strenger als eine Leichenhalle. Und am Ende des Bahnhofs sehe ich die metallenen Beine eines Dreistelzers. Mir bleibt nichts anderes übrig, als mich umzudrehen und das Weite zu suchen.")
+	#'ort-48)
+
+
 
 (defun ort-50 ()
-  'ende)
+  (let ((raum (second *zug*)))
+	(if (eql raum 'ort-33)
+		(textausgabe "Nervös siehst du hinter dich, aber es scheint nicht, als wäre dir jemand gefolgt.")
+		(textausgabe "Die Kleiststraße ist jene kurze Straße zwischen dem Lichthof und dem Adenauerplatz, an dem sich das von allen Gladbachern gehasste Finanzamt befindet. Wenn man sich die Fassade des Gebäudes genauer betrachtet, so hat sie noch so etwas widerliches an sich, eine Ausstrahlung, als wäre sie ein verirrtes Stück 1940."))
+	(when (ereignis 'dreistelzer)
+	  (textausgabe "Ein Schuß erklingt!")
+	  (when (eql (ort-113) 'ende)
+		(return-from ort-50 'ende)))
+	(auswahl '(ort-31 ort-33) "Du kannst am Adenauerplatz vorbei zur Blücherstraße (1) oder Richtung Hindenburgstraße in den Lichthof (2)")))
+
+
 
 (defun ort-51 ()
-  'ende)
+  (let ((raum (second *zug*)))
+	(when (eql raum 'ort-36)
+	   (textausgabe "Du stürzt am Jugendheim vorbei, läßt das Museum rechts an dir vorbeigleiten. Früher hättest du wohl angehalten - und dir die Schaufenster des Elektronikladens angeguckt, jetzt aber hastest du quer über die Straße und läufst bergab auf die Stepgesstraße zu. Unten am Fuß der Stepgesstraße steht ein weiterer Dreistelzer, sein eines Standbein hat ein Auto plattgequetscht. Wer immer auch in dem Auto drin saß, er dürfte nun klein wie eine Briefmarke sein. Du läuftst nach links in Richtung Croonsallee. Als du an die Kreuzung zur Hindenburgstraße kommst, hältst du an. Auch hier sieht es nicht besser aus. Der Dreibeiner auf dem Alten Markt ist auch von hier aus zu sehen - er bleckt bläuliches Feuer gegen das ehemalige Heinemann. Und trotz des prasselnden Regens erkennst du auch am unten an der Hindenburgstraße, direkt um die Biegung herum noch ein weiterer Dreistelzer sein muß. Du mußt nicht lange überlegen. Du rennst zurück, hinauf zum Rathaus und dem Münster. Im Moment scheinen daß die letzten beiden Orte zu sein, wo die Dreistelzer noch nicht hingelangen. Verbissen rennst du los.")
+	   (return-from ort-51 #'ort-37))
+	(when (and (eql raum 'ort-47) (ereignis 'dreistelzer))
+	  (textausgabe "Mit Mühe und Not gelingt es dir, die Bismarkstraße unbemerkt zu überqueren. Du hältst dich dicht an die Häuserfassade gedrückt, damit dich der andere Dreibeiner nicht bemerkt, der am Lichthof gegenüber der Friedrichstraße sein Zerstörungswerk fortsetzt. Belustigt denkst du an die Kuh Martina zurück. Zurück in der Realität rennst du so schnell dich deine Beine tragen in die Albertusstraße hinein, vorbei an dem Gebäude früher der Buchclub war, in dem deine Mutter sich seit einem halben Jahrhundert Mitgliedschaft durchgequält hat, vorbei an der Bank... Uff, das hätte auch schlecht ausgehen können. Auch hier ist eine Bank, aber noch kein Dreistelzer. Du läuftst weiter bis zum Adenauerplatz und rennst quer über diesen, bis du an die Ecke zur Blücherstraße kommst.")
+	  (return-from ort-51 #'ort-31))
+	(auswahl '(ort-34 ort-47 ort-33) "Von hier aus kannst du der Hindenburgstraße bergauf folgen (1) oder in die Gegenrichtung auf den Hauptbahnhof zu (2), oder Richtung Kleiststraße durch den Lichthof (3)")))
+
+
+
+(defun ort-52 ()
+  (if (ereignis 'dreistelzer)
+	  (progn
+		(textausgabe "Oben von der Annastiege aus, kannst du den Dreibeiner sehen - und auch die Männer, die allem Anschein nach die Bank leer räumen.")
+		(auswahl '(ort-37 ort-43 ort-46) "Von hier aus kannst du versuchen die Neustraße langzuhuschen, ein kurzes Stück die Weiherstraße hinab zulaufen und dann die Treppen hinauf zum Münsterplatz (1), oder du rennst hinüber zur Waldhausener Straße, zum Dicken Turm (2) oder jagst wie in deiner Jugend die gesamte Anna-Schiller-Stiege bis zum Geroweiher hinab (3)"))
+	  (progn
+		(when (> (w6) 4)
+		  (textausgabe "Der Fliescherberg ist ein ganz sentimentaler Ort für dich. Oben auf der kleine Plattform naher der Ecke Neustraße habt ihr immer Detektiv gespielt - und die Bank beobachtet. Hier wuchsen auch die Knallerbsen mit denen ihr die Leute erschreckt habt. An den Ästen der beiden Bäume neben der Plattofrm seid ihr immer hinaufgeklettert - und wenn ihr Glück hattet, dann konnte man im Winter an ein oder zwei Tagen auch mit dem Schlitten den ganzen Fliescherberg hinuntersausen."))
+		(textausgabe "An der Seite des Fliescherberges führt die lange Anna-Schiller-Stiege hinab, neben der ihr als Kinder immer in den Büschen Cowboys und Indianer oder Ritter gespielt hattet. Hier waren immer eure selbst gemachten Pfeilbögen und Schwerter versteckt. Ein lang gewundener Weg führt von der Waldhausener Straße hinüber und ein weiterer von der Ecke Neustraße hinunter. Du weißt gar nicht mehr, wie oft ihr als Kinder wagemutig auf euren Skateboards hier heruntergerast seid, ja, gerast trifft es, denn der Berg ist so steil, das die Endgeschwindigkeit einfach nur verboten schnell war.")
+		(auswahl '(ort-35 ort-46 ort-43) "Du kannst von hier aus zum Abteiberg hinaufgehen (1), hinab zum Geroweiher (2) oder hinüber zur Waldhausener Straße (3)"))))
+
+
+
+(defun ort-53 ()
+  (let ((raum (second *zug*)))
+  	(if (eql raum 'ort-42)
+		(textausgabe "Du betrittst den Gang. Er ist alt, die Luft riecht modrig, abgestanden. Aus deinem Rucksack hast du deine Taschenlampe und deinen alten Marschkompass aus der Bundeswehrzeit hervorgeholt. Du leuchtest die Wände ab und gehst langsam voran. Plötzlich hörst du hinter dir, wie sich der Spalt schließt. Du drehst dich noch um - aber es ist zu spät. Es scheint, als wäre dir der Rückweg versperrt. Hilflos zuckst du mit den Schultern. Wenn du richtig liegst, dann kannte dein Großvater diesen Ort - und er hätte dich niemals in eine Falle laufen lassen. So schreitest du weiter den Gang voran.")
+		(textausgabe "Ganz im Westen ist der Gang eine Sackgasse. Du weißt, daß dort eine Türe ist, aber sie ist zu perfekt eingefasst - und du findest nichts, um sie zu öffnen. So gibst du nach einer Weile des Suchens auf und folgst dem Gang nach Osten."))
+	(ereignis 'sargdeckel-verschoben)
+	#'ort-54))
+
+
+
+(defun ort-54 ()
+  (when (zerop (inventar 'rucksack))
+	(textausgabe "Du tastest dich durch den stockfinsteren Raum, bis du glaubst den Durchgang nach Norden gefunden zu haben und folgst diesem weiter.")
+	(return-from ort-54 #'ort-55))
+  (textausgabe "Du betrittst einen mehr oder weniger rechteckigen Raum. Es sind verschiedene, unleserliche Kritzeleien und Schriftzeichen an den Wänden zu sehen, jedoch nichts, was du wirklich entziffern könntest.")
+  (if (ereignis 'durchgang-geöffnet)
+	  (progn
+		(textausgabe "In der Südostecke des Raumes hat sich ein Stück des Bodens verschoben. Dort ist ein Loch im Boden, in dem eine Rutsche ist. Nachdem du sie dir näher angesehen und betastet hast, kommst du zu dem Ergebnis, daß das Metall zu glatt ist - um im Falle eines Falles dort wieder hochklettern zu können - hingegen wäre es wohl eine Leichtigkeit - hinunterzurutschen.")
+		(auswahl '(ort-53 ort-55 ort-56) "Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Du könntest einen von ihnen nehmen - oder aber eine ungewisse Rutschpartie wagen (3)."))
+	  (auswahl '(ort-53 ort-55) "Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Welchen möchtest du einschlagen?")))
+
+
+
+(defun ort-55 ()
+  (if (zerop (inventar 'rucksack))
+	  (progn
+		(textausgabe "Du tastest dich durch den Raum, bis du schließlich auf deinen Rucksack stößt. Du nimmst alles wieder an dich und schaltest die Taschenlampe an. Da der Raum außer dem Wasserloch nun nichts mehr zu bieten hat, verläßt du ihn und gehst zurück nach Süden.")
+		(inventar 'rucksack 1)
+		#'ort-54)
+	  (progn
+		(textausgabe "Der Raum, in den du gelangst, gleicht eher einer Höhle mit Natursteinen. Es gibt nur einen Weg hinaus, der im Süden, durch den du hineingekommen bist. An seiner Westwand ist ein großes, dunkles Wasserloch.")
+		(if (j-oder-n-p "Möchtest du deine Kleidung und deinen Rucksack samt Taschenlampe ablegen und in das dunkle Wasserloch tauchen?")
+			(progn
+			  (inventar 'rucksack -1)
+			  (textausgabe "Vorsichtig steckst du einen Zeh in das Wasser. Es ist eiskalt. Langsam, ganz langsam steigst du immer tiefer rein. Der Boden sinkt soweit ab, das du ab einer gewissen Grenze nicht mehr stehen kannst. Es ist jetzt stockfinster im Raum. Schräg in der Tiefe glaubst du ein Licht wahrzunehmen. Du holst noch einmal tief Luft - und tauchst tief in das Wasser ein. Du tauchst durch eine Art natürlicher Tunnel, dessen Wände sich allerdings glatt anfühlen. An einer Stelle des Tunnels stößt du gegen einen Widerstand, aber der verflüchtigt sich sofort. Vermutlich war es nur ein verirrter Fisch.")
+			  (ereignis 'durchgang-geöffnet 't)
+			  #'ort-46)
+			(progn
+			  (textausgabe "Da der Raum außer dem Wasserloch nichts zu bieten hat, verläßt du ihn und gehst zurück nach Süden.")
+			  #'ort-54)))))
+
+
+
+(defun ort-56 ()
+  (let ((raum (second *zug*)))
+	(when (eql raum 'ort-54)
+	  (textausgabe "Du nimmst deinen Rucksack vom Rücken und ziehst ihn verkehrt herum an, so daß er jetzt vor deinem Bauch ist. Das Seil an deiner Taschenlampe schlingst du fest um deine Hand, damit du sie auf keinen Fall verlieren kannst. Du hast dir die Richtung gemerkt, in der die Rutschaprtie beginnen wird. Schließlich setzt du dich auf den Rand und läßt deine Beine in diese seltsam glatte Metallröhre baumeln. Du atmest tief durch und denkst an Karl Kochs, deinen Großvater. Er hätte dich doch bestimmt niemals dazu verlockt, dich in eine Gefahr zu begeben, oder? Andererseits, wenn du an das Draußen denkst, an diesen Überfall fremder Truppen auf Mönchengladbach, an die Greuel, die sich deinen Augen heute bereits geboten haben, so kannst du froh sein, überhaupt noch am Leben zu sein. Dein Leben war so lange nur ein Kampf, auch noch den nächsten Tag erleben zu dürfen, was sollte dich von einem echten Abenteuer abhalten? Im schlimmsten Fall, wird das jetzt eine ungewöhnliche Todesart, eine Rutschpartie in den Tod.")
+	  (textausgabe "Noch einmal holst du Luft, gerade so, als müßtest du tauchen, dann stößt du dich ab. Du rutschst, langsam nur. Vermutlich könntest du jetzt noch mit deinen Sohlen abbremsen. Aber schon jetzt stürst du, mit hinaufklettern, wir das nichts. Und dann plötzlich, wird es steiler, abschüssiger. Du breitest die Arme aus, bildest mit deinem langgezogenen Körper und deinen Elbogen eine halbwegs stabile Haltung. Du wagst es gar nicht mehr, zu versuchen mit Händen oder Schuhsohlen die Röhre zu berühren. Ja, die Röhre, denn es ist eine Röhre, eine Röhre, die vollkommen glatt ist - und dann spürst du, das du dich in einer langen Spirale bewegst, während es immer tiefer geht - und du wirst schneller in der Spirale, sie wird weiter.")
+	  (textausgabe "Dachtest du vor Beginn deiner Rutschpartie noch, es wäre nach 2, 3, 4 Sekunden vorbei, so weißt du jetzt, daß du besser in Minuten hättest rechnen sollen. Und dann kommt es zu einer Art Korkenziehereffekt, du verlierst die Übersicht, wo oben und unten ist, dann wird es Spiralförmig - und die Spirale flacht immer weiter ab - es kommt zu einem letzten auf und ab - und dann plötzlich trittst du aus einer Röhre aus und fliegst in einem weiten Bogen - und landest in einem relativ flachen Winkel mitten im Wasser. Jetzt bemerkst du, daß das mit dem Rucksack nicht die wirklich tolle Idee war. Du ruderst - und schaffst es, seichteres Gewässer zu erreichen - und als du mit den Knien den Boden fühlst, hörst du auf zu paddeln und stellst dich auf, dann watest du die letzten Schritte an das Ufer und setzt dich hin.")
+	  (textausgabe "Es war nicht wirklich schwierig, diese ganze Rutschpartie durchzustehen, aber noch dreht sich dir die Umgebung ein wenig. Du legst dich zurück und schließt die Augen.")
+	  ;; Durch den Schlaf erholt sich der Spieler vollständig
+	  (erhöhe 'stärke 24)
+	  (erhöhe 'gewandheit 12)
+	  (erhöhe 'glück 12)
+	  (textausgabe "Du weißt nicht, wieviel Zeit vergangen ist, aber nachdem du nun endlich wach bist, fühlst du dich direkt viel wohler und auch viel ausgeruhter. Deine Kleidung ist nicht mehr nass. Und dein Rucksack liegt neben dir auf dem Boden. Langsam steigt es dir ins Bewußtsein, daß du sehen kannst. Du blickst dich um uns bemerkst, das die seltsamen Wurzeln - oder sind es Pflanzen - die sich an den Wänden langziehen, eine Art Lumineszenz ausstrahlen, in einem Spektrum, die die Höhle in eine Art angenehmes gelbliches Licht tauchen."))
+	(rotiere-plattform)
+	(textausgabe "Du befindest dich in einer Art Naturhöhle mit einem großen Teich. Das Wasser ist kristallklar. Die weit entfernte Nordwand ist spiegelglatt - nicht jene natürliche Glätte eines gebrochenen Felsens, sondern künstliche Glätte die Rückschlüsse auf eine Bearbeitung läßt. Mitten in dieser befindet sich ein beinahe mannsgroßes Loch. Das ist der Ausgang der Röhre, durch die du hierhin gerutscht bist. Die Höhle ist bewachsen mit einer seltsamen Pflanze oder Wurzel, die luminiszierend ist und ein angenehmes gelbliches Licht ausstrahlt. Das Ufer ist nicht sandig, wie du es von Stränden kennst, dafür liegen dort viele Kieselsteine. Soweit du sonst erkennen kannst, ist die Höhle leer. Im Süden führt ein Weg aus ihr hinaus. Da es hier nichts gibt, was dich hält, drehst du dich um und folgst dem Weg hinaus aus der Höhle.")
+	#'ort-59))
+
+
+
+(defun ort-57 ()
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-58
+	   (textausgabe "Du hast schon das Gefühl, der Gang würde niemals enden. Dann aber scheint er doch an sein Ende zu kommen und macht einen Knick nach links.")
+	   (auswahl '(ort-131 ort-58 ort-63) "Möchtest du dem Gang nach links folgen (1) oder zurückgehen (2)? Du kannst natürlich auch nach Geheimgängen suchen (3)"))
+	  (ort-63
+	   (textausgabe "Der Geheimgang, den du gefunden hast, ist verwirrend. Er ändert immer wieder sporadisch die Richtung, mal mußt du kriechen, dann wieder über Hindernisse klettern. Einmal wenigstens hast du sogar Angst, stecken zu bleiben, doch schließlich gelangst du an sein Ende. In einer schattigen Mulde trittst du aus ihm hervor.")
+	   (auswahl '(ort-58 ort-131 ort-63) "Der Gang führt hier weiter geradeaus (1), du kannst aber auch einem Weg nach rechts folgen (2) oder kehrt machen und wieder zurück an deinen Ausgangsort durch den Geheimgang, so du ihn denn wiederfindest (3)."))
+	  (ort-131
+	   (textausgabe "Der Gang macht an dieser Stelle einen Knick nach rechts.")
+	   (auswahl '(ort-58 ort-131 ort-63) "Möchtest du dem Gang nach rechts folgen (1) oder zurückgehen (2)? Du kannst natürlich auch nach Geheimgängen suchen (3)"))
+	  (otherwise
+	   (auswahl '(ort-58 ort-131 ort-63) "Du kannst dem Tunnel nach Osten folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)")))))
+
+
+
+(defun ort-58 ()
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-57
+	   (textausgabe "Du kommst, nachdem du einem langen Tunnel gefolgt bist, an eine Abbiegung.")
+	   (auswahl '(ort-59 ort-64 ort-57 ort-212) "Von hier aus kannst du weiter geradeaus gehen (1) oder der Abbiegung nach rechts folgen (2). Du kannst dich aber natürlich auch umdrehen und zurückgehen (3) oder nach Geheimgängen suchen (4)"))
+	  (ort-59
+	   (auswahl '(ort-57 ort-64 ort-59 ort-212) "Von hier aus kannst du weiter geradeaus gehen (1) oder der Abbiegung nach links folgen (2). Du kannst dich aber natürlich auch umdrehen und zurückgehen (3) oder nach Geheimgängen suchen (4)"))
+	  (ort-64
+	   (textausgabe "Der Gang kommt mündet hier in einen anderen Gang, der von rechts nach links verläuft.")
+	   (auswahl '(ort-59 ort-57 ort-64 ort-212) "Möchtest du nach rechts gehen (1) oder nach links (2) oder drehst du dich um und gehst zurück (3)? Wenn du magst, kannst du auch nach Geheimwänden suchen (4)")))))
+
+
+
+(defun ort-59 ()
+  )
 
 (defun ort-100 ()
   'ende)
