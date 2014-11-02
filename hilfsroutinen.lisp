@@ -38,35 +38,29 @@
 
 
 
-(defun addiere-ziffern (n &optional (summe 0))
+(defun addiere-ziffern (n &optional (sum 0))
   "Nimmt eine Zahl entgegen und gibt die Summe all ihrer Ziffern zurück.
 Beispiel: (addiere-ziffern 125) => 8"
-  (cond	((zerop n)
-		 summe)
-		(t
-		 (addiere-ziffern (truncate (/ n 10)) (+ summe (rem n 10))))))
+  (if (zerop n)
+	  sum
+	  (addiere-ziffern (truncate (/ n 10)) (+ sum (rem n 10)))))
 
 
 
-(defun alle-permutationen (liste)
+(defun alle-permutationen (lst)
   "Alle Permutationen einer Liste erzeugen; Beispiel: (alle-permutationen (list 'a 'b 'c 'd 'e))"
-  (if (null liste) '(())
+  (if (null lst) '(nil)
       (mapcan #'(lambda (x)
-		  (mapcar #'(lambda (y) (cons x y))
-			  (alle-permutationen (remove x liste :count 1)))) liste)))
+				  (mapcar #'(lambda (y) (cons x y))
+						  (alle-permutationen (remove x lst :count 1)))) lst)))
 
 
 
-(defun alphabetischer-wert (string &aux (länge (length string)))
+(defun alphabetischer-wert (str)
   "Errechnet den alphabetischen Wert eines Strings, momentan nur für Großbuchstaben korrekt.
 Beispiel: (alphabetischer-wert \"abc\") => 102"
-  (do ((i 0 (1+ i))
-	   (summe 0))
-	  ((= i länge)
-	   summe)
-	(incf summe (- (char-int (aref string i)) 64))))
-
-
+  (loop for c across str summing (- (char-int c) 64)))
+  
 
 (defun arabisch->römisch (zahl)
   "Übersetzt eine Zahl mit arabischen Ziffern in einen String mit römische Ziffern um.
@@ -81,19 +75,19 @@ Das kleinste befreundete Zahlenpaar wird von den Zahlen 220 und 284 gebildet. Ma
     Die Summe der echten Teiler von 220 ergibt 1 + 2 + 4 + 5 + 10 + 11 + 20 + 22 + 44 + 55 + 110 = 284 und die Summe der echten Teiler von 284 ergibt 1 + 2 + 4 + 71 + 142 = 220.
 In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die größere Zahl defizient."
   (let* ((bz (apply #'+ (sammle-divisoren n t)))
-		 (bz-summe (apply #'+ (sammle-divisoren bz t))))
-	(when (= n bz-summe)
+		 (bz-sum (apply #'+ (sammle-divisoren bz t))))
+	(when (= n bz-sum)
 	  bz)))
 
 
 
-(defun but-nth (n liste)
+(defun but-nth (n lst)
   "Gibt die Liste, ohne das nte Element zurück. Die Zählung der Liste beginnt bei NULL.
 Beispiel: (but-nth 4 '(1 2 3 4 5 6 7 8 9)) => (1 2 3 4 6 7 8 9)"
   (if (zerop n)
-	  (rest liste)
-	  (cons (first liste)
-			(but-nth (1- n) (rest liste)))))
+	  (rest lst)
+	  (cons (first lst)
+			(but-nth (1- n) (rest lst)))))
 
 
 
@@ -108,18 +102,18 @@ Beispiel: (but-nth 4 '(1 2 3 4 5 6 7 8 9)) => (1 2 3 4 6 7 8 9)"
 
 
 
-(defun collatz-sequenz (n &optional (liste nil))
+(defun collatz-sequenz (n &optional (lst nil))
   "Gibt die Collatz-Sequenz einer gegebenen Zahl n als Liste zurück.
 Beispiel: (collatz-sequenz 19) => (19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 5 16 8 4 2 1)"
-  (push n liste)
+  (push n lst)
   (cond	((= n 1)
-		 (reverse liste))
+		 (reverse lst))
 		((evenp n)
 		 (setf n (/ n 2))
-		 (collatz-sequenz n liste))
+		 (collatz-sequenz n lst))
 		(t
 		 (setf n (1+ (* 3 n)))
-		 (collatz-sequenz n liste))))
+		 (collatz-sequenz n lst))))
 
 
 
@@ -143,27 +137,27 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 
 
 
-(defun dreieckszahl-rang (zahl)
+(defun dreieckszahl-rang (n)
   "Gibt die Dreieckszahl des gewünschten Rangs aus."
-  (/ (* zahl (1+ zahl)) 2))
+  (/ (* n (1+ n)) 2))
 
 
 
-(defun dreieckszahlp (zahl)
+(defun dreieckszahlp (n)
   "Prüft ob eine Zahl eine Dreieckszahl ist."
-  (let ((wert (sqrt (1+ (* 8 zahl)))))
+  (let ((wert (sqrt (1+ (* 8 n)))))
 	(= wert (truncate wert))))
 
 
 
-(defun durchschnitt (&rest liste)
-  "(durchschnitt liste)
+(defun durchschnitt (&rest lst)
+  "(durchschnitt lst)
 DURCHSCHNITT ermöglicht es, den Durchschnitt einer Reihe von Zahlen zu berechnen.
 Beispiel: (durchschnitt 2 3 4) => 3"
-  (if (null liste)
+  (if (null lst)
       nil
-      (/ (reduce #'+ liste) 
-		 (length liste)))) 
+      (/ (reduce #'+ lst) 
+		 (length lst)))) 
 
 
 
@@ -202,18 +196,18 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 
 
 
-(defun faktorisiere (zahl)
+(defun faktorisiere (n)
   "(faktorisiere n)
 Gibt eine Liste der Faktoren der Zahl N zurück.
 Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"  
-  (when (> zahl 1)
+  (when (> n 1)
 	(do ((i 2 (1+ i))
-		 (limit (1+ (isqrt zahl))))
+		 (limit (1+ (isqrt n))))
 		((> i limit)
-		 (list zahl))
-	  (when (zerop (mod zahl i))
+		 (list n))
+	  (when (zerop (mod n i))
 		(return-from faktorisiere
-		  (cons i (faktorisiere (/ zahl i))))))))
+		  (cons i (faktorisiere (/ n i))))))))
 
 
 
@@ -268,19 +262,19 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 
-(defun fünfeckszahl-rang (zahl)
+(defun fünfeckszahl-rang (n)
   "Gibt die Fünfeckszahl des gewünschten Rangs aus."
-  (/ (* zahl (1- (* 3 zahl))) 2))
+  (/ (* n (1- (* 3 n))) 2))
 
 
 
-(defun fünfeckszahlp (zahl)
+(defun fünfeckszahlp (n)
   "Prüft ob eine Zahl eine Dreieckszahl ist."
   (let ((lst (do* ((i 10 (+ i 10))
 				   (lst (fünfeckszahl-folge i) (fünfeckszahl-folge i lst)))
-				  ((>= (first (last lst)) zahl)
+				  ((>= (first (last lst)) n)
 				   lst))))
-	(when (member zahl lst)
+	(when (member n lst)
 	  't)))
 
 
@@ -342,13 +336,13 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
-(defun liste->zahl (liste)
+(defun liste->zahl (lst)
   "Die übergebene Liste wird als Zahl zurückgegeben."
-  (reduce #'(lambda (x y) (+ (* 10 x) y)) liste))
+  (reduce #'(lambda (x y) (+ (* 10 x) y)) lst))
 
 
 
-(defun lychrel-zahl-p (zahl &optional (versuche 50))
+(defun lychrel-zahl-p (n &optional (versuche 50))
   "Jede natürliche Zahl n, die nicht durch eine endliche Anzahl von Inversionen und Additionen zu einem Zahlen-Palindrom führt, wird als Lychrel-Zahl bezeichnet. Als Inversion versteht man hier das Bilden der spiegelverkehrten Zahl m. Führt die Addition n+m dabei zu einem Zahlenpalindrom, ist der Algorithmus beendet. Falls nicht, wird durch erneute Inversion und Addition dieser Vorgang solange ausgeführt, bis das Ergebnis ein Palindrom ist.
 Beispiele
     Man nimmt die Zahl 5273. Die spiegelverkehrte Zahl dazu lautet 3725 (Inversion). Durch Addition erhält man das Zahlenpalindrom 8998.
@@ -360,7 +354,7 @@ Beispiele
         133243 + 342331 = 475574 (ein Palindrom)"
   (if (zerop versuche)
 	  t
-	  (let ((kandidat (+ zahl (liste->zahl (reverse (zahl->liste zahl))))))
+	  (let ((kandidat (+ n (liste->zahl (reverse (zahl->liste n))))))
 		(if (palindromp kandidat)
 			nil
 			(lychrel-zahl-p kandidat (1- versuche))))))
@@ -373,24 +367,24 @@ Beispiele
 
 
 
-(defun mischen (liste &optional (durchgang (* 2 (length liste))) &aux (länge (length liste)))
+(defun mischen (lst &optional (durchgang (* 2 (length lst))) &aux (len (length lst)))
   "(mischen liste &optional durchgang)
 MISCHEN dient dazu, eine Liste mit einer frei wählbaren Anzahl an Durchgängen zu mischen. Wird keine Anzahl an Durchgängen genannt, so wird der Vorgang 20 Mal durchgeführt.
 Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
-  (let ((zufallszahl (random länge)))
+  (let ((zufallszahl (random len)))
 	(cond ((zerop durchgang)
-		   liste)
+		   lst)
 		  ((oddp zufallszahl)
-		   (mischen (append (reverse (nthcdr zufallszahl liste))
-							(butlast liste (- länge zufallszahl)))
+		   (mischen (append (reverse (nthcdr zufallszahl lst))
+							(butlast lst (- len zufallszahl)))
 					(1- durchgang)))
 		  ((evenp zufallszahl)
-		   (mischen (append (nthcdr zufallszahl liste)
-							(butlast liste (- länge zufallszahl)))
+		   (mischen (append (nthcdr zufallszahl lst)
+							(butlast lst (- len zufallszahl)))
 					(1- durchgang)))
 		  (t
-		   (mischen (append (nthcdr zufallszahl liste)
-							(reverse (butlast liste (- länge zufallszahl)))
+		   (mischen (append (nthcdr zufallszahl lst)
+							(reverse (butlast lst (- len zufallszahl)))
 							(1- durchgang)))))))
 
 
@@ -404,19 +398,19 @@ Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
 
 
 
-(defun nth-permutation (x liste)
+(defun nth-permutation (n lst)
   "Gibt die nte Permutation einer Liste zurück. Die Zählung beginnt bei NULL."
-  (if (zerop x)
-	  liste
-	  (let* ((länge (length liste))
-			 (sublen (1- länge))
+  (if (zerop n)
+	  lst
+	  (let* ((len (length lst))
+			 (sublen (1- len))
 			 (modulus (faktor sublen)))
-		(if (> x (* länge modulus))
-			(format t "Die Liste mit der Länge ~A ermöglicht keine ~A Permutationen." länge x)
+		(if (> n (* len modulus))
+			(format t "Die Liste mit der Länge ~A ermöglicht keine ~A Permutationen." len n)
 			(multiple-value-bind (quotient remainder)
-				(floor x modulus)
-			  (cons (nth quotient liste)
-					(nth-permutation remainder (but-nth quotient liste))))))))
+				(floor n modulus)
+			  (cons (nth quotient lst)
+					(nth-permutation remainder (but-nth quotient lst))))))))
 
 
 
@@ -434,19 +428,19 @@ Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
 
 
 
-(defun palindromp (sequenz)
+(defun palindromp (seq)
   "(palindromp sequenz)
 Palindromp testet, ob eine übergebene Sequenz, eine übergebene Zeichenkette oder ein übergebenes Symbol ein Palindrom darstellt.
 Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
  (palindromp 'otto) => T
  (palindromp 'otta) => NIL
  (palindromp \"Otto\") => T"
-  (typecase sequenz
+  (typecase seq
 	(null nil)
-	(number (string= (write-to-string sequenz) (reverse (write-to-string sequenz))))
-	(string (string= sequenz (reverse sequenz)))
-	(symbol (string= (symbol-name sequenz) (reverse (symbol-name sequenz))))
-	(list (equal sequenz (reverse sequenz)))
+	(number (string= (write-to-string seq) (reverse (write-to-string seq))))
+	(string (string= seq (reverse seq)))
+	(symbol (string= (symbol-name seq) (reverse (symbol-name seq))))
+	(list (equal seq (reverse seq)))
 	(otherwise nil)))
 
 
@@ -462,16 +456,15 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 
 
 
-(defmacro permutations-rang (x liste)
+(defmacro permutations-rang (n lst)
   "Translator zwischen Mensch und Maschine, um die Zählung bei 1 (Mensch) gegen die Zählung bei 0 (Maschine) auszutauschen"
-  `(nth-permutation (1- ,x) ,liste))
+  `(nth-permutation (1- ,n) ,lst))
 
 
 
-(defun phi-tabelle (n)
+(defun phi-tabelle (n &aux (n+1 (1+ n)))
   "Erstellt eine Tabelle der phi-Werte bis n"
-  (let* ((n+1 (1+ n))
-		 (phi (make-array n+1 :initial-element 1)))
+  (let ((phi (make-array n+1 :initial-element 1)))
     (do ((k 2 (1+ k)))
         ((>= k n+1))
       (if (= 1 (aref phi k))
@@ -504,16 +497,16 @@ Beispiele:
    (sammle-divisoren 28) => (7 4 14 2 28 1)
    (sammle-divisoren 8128) => (127 64 254 32 508 16 1016 8 2032 4 4064 2 8128 1)
    (sammle-divisoren 2000 t) => (1 2 1000 4 500 5 400 8 250 10 200 16 125 20 100 25 80 40 50)"
-  (let ((liste nil))
+  (let ((lst nil))
 	(do ((i 1 (1+ i)))
 		((> i (sqrt n))
 		 (if ohne-selbst
-			 (set-difference liste (list n))
-			 liste))
+			 (set-difference lst (list n))
+			 lst))
 	  (when (zerop (mod n i))
-		(push i liste)
+		(push i lst)
 		(unless (= i (/ n i))
-		  (push (/ n i) liste))))))
+		  (push (/ n i) lst))))))
 
 
 
@@ -534,19 +527,19 @@ Beispiele:
   (let* ((n+1 (1+ n))
 		 (phi (phi-tabelle n)))
     (do ((i 1 (1+ i))
-         (summe 1))
-        ((>= i n+1) summe)
-      (incf summe (aref phi i)))))
+         (sum 1))
+        ((>= i n+1) sum)
+      (incf sum (aref phi i)))))
 
 
 
-(defun tausche-ziffer (zahl original-ziffer neue-ziffer)
+(defun tausche-ziffer (n old-dig new-dig)
   "Vertauscht alle Vorkommen einer bestimmten Ziffer einer Zahl gegen eine andere aus."
   (liste->zahl
-   (mapcar #'(lambda (x) (if (= x original-ziffer)
-							 neue-ziffer
+   (mapcar #'(lambda (x) (if (= x old-dig)
+							 new-dig
 							 x))
-	   (zahl->liste zahl))))
+	   (zahl->liste n))))
 
 
 
@@ -706,10 +699,10 @@ Beispiel: (würfelwurf) => 4"
 
 
 
-(defun zahl->liste (zahl)
+(defun zahl->liste (n)
   "Die übergebene Zahl wird als Liste von Ziffern zurückgegeben."
-  (map 'list #'(lambda (zeichen) (read-from-string (string zeichen)))
-	   (prin1-to-string zahl)))
+  (map 'list #'(lambda (x) (read-from-string (string x)))
+	   (prin1-to-string n)))
 
 
 
@@ -719,8 +712,8 @@ Beispiel: (würfelwurf) => 4"
 
 
 
-(defun ziffer-summe (zahl)
-  (apply #'+ (zahl->liste zahl)))
+(defun ziffer-summe (n)
+  (apply #'+ (zahl->liste n)))
 
 
 
@@ -730,109 +723,109 @@ Beispiel: (würfelwurf) => 4"
 
 
 
-(defun sieb-des-eratosthenes (maximum)
-  (let ((composites (make-array (1+ maximum) :element-type 'bit
+(defun sieb-des-eratosthenes (max)
+  (let ((composites (make-array (1+ max) :element-type 'bit
 								:initial-element 0)))
-    (loop for candidate from 2 to maximum
+    (loop for candidate from 2 to max
 	   when (zerop (bit composites candidate))
 	   collect candidate
-	   and do (loop for composite from (expt candidate 2) to maximum by candidate
+	   and do (loop for composite from (expt candidate 2) to max by candidate
 				 do (setf (bit composites composite) 1)))))
 
 
 
-(defun primzahlp (x)
+(defun primzahlp (n)
   "Prüft ob eine Zahl eine echte Primzahl ist.
 Beispiele:
    (primzahlp 24) => NIL
    (primzahlp 29) => T
    (primzahlp 1299709) => T"  
-  (when (and (integerp x) (> x 1))
-	(let ((max-d (isqrt x)))
+  (when (and (integerp n) (> n 1))
+	(let ((max-d (isqrt n)))
 	  (do ((d 2 (incf d (if (evenp d)
 							1
 							2))))
 		  ((cond ((> d max-d)
 				  (return t))
-				 ((zerop (rem x d))
+				 ((zerop (rem n d))
 				  (return nil))))))))
 
 
 
-(defun nächste-primzahl (&optional (zahl 0))
+(defun nächste-primzahl (&optional (n 0))
   "Ein Primzahlen-Generator, der die nächste Primzahl nach der angegebenen Zahl berechnet.
 Beispiele:
    (nächste-primzahl 19) => 23
    (nächste-primzahl 20) => 23
    (nächste-primzahl 23) => 29"
-  (cond ((< zahl 2)
+  (cond ((< n 2)
 		 2)
 		(t
-		 (do ((i (+ zahl (if (evenp zahl) 1 2)) (+ i 2)))
+		 (do ((i (+ n (if (evenp n) 1 2)) (+ i 2)))
 			 ((primzahlp i)
 			  i)))))
 
 
 
-(defun primzahl-rang (x)
+(defun primzahl-rang (n)
   "Erzeugte die Primzahl eines bestimmten Rangs.
 Beispiele:
 (primzahl-rang 1) => 2
 (primzahl-rang 1000) => 7919
 (primzahl-rang 100000) => 1299709"
-  (labels ((nth-primzahl (x &optional (rang 1) (letzte-primzahl 0))
+  (labels ((nth-primzahl (x &optional (rang 1) (last-x 0))
 			 (cond ((< x 1)
 					nil)
 				   ((= x rang)
-					(nächste-primzahl letzte-primzahl))
+					(nächste-primzahl last-x))
 				   (t
-					(nth-primzahl x (1+ rang) (nächste-primzahl letzte-primzahl))))))
-	(nth-primzahl x)))
+					(nth-primzahl x (1+ rang) (nächste-primzahl last-x))))))
+	(nth-primzahl n)))
 
 
 
-(defun trunkierbare-primzahl-p (zahl)
+(defun trunkierbare-primzahl-p (n)
   "Die Primzahl bleibt eine Primzahl, selbst wenn die Ziffern von vorne oder von hinten abgetrennt werden."
-  (if (< zahl 10)
+  (if (< n 10)
 	  nil
 	  (do ((i 1 (1+ i))
-		   (länge (length (zahl->liste zahl))))
-		  ((= i länge)
+		   (len (length (zahl->liste n))))
+		  ((= i len)
 		   t)
-		(unless (and (primzahlp (truncate (/ zahl (expt 10 i))))
-					 (primzahlp (rem zahl (expt 10 i))))
+		(unless (and (primzahlp (truncate (/ n (expt 10 i))))
+					 (primzahlp (rem n (expt 10 i))))
 		  (return nil)))))
 
 
 
-(defun kreisförmige-primzahl-p (zahl)
+(defun kreisförmige-primzahl-p (n)
   "Die Ziffern können rotiert werden, vorne raus, hinten rein - und es ergibt sich dennoch immer eine Primzahl."
-  (let ((länge (length (zahl->liste zahl))))
-	(if (= länge 1)
-		(when (primzahlp zahl)
+  (let ((len (length (zahl->liste n))))
+	(if (= len 1)
+		(when (primzahlp n)
 		  t)
-		(let ((temp-zahl zahl)
-			  (temp-liste (zahl->liste zahl)))
+		(let ((temp-n n)
+			  (temp-lst (zahl->liste n)))
 		  (do ((i 1 (1+ i)))
-			  ((= i länge)
+			  ((= i len)
 			   t)
-			(setf temp-liste (append (cdr temp-liste) (cons (car temp-liste) '())))
-			(setf temp-zahl (liste->zahl temp-liste))
-			(unless (primzahlp temp-zahl)
+			(setf temp-lst (append (cdr temp-lst) (cons (car temp-lst) '())))
+			(setf temp-n (liste->zahl temp-lst))
+			(unless (primzahlp temp-n)
 			  (return nil)))))))
 
 
 
-(defun summe-fortlaufender-primzahlen (start maximum)
+(defun summe-fortlaufender-primzahlen (start max)
   (unless (primzahlp start)
 	(setf start (nächste-primzahl start)))
   (do ((i start (nächste-primzahl i))
-	   (summe 0)
-	   (anzahl 0))
-	  ((> (+ summe i) maximum)
-	   (list summe anzahl))
-	(incf summe i)
-	(incf anzahl)))
+	   (sum 0)
+	   (anz 0))
+	  ((> (+ sum i) max)
+	   (list sum anz))
+	(incf sum i)
+	(incf anz)))
 
 
 
@@ -891,20 +884,20 @@ Beispiele:
 
 
 
-(defun route-dreieck (liste)
+(defun route-dreieck (lst)
   "Findet den Weg vom Boden zur Spitze einer Zahlenpyramide anhand des teuersten Weges."
-  (if (null (rest liste))
-	  (first liste)
-	  (let ((bottom-row (pop liste))
+  (if (null (rest lst))
+	  (first lst)
+	  (let ((bottom-row (pop lst))
 			(new-row nil))
 		(do ((i 0 (1+ i)))
 			((= i (1- (length bottom-row))) new-row)
 		  (push (reduce #'max bottom-row
 						:start i :end (+ i 2))
 				new-row))
-		(push (mapcar #'+ (pop liste) (reverse new-row))
-			  liste)
-		(route-dreieck liste))))
+		(push (mapcar #'+ (pop lst) (reverse new-row))
+			  lst)
+		(route-dreieck lst))))
 
 
 
@@ -940,31 +933,31 @@ Beispiele:
 
 
 
-(defun expt-ziffern (n p &optional (summe 0))
+(defun expt-ziffern (n p &optional (sum 0))
   "Berechnet den Exponent p zu jeder einzelnen Ziffer der Zahl n. Bemerkenswert:
 (expt-ziffern 9474 4) => 9474"
   (if (zerop n)
-	  summe
-	  (expt-ziffern (truncate (/ n 10)) p (+ summe (expt (rem n 10) p)))))
+	  sum
+	  (expt-ziffern (truncate (/ n 10)) p (+ sum (expt (rem n 10) p)))))
 
 
 
-(defun goldbach-aufgliedern (zahl)
+(defun goldbach-aufgliedern (n)
   "Aufgliederung einer Zahl nach Goldbach's anderer Vermutung"
-  (let ((maximum (isqrt zahl)))
+  (let ((max (isqrt n)))
 	(do ((i 1 (1+ i)))
-		((> i maximum))
-	  (let ((p (- zahl (* 2 (expt i 2)))))
+		((> i max))
+	  (let ((p (- n (* 2 (expt i 2)))))
 		(when (primzahlp p)
 		  (return (list p i)))))))
 
 
 
-(defun teil-der-liste (zahl liste)
-  (dolist (i liste)
-	(cond ((= i zahl)
+(defun teil-der-liste (n lst)
+  (dolist (i lst)
+	(cond ((= i n)
 		   (return t))
-		  ((> i zahl)
+		  ((> i n)
 		   (return nil)))))
 
 
@@ -973,11 +966,11 @@ Beispiele:
 
 
 
-(defun string-aufteilen (string &key (trennzeichenp #'trennsymbolep))
-  (loop :for beg = (position-if-not trennzeichenp string)
-	 :then (position-if-not trennzeichenp string :start (1+ end))
-	 :for end = (and beg (position-if trennzeichenp string :start beg))
-	 :when beg :collect (subseq string beg end)
+(defun string-aufteilen (str &key (trennzeichenp #'trennsymbolep))
+  (loop :for beg = (position-if-not trennzeichenp str)
+	 :then (position-if-not trennzeichenp str :start (1+ end))
+	 :for end = (and beg (position-if trennzeichenp str :start beg))
+	 :when beg :collect (subseq str beg end)
 	 :while end))
 
 
