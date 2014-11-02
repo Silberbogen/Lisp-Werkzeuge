@@ -62,10 +62,10 @@ Beispiel: (alphabetischer-wert \"abc\") => 102"
   (loop for c across str summing (- (char-int c) 64)))
   
 
-(defun arabisch->römisch (zahl)
+(defun arabisch->römisch (n)
   "Übersetzt eine Zahl mit arabischen Ziffern in einen String mit römische Ziffern um.
 Beispiel: (arabisch->römisch 1968) => \"MCMLXVIII\""
-  (format nil "~@R" zahl))
+  (format nil "~@R" n))
 
 
 
@@ -371,20 +371,20 @@ Beispiele
   "(mischen liste &optional durchgang)
 MISCHEN dient dazu, eine Liste mit einer frei wählbaren Anzahl an Durchgängen zu mischen. Wird keine Anzahl an Durchgängen genannt, so wird der Vorgang 20 Mal durchgeführt.
 Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
-  (let ((zufallszahl (random len)))
+  (let ((zn (random len))) ; Zufallszahl
 	(cond ((zerop durchgang)
 		   lst)
-		  ((oddp zufallszahl)
-		   (mischen (append (reverse (nthcdr zufallszahl lst))
-							(butlast lst (- len zufallszahl)))
+		  ((oddp zn)
+		   (mischen (append (reverse (nthcdr zn lst))
+							(butlast lst (- len zn)))
 					(1- durchgang)))
-		  ((evenp zufallszahl)
-		   (mischen (append (nthcdr zufallszahl lst)
-							(butlast lst (- len zufallszahl)))
+		  ((evenp zn)
+		   (mischen (append (nthcdr zn lst)
+							(butlast lst (- len zn)))
 					(1- durchgang)))
 		  (t
-		   (mischen (append (nthcdr zufallszahl lst)
-							(reverse (butlast lst (- len zufallszahl)))
+		   (mischen (append (nthcdr zn lst)
+							(reverse (butlast lst (- len zn)))
 							(1- durchgang)))))))
 
 
