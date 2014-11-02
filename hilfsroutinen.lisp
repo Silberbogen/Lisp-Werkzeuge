@@ -131,6 +131,18 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 
 
 
+(defmacro dosequence ((var seq &optional result) &body body
+					  &aux (seq-len (length seq)))
+  "Iteriert über die gegebene Sequenz SEQ."
+  (with-gensym (i)
+	`(do ((,i 0 (1+ ,i)))
+		 ((= ,i ,seq-len)
+		  ,result)
+	   (let ((,var (elt ,seq ,i)))
+		 ,@body))))
+
+
+
 (defun dreieckszahl-rang (zahl)
   "Gibt die Dreieckszahl des gewünschten Rangs aus."
   (/ (* zahl (1+ zahl)) 2))
@@ -225,6 +237,26 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 
+(defmacro for ((var start stop &optional (step 1)) &body body)
+  "Eine for-Schleife mit optionaler Schrittweite"
+  (with-gensym (gstop)
+	`(do ((,var ,start (+ ,var ,step))
+		  (,gstop ,stop))
+		 ((if (minusp ,step)
+			  (< ,var ,gstop)
+			  (> ,var ,gstop)))
+	   ,@body)))
+
+
+
+(defmacro forever (&body body)
+  "Eine Endlos-Schleife"
+  `(do ()
+	   (nil)
+	 ,@body))
+
+
+
 (defun fünfeckszahl-folge (max &optional lst (len (length lst)))
   "Erstellt eine Liste aller Fibonacci-Zahlen von der ersten bis zur MAXten."
   (when (zerop len)
@@ -262,6 +294,15 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
+(defmacro in (obj &rest choices)
+  "Prüft ob OBJ in CHOICES vorkommt und gibt entsprechend T oder NIL zurück."
+  (with-gensym (gobj)
+	`(let ((,gobj ,obj))
+	   (or ,@(mapcar #'(lambda (c) `(eql ,gobj ,c))
+					 choices)))))
+
+
+
 (defun j-oder-n-p (&optional ctrl &rest args)
   "Erzwingt die Beantwortung einer Eingabe mit j oder n."
   (do ((danach nil t)
@@ -294,6 +335,13 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
+(defmacro let1 (var val &body body)
+  "Dient zum schnellen Anlegen und Zuweisen einer einzigen Variablen."
+  `(let ((,var ,val))
+	 ,@body))
+
+
+
 (defun liste->zahl (liste)
   "Die übergebene Liste wird als Zahl zurückgegeben."
   (reduce #'(lambda (x y) (+ (* 10 x) y)) liste))
@@ -316,6 +364,12 @@ Beispiele
 		(if (palindromp kandidat)
 			nil
 			(lychrel-zahl-p kandidat (1- versuche))))))
+
+
+
+(defmacro mac (form)
+  "Expandiert ein Macro und gibt es schön formatiert aus."
+  `(pprint (macroexpand-1 ',form)))
 
 
 
@@ -614,9 +668,33 @@ Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
 
 
 
+(defmacro until (test &body body)
+  "Eine until-Kontrollstruktur"
+  `(do ()
+	   (,test)
+	 ,@body))
+
+
+
 (defun vollkommene-zahl-p (n)
   "Eine natürliche Zahl n wird vollkommene Zahl (auch perfekte Zahl) genannt, wenn sie gleich der Summe σ*(n) aller ihrer (positiven) Teiler außer sich selbst ist. Eine äquivalente Definition lautet: eine vollkommene Zahl n ist eine Zahl, die halb so groß ist wie die Summe aller ihrer positiven Teiler (sie selbst eingeschlossen), d. h. σ(n) = 2n. Die kleinsten drei vollkommenen Zahlen sind 6, 28 und 496. Alle bekannten vollkommenen Zahlen sind gerade und von Mersenne-Primzahlen abgeleitet."
   (= n (apply #'+ (sammle-divisoren n t))))
+
+
+
+(defmacro while (test &body body)
+  "Eine while-Kontrollstruktur"
+  `(do ()
+	   ((not ,test))
+	 ,@body))
+
+
+
+(defmacro with-gensym (syms &body body)
+  "Generiert ein gensym je Element aus der Liste SYMS."
+  `(let ,(mapcar #'(lambda (s) `(,s (gensym)))
+				 syms)
+	 ,@body))
 
 
 
