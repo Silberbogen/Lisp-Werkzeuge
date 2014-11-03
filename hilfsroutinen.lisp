@@ -24,6 +24,101 @@
 
 
 
+;;; ##########
+;;; # Makros #
+;;; ##########
+
+
+
+(defmacro dosequence ((var seq &optional result) &body body
+					  &aux (seq-len (length seq)))
+  "Iteriert über die gegebene Sequenz SEQ."
+  (with-gensym (i)
+	`(do ((,i 0 (1+ ,i)))
+		 ((= ,i ,seq-len)
+		  ,result)
+	   (let ((,var (elt ,seq ,i)))
+		 ,@body))))
+
+
+
+(defmacro for ((var start stop &optional (step 1)) &body body)
+  "Eine for-Schleife mit optionaler Schrittweite"
+  (with-gensym (gstop)
+	`(do ((,var ,start (+ ,var ,step))
+		  (,gstop ,stop))
+		 ((if (minusp ,step)
+			  (< ,var ,gstop)
+			  (> ,var ,gstop)))
+	   ,@body)))
+
+
+
+(defmacro forever (&body body)
+  "Eine Endlos-Schleife"
+  `(do ()
+	   (nil)
+	 ,@body))
+
+
+
+(defmacro in (obj &rest choices)
+  "Prüft ob OBJ in CHOICES vorkommt und gibt entsprechend T oder NIL zurück."
+  (with-gensym (gobj)
+	`(let ((,gobj ,obj))
+	   (or ,@(mapcar #'(lambda (c) `(eql ,gobj ,c))
+					 choices)))))
+
+
+
+(defmacro let1 (var val &body body)
+  "Dient zum schnellen Anlegen und Zuweisen einer einzigen Variablen."
+  `(let ((,var ,val))
+	 ,@body))
+
+
+
+(defmacro mac (form)
+  "Expandiert ein Macro und gibt es schön formatiert aus."
+  `(pprint (macroexpand-1 ',form)))
+
+
+
+(defmacro permutations-rang (n lst)
+  "Translator zwischen Mensch und Maschine, um die Zählung bei 1 (Mensch) gegen die Zählung bei 0 (Maschine) auszutauschen"
+  `(nth-permutation (1- ,n) ,lst))
+
+
+
+(defmacro until (test &body body)
+  "Eine until-Kontrollstruktur"
+  `(do ()
+	   (,test)
+	 ,@body))
+
+
+
+(defmacro while (test &body body)
+  "Eine while-Kontrollstruktur"
+  `(do ()
+	   ((not ,test))
+	 ,@body))
+
+
+
+(defmacro with-gensym (syms &body body)
+  "Generiert ein gensym je Element aus der Liste SYMS."
+  `(let ,(mapcar #'(lambda (s) `(,s (gensym)))
+				 syms)
+	 ,@body))
+
+
+
+;;; ##############
+;;; # Funktionen #
+;;; ##############
+
+
 (defun 2d-array->list (array)
   "Macht aus einem zweidimensionalem Array eine Liste"
   (loop for i below (array-dimension array 0)
@@ -125,18 +220,6 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 
 
 
-(defmacro dosequence ((var seq &optional result) &body body
-					  &aux (seq-len (length seq)))
-  "Iteriert über die gegebene Sequenz SEQ."
-  (with-gensym (i)
-	`(do ((,i 0 (1+ ,i)))
-		 ((= ,i ,seq-len)
-		  ,result)
-	   (let ((,var (elt ,seq ,i)))
-		 ,@body))))
-
-
-
 (defun dreieckszahl-rang (n)
   "Gibt die Dreieckszahl des gewünschten Rangs aus."
   (/ (* n (1+ n)) 2))
@@ -181,7 +264,7 @@ Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
 	(apply #'format *query-io* ctrl args)
 	(let ((antw (string-trim " " (read-line *query-io*))))
 	  (unless (string-equal antw "")
-		(return-from eingabe antw)))))
+		(return antw)))))
 
 
 
@@ -214,12 +297,12 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 (defun fibonacci-folge (max)
   "Erstellt eine Liste aller Fibonacci-Zahlen von der ersten bis zur MAXten."
   (do ((i 1 (1+ i))
-	   (aktuell 1 nächste)
-	   (nächste 1 (+ aktuell nächste))
+	   (a 1 a-next)
+	   (a-next 1 (+ a a-next))
 	   lst)
 	  ((> i max)
 	   (nreverse lst))
-	(push aktuell lst)))
+	(push a lst)))
 
 
 
@@ -231,28 +314,8 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 
-(defmacro for ((var start stop &optional (step 1)) &body body)
-  "Eine for-Schleife mit optionaler Schrittweite"
-  (with-gensym (gstop)
-	`(do ((,var ,start (+ ,var ,step))
-		  (,gstop ,stop))
-		 ((if (minusp ,step)
-			  (< ,var ,gstop)
-			  (> ,var ,gstop)))
-	   ,@body)))
-
-
-
-(defmacro forever (&body body)
-  "Eine Endlos-Schleife"
-  `(do ()
-	   (nil)
-	 ,@body))
-
-
-
 (defun fünfeckszahl-folge (max &optional lst (len (length lst)))
-  "Erstellt eine Liste aller Fibonacci-Zahlen von der ersten bis zur MAXten."
+  "Erstellt eine Liste aller Fünfecks-Zahlen von der ersten bis zur MAXten."
   (when (zerop len)
 	(setf len 1))
   (do* ((i len (1+ i)))
@@ -269,7 +332,7 @@ Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"
 
 
 (defun fünfeckszahlp (n)
-  "Prüft ob eine Zahl eine Dreieckszahl ist."
+  "Prüft ob eine Zahl eine Fünfeckszahl ist."
   (let ((lst (do* ((i 10 (+ i 10))
 				   (lst (fünfeckszahl-folge i) (fünfeckszahl-folge i lst)))
 				  ((>= (first (last lst)) n)
@@ -285,15 +348,6 @@ GLEICHWERTIGE-ELEMENTE überprüft, ob Liste1 und Liste2 über dieselben Element
 Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 	   (when (and (subsetp a b) (subsetp b a))
 	     t))
-
-
-
-(defmacro in (obj &rest choices)
-  "Prüft ob OBJ in CHOICES vorkommt und gibt entsprechend T oder NIL zurück."
-  (with-gensym (gobj)
-	`(let ((,gobj ,obj))
-	   (or ,@(mapcar #'(lambda (c) `(eql ,gobj ,c))
-					 choices)))))
 
 
 
@@ -329,10 +383,21 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 
 
 
-(defmacro let1 (var val &body body)
-  "Dient zum schnellen Anlegen und Zuweisen einer einzigen Variablen."
-  `(let ((,var ,val))
-	 ,@body))
+(defun kreisförmige-primzahl-p (n)
+  "Die Ziffern können rotiert werden, vorne raus, hinten rein - und es ergibt sich dennoch immer eine Primzahl."
+  (let ((len (length (zahl->liste n))))
+	(if (= len 1)
+		(when (primzahlp n)
+		  t)
+		(let ((temp-n n)
+			  (temp-lst (zahl->liste n)))
+		  (do ((i 1 (1+ i)))
+			  ((= i len)
+			   t)
+			(setf temp-lst (append (cdr temp-lst) (cons (car temp-lst) '())))
+			(setf temp-n (liste->zahl temp-lst))
+			(unless (primzahlp temp-n)
+			  (return nil)))))))
 
 
 
@@ -358,12 +423,6 @@ Beispiele
 		(if (palindromp kandidat)
 			nil
 			(lychrel-zahl-p kandidat (1- versuche))))))
-
-
-
-(defmacro mac (form)
-  "Expandiert ein Macro und gibt es schön formatiert aus."
-  `(pprint (macroexpand-1 ',form)))
 
 
 
@@ -398,6 +457,21 @@ Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
 
 
 
+(defun nächste-primzahl (&optional (n 0))
+  "Ein Primzahlen-Generator, der die nächste Primzahl nach der angegebenen Zahl berechnet.
+Beispiele:
+   (nächste-primzahl 19) => 23
+   (nächste-primzahl 20) => 23
+   (nächste-primzahl 23) => 29"
+  (cond ((< n 2)
+		 2)
+		(t
+		 (do ((i (+ n (if (evenp n) 1 2)) (+ i 2)))
+			 ((primzahlp i)
+			  i)))))
+
+
+
 (defun nth-permutation (n lst)
   "Gibt die nte Permutation einer Liste zurück. Die Zählung beginnt bei NULL."
   (if (zerop n)
@@ -416,14 +490,14 @@ Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
 
 (defun nur-buchstaben (text)
   "Entfernt die Nicht-Buchstaben eines Textes."
-  (remove-if #'(lambda (string) (not (alpha-char-p string)))
+  (remove-if #'(lambda (x) (not (alpha-char-p x)))
 			 text))
 
 
 
 (defun nur-ziffern (text)
   "Entfernt die Nicht-Ziffern eines Textes."
-  (remove-if #'(lambda (string) (not (digit-char-p string)))
+  (remove-if #'(lambda (x) (not (digit-char-p x)))
 			 text))
 
 
@@ -456,12 +530,6 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 
 
 
-(defmacro permutations-rang (n lst)
-  "Translator zwischen Mensch und Maschine, um die Zählung bei 1 (Mensch) gegen die Zählung bei 0 (Maschine) auszutauschen"
-  `(nth-permutation (1- ,n) ,lst))
-
-
-
 (defun phi-tabelle (n &aux (n+1 (1+ n)))
   "Erstellt eine Tabelle der phi-Werte bis n"
   (let ((phi (make-array n+1 :initial-element 1)))
@@ -478,15 +546,50 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 
 
 
-(defun römisch->arabisch (zahlen-string)
+(defun primzahlp (n)
+  "Prüft ob eine Zahl eine echte Primzahl ist.
+Beispiele:
+   (primzahlp 24) => NIL
+   (primzahlp 29) => T
+   (primzahlp 1299709) => T"  
+  (when (and (integerp n) (> n 1))
+	(let ((max-d (isqrt n)))
+	  (do ((d 2 (incf d (if (evenp d)
+							1
+							2))))
+		  ((cond ((> d max-d)
+				  (return t))
+				 ((zerop (rem n d))
+				  (return nil))))))))
+
+
+
+(defun primzahl-rang (n)
+  "Erzeugte die Primzahl eines bestimmten Rangs.
+Beispiele:
+   (primzahl-rang 1) => 2
+   (primzahl-rang 1000) => 7919
+   (primzahl-rang 100000) => 1299709"
+  (labels ((nth-primzahl (x &optional (rang 1) (last-x 0))
+			 (cond ((< x 1)
+					nil)
+				   ((= x rang)
+					(nächste-primzahl last-x))
+				   (t
+					(nth-primzahl x (1+ rang) (nächste-primzahl last-x))))))
+	(nth-primzahl n)))
+
+
+
+(defun römisch->arabisch (str)
   "Übersetzt eine String, der eine Zahl als römische Ziffern enthält und wand diese in einer Zahl mit arabischen Ziffern um."
   (let ((römische-ziffern "IVXLCDM")
 		(arabische-werte (list 1 5 10 50 100 500 1000)))
-	(flet ((übersetze (string)
-			 (loop as zeichen across string
-				as i = (position zeichen römische-ziffern)
+	(flet ((übersetze (str)
+			 (loop as c across str
+				as i = (position c römische-ziffern)
 				collect (and i (nth i arabische-werte)))))
-  (loop with zahlen = (übersetze zahlen-string)
+  (loop with zahlen = (übersetze str)
         as (a b) on zahlen if a sum (if (and b (< a b)) (- a) a)))))
 
 
@@ -510,15 +613,37 @@ Beispiele:
 
 
 
-(defun sechseckzahl-rang (zahl)
+(defun sechseckzahl-rang (n)
   "Gibt die Sechseckzahl des gewünschten Rangs aus."
-  (* zahl (1- (* 2 zahl))))
+  (* n (1- (* 2 n))))
 
 
 
-(defun sortiere-ziffern (zahl)
+(defun sieb-des-eratosthenes (max)
+  (let ((composites (make-array (1+ max) :element-type 'bit
+								:initial-element 0)))
+    (loop for candidate from 2 to max
+	   when (zerop (bit composites candidate))
+	   collect candidate
+	   and do (loop for composite from (expt candidate 2) to max by candidate
+				 do (setf (bit composites composite) 1)))))
+
+
+
+(defun sortiere-ziffern (n)
   "Nimmt eine Zahl entgegen und gibt sie als Liste zurück, die Ziffern aufsteigend sortiert."
-  (sort (zahl->liste zahl) #'<))
+  (sort (zahl->liste n) #'<))
+
+
+
+(defun string-aufteilen (str &key (trennzeichenp #'(lambda (x)
+													 (position x " ,.;?!/\\"))))
+  "Wandelt einen String in eine Liste von Worten um."
+  (loop :for beg = (position-if-not trennzeichenp str)
+	 :then (position-if-not trennzeichenp str :start (1+ end))
+	 :for end = (and beg (position-if trennzeichenp str :start beg))
+	 :when beg :collect (subseq str beg end)
+	 :while end))
 
 
 
@@ -533,6 +658,19 @@ Beispiele:
 
 
 
+(defun summe-fortlaufender-primzahlen (start max)
+  (unless (primzahlp start)
+	(setf start (nächste-primzahl start)))
+  (do ((i start (nächste-primzahl i))
+	   (sum 0)
+	   (anz 0))
+	  ((> (+ sum i) max)
+	   (list sum anz))
+	(incf sum i)
+	(incf anz)))
+
+
+
 (defun tausche-ziffer (n old-dig new-dig)
   "Vertauscht alle Vorkommen einer bestimmten Ziffer einer Zahl gegen eine andere aus."
   (liste->zahl
@@ -543,15 +681,16 @@ Beispiele:
 
 
 
-(defun temperatur (wert &optional (größeneinheit 'celsius))
+(defun temperatur (n &optional (smbl 'celsius))
   "TEMPERATUR wandelt den angegebenen Temperaturwert in eine Liste der Werte aller drei Maßsysteme um."
-  (let ((kelvin (case größeneinheit
-		  ((celsius c) (+ wert 273.15))
-		  ((fahrenheit f) (* (+ wert 459.67) 5/9))
-		  ((kelvin k) wert)
-		  (otherwise nil))))
+  (let ((kelvin (case smbl
+				  ((celsius c) (+ n 273.15))
+				  ((fahrenheit f) (* (+ n 459.67) 5/9))
+				  ((kelvin k) n))))
     (when kelvin
-      (values (list kelvin 'kelvin) (list (- kelvin 273.15) 'celsius) (list (- (* kelvin 1.8) 459.67) 'fahrenheit)))))
+      (values kelvin
+			  (- kelvin 273.15)
+			  (- (* kelvin 1.8) 459.67)))))
 
 
 
@@ -595,11 +734,25 @@ Beispiele:
 
 
 
-(defun umwandeln (wert ausgangsgröße ergebnisgröße)
+(defun trunkierbare-primzahl-p (n)
+  "Die Primzahl bleibt eine Primzahl, selbst wenn die Ziffern von vorne oder von hinten abgetrennt werden."
+  (if (< n 10)
+	  nil
+	  (do ((i 1 (1+ i))
+		   (len (length (zahl->liste n))))
+		  ((= i len)
+		   t)
+		(unless (and (primzahlp (truncate (/ n (expt 10 i))))
+					 (primzahlp (rem n (expt 10 i))))
+		  (return nil)))))
+
+
+
+(defun umwandeln (n von nach)
   "UMWANDELN dient dazu, eine Zahl von einer Maßeinheit in eine andere umzurechnen.
 Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
-  (flet ((faktor-festlegen (wert)
-		   (case wert
+  (flet ((faktor-festlegen (n)
+		   (case n
 			 ((yoctometer) 10e-24)
 			 ((zeptometer) 10e-21)
 			 ((am attometer) 10e-18)
@@ -652,21 +805,11 @@ Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
 			 ((yb yottabyte yottameter) 10e24)
 			 ((yobibyte yib) 1208925819614629174706176) ; 2e80
 			 (otherwise nil))))
-	(if (eql ausgangsgröße ergebnisgröße)
-		(values wert ergebnisgröße)
-		(let ((faktor1 (faktor-festlegen ausgangsgröße))
-			  (faktor2 (faktor-festlegen ergebnisgröße)))
-		  (values (/ (* wert faktor1) faktor2)
-				  ergebnisgröße))))) 
-
-
-
-(defmacro until (test &body body)
-  "Eine until-Kontrollstruktur"
-  `(do ()
-	   (,test)
-	 ,@body))
-
+	(if (eql von nach)
+		(values n nach)
+		(let ((faktor1 (faktor-festlegen von))
+			  (faktor2 (faktor-festlegen nach)))
+		  (/ (* n faktor1) faktor2)))))
 
 
 (defun vollkommene-zahl-p (n)
@@ -675,27 +818,21 @@ Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
 
 
 
-(defmacro while (test &body body)
-  "Eine while-Kontrollstruktur"
-  `(do ()
-	   ((not ,test))
-	 ,@body))
+(defun wochentag (tag monat jahr)
+  "Gibt den Tag der Woche zurück, als Zahl und als Symbol"
+  (let ((tag (seventh (multiple-value-list
+					   (decode-universal-time
+						(encode-universal-time 0 0 0 tag monat jahr)))))
+		(name '(montag dienstag mittwoch donnerstag freitag samstag sonntag)))
+	(values tag (elt name tag))))
 
 
 
-(defmacro with-gensym (syms &body body)
-  "Generiert ein gensym je Element aus der Liste SYMS."
-  `(let ,(mapcar #'(lambda (s) `(,s (gensym)))
-				 syms)
-	 ,@body))
-
-
-
-(defun würfelwurf (&optional (seiten 6))
+(defun würfelwurf (&optional (n 6))
   "(würfelwurf &optional seiten)
 WÜRFELWURF bildet den Wurf mit einem in Spieleboxen üblichen, voreingestellt 6-seitigen, Würfel nach. Durch einen Aufruf mit einer anderen Seitenzahl wird ein entsprechender über Seiten verfügender Würfel angenommen.
 Beispiel: (würfelwurf) => 4"
-  (1+ (random seiten)))
+  (1+ (random n)))
 
 
 
@@ -714,167 +851,6 @@ Beispiel: (würfelwurf) => 4"
 
 (defun ziffer-summe (n)
   (apply #'+ (zahl->liste n)))
-
-
-
-; ------------------------------------------
-;          Abteilung: Primzahlen
-; ------------------------------------------
-
-
-
-(defun sieb-des-eratosthenes (max)
-  (let ((composites (make-array (1+ max) :element-type 'bit
-								:initial-element 0)))
-    (loop for candidate from 2 to max
-	   when (zerop (bit composites candidate))
-	   collect candidate
-	   and do (loop for composite from (expt candidate 2) to max by candidate
-				 do (setf (bit composites composite) 1)))))
-
-
-
-(defun primzahlp (n)
-  "Prüft ob eine Zahl eine echte Primzahl ist.
-Beispiele:
-   (primzahlp 24) => NIL
-   (primzahlp 29) => T
-   (primzahlp 1299709) => T"  
-  (when (and (integerp n) (> n 1))
-	(let ((max-d (isqrt n)))
-	  (do ((d 2 (incf d (if (evenp d)
-							1
-							2))))
-		  ((cond ((> d max-d)
-				  (return t))
-				 ((zerop (rem n d))
-				  (return nil))))))))
-
-
-
-(defun nächste-primzahl (&optional (n 0))
-  "Ein Primzahlen-Generator, der die nächste Primzahl nach der angegebenen Zahl berechnet.
-Beispiele:
-   (nächste-primzahl 19) => 23
-   (nächste-primzahl 20) => 23
-   (nächste-primzahl 23) => 29"
-  (cond ((< n 2)
-		 2)
-		(t
-		 (do ((i (+ n (if (evenp n) 1 2)) (+ i 2)))
-			 ((primzahlp i)
-			  i)))))
-
-
-
-(defun primzahl-rang (n)
-  "Erzeugte die Primzahl eines bestimmten Rangs.
-Beispiele:
-(primzahl-rang 1) => 2
-(primzahl-rang 1000) => 7919
-(primzahl-rang 100000) => 1299709"
-  (labels ((nth-primzahl (x &optional (rang 1) (last-x 0))
-			 (cond ((< x 1)
-					nil)
-				   ((= x rang)
-					(nächste-primzahl last-x))
-				   (t
-					(nth-primzahl x (1+ rang) (nächste-primzahl last-x))))))
-	(nth-primzahl n)))
-
-
-
-(defun trunkierbare-primzahl-p (n)
-  "Die Primzahl bleibt eine Primzahl, selbst wenn die Ziffern von vorne oder von hinten abgetrennt werden."
-  (if (< n 10)
-	  nil
-	  (do ((i 1 (1+ i))
-		   (len (length (zahl->liste n))))
-		  ((= i len)
-		   t)
-		(unless (and (primzahlp (truncate (/ n (expt 10 i))))
-					 (primzahlp (rem n (expt 10 i))))
-		  (return nil)))))
-
-
-
-(defun kreisförmige-primzahl-p (n)
-  "Die Ziffern können rotiert werden, vorne raus, hinten rein - und es ergibt sich dennoch immer eine Primzahl."
-  (let ((len (length (zahl->liste n))))
-	(if (= len 1)
-		(when (primzahlp n)
-		  t)
-		(let ((temp-n n)
-			  (temp-lst (zahl->liste n)))
-		  (do ((i 1 (1+ i)))
-			  ((= i len)
-			   t)
-			(setf temp-lst (append (cdr temp-lst) (cons (car temp-lst) '())))
-			(setf temp-n (liste->zahl temp-lst))
-			(unless (primzahlp temp-n)
-			  (return nil)))))))
-
-
-
-(defun summe-fortlaufender-primzahlen (start max)
-  (unless (primzahlp start)
-	(setf start (nächste-primzahl start)))
-  (do ((i start (nächste-primzahl i))
-	   (sum 0)
-	   (anz 0))
-	  ((> (+ sum i) max)
-	   (list sum anz))
-	(incf sum i)
-	(incf anz)))
-
-
-
-; -------------------------------------------
-;        Abteilung: Zeit und Datum
-; -------------------------------------------
-
-
-
-(defun wochentag (tag monat jahr)
-  "Gibt den Tag der Woche als Zahl zurück. Montag = 0 ... Sonntag = 6."
-  (seventh (multiple-value-list
-			(decode-universal-time
-			 (encode-universal-time 0 0 0 tag monat jahr)))))
-
-
-
-(defun montagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 0))
-
-
-
-(defun dienstagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 1))
-
-
-
-(defun mittwochp (tag monat jahr)
-  (= (wochentag tag monat jahr) 2))
-
-
-
-(defun donnerstagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 3))
-
-
-
-(defun freitagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 4))
-
-
-
-(defun samstagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 5))
-
-
-
-(defun sonntagp (tag monat jahr)
-  (= (wochentag tag monat jahr) 6))
 
 
 
@@ -924,140 +900,3 @@ Beispiele:
 		   (reverse zahlenliste))
 		(push i zahlenliste)
 		(read-char-no-hang stream nil)))))
-
-
-
-; -------------------------------------------
-;     Abteilung: Nur einmal benötigt
-; -------------------------------------------
-
-
-
-(defun expt-ziffern (n p &optional (sum 0))
-  "Berechnet den Exponent p zu jeder einzelnen Ziffer der Zahl n. Bemerkenswert:
-(expt-ziffern 9474 4) => 9474"
-  (if (zerop n)
-	  sum
-	  (expt-ziffern (truncate (/ n 10)) p (+ sum (expt (rem n 10) p)))))
-
-
-
-(defun goldbach-aufgliedern (n)
-  "Aufgliederung einer Zahl nach Goldbach's anderer Vermutung"
-  (let ((max (isqrt n)))
-	(do ((i 1 (1+ i)))
-		((> i max))
-	  (let ((p (- n (* 2 (expt i 2)))))
-		(when (primzahlp p)
-		  (return (list p i)))))))
-
-
-
-(defun teil-der-liste (n lst)
-  (dolist (i lst)
-	(cond ((= i n)
-		   (return t))
-		  ((> i n)
-		   (return nil)))))
-
-
-
-(defun trennsymbolep (c) (position c " ,.;/"))
-
-
-
-(defun string-aufteilen (str &key (trennzeichenp #'trennsymbolep))
-  (loop :for beg = (position-if-not trennzeichenp str)
-	 :then (position-if-not trennzeichenp str :start (1+ end))
-	 :for end = (and beg (position-if trennzeichenp str :start beg))
-	 :when beg :collect (subseq str beg end)
-	 :while end))
-
-
-
-;;; Monopoly
-
-(defun monopoly (&optional (max 1000000) (würfel 4))
-  (let* ((feldnamen '(go a1 cc1 a2 t1 r1 b1 ch1 b2 b3 jail c1 u1 c2 c3 r2 d1 cc2 d2 d3 fp e1 ch2 e2 e3 r3 f1 f2 u2 f3 g2j g1 g2 cc3 g3 r4 ch3 h1 t2 h2))
-		 (felder (make-hash-table))
-		 (anzahl-felder (length feldnamen))
-		 (pos 0)
-		 (pasch 0)
-		 (ziehe-gemeinschaftskarte (let ((zähler 0))
-									 #'(lambda ()
-										 (incf zähler)
-										 (when (> zähler 16)
-										   (setf zähler 1))
-										 zähler)))
-		 (ziehe-ereigniskarte (let ((zähler 0))
-								#'(lambda ()
-									(incf zähler)
-									(when (> zähler 16)
-									  (setf zähler 1))
-									zähler))))
-	(labels ((setze-pos (wert)
-			   (if (>= wert anzahl-felder)
-				   (decf wert anzahl-felder))
-			   (if (< wert 0)
-				   (incf wert anzahl-felder))
-			   (setf pos wert)
-			   (case (elt feldnamen pos)
-				 ((cc1 cc2 cc3) (gemeinschaftskarte))
-				 ((ch1 ch2 ch3) (ereigniskarte))
-				 ((g2j) (setze-ort 'jail))))
-			 (setze-ort (wert)
-			   (setze-pos (position wert feldnamen)))
-			 (setze-nächster-bahnhof ()
-			   (cond ((or (< pos (position 'r1 feldnamen)) (> pos (position 'r4 feldnamen)))
-					  (setze-ort 'r1))
-					 ((< pos (position 'r2 feldnamen))
-					  (setze-ort 'r2))
-					 ((< pos (position 'r3 feldnamen))
-					  (setze-ort 'r3))
-					 (t
-					  (setze-ort 'r4))))
-			 (setze-nächstes-werk ()
-			   (if (or (< pos (position 'u1 feldnamen)) (> pos (position 'u2 feldnamen)))
-				   (setze-ort 'u1)
-				   (setze-ort 'u2)))
-			 (setze-drei-felder-zurück ()
-			   (setze-pos (- pos 3)))
-			 (gemeinschaftskarte ()
-			   (case (funcall ziehe-gemeinschaftskarte)
-				 (1 (setze-ort 'go))
-				 (2 (setze-ort 'jail))
-				 (3 (setze-ort 'c1))
-				 (4 (setze-ort 'e3))
-				 (5 (setze-ort 'h2))
-				 (6 (setze-ort 'r1))
-				 (7 (setze-nächster-bahnhof))
-				 (8 (setze-nächster-bahnhof))
-				 (9 (setze-nächstes-werk))
-				 (10 (setze-drei-felder-zurück))))
-			 (ereigniskarte ()
-			   (case (funcall ziehe-ereigniskarte)
-				 (1 (setze-ort 'go))
-				 (2 (setze-ort 'jail)))))
-	(dotimes (i max)
-		(let ((wurf1 (würfelwurf würfel))
-			  (wurf2 (würfelwurf würfel)))
-		  (if (= wurf1 wurf2)
-			  (incf pasch)
-			  (setf pasch 0))
-		  (if (= pasch 3)
-			  (setze-ort 'jail)
-			  (setze-pos (+ pos wurf1 wurf2))))
-	  (incf (gethash (elt feldnamen pos) felder 0)))
-	(let (lst)
-	  (dotimes (i anzahl-felder)
-		(push (list i (elt feldnamen i) (* (/ (gethash (elt feldnamen i) felder 0) max 1.0) 100)) lst))
-	  (sort lst  #'> :key #'third)))))
-
-	  
-		  
-		
-	
-
-
-
-
