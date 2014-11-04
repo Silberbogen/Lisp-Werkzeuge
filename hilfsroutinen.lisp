@@ -30,6 +30,14 @@
 
 
 
+(defmacro with-gensym (syms &body body)
+  "Generiert ein gensym je Element aus der Liste SYMS."
+  `(let ,(mapcar #'(lambda (s) `(,s (gensym)))
+				 syms)
+	 ,@body))
+
+
+
 (defmacro dosequence ((var seq &optional result) &body body
 					  &aux (seq-len (length seq)))
   "Iteriert über die gegebene Sequenz SEQ."
@@ -102,14 +110,6 @@
   "Eine while-Kontrollstruktur"
   `(do ()
 	   ((not ,test))
-	 ,@body))
-
-
-
-(defmacro with-gensym (syms &body body)
-  "Generiert ein gensym je Element aus der Liste SYMS."
-  `(let ,(mapcar #'(lambda (s) `(,s (gensym)))
-				 syms)
 	 ,@body))
 
 
@@ -233,6 +233,24 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 
 
 
+(defun dreisatz (m n o &optional (modus 'p))
+  "Ein einfacher Dreisatz-Löser.
+Beispiel proportional:
+Ein Auto fährt mit 12 Litern 162 km weit. Wie weit fährt es mit 20 Litern?
+   (dreisatz 12 162 20 'p) => 270
+Beispiel umgekehrt proportional:
+8 Pferde fressen in 5 Tagen den gesamten Hafervorat. Wie lange würde dieselbe Menge bei 10 Pferden reichen?
+   (dreisatz 8 5 10 'u) => 4"
+  (case modus
+	(p
+	 (* (/ n m) o))
+	(u
+	 (/ (* m n) o))
+	(otherwise
+	 (error "~&Sie haben statt 'p oder 'u den Wert ~A als vierten Parameter angegeben.~%" modus))))
+	
+
+
 (defun durchschnitt (&rest lst)
   "(durchschnitt lst)
 DURCHSCHNITT ermöglicht es, den Durchschnitt einer Reihe von Zahlen zu berechnen.
@@ -276,6 +294,26 @@ Beispiel: (faktor 20) =>  2432902008176640000"
   (if (eql n 0) 
 	  1 
 	  (* n (faktor (1- n)))))
+
+
+
+(defun faktoren (n &aux (lows nil) (highs nil) (limit (isqrt n)))
+  "Berechnet alle Faktoren, die eine Zahl haben kann, inklusive 1 und sich selber."
+  (do ((feld (make-array (1+ limit) :element-type 'bit :initial-element 1))
+	   (i 1 (1+ i)))
+	  ((= i limit)
+	   (when (= n (* limit limit))
+		 (push limit highs))
+	   (nreconc lows highs))
+	(unless (zerop (elt feld i))
+	  (multiple-value-bind (quotient remainder)
+		  (floor n i)
+		(if (zerop remainder)
+			(progn
+			  (push i lows)
+			  (push quotient highs))
+			(loop for j from i to limit by i do
+				 (setf (elt feld j) 0)))))))
 
 
 
@@ -851,52 +889,3 @@ Beispiel: (würfelwurf) => 4"
 
 (defun ziffer-summe (n)
   (apply #'+ (zahl->liste n)))
-
-
-
-; -------------------------------------------
-;     Abteilung: Mehr als einmal benötigt
-; -------------------------------------------
-
-
-
-(defun route-dreieck (lst)
-  "Findet den Weg vom Boden zur Spitze einer Zahlenpyramide anhand des teuersten Weges."
-  (if (null (rest lst))
-	  (first lst)
-	  (let ((bottom-row (pop lst))
-			(new-row nil))
-		(do ((i 0 (1+ i)))
-			((= i (1- (length bottom-row))) new-row)
-		  (push (reduce #'max bottom-row
-						:start i :end (+ i 2))
-				new-row))
-		(push (mapcar #'+ (pop lst) (reverse new-row))
-			  lst)
-		(route-dreieck lst))))
-
-
-
-(defun erstelle-wortliste (stream-name)
-  "Einleseformat: TextKommaTextKommaText ohne Leerzeichen"
-  (let ((wortliste nil))
-	(with-open-file (stream stream-name)
-	  (do ((i (read stream nil)
-			  (read stream nil)))
-		  ((null i)
-		   (sort wortliste #'string<))
-		(push i wortliste)
-		(read-char-no-hang stream nil)))))
-
-
-
-(defun erstelle-zahlenliste (stream-name)
-  "Einleseformat: ZahlKommaZahlKommaZahl ohne Leerzeichen"
-  (let ((zahlenliste nil))
-	(with-open-file (stream stream-name)
-	  (do ((i (read stream nil)
-			  (read stream nil)))
-		  ((null i)
-		   (reverse zahlenliste))
-		(push i zahlenliste)
-		(read-char-no-hang stream nil)))))
