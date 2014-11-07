@@ -318,26 +318,6 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 
 
 
-(defun faktoren (n &aux (lows nil) (highs nil) (limit (isqrt n)))
-  "Berechnet alle Faktoren, die eine Zahl haben kann, inklusive 1 und sich selber."
-  (do ((feld (make-array (1+ limit) :element-type 'bit :initial-element 1))
-	   (i 1 (1+ i)))
-	  ((= i limit)
-	   (when (= n (* limit limit))
-		 (push limit highs))
-	   (nreconc lows highs))
-	(unless (zerop (elt feld i))
-	  (multiple-value-bind (quotient remainder)
-		  (floor n i)
-		(if (zerop remainder)
-			(progn
-			  (push i lows)
-			  (push quotient highs))
-			(loop for j from i to limit by i do
-				 (setf (elt feld j) 0)))))))
-
-
-
 (defun faktorisiere (n)
   "(faktorisiere n)
 Gibt eine Liste der Faktoren der Zahl N zurück.
