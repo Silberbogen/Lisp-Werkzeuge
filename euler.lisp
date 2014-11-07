@@ -812,7 +812,6 @@ Antwort: 4179871"
 		 summe)
 	  (dolist (j liste-abundanter-zahlen)
 		(when (>= j i)
-;		  (incf summe i)
 		  (return))
 		(when (abundante-zahl-p (- i j))
 		  (decf summe i) ; bei jedem Treffer Reduzierung der Summe um i
