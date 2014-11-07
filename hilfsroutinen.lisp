@@ -213,13 +213,13 @@ Beispiel: (collatz-sequenz 19) => (19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 
   (labels ((zurück (lst1 &optional lst2)
 			 (maplist #'(lambda (x)
 						  (setf (gethash (first x) *collatz-hash-table*) (append x lst2)))
-					  lst1)))
+					  lst1)
+			 (append lst1 lst2)))
 	(let ((n-lst (gethash n *collatz-hash-table* 'nil)))
 	  (if n-lst
 		  (progn
 			(let ((nr (nreverse lst)))
-			  (zurück nr n-lst)
-			  (append nr n-lst)))
+			  (zurück nr n-lst)))
 		  (progn
 			(push n lst)
 			(cond ((= n 1)
@@ -653,22 +653,29 @@ Beispiele:
 
 
 
-(defun sammle-divisoren (n &optional (ohne-selbst nil))
+(defun sammle-divisoren (n &optional (ohne-selbst nil) &aux (lows nil) (highs nil) (limit (isqrt n)))
   "Erstellt eine Liste aller Divisoren einer Zahl, wahlweise mit oder ohne sich selbst in die Liste einzubeziehen, vorgegeben, ist sich selbst mit einzubeziehen.
 Beispiele:
-   (sammle-divisoren 28) => (7 4 14 2 28 1)
-   (sammle-divisoren 8128) => (127 64 254 32 508 16 1016 8 2032 4 4064 2 8128 1)
-   (sammle-divisoren 2000 t) => (1 2 1000 4 500 5 400 8 250 10 200 16 125 20 100 25 80 40 50)"
-  (let ((lst nil))
-	(do ((i 1 (1+ i)))
-		((> i (sqrt n))
-		 (if ohne-selbst
-			 (set-difference lst (list n))
-			 lst))
-	  (when (zerop (mod n i))
-		(push i lst)
-		(unless (= i (/ n i))
-		  (push (/ n i) lst))))))
+   (sammle-divisoren 28) => (1 2 4 7 14 28)
+   (sammle-divisoren 8128) => (1 2 4 8 16 32 64 127 254 508 1016 2032 4064 8128)
+   (sammle-divisoren 2000 t) => (1 2 4 5 8 10 16 20 25 40 50 80 100 125 200 250 400 500 1000)"
+  (do ((feld (make-array (1+ limit) :element-type 'bit :initial-element 1))
+	   (i 1 (1+ i)))
+	  ((= i limit)
+	   (when (= n (* limit limit))
+		 (push limit highs))
+	   (if ohne-selbst
+		   (butlast (nreconc lows highs))
+		   (nreconc lows highs)))
+	(unless (zerop (elt feld i))
+	  (multiple-value-bind (quotient remainder)
+		  (floor n i)
+		(if (zerop remainder)
+			(progn
+			  (push i lows)
+			  (push quotient highs))
+			(loop for j from i to limit by i do
+				 (setf (elt feld j) 0)))))))
 
 
 

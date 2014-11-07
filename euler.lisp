@@ -778,7 +778,7 @@ Benutzen Sie names.txt (Rechtsklick und \"Ziel speichern unter...\"), eine 46K T
 Beispiel: Nachdem die Liste alphabetisch geordnet wurde, ist COLIN, was einen Namenswert von 3 + 15 + 12 + 9 + 14 = 53 hat, der 938. Name in der Liste. Also hätte COLIN einen Namenswert von 938 × 53 = 49714.
 Welches ist die Summe aller Namenswerte der Datei?
 Antwort: 871198282"
-  (let* ((namensliste (erstelle-wortliste "~/lisp/p022_names.txt"))
+  (let* ((namensliste (erstelle-wortliste "~/Euler/p022_names.txt"))
 		 (länge (length namensliste)))
 	(do ((i 1 (1+ i))
 		 (summe 0))
@@ -812,6 +812,7 @@ Antwort: 4179871"
 		 summe)
 	  (dolist (j liste-abundanter-zahlen)
 		(when (>= j i)
+;		  (incf summe i)
 		  (return))
 		(when (abundante-zahl-p (- i j))
 		  (decf summe i) ; bei jedem Treffer Reduzierung der Summe um i
