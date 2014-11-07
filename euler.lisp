@@ -27,6 +27,56 @@
 (load "~/lisp/hilfsroutinen.lisp")
 
 
+
+;;; -----------------------------------------------------------
+;;; Aufgaben übergreifende Routinen, die sinnlos sind im Alltag
+;;; -----------------------------------------------------------
+
+
+
+(defun route-dreieck (lst)
+  "Findet den Weg vom Boden zur Spitze einer Zahlenpyramide anhand des teuersten Weges."
+  (if (null (rest lst))
+	  (first lst)
+	  (let ((bottom-row (pop lst))
+			(new-row nil))
+		(do ((i 0 (1+ i)))
+			((= i (1- (length bottom-row))) new-row)
+		  (push (reduce #'max bottom-row
+						:start i :end (+ i 2))
+				new-row))
+		(push (mapcar #'+ (pop lst) (reverse new-row))
+			  lst)
+		(route-dreieck lst))))
+
+
+
+(defun erstelle-wortliste (stream-name)
+  "Einleseformat: TextKommaTextKommaText ohne Leerzeichen"
+  (let ((wortliste nil))
+	(with-open-file (stream stream-name)
+	  (do ((i (read stream nil)
+			  (read stream nil)))
+		  ((null i)
+		   (sort wortliste #'string<))
+		(push i wortliste)
+		(read-char-no-hang stream nil)))))
+
+
+
+(defun erstelle-zahlenliste (stream-name)
+  "Einleseformat: ZahlKommaZahlKommaZahl ohne Leerzeichen"
+  (let ((zahlenliste nil))
+	(with-open-file (stream stream-name)
+	  (do ((i (read stream nil)
+			  (read stream nil)))
+		  ((null i)
+		   (reverse zahlenliste))
+		(push i zahlenliste)
+		(read-char-no-hang stream nil)))))
+
+
+
 ;;; ----------------------------------------
 ;;;  Die Lösungen zu den einzelnen Aufgaben
 ;;; ----------------------------------------
@@ -553,7 +603,7 @@ Antwort: 5537376230"
 
 
 
-(defun euler-14 ()
+(defun euler-14 (&optional (max (expt 10 6)))
   "Längste Collatz-Folge
 Aufgabe 14
 Die folgende sich wiederholende Folge ist definiert für die Menge der natürlichen Zahlen:
@@ -565,15 +615,15 @@ Es ist zu sehen, dass diese Folge (beginnend bei 13 und endend bei 1) 10 Terme e
 Welche Anfangszahl unter 1 Million erzeugt die längste Folge?
 HINWEIS: Sobald die Folge begonnen hat, dürfen die Terme auch 1 Million überschreiten.
 Antwort: 837799"
-  (do ((i 1 (1+ i))
-	   (gesuchte-zahl 0)
-	   (maximale-länge 0))
-	  ((>= i 1000000)
-	   gesuchte-zahl)
-	(let ((länge (collatz-rang i)))
-	  (when (> länge maximale-länge)
-		(setf maximale-länge länge
-			  gesuchte-zahl i)))))
+  (let ((len 0)
+		(n 0))
+	(do ((i 1 (1+ i)))
+		((>= i max)
+		 (values n len))
+	  (let ((c (collatz-sequenz i)))
+		(when (> (length c) len)
+		  (setf len (length c)
+				n (first c)))))))
 
 
 

@@ -24,6 +24,16 @@
 
 
 
+;;; #############
+;;; # Variablen #
+;;; #############
+
+
+
+(defvar *collatz-hash-table* (make-hash-table))
+
+
+
 ;;; ##########
 ;;; # Makros #
 ;;; ##########
@@ -200,15 +210,26 @@ Beispiel: (but-nth 4 '(1 2 3 4 5 6 7 8 9)) => (1 2 3 4 6 7 8 9)"
 (defun collatz-sequenz (n &optional (lst nil))
   "Gibt die Collatz-Sequenz einer gegebenen Zahl n als Liste zurück.
 Beispiel: (collatz-sequenz 19) => (19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 5 16 8 4 2 1)"
-  (push n lst)
-  (cond	((= n 1)
-		 (reverse lst))
-		((evenp n)
-		 (setf n (/ n 2))
-		 (collatz-sequenz n lst))
-		(t
-		 (setf n (1+ (* 3 n)))
-		 (collatz-sequenz n lst))))
+  (labels ((zurück (lst1 &optional lst2)
+			 (maplist #'(lambda (x)
+						  (setf (gethash (first x) *collatz-hash-table*) (append x lst2)))
+					  lst1)))
+	(let ((n-lst (gethash n *collatz-hash-table* 'nil)))
+	  (if n-lst
+		  (progn
+			(let ((nr (nreverse lst)))
+			  (zurück nr n-lst)
+			  (append nr n-lst)))
+		  (progn
+			(push n lst)
+			(cond ((= n 1)
+				   (zurück (reverse lst)))
+				  ((evenp n)
+				   (setf n (/ n 2))
+				   (collatz-sequenz n lst))
+				  (t
+				   (setf n (1+ (* 3 n)))
+				   (collatz-sequenz n lst))))))))
 
 
 
