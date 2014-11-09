@@ -139,7 +139,7 @@
 
 (defun abundante-zahl-p (n)
   "Eine natürliche Zahl heißt abundant (lat. abundans „überladen“), wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) größer ist als die Zahl selbst. Die kleinste abundante Zahl ist 12 (1+2+3+4+6 = 16 > 12). Die ersten geraden abundanten Zahlen lauten 12, 18, 20, 24, 30, 36, 40, 42, …"
-  (> (apply #'+ (sammle-divisoren n t)) n))
+  (> (apply #'+ (divisoren n t)) n))
 
 
 
@@ -179,8 +179,8 @@ Beispiel: (arabisch->römisch 1968) => \"MCMLXVIII\""
 Das kleinste befreundete Zahlenpaar wird von den Zahlen 220 und 284 gebildet. Man rechnet leicht nach, dass die beiden Zahlen der Definition genügen:
     Die Summe der echten Teiler von 220 ergibt 1 + 2 + 4 + 5 + 10 + 11 + 20 + 22 + 44 + 55 + 110 = 284 und die Summe der echten Teiler von 284 ergibt 1 + 2 + 4 + 71 + 142 = 220.
 In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die größere Zahl defizient."
-  (let* ((bz (apply #'+ (sammle-divisoren n t)))
-		 (bz-sum (apply #'+ (sammle-divisoren bz t))))
+  (let* ((bz (apply #'+ (divisoren n t)))
+		 (bz-sum (apply #'+ (divisoren bz t))))
 	(when (= n bz-sum)
 	  bz)))
 
@@ -237,7 +237,33 @@ Beispiel: (collatz-sequenz 19) => (19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 
   "Eine natürliche Zahl heißt defizient, wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) kleiner ist als die Zahl selbst. Ist die Teilersumme dagegen gleich der Zahl, spricht man von einer vollkommenen Zahl, ist sie größer, so spricht man von einer abundanten Zahl.
 Beispiele: Die Zahl 10 ist defizient, denn 1+2+5 = 8 < 10.
 Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist."
-  (< (apply #'+ (sammle-divisoren n t)) n))
+  (< (apply #'+ (divisoren n t)) n))
+
+
+
+(defun divisoren (n &optional (ohne-selbst nil)
+						 &aux (lows nil) (highs nil) (limit (isqrt n)))
+"(divisoren 28) => (1 2 4 7 14 28)
+ (divisoren 8128) => (1 2 4 8 16 32 64 127 254 508 1016 2032 4064 8128)
+ (divisoren 2000 t) => (1 2 4 5 8 10 16 20 25 40 50 80 100 125 200 250 400 500 1000)"
+  (do ((feld (make-array (1+ limit) :element-type 'bit :initial-element 1))
+	   (i 1 (1+ i)))
+	  ((> i limit)
+	   (when (= n (* limit limit))
+		 (push limit highs))
+	   (if ohne-selbst
+		   (butlast (nreconc lows highs))
+		   (nreconc lows highs)))
+	(unless (zerop (elt feld i))
+	  (multiple-value-bind (quotient remainder)
+		  (floor n i)
+		(if (zerop remainder)
+			(progn
+			  (unless (= i quotient)
+				(push i lows)
+				(push quotient highs)))
+			(loop for j from i to limit by i do
+				 (setf (elt feld j) 0)))))))
 
 
 
@@ -312,24 +338,7 @@ Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
 FAKTOR berechnet den Faktor einer Zahl.
 Ein Faktor von 6 wird zum Beispiel errechnet, indem man die Werte von 1 bis 6 miteinander malnimmt, also 1 * 2 * 3 * 4 * 5 * 6. Faktoren haben die unangenehme Eigenschaft, das sie sehr schnell sehr groß werden können.
 Beispiel: (faktor 20) =>  2432902008176640000"
-  (if (eql n 0) 
-	  1 
-	  (* n (faktor (1- n)))))
-
-
-
-(defun faktorisiere (n)
-  "(faktorisiere n)
-Gibt eine Liste der Faktoren der Zahl N zurück.
-Beispiel: (faktorisiere 1000) => (2 2 2 5 5 5)"  
-  (when (> n 1)
-	(do ((i 2 (1+ i))
-		 (limit (1+ (isqrt n))))
-		((> i limit)
-		 (list n))
-	  (when (zerop (mod n i))
-		(return-from faktorisiere
-		  (cons i (faktorisiere (/ n i))))))))
+  (reduce #'* (loop for i from 1 to n collect i)))
 
 
 
@@ -585,6 +594,21 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 
 
 
+(defun primfaktoren (n)
+  "(primfaktoren n)
+Gibt eine Liste der Primfaktoren der Zahl N zurück.
+Beispiel: (primfaktoren 1000) => (2 2 2 5 5 5)"  
+  (when (> n 1)
+	(do ((i 2 (1+ i))
+		 (limit (1+ (isqrt n))))
+		((> i limit)
+		 (list n))
+	  (when (zerop (mod n i))
+		(return-from primfaktoren
+		  (cons i (primfaktoren (/ n i))))))))
+
+
+
 (defun primzahlp (n)
   "Prüft ob eine Zahl eine echte Primzahl ist.
 Beispiele:
@@ -633,29 +657,6 @@ Beispiele:
 
 
 
-(defun sammle-divisoren (n &optional (ohne-selbst nil)
-						 &aux (lows nil) (highs nil) (limit (isqrt n)))
-"(sammle-divisoren 28) => (1 2 4 7 14 28)
- (sammle-divisoren 8128) => (1 2 4 8 16 32 64 127 254 508 1016 2032 4064 8128)
- (sammle-divisoren 2000 t) => (1 2 4 5 8 10 16 20 25 40 50 80 100 125 200 250 400 500 1000)"
-  (do ((feld (make-array (1+ limit) :element-type 'bit :initial-element 1))
-	   (i 1 (1+ i)))
-	  ((> i limit)
-	   (when (= n (* limit limit))
-		 (push limit highs))
-	   (if ohne-selbst
-		   (butlast (nreconc lows highs))
-		   (nreconc lows highs)))
-	(unless (zerop (elt feld i))
-	  (multiple-value-bind (quotient remainder)
-		  (floor n i)
-		(if (zerop remainder)
-			(progn
-			  (unless (= i quotient)
-				(push i lows)
-				(push quotient highs)))
-			(loop for j from i to limit by i do
-				 (setf (elt feld j) 0)))))))
 
 
 
@@ -860,7 +861,7 @@ Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
 
 (defun vollkommene-zahl-p (n)
   "Eine natürliche Zahl n wird vollkommene Zahl (auch perfekte Zahl) genannt, wenn sie gleich der Summe σ*(n) aller ihrer (positiven) Teiler außer sich selbst ist. Eine äquivalente Definition lautet: eine vollkommene Zahl n ist eine Zahl, die halb so groß ist wie die Summe aller ihrer positiven Teiler (sie selbst eingeschlossen), d. h. σ(n) = 2n. Die kleinsten drei vollkommenen Zahlen sind 6, 28 und 496. Alle bekannten vollkommenen Zahlen sind gerade und von Mersenne-Primzahlen abgeleitet."
-  (= n (apply #'+ (sammle-divisoren n t))))
+  (= n (apply #'+ (divisoren n t))))
 
 
 

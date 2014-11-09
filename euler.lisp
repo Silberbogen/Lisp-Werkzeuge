@@ -122,7 +122,7 @@ Aufgabe 3
 Die Primfaktoren von 13195 sind 5,7,13 und 29.
 Welcher ist der größte Primfaktor der Zahl 600851475143?
 Antwort: 6857"
-  (apply #'max (faktorisiere limit)))
+  (apply #'max (primfaktoren limit)))
 
 
 
@@ -382,7 +382,7 @@ Was ist der Wert der ersten Dreieckszahl, die mehr als 500 Teiler hat?
 Antwort: 76576500"
   (let ((n 0))
 	(do ((i 1 (1+ i)))
-		((> (length (sammle-divisoren n)) 500)
+		((> (length (divisoren n)) 500)
 		 n)
 	  (setf n (/ (* i (1+ i)) 2)))))
 
@@ -1106,7 +1106,7 @@ Es gibt 13 solche Primzahlen unter 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 
 Wie viele kreisförmige Primzahlen unter 1 Million gibt es?
 Antwort: 55"
   (let (liste)
-	(dolist (i (sieb-des-eratosthenes 999999) (length liste))
+	(dolist (i (sieb-des-eratosthenes 999999) (values (length liste) (nreverse liste)))
 	  (when (kreisförmige-primzahl-p i) 
 		(push i liste)))))
 
@@ -1227,7 +1227,7 @@ Der nte Term der Folge der Dreieckszahlen ist definiert durch tn = ½n(n+1), als
 Indem wir jeden Buchstaben eines Wortes zu einer Zahl entsprechend seiner Position im Alphabet umwandeln und diese addieren, erhalten wir einen Wortwert. Beispiel: Der Wortwert von SKY ist 19 + 11 + 25 = 55 = tn. Wenn der Wortwert eine Dreieckszahl ist, nennen wir das Wort ein Dreieckswort.
 Benutzen Sie words.txt (Rechtsklick und 'Ziel speichern unter...'), eine 16K Datei, die nahezu 2000 englische Wörter enthält, und finden Sie die Anzahl von Dreieckswörtern.
 Antwort: 162"
-  (let* ((wortliste (erstelle-wortliste "~/lisp/p042_words.txt"))
+  (let* ((wortliste (erstelle-wortliste "~/Euler/p042_words.txt"))
 		 (länge (length wortliste)))
 	(do ((i 1 (1+ i))
 		 (anzahl 0))
@@ -1373,10 +1373,10 @@ Die ersten drei aufeinanderfolgenden Zahlen, die jeweils drei verschiedene Primf
 Finden Sie die ersten vier aufeinanderfolgenden Zahlen, die jeweils vier verschiedene Primfaktoren haben. Was ist die erste dieser Zahlen?
 Antwort: 134043"
   (if (= fortlaufend
-         (length (remove-duplicates (faktorisiere zahl)))
-         (length (remove-duplicates (faktorisiere (+ zahl 1))))
-         (length (remove-duplicates (faktorisiere (+ zahl 2))))
-         (length (remove-duplicates (faktorisiere (+ zahl 3)))))
+         (length (remove-duplicates (primfaktoren zahl)))
+         (length (remove-duplicates (primfaktoren (+ zahl 1))))
+         (length (remove-duplicates (primfaktoren (+ zahl 2))))
+         (length (remove-duplicates (primfaktoren (+ zahl 3)))))
       zahl
       (euler-47 fortlaufend (1+ zahl))))
 
@@ -1685,7 +1685,7 @@ Antwort: 376"
 					  (reverse kartenliste))
 				   (push (string-aufteilen i) kartenliste))))))
 	;; ---------- ENDE der Unterprogramme ----------------------------------------
-	(let ((kartenliste (erstelle-kartenliste "/home/sascha/lisp/p054_poker.txt")))
+	(let ((kartenliste (erstelle-kartenliste "~/Euler/p054_poker.txt")))
 	  (loop for blatt-paar in kartenliste
 		 when (blatt< (nthcdr 5 blatt-paar) (butlast blatt-paar 5))
 		 sum 1))))
