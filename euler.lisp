@@ -1673,7 +1673,7 @@ Antwort: 376"
 														(höchste-karte< (remove paar0 h0 :test #'karte=)
 																		(remove paar1 h1 :test #'karte=)))))))
 				 ;; Höchste Karte
-				 (blatt-test (lambda () t) #'höchste-karte<))))
+				 (blatt-test (lambda (h) t) #'höchste-karte<))))
 	
 		   (erstelle-kartenliste (stream-name)
 			 "Einleseformat: 10 durch Leerzeichen getrennte Daten je Zeile"
