@@ -644,6 +644,18 @@ Beispiele:
 
 
 
+(defun prozent (x n)
+  "Berechnet x Prozent von n."
+  (/ (* x n) 100))
+
+
+
+(defun quadrat (n)
+  "Berechne das Quadrat von n."
+  (expt n 2))
+
+
+
 (defun römisch->arabisch (str)
   "Übersetzt eine String, der eine Zahl als römische Ziffern enthält und wand diese in einer Zahl mit arabischen Ziffern um."
   (let ((römische-ziffern "IVXLCDM")
