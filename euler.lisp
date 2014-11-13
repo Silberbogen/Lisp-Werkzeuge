@@ -1830,7 +1830,42 @@ Aufgabe 60
 Die Primzahlen 3, 7, 109 und 673 sind ziemlich erstaunlich. Wenn man beliebige 2 dieser Primzahlen nimmt und sie in beliebiger Reihenfolge verbindet, wird das Ergebnis auch immer eine Primzahl sein. Beispiel: Wenn wir 7 und 109 nehmen, sind sowohl 7109 als auch 1097 Primzahlen. Die Summe dieser 4 Primzahlen, 792, repräsentiert die kleinste mögliche Summe für eine Menge von 4 Primzahlen mit dieser Eigenschaft.
 Finden Sie die kleinste mögliche Summe für eine Menge von 5 Primzahlen, für die zwei beliebige Primzahlen miteinander verbunden eine weitere Primzahl produzieren.
 Antwort: 26033"
-  )
+    (labels ((kombiniere (m n)
+			 (parse-integer (format nil "~d~d" m n)))
+		   (kombinierbare-primzahlen-p (m n)
+			 (and (primzahlp (kombiniere m n))
+				  (primzahlp (kombiniere n m))))
+		   (alle-primzahlen-kombinierbar-p (&optional lst)
+			 (labels ( (teste-liste (&optional lst)
+						 (cond ((null lst)
+								nil)
+							   ((null (rest lst))
+								(primzahlp (first lst)))
+							   (t
+								(let ((a (first lst)))
+								  (dolist (b (rest lst) 't)
+									(unless (kombinierbare-primzahlen-p a b)
+									  (return-from teste-liste nil))))))))
+			   (unless (null lst)
+				 (notany #'null (maplist #'teste-liste lst))))))
+	(let* ((primzahlen (sieb-des-eratosthenes 9000))
+		   lst
+		   (primzahlen2 (dolist (i primzahlen (sort lst #'<))
+						  (do ((j (nächste-primzahl i) (nächste-primzahl j)))
+							  ((or (kombinierbare-primzahlen-p i j) (> j 9000))
+							   (when (< j 9000)
+								 (pushnew i lst)
+								 (pushnew j lst)))))))
+	  (dolist (i primzahlen2)
+		(dolist (j (rest (member i primzahlen2)))
+		  (dolist (k (rest (member j primzahlen2)))
+			(when (alle-primzahlen-kombinierbar-p (list i j k))
+			  (dolist (l (rest (member k primzahlen2)))
+				(when (alle-primzahlen-kombinierbar-p (list i j k l))
+				  (dolist (m (rest (member l primzahlen2)))
+					(when (alle-primzahlen-kombinierbar-p (list i j k l m))
+					  (return-from euler-60 (values (+ i j k l m) (list i j k l m))))))))))))))
+
 
 
 
