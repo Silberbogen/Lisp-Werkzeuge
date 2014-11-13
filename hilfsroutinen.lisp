@@ -327,6 +327,7 @@ Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
 	(when danach
 	  (format *query-io* "~&Bitte tippe deine Antwort ein und drücke dann die Eingabe-Taste.~%"))
 	(apply #'format *query-io* ctrl args)
+	(force-output *query-io*)
 	(let ((antw (string-trim " " (read-line *query-io*))))
 	  (unless (string-equal antw "")
 		(return antw)))))
@@ -407,6 +408,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 	(when danach
 	  (format *query-io* "~&Bitte tippe \"j\" für Ja oder  \"n\" für Nein.~%"))
 	(apply #'format *query-io* ctrl args)
+	(force-output *query-io*)
 	(let ((antw (string-trim " " (read-line *query-io*))))
 	  (cond ((string-equal antw "j")
 			 (return-from j-oder-n-p 't))
@@ -423,6 +425,7 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 	(when danach
 	  (format *query-io* "~&Bitte tippe \"ja\" für Ja oder  \"nein\" für Nein.~%"))
 	(apply #'format *query-io* ctrl args)
+	(force-output *query-io*)
 	(let ((antw (string-trim " " (read-line *query-io*))))
 	  (cond ((string-equal antw "ja")
 			 (return-from ja-oder-nein-p 't))
@@ -773,6 +776,7 @@ Beispiele:
 		  (format *query-io* "~&Bitte wählen sie, was sie benötigen, aus der Liste aus. Geben sie \"nichts\" ein, wenn sie nichts möchten oder \"alles\" wenn sie gerne alles hätten.~%")
 		  (format *query-io* "~&Bitte wählen sie, was sie benötigen, aus der Liste aus. Geben sie \"nichts\" ein, wenn sie nichts möchten.~%")))
 	(apply #'format *query-io* ctrl args)
+	(force-output *query-io*)
 	(let* ((antw (string-trim " " (read-line *query-io*)))
 		   (antw-lst (string-aufteilen antw))
 		   antwort)
