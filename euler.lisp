@@ -107,7 +107,7 @@ Jeder neue Term in der Fibonacci-Reihe wird gebildet, indem die beiden vorherige
 Finden Sie die Summe aller geraden Terme der Fibonacci-Reihe, die 4 Millionen nicht überschreiten.
 Antwort: 4613732"
   (do* ((i 1 (1+ i))
-		(x (fibonacci-rang i) (fibonacci-rang i))
+		(x (fibonaccizahl i) (fibonaccizahl i))
 		(summe 0))
 	   ((>= x 4000000)
 		summe)
@@ -852,7 +852,7 @@ Das 12. Glied, F12, ist das erste, das dreistellig ist.
 Was ist das erste Glied der Fibonacci-Reihe, das 1000 Stellen hat?
 Antwort: 4782"
   (do ((i 1 (1+ i)))
-	  ((= 1000 (length (zahl->liste (fibonacci-rang i))))
+	  ((= 1000 (length (zahl->liste (fibonaccizahl i))))
 	   i)))
 
 
@@ -1824,7 +1824,7 @@ Antwort: 107359"
 
 
 
-(defun euler-60 ()
+(defun euler-60 (&optional (max 8400))
   "Primzahl-Paar-Mengen
 Aufgabe 60
 Die Primzahlen 3, 7, 109 und 673 sind ziemlich erstaunlich. Wenn man beliebige 2 dieser Primzahlen nimmt und sie in beliebiger Reihenfolge verbindet, wird das Ergebnis auch immer eine Primzahl sein. Beispiel: Wenn wir 7 und 109 nehmen, sind sowohl 7109 als auch 1097 Primzahlen. Die Summe dieser 4 Primzahlen, 792, repräsentiert die kleinste mögliche Summe für eine Menge von 4 Primzahlen mit dieser Eigenschaft.
@@ -1848,12 +1848,12 @@ Antwort: 26033"
 									  (return-from teste-liste nil))))))))
 			   (unless (null lst)
 				 (notany #'null (maplist #'teste-liste lst))))))
-	(let* ((primzahlen (sieb-des-eratosthenes 9000))
+	(let* ((primzahlen (sieb-des-eratosthenes max))
 		   lst
 		   (primzahlen2 (dolist (i primzahlen (sort lst #'<))
 						  (do ((j (nächste-primzahl i) (nächste-primzahl j)))
-							  ((or (kombinierbare-primzahlen-p i j) (> j 9000))
-							   (when (< j 9000)
+							  ((or (kombinierbare-primzahlen-p i j) (> j max))
+							   (when (< j max)
 								 (pushnew i lst)
 								 (pushnew j lst)))))))
 	  (dolist (i primzahlen2)
@@ -1874,7 +1874,7 @@ Antwort: 26033"
 Aufgabe 61
 Dreiecks-, Quadrat-, Fünfecks-, Sechsecks-, Siebenecks- und Achteckszahlen sind alles figurierte (Polygonal-) Zahlen und werden mit den folgenden Formeln gebildet:
 Dreieck 	  	P3,n=n(n+1)/2 	  	1, 3, 6, 10, 15, ...
-Quadrat 	  	P4,n=n2 	  	1, 4, 9, 16, 25, ...
+Quadrat 	  	P4,n=n² 	  	1, 4, 9, 16, 25, ...
 Fünfeck 	  	P5,n=n(3n− 1)/2 	  	1, 5, 12, 22, 35, ...
 Sechseck 	  	P6,n=n(2n−1) 	  	1, 6, 15, 28, 45, ...
 Siebeneck 	  	P7,n=n(5n− 3)/2 	  	1, 7, 18, 34, 55, ...
@@ -1885,7 +1885,41 @@ Die geordnete Menge von 3 vierstelligen Zahlen: 8128, 2882, 8281, hat drei inter
     Dies ist die einzige Menge mit vierstelligen Zahlen mit dieser Eigenschaft.
 Finden Sie die Summe der einzigen geordneten Menge mit sechs zyklischen 4-stelligen Zahlen, von denen alle Polygonal-Typen (Dreieck, Quadrat, Fünfeck, Sechseck, Siebeneck und Achteck) durch verschiedene Zahlen vertreten sind.
 Antwort: 28684"
-  )
+  (let ((h (make-hash-table))
+		(to (make-hash-table)))
+	(labels ((p-funktion (typ n)
+			   (case typ
+				 (3 (* n (1+ n) 1/2))
+				 (4 (* n n))
+				 (5 (* n (1- (* 3 n)) 1/2))
+				 (6 (* n (1- (* 2 n))))
+				 (7 (* n (- (* 5 n) 3) 1/2))
+				 (8 (* n (- (* 3 n) 2)))))
+			 (dostep (start check target path)
+			   (if (= (length check) 5)
+				   (let* ((final (+ (* start 100) target))
+						  (fk (gethash final h)))
+					 (when (and fk (not (intersection fk check)))
+					   (return-from euler-61
+						 (values (reduce #'+ (cons final path))
+								 (reverse (cons final path))))))
+				   (loop for x in (gethash start to)
+					  for ks = (gethash x h)
+					  for freek = (set-difference ks check)
+					  when freek do (loop for k in freek
+									   do (dostep (mod x 100)
+												  (cons k check)
+												  target (cons x path)))))))
+	  (loop for typ from 3 to 8
+		 do (loop for n from 1
+			   for p = (p-funktion typ n)
+			   when (> p 9999) do (return)
+			   when (and (> p 1000)
+						 (> (mod p 100) 9))
+			   do (push typ (gethash p h))
+				 (pushnew p (gethash (floor p 100) to))))
+	  (loop for start from 10 to 99 do (dostep start nil start nil)))))
+
 
 
 
