@@ -143,6 +143,12 @@
 
 
 
+(defun achteckszahl (n)
+  "Gibt die Achteckszahl des gewünschten Rangs aus."
+ (* (- (* 3 n) 2) n))
+
+
+
 (defun addiere-ziffern (n &optional (sum 0))
   "Nimmt eine Zahl entgegen und gibt die Summe all ihrer Ziffern zurück.
 Beispiel: (addiere-ziffern 125) => 8"
@@ -267,7 +273,7 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 
 
 
-(defun dreieckszahl-rang (n)
+(defun dreieckszahl (n)
   "Gibt die Dreieckszahl des gewünschten Rangs aus."
   (/ (* n (1+ n)) 2))
 
@@ -355,11 +361,17 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 
 
 
-(defun fibonacci-rang (n &optional (a 0) (b 1))
- "Bildet die Fibonacci-Rang zur n. Zahl; Beispiel: (fibonacci-rang 20) => 6765"
+(defun fibonaccizahl (n &optional (a 0) (b 1))
+ "Bildet die Fibonaccizahl zur n. Zahl; Beispiel: (fibonaccizahl 20) => 6765"
   (if (zerop n)
       a
-	  (fibonacci-rang (1- n) b (+ a b))))
+	  (fibonaccizahl (1- n) b (+ a b))))
+
+
+
+(defun fünfeckszahl (n)
+  "Gibt die Fünfeckszahl des gewünschten Rangs aus."
+  (/ (* n (1- (* 3 n))) 2))
 
 
 
@@ -370,13 +382,7 @@ Beispiel: (faktor 20) =>  2432902008176640000"
   (do* ((i len (1+ i)))
 	   ((> i max)
 		(nreverse lst))
-	(push (fünfeckszahl-rang i) lst)))
-
-
-
-(defun fünfeckszahl-rang (n)
-  "Gibt die Fünfeckszahl des gewünschten Rangs aus."
-  (/ (* n (1- (* 3 n))) 2))
+	(push (fünfeckszahl i) lst)))
 
 
 
@@ -653,8 +659,8 @@ Beispiele:
 
 
 
-(defun quadrat (n)
-  "Berechne das Quadrat von n."
+(defun quadratzahl (n)
+  "Berechne die Quadratzahl von n."
   (expt n 2))
 
 
@@ -672,11 +678,8 @@ Beispiele:
 
 
 
-
-
-
-(defun sechseckzahl-rang (n)
-  "Gibt die Sechseckzahl des gewünschten Rangs aus."
+(defun sechseckszahl (n)
+  "Gibt die Sechseckszahl des gewünschten Rangs aus."
   (* n (1- (* 2 n))))
 
 
@@ -689,6 +692,12 @@ Beispiele:
 	   collect candidate
 	   and do (loop for composite from (expt candidate 2) to max by candidate
 				 do (setf (bit composites composite) 1)))))
+
+
+
+(defun siebeneckszahl (n)
+  "Gibt die Siebeneckszahl des gewünschten Rangs aus."
+  (/ (* n(- (* 5 n) 3)) 2))
 
 
 
