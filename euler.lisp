@@ -2896,17 +2896,17 @@ For a positive integer n, let σ2(n) be the sum of the squares of its divisors. 
 σ2(10) = 1 + 4 + 25 + 100 = 130.
 Find the sum of all n, 0 < n < 64,000,000 such that σ2(n) is a perfect square.
 Antwort: 1922364685"
-  (let ((array (make-array (+ max 1) :initial-element 1))
-		(summe 0))
+  (let ((sieb (make-array (+ max 1) :initial-element 1)))
+	;; Fülle das Sieb ...
 	(loop for i from 2 to max do
 		 (let ((wert (expt i 2)))
 		   (loop for j from i to max by i do
-				(incf (svref array j) wert))))
-	(loop for i from 1 to max do
-		 (let ((wert (svref array i)))
-		   (when (quadratzahlp wert)
-			 (incf summe i))))
-	summe))
+				(incf (svref sieb j) wert))))
+	;; ... finde die gesuchten Zahlen, summiere sie ...
+	(loop for i from 1 to max
+	   when (quadratzahlp (svref sieb i))
+	   sum i)))
+
 
 
 
