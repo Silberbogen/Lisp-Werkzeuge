@@ -17,14 +17,10 @@
 ;;;; ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 ;;;; OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ;;;; ------------------------------------------------------------------------
-;;;; Hinweis:
-;;;; Das Laden dieser Datei in Common Lisp erfolgt per:
-;;;; (load "euler.lisp")
-;;;; Zur Verbesserung der Geschwinidkeit bitte vorher compilieren per:
-;;;; (compile-file "euler.lisp")
 
 
-(load "~/lisp/hilfsroutinen.lisp")
+
+(load "~/src/lisp/hilfsroutinen.lisp")
 
 
 
@@ -2890,6 +2886,27 @@ Antwort: 2906969179"
 				   (when (palindromp x)
 					 (push x liste))))))))
 	(finde-summe 100000000)))
+
+
+
+(defun euler-211 (&optional (max 64000000))
+  "Divisor Square Sum
+Problem 211
+For a positive integer n, let σ2(n) be the sum of the squares of its divisors. For example,
+σ2(10) = 1 + 4 + 25 + 100 = 130.
+Find the sum of all n, 0 < n < 64,000,000 such that σ2(n) is a perfect square.
+Antwort: 1922364685"
+  (let ((array (make-array (+ max 1) :initial-element 1))
+		(summe 0))
+	(loop for i from 2 to max do
+		 (let ((wert (expt i 2)))
+		   (loop for j from i to max by i do
+				(incf (svref array j) wert))))
+	(loop for i from 1 to max do
+		 (let ((wert (svref array i)))
+		   (when (quadratzahlp wert)
+			 (incf summe i))))
+	summe))
 
 
 

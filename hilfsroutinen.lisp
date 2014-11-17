@@ -665,6 +665,12 @@ Beispiele:
 
 
 
+(defun quadratzahlp (n)
+  "Ist die übergebene Zahl N ein perfektes Quadrat?"
+  (= n (expt (isqrt n) 2)))
+
+
+
 (defun römisch->arabisch (str)
   "Übersetzt eine String, der eine Zahl als römische Ziffern enthält und wand diese in einer Zahl mit arabischen Ziffern um."
   (let ((römische-ziffern "IVXLCDM")
