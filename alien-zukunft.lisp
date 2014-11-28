@@ -1226,7 +1226,7 @@ Beispiel: (würfelwurf) => 4"
 	(1
 	 (auswahl '(ort-74 ort-68 ort-81 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
 	(2
-	 (auswahl '(ort-74 ort-68 ort-82 ort-67) ("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	 (auswahl '(ort-74 ort-68 ort-82 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
 	(3
 	 (auswahl '(ort-74 ort-68 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
 	(4
@@ -1368,7 +1368,7 @@ Beispiel: (würfelwurf) => 4"
 	(7
 	 (auswahl '(ort-71 ort-73 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
 	(otherwise
-	 (auswahl '(ort-71 ort-73 ort-66 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)")))))
+	 (auswahl '(ort-71 ort-73 ort-66 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))))
 
 
 (defun ort-73 ()
@@ -1498,6 +1498,34 @@ Beispiel: (würfelwurf) => 4"
 	 (auswahl '(ort-77 ort-75 ort-78) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))))
 
 
+(defun ort-79 ()
+  (rotiere-plattform)
+  (textausgabe "Der Raum in dem du dich befindest hat nur einen Ausgang, der im Norden liegt. Er besteht ganz aus Rosenmarmor, doch ist seine Oberfläche überall seltsam aufgeraut und macht es schwierig, eine Stelle genauer zu betrachten. In der Mitte des Raumes befindet sich ein großer Sockel, in dessen Mitte ein Becken mit kristallklarem Wasser ist.")
+  (when (and (zerop (inventar 'schlüssel-66)) (ja-oder-nein-p "Willst du deine Hände in das Becken tauchen?"))
+	(inventar 'schlüssel-66 1))
+  (textausgabe "Du läßt die Hände in das Becken gleiten. Das Wasser fühlt sich seltsam warm an, so daß es beinahe deine Sinne betäubt. Du gleitest mit deinen Händen über die Wände des Beckens und plötzlich fühlst du, daß da ein Gegenstand ist. Du tastest danach und bekommst ihn zu greifen. Als du die Hände aus dem Becken herausholst, hälst du deinen Kristallschlüssel in der Hand, der vollkommen durchsichtig ist. Die Zinken scheinen die Zahl 66 zu formen.")
+  (auswahl `((elt '(ort-78 ort-77 ort-76 ort-75) (rem *richtung* 4)) ort-152 ort-79) "Willst du den Raum wieder verlassen (1)? Du kannst auch nach Geheimtüren suchen (2) oder warten (3)"))
+
+
+(defun ort-80 ()
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(when (eql raum 'ort-143)
+	  (textausgabe "Kaum daß du den Wasserfall durchschritten hast, bemerkst du eine Veränderung deiner Kompaßnadel. Sie hört auf mit ihrem Tanz und zeigt wieder konstant nach Norden.")))
+  (when (zerop (inventar 'schlüssel-99))
+	(textausgabe "Du siehst etwas funkelndes im Wasser.")
+	(when (ja-oder-nein-p "Möchtest du im Wasser nach dem funkelnden etwas tauchen?")
+	  (inventar 'schlüssel-99 1)
+	  (textausgabe "Es ist ein kupferfarbener Schlüssel, dessen Zinken so geformt sind, als würden sie die Zahl 99 ergeben.")))
+  (textausgabe "Der Raum, in dem du dich jetzt befindet, scheint eine große natürliche Höhle zu sein. Sie ist bewachsen von exotischen Pflanzen. Grün ist hier eine weniger dominierende Farbe, als es sie an der Erdoberfläche zu sein scheint. Der Raum ist viel stickiger, als die Tunnel, durch die du dich seit einiger Zeit bewegst. Im nördlichen Teil der Höhle befindet sich ein großer Teich, in den ein Wasserfall hineinstürzt.")
+  (auswahl `(ort-143 ,(elt '(ort-72 ort-71 ort-70 ort-69 ort-68 ort-67 ort-74 ort-73) *richtung*)) "Willst du in den Teich hineinwaten und dich in die herabfallenden Wasser des Wasserfalls stellen (1) oder die Höhle durch ihren Ausgang im Osten verlassen (2)?"))
+
+
+
+
+(defun ort-82 ()
+  )
+
 (defun ort-100 ()
   'ende)
 
@@ -1505,4 +1533,7 @@ Beispiel: (würfelwurf) => 4"
   'ende)
 
 (defun ort-113 ()
+  )
+
+(defun ort-143 ()
   )
