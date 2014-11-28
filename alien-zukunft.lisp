@@ -99,8 +99,7 @@
 
 (defun nur-ziffern (text)
   "Entfernt die Nicht-Ziffern eines Textes."
-  (remove-if #'(lambda (string) (not (digit-char-p string)))
-			 text))
+  (remove-if #'(lambda (string) (not (digit-char-p string))) text))
 
 
 (defun textausgabe (ctrl &rest args)
@@ -1213,7 +1212,6 @@ Beispiel: (würfelwurf) => 4"
 	(case raum
 	  ((ort-65 ort-133)
 	   (textausgabe "Du gelangst an eine Abzweigung im Tunnel. Zu deiner großen Verblüffung funktioniert dein Kompass hier wieder."))))
-  
   (auswahl `(ort-65 ,(elt '(ort-74 ort-73 ort-72 ort-71 ort-70 ort-69 ort-68 ort-67) *richtung*) ort-140) "Du kannst dem Tunnel nach Norden (1) oder nach Süden folgen (2). Du kannst aber auch die Abzweigung nach Osten nehmen (3)"))
 
 
@@ -1228,7 +1226,7 @@ Beispiel: (würfelwurf) => 4"
 	(1
 	 (auswahl '(ort-74 ort-68 ort-81 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
 	(2
-	 (auswahl 'ort-74 ort-68 ort-82 ort-67) ("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	 (auswahl '(ort-74 ort-68 ort-82 ort-67) ("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
 	(3
 	 (auswahl '(ort-74 ort-68 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
 	(4
@@ -1267,6 +1265,237 @@ Beispiel: (würfelwurf) => 4"
 	 (auswahl '(ort-67 ort-69 ort-68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
 	(otherwise
 	 (auswahl '(ort-67 ort-69 ort-66 ort-68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))))
+
+
+(defun ort-69 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-69
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case *richtung*
+	(1
+	 (auswahl '(ort-68 ort-70 ort-81 ort-69) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(2
+	 (auswahl '(ort-68 ort-70 ort-82 ort-69) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(3
+	 (auswahl '(ort-68 ort-70 ort-69) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(4
+	 (auswahl '(ort-68 ort-70 ort-87 ort-77 ort-69) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)"))
+	(5
+	 (auswahl '(ort-68 ort-70 ort-88 ort-69) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(6
+	 (auswahl '(ort-68 ort-70 ort-80 ort-69) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(7
+	 (auswahl '(ort-68 ort-70 ort-69) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(otherwise
+	 (auswahl '(ort-68 ort-70 ort-66 ort-69) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))))
+
+
+(defun ort-70 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-70
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case *richtung*
+	(1
+	 (auswahl '(ort-69 ort-71 ort-81 ort-70) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(2
+	 (auswahl '(ort-69 ort-71 ort-82 ort-70) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(3
+	 (auswahl '(ort-69 ort-71 ort-70) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(4
+	 (auswahl '(ort-69 ort-71 ort-87 ort-77 ort-70) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)"))
+	(5
+	 (auswahl '(ort-69 ort-71 ort-88 ort-70) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(6
+	 (auswahl '(ort-69 ort-71 ort-80 ort-70) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(7
+	 (auswahl '(ort-69 ort-71 ort-70) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(otherwise
+	 (auswahl '(ort-69 ort-71 ort-66 ort-70) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))))
+
+
+(defun ort-71 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-71
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case *richtung*
+	(1
+	 (auswahl '(ort-70 ort-72 ort-81 ort-71) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(2
+	 (auswahl '(ort-70 ort-72 ort-82 ort-71) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(3
+	 (auswahl '(ort-70 ort-72 ort-71) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(4
+	 (auswahl '(ort-70 ort-72 ort-87 ort-77 ort-71) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)"))
+	(5
+	 (auswahl '(ort-70 ort-72 ort-88 ort-71) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(6
+	 (auswahl '(ort-70 ort-72 ort-80 ort-71) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(7
+	 (auswahl '(ort-70 ort-72 ort-71) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(otherwise
+	 (auswahl '(ort-70 ort-72 ort-66 ort-71) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))))
+
+
+(defun ort-72 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-72
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case *richtung*
+	(1
+	 (auswahl '(ort-71 ort-73 ort-81 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(2
+	 (auswahl '(ort-71 ort-73 ort-82 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(3
+	 (auswahl '(ort-71 ort-73 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(4
+	 (auswahl '(ort-71 ort-73 ort-87 ort-77 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)"))
+	(5
+	 (auswahl '(ort-71 ort-73 ort-88 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(6
+	 (auswahl '(ort-71 ort-73 ort-80 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(7
+	 (auswahl '(ort-71 ort-73 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(otherwise
+	 (auswahl '(ort-71 ort-73 ort-66 ort-72) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)")))))
+
+
+(defun ort-73 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-73
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case *richtung*
+	(1
+	 (auswahl '(ort-72 ort-74 ort-81 ort-73) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(2
+	 (auswahl '(ort-72 ort-74 ort-82 ort-73) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(3
+	 (auswahl '(ort-72 ort-74 ort-73) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(4
+	 (auswahl '(ort-72 ort-74 ort-87 ort-77 ort-73) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)"))
+	(5
+	 (auswahl '(ort-72 ort-74 ort-88 ort-73) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(6
+	 (auswahl '(ort-72 ort-74 ort-80 ort-73) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(7
+	 (auswahl '(ort-72 ort-74 ort-73) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(otherwise
+	 (auswahl '(ort-72 ort-74 ort-66 ort-73) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))))
+
+
+(defun ort-74 ()
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-95
+	   (textausgabe "Du entdeckst im Schatten hinter einem scharfkantigen Vorsprung einen für das Auge beinahe unsichtbaren Tunnel. Du mußt dich auf Hände und Knie hinablassen und kriechst hinein. So gut es dir möglich ist, kriechst du durch einen stockdunklen Gang. Du bist dir nicht einmal sicher, in welche Richtung du krabbelst. Mehr als nur einmal hast du das Gefühl, mehr als einen Weg zur Auswahl zu haben, doch du kriechst intuitiv der Nase nach, bis du endlich, den Tunnel verlassen kannst."))
+	    (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+	  (ort-74
+	   (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case *richtung*
+	(1
+	 (auswahl '(ort-73 ort-67 ort-81 ort-74) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(2
+	 (auswahl '(ort-73 ort-67 ort-82 ort-74) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(3
+	 (auswahl '(ort-73 ort-67 ort-74) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(4
+	 (auswahl '(ort-73 ort-67 ort-87 ort-77 ort-74) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)"))
+	(5
+	 (auswahl '(ort-73 ort-67 ort-88 ort-74) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(6
+	 (auswahl '(ort-73 ort-67 ort-80 ort-74) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(7
+	 (auswahl `(ort-73 ort-67 (if (> (w6) 3) ort-95 ort98) ort-74) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem orange erleuchteten Ausgang oder stehenbleiben und warten (4)"))
+	(otherwise
+	 (auswahl '(ort-73 ort-67 ort-66 ort-74) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))))
+
+
+(defun ort-75 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-75
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case (rem *richtung* 4)
+	(1
+	 (auswahl '(ort-76 ort-78 ort-75) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(2
+	 (auswahl '(ort-76 ort-78 ort-75) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(3
+	 (auswahl '(ort-76 ort-78 ort-75) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(otherwise
+	 (auswahl '(ort-76 ort-78 ort-79) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder dem gelblich erleuchteten Ausgang (3)"))))
+
+
+(defun ort-76 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-76
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case (rem *richtung* 4)
+	(1
+	 (auswahl '(ort-75 ort-77 ort-76) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(2
+	 (auswahl '(ort-75 ort-77 ort-76) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(3
+	 (auswahl '(ort-75 ort-77 ort-79) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder dem gelblich erleuchteten Ausgang (3)"))
+	(otherwise
+	 (auswahl '(ort-75 ort-77 ort-76) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))))
+
+
+(defun ort-77 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-77
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case (rem *richtung* 4)
+	(1
+	 (auswahl '(ort-78 ort-76 ort-77) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(2
+	 (auswahl '(ort-78 ort-76 ort-79) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder dem gelblich erleuchteten Ausgang (3)"))
+	(3
+	 (auswahl '(ort-78 ort-76 ort-77) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(otherwise
+	 (auswahl '(ort-78 ort-76 ort-77) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))))
+
+
+(defun ort-78 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-78
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case (rem *richtung* 4)
+	(1
+	 (auswahl '(ort-77 ort-75 ort-78) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(2
+	 (auswahl '(ort-77 ort-75 ort-78) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(3
+	 (auswahl '(ort-77 ort-75 ort-79) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder dem gelblich erleuchteten Ausgang (3)"))
+	(otherwise
+	 (auswahl '(ort-77 ort-75 ort-78) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))))
 
 
 (defun ort-100 ()
