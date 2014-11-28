@@ -23,15 +23,12 @@
 ;;;; (compile-file "alien-zukunft.lisp")
 
 
-
 (defparameter *ereignis* (make-hash-table)
   "Hält fest, ob gewisse Ereignisse eingetroffen sind")
 
 
-
 (defparameter *inventar* (make-hash-table)
   "Das Inventar des Spielers")
-
 
 
 (defparameter *richtung* 0
@@ -40,7 +37,6 @@
 
 (defparameter *spieler* (make-hash-table)
   "Die Charakterwerte des Spielers")
-
 
 
 (defparameter *zug* 'nil
@@ -52,12 +48,10 @@
 ;;; ----------------------------
 
 
-
 (defun auswahl (orte ctrl &rest args &aux (anzahl (length orte)))
   "Ermittelt durch Abfrage den nächsten Ort, den der Spieler aufsuchen möchte"
   (let ((auswahl (apply #'zahlen-auswahl anzahl ctrl args)))
 	(elt orte (1- auswahl))))
-
 
 
 (defun eingabe (&optional ctrl &rest args)
@@ -71,7 +65,6 @@
 	(let ((antw (string-trim " " (read-line *query-io*))))
 	  (unless (string-equal antw "")
 		(return-from eingabe antw)))))
-
 
 
 (defun j-oder-n-p (&optional ctrl &rest args)
@@ -89,7 +82,6 @@
 			 (return-from j-oder-n-p 'nil))))))
 
 
-
 (defun ja-oder-nein-p (&optional ctrl &rest args)
   "Erzwingt die Beantwortung einer Eingabe mit Ja oder Nein."
   (do ((danach nil t)
@@ -105,19 +97,16 @@
 			 (return-from ja-oder-nein-p 'nil))))))
 
 
-
 (defun nur-ziffern (text)
   "Entfernt die Nicht-Ziffern eines Textes."
   (remove-if #'(lambda (string) (not (digit-char-p string)))
 			 text))
 
 
-
 (defun textausgabe (ctrl &rest args)
   "Eine vereinfachte Ausgabe, die die Ausgabe stets am Anfang der Zeile beginnt und nach der Ausgabe die Zeile abschließt."
   (let ((ctrl (concatenate 'string "~&" ctrl "~%")))
 	(apply #'format t ctrl args)))
-
 
 
 (defun text-auswahl (lst ctrl &rest args &aux mehrfach)
@@ -152,18 +141,14 @@
 			  (t (format *query-io* "~&Etwas aus deiner Eingabe ist mir unbekannt!~%")))))))
 
 
-
-(defun trennsymbolep (c) (position c " ,.;/"))
-
-
-
-(defun string-aufteilen (string &key (trennzeichenp #'trennsymbolep))
-  (loop :for beg = (position-if-not trennzeichenp string)
-	 :then (position-if-not trennzeichenp string :start (1+ end))
-	 :for end = (and beg (position-if trennzeichenp string :start beg))
-	 :when beg :collect (subseq string beg end)
+(defun string-aufteilen (str &key (trennzeichenp #'(lambda (x)
+													 (position x " ,.;?!/\\"))))
+  "Wandelt einen String in eine Liste von Worten um."
+  (loop :for beg = (position-if-not trennzeichenp str)
+	 :then (position-if-not trennzeichenp str :start (1+ end))
+	 :for end = (and beg (position-if trennzeichenp str :start beg))
+	 :when beg :collect (subseq str beg end)
 	 :while end))
-
 
 
 (defun w4 (&optional (anzahl 1))
@@ -171,11 +156,9 @@
   (wurfserie anzahl 4))
 
 
-
 (defun w6 (&optional (anzahl 1))
   "Simuliert Würfe mit einem sechsseitigen Würfel"
   (wurfserie anzahl 6))
-
 
 
 (defun w8 (&optional (anzahl 1))
@@ -183,11 +166,9 @@
   (wurfserie anzahl 8))
 
 
-
 (defun w10 (&optional (anzahl 1))
   "Simuliert Würfe mit einem zehnseitigen Würfel"
   (wurfserie anzahl 10))
-
 
 
 (defun w12 (&optional (anzahl 1))
@@ -195,17 +176,14 @@
   (wurfserie anzahl 12))
 
 
-
 (defun w20 (&optional (anzahl 1))
   "Simuliert Würfe mit einem zwanzigseitigen Würfel"
   (wurfserie anzahl 20))
 
 
-
 (defun w100 (&optional (anzahl 1))
   "Simuliert Würfe mit einem 100seitigen Würfel"
   (wurfserie anzahl 100))
-
 
 
 (defun wurfserie (&optional (anzahl 1) (seiten 6))
@@ -218,13 +196,11 @@
 	  (incf summe (würfelwurf seiten)))))
 
 
-
 (defun würfelwurf (&optional (seiten 6))
   "(würfelwurf &optional seiten)
 WÜRFELWURF bildet den Wurf mit einem in Spieleboxen üblichen, voreingestellt 6-seitigen, Würfel nach. Durch einen Aufruf mit einer anderen Seitenzahl wird ein entsprechender über Seiten verfügender Würfel angenommen.
 Beispiel: (würfelwurf) => 4"
   (1+ (random seiten)))
-
 
 
 (defun zahlen-auswahl (max ctrl &rest args)
@@ -242,18 +218,15 @@ Beispiel: (würfelwurf) => 4"
 			  (return-from zahlen-auswahl antwort)))))))
 
 
-
 ;;; ------------------------------------
 ;;;  besondere Funktionen für das Spiel
 ;;; ------------------------------------
-
 
 
 (defun ereignis (key &optional wert)
   (if (null wert)
 	  (gethash key *ereignis* nil)
 	  (setf (gethash key *ereignis* nil) wert)))
-
 
 
 (defun erhöhe (key wert)
@@ -281,7 +254,6 @@ Beispiel: (würfelwurf) => 4"
 	 (spieler 'max-stärke wert))))
 
 
-
 (defun inventar (key &optional (wert 0))
   (typecase wert
 	(number
@@ -299,7 +271,6 @@ Beispiel: (würfelwurf) => 4"
 				  (values t (incf (gethash key *inventar* 0) wert)))))))
 	(otherwise
 	 (setf (gethash key *inventar* nil) wert))))
-
 
 
 (defun kampf (gegner &optional flucht treffer-verboten)
@@ -371,7 +342,6 @@ Beispiel: (würfelwurf) => 4"
 	  't)))
 
 
-
 (defun mahlzeit ()
   (when (j-oder-n-p "Möchtest du eine Mahlzeit zu dir nehmen")
 	(if (plusp (inventar 'proviant))
@@ -382,12 +352,10 @@ Beispiel: (würfelwurf) => 4"
 		(textausgabe "Nachdem du dich versichert hast, das niemand in der Nähe ist, durchwühlst du deinen Rucksack auf der Suche nach einem Proviantpaket. Nach einigen Minuten und mehrfachem aus- und einpacken des Rucksacks gibst du verzweifelt auf. Es ist tatsächlich kein einziger Brotkrummen mehr übrig."))))
 
 
-
 (defun rotiere-plattform ()
   (if (< 7 *richtung*)
 	  (incf *richtung*)
 	  (setf *richtung* 0)))
-
 
 
 (defun spieler (key &optional (wert 0))
@@ -400,7 +368,6 @@ Beispiel: (würfelwurf) => 4"
 	 (setf (gethash key *spieler* nil) wert))))
 
 
-
 (defun versuche-dein-glück ()
   (let ((glück (spieler 'glück)))
 	(when (plusp glück)
@@ -409,11 +376,9 @@ Beispiel: (würfelwurf) => 4"
 			't))))
 
 
-
 ;;; -----------
 ;;;  Das Spiel
 ;;; -----------
-
 
 
 (defun hauptprogramm ()
@@ -460,7 +425,6 @@ Beispiel: (würfelwurf) => 4"
 	(textausgabe "So, das hätten wir! Zeit, daß du dich in dein Abenteuer stürzt, hm? :-)"))
 
 
-
 (defun vorwort ()
 	(textausgabe "Vorwort")
 	(textausgabe "Viele Menschen würden der Wiedervereinigung und der Politik die Schuld geben, das die Schwächeren in unserer Gesellschaft ins Abseits geraten. Die meisten wissen nicht, was das wirklich bedeutet, du jedoch schon. Seit Jahren bereits kämpfst du um dein Überleben, mit nicht mehr als deiner Kleidung am Körper, einem Ruckscack, einem Zelt, einer Pumptaschenlampe, einem Multifunktionstaschenmesser billigster Machart und einigen wenigen weiteren Kleinigkeiten. Momentan ist das Wetter noch Mild - und so hast du die Nacht in den Überresten einer alten Turmruine verbracht, die unbeachtet im Park des Museums am Münster steht.")
@@ -469,11 +433,9 @@ Beispiel: (würfelwurf) => 4"
 	(textausgabe "Mit deinem ganzen Habseligkeiten bepackt gehst du die Treppen des Münster hinunter. Als Kind hast du dafür immer den schnellen Weg gewählt, mit den glatten Sandahlensohlen seid deine Freunde und ihre einfach immer stehend das Geländer hinuntergerutscht. Kinder kenen keinerlei Angst vor Gefahren. Du überquerst den Platz hinüber in Richtung des ehemaligen Dortin-Hotels und schlägst den Weg, die Hügelstraße hinauf ein. Nahe dem alten Wasserturm am Odenkirchweg versteckst du den Rucksack mit deinem Zelt, der Isoliermatte und all den anderen Dingen, die du nur des Nachts brauchst - und wanderst nur mit deinem \"leichten Gepäck\" die Vitusstraße hinunter. Du wanderst die Lüperzender Straße entlang und gehst schließlich die Brücke am ehemaligen Zentralbad hinauf - um noch kurz den kleine Park zu durchqueren, bevor du in Kürze die Hindenburgstraße nahe des Stadttheaters, oder einem seiner Nachfahren erreichst."))
 
 
-
 (defun ort-1 ()
   (textausgabe "Die Innenstadt macht um diese Zeit noch einen gänzlich unbelebten Eindruck - und kein einiges Licht erhellt die Straße. Keine Straßenlaterne, keine Glühbirne hinter einem Fenster, nicht einmal die Werbetafeln leuchten auf. Wenn du so drüber nachdenkst, auf deinem ganzen Weg hierhin hast du bisher keinerlei eingeschaltete Lichtquellen gesehen.\nNun stehst du an der Kreuzung Stepgesstraße Ecke Hindenburgstraße. Ein Stück die große Einkaufsstraße hinauf ist das Bäckereigeschäft, an dem dir jeden Morgen ein guter Geist eine braune Papiertüte mit dampfend warmen Gebäck bereitstellt. Du schaust in die Richtung, doch diesmal steht auf dem Stromkasten neben der Türe nicht der verlockende Beutel, sondern eine Gestalt steht in der Türe und winkt dir zu.")
   (auswahl '(ort-2 ort-3) "Wirst du auf die winkende Gestalt zugehen (1) oder ziehst du es vor, dich lieber scheu und mit knurrendem Magen aus dem Staub zu machen (2)?"))
-
 
 
 (defun ort-2 ()
@@ -493,7 +455,6 @@ Beispiel: (würfelwurf) => 4"
   (auswahl '(ort-4 ort-5 ort-6) "Ignorierst du das Geheul, das Donnern und die Blitze und wirst  erst einmal in Ruhe Frühstücken (1) oder würdest du lieber Elke fragen, ob sie dich rauslassen kann, damit du einmal nach dem Rechten sehen kannst (2)? Vielleicht würdest du sie ja auch lieber fragen, ob sie über einen anderen Empfänger verfügt, der nicht an das Stromnetz angeschlossen werden muss (3)?"))
 
 
-
 (defun ort-3 ()
   (textausgabe "Du bist ein äußerst mißtrauischer Mensch und vertraust der unbekannten, winkenden Gestalt nicht. Zu deinem Glück fängt es an zu regnen, eine hervorragende Möglichkeit um sich zu verpissen. Leider ist es aber ein echter Platzregen, daher solltest du möglichst schnell ein Dach über den Kopf bekommen. Du rennst ein Stück weit die Hindenburgstraße hinab und biegst in den Lichthof ein, wo du dich während des Regens unterstellts.")
   (textausgabe "Kaum bist du eine Minute drin, als plötzlich überall die Sirenen anfangen zu heulen. Draußen hörst du ein lautes Donnergrollen. Auch ist es viel dunkler geworden, seit die dichten grauen Wolken sich mit ihrem Regen auf Gladbach stürzen. Plötzlich pfeift ein Schuß an dir vorbei und schlägt in die Fensterscheibe ein Stück weit vor dir ein.")
@@ -504,18 +465,15 @@ Beispiel: (würfelwurf) => 4"
   (auswahl '(ort-50 ort-51) "Möchtest du den Lichthof nach Norden in Richtung Kaiserstraße verlassen (1), oder nach Süden in Richtung Hindernburgstraße (2)?"))
 
 
-
 (defun ort-4 ()
   (textausgabe "Du setzt dich zu Elke an den Tisch. Das Wetter, den Donner und den fehlenden Strom ignorieren, lernt ihr euch langsam besser kennen, während die Anzahl der Backwaren auf dem Tablett deutlich schrumpfen und der heiße Kaffee aus der Thermoskanne sich wohlig in deinem Inneren verteilt. Der Ort, die Zeit, die Situation, alles könnte man als idyllisch bezeichnen, wenn, ja wenn nicht auf einmal dieses seltsame Geräusch eine absterbenden Sirene gewsen wäre. Es war kein Abschwellen, wie man es kenn, sondern klang eher, wie ein entenartiger Aufschrei.")
   (textausgabe "Und dann nimmst du plötzlich wahr, das mit dem Verstummen dieser Sirene, die Masse an Sirenen, die noch klingen, weniger hoch ist, als zuvor. Aber was viel wichtiger ist, einige gehen immer noch. Langsam wirst du dir der Situation bewußt, die da draußen herrscht - und du beschließt, nachsehen zu gehen, was da los ist.")
   #'ort-5)
 
 
-
 (defun ort-5 ()
   (textausgabe "Du schlägst vor, daß du dich draußen umsiehst und zurückkommst, sobald du weißt, was los ist. Elke begleitet dich zur Ladentüre und läßt dich raus. Der Regen prasselt von oben herab und immer wieder donnert es. Du winkst ihr kurz zu und rennst so gut es geht an den Hauswänden entlang die Hindenburgstraße hinauf, trotzdem bist du nach weniger als einer Minute bis auf die Unterhose durchnäßt. Als du am ehemaligen Heinemann vorbeikommst und durch die kurze Passage läuftst, bemerkst du an der Straßenecke zum Sankt Vith hinunter einen brennenden Polizeiwagen. Ein mulmiges Gefühl geht dir durch den Magen. Eigentlich wolltest du ja in das Haus, das früher deinem Großvater gehört hat - und von dem aus man eine Übersicht über die ganze Stadt hat. Trotzdem ergreift dich gerade die Angst.")
   (auswahl '(ort-7 ort-8 ort-9) "Vielleicht wäre es ja besser, die Straße wieder hinunter zulaufen - und sich im Geschäft bei Elke zu verstecken (1)? Du könntest auch auf den Polizeiwagen zulaufen, vielleicht kannst du jemandem helfen, der im Wagen eingeklemmt ist (2)? Natürlich kannst du auch deinem ursprünglichen Plan weiter verfolgen,, das Haus deines Großvaters zu erreichen (3)!"))
-
 
 
 (defun ort-6 ()
@@ -524,11 +482,9 @@ Beispiel: (würfelwurf) => 4"
   (auswahl '(ort-17 ort-4 ort-5) "Willst du sie wirklich überreden, mit dir zu ihrem Auto zu gehen (1), oder würdest du jetzt nicht viel lieber frühstücken (2)? Möchtest du hingegen unbedingt draußen nachsehen was los ist, könntest du Elke auch bitten, dich rauszulassen (3)."))
 
 
-
 (defun ort-7 ()
   (textausgabe "Vollkommen durchnäßt kommst du wieder am Geschäft an. Drinnen ist alles dunkel. Du klopfst mehrfach, aber nichts rührt sich.")
   (auswahl '(ort-14 ort-15 ort-16) "Willst du es weiter mit klopfen und rufen probieren (1), oder willst du versuchen, ob du die Türe öffnen kannst (2), oder aber möchtest du dir einen anderen Weg suchen (3)?"))
-
 
 
 (defun ort-8 ()
@@ -550,7 +506,6 @@ Beispiel: (würfelwurf) => 4"
 		  (auswahl '(ort-9 ort-7) "Willst du jetzt weiter zum Haus deines Großvaters (1) oder zurück zum Geschäft (2)?")))))
 
 
-
 (defun ort-9 ()
   (if (ereignis 'dreistelzer)
 	  (progn
@@ -567,13 +522,11 @@ Beispiel: (würfelwurf) => 4"
 	(auswahl '(ort-8 ort-20 ort-7) "Du läufst hinaus und zu dem Polizeiwagen (1), du läufst die Kellertreppe hinab und suchst dort Schutz vor dem was kommt (2) oder du läufst zurück zu Elke, der Frau, die dich täglich mit Backwaren versorgt hat und erzählst ihr, was du gesehen hast (3)?")))))
 
 
-
 (defun ort-10 ()
   (when (eql (ort-13) 'ende)
 	(return-from ort-10 'ende))
   (textausgabe "Du bist nicht stolz darauf, einen anderen Menschen getötet zu haben, aber du warst ja nicht der Angreifer. Trotzdem fühlst du dich schäbig. Etwas in dir hat sich verändert, das kannst du spüren. Noch immer prasselt der Regen auf dich, so als wäre nichts gewesen. Und hinter den Wolkenbergen, da bist du dir sicher, scheint immer noch die Sonne.")
   (auswahl '(ort-9 ort-7) "Willst du jetzt weiter zum Haus deines Großvaters (1) oder zurück zum Geschäft (2)?"))
-
 
 
 (defun ort-11 ()
@@ -584,11 +537,9 @@ Beispiel: (würfelwurf) => 4"
 		  #'ort-10)))
 
 
-
 (defun ort-12 ()
   (textausgabe "Geduckt rennst du an der Häuserwand entlang und dann rechts in die Straße, auf das Kabuff zu, dort rennst du links um die Ecke in Richtung Kapuzinerplatz, läufst dann aber stattdessen um die Kirche herum, ein kurzes Stück über den Parkplatz - und dann die Stepgesstraße hinunter, bis du schließlich wieder die Hindenburgstraße erreichst. Etwas atemlos stellst du dich an die Wand. Mehr als nur einmal bist du beim Laufen geschlittert. Das Wasser läuft in Strömen in die Kanalisation. Du vergewisserst dich, bleibst mehrere Minuten in deiner versteckten Position, bis du dir sicher bist, daß der Angreifer dir nicht gefolgt ist. Erst jetzt begibst du dich zurück zur Bäckerei.")
   #'ort-7)
-
 
 
 (defun ort-13 ()
@@ -617,7 +568,6 @@ Beispiel: (würfelwurf) => 4"
 		  'ende))))
 
 
-
 (defun ort-14 ()
   (if (>= (w6) 4)
 	  (progn
@@ -628,18 +578,17 @@ Beispiel: (würfelwurf) => 4"
   (auswahl '(ort-14 ort-15 ort-16) "Willst du es weiter mit klopfen und rufen probieren (1), oder willst du versuchen, ob du die Türe öffnen kannst (2), oder willst du dir einen anderen Weg suchen (3)?"))
 
 
-
 (defun ort-15 ()
   (if (versuche-dein-glück)
 	  #'ort-18
 	  #'ort-19))
 
 
-
 (defun ort-16 ()
   ;; Versuche einen anderen Weg zu finden
   ;; bisher nicht zu Ende verfolgt
   'ende)
+
 
 (defun ort-17 ()
   (textausgabe "Du schulterst dir deinen Rucksack, während Elke ein paar Papiertüten mit Backwaren füllt. Danach siehst du ihr zu, wie sie ein paar Flaschen aus dem Kühlschrank holt und in eine weitere Tüte stopft. Als sie alles gepackt hat, verschwindet sie kurz im Nebenzimmer und kommt, jetzt einen Mantel tragend, eine Damenhandtusche um die Schulter hängend zurück. Ihr nennt die ganzen Taschen und verlasst das Geschäft. Elke schließt den Laden hinter sich ab, macht sogar die Bewegung zum Scharfschalten der Alarmanlage, dann sagt sie: \"Komm!\" und geht dir voraus, die Stepgesstraße hinunter.")
@@ -650,11 +599,9 @@ Beispiel: (würfelwurf) => 4"
   (auswahl '(ort-100 ort-101) "Stimmst du Elke zu - und ihr fahrt mit dem Auto aus dem Parkhaus heraus in den Regen (1) oder hast du ein mulmiges Gefühl und glaubst nicht, daß das eine gute Idee ist (2)?"))
 
 
-
 (defun ort-18 ()
   (textausgabe "Du betrittst den Laden, hast aber sofort das Gefühl, alleine zu sein. Du durchstöberst jedes Zimmer, jeden Raum, jeden Winkel, aber Elke ist nicht mehr da. Sie hat wohl nicht geglaubt, daß du wieder kommst. Dir bleibt nichts anderes übrig, als den Laden zu verlassen.")
   #'ort-34)
-
 
 
 (defun ort-19 ()
@@ -662,11 +609,9 @@ Beispiel: (würfelwurf) => 4"
 	#'ort-34)
 
 
-
 (defun ort-20 ()
   (textausgabe "Du öffnest die eiserne Treppe und gehst die Kellertreppe hinunter. Als du am Fuße der Treppe ankommst, siehst du vor dir die eiserne Doppeltüre, die in den Heizungskeller führt. Nach rechts führt ein weiterer Weg zum Lagerraum, wo deine Großmutter ihre Kartoffeln lagerte. Neben der Treppe führt ein Weg nach hinten, wo die Mieter des Hauses ihre Kellerabteile haben.")
   (auswahl '(ort-21 ort-22 ort-23 ort-24) "Wenn du zurück nach oben gehen willst (1). Möchtest du in den Heizungskeller (2). Willst du in den Gang, der zum Kartoffellager deiner Großmutter führt (3). Würdest du gerne in den rückwärtigen Bereich gehen (4)."))
-
 
 
 (defun ort-21 ()
@@ -677,7 +622,6 @@ Beispiel: (würfelwurf) => 4"
 	  (progn
 		(textausgabe "Du stehst in einem großen Treppenflur. An der Seite befindet sich der Hängeschrank mit den ganzen Ablesegeräten für Elektrizität und Wasser. Rechts an der Wand für eine Steintreppe hinauf in das erste Stockwerk. Geradeaus ist eine Holztüre, durch die man in den Kellerbereich der Gaststätte kommt, allerdings ist sie dauerhaft abgeschlossen. Rechts neben der Holztüre, unterhalb der Steintreppe, befindet sich eine Eisentüre, hinter der sich der Abstieg in den Keller befindet.")
 		(auswahl '(ort-25 ort-20 ort-26) "Willst du die Treppe hinaufsteigen (1), in den Keller hinuntergehen (2), oder das Haus verlassen und zurück auf den Alten Markt (3)?"))))
-
 
 
 (defun ort-22 ()
@@ -693,7 +637,6 @@ Beispiel: (würfelwurf) => 4"
 		  (textausgabe "Endlich hast du das Gekritzel an der Wand freigelegt. Was du liest, ist ein Wort: \"Agartha\"")
 		  (ereignis 'agartha 't))))
   (auswahl '(ort-23 ort-24 ort-21) "Willst du in in den Gang zum Kartoffelkeller (1), oder willst du zu den rückwärtigen Keller (2) oder möchtest du zurück nach oben in den Treppenflur (3)?"))
-
 
 
 (defun ort-23 ()
@@ -714,7 +657,6 @@ Beispiel: (würfelwurf) => 4"
   #'ort-20)
 
 
-
 (defun ort-25 ()
   (if (and (not (ereignis 'buch-gefunden)) (ereignis 'schlüssel-gefunden))
 	  (progn
@@ -726,7 +668,6 @@ Beispiel: (würfelwurf) => 4"
 			(textausgabe "Du steigst die Treppen bis zur dritten Etage hinauf. Von hier aus schaust du hinüber zu dem Balkon, wo früher dein Freund Guido gelebt hat. Du erinnerst dich daran, wie ihr ein primitives Blechdosentelefon gespannt hattet, dessen eines Ende ihr mit einem Holzflitzebogen ihr hinübergeschossen hattet. In Erinnerungen versunken steigst du danach die Treppe wieder hinunter ins Erdgeschoss.")
 			(textausgabe "Du ersteigst die Treppenstufen bis hinauf in das Dachgeschoss. Noch einmal versuchst du, ob du eine der verschlossenen Türen aufbekommst und schaust durch die Schlüssellöcher, doch erscheinen dir alle Räume leer und verlassen. Du drehst dich um und gehst die Treppenstufen wieder hinab in das Erdgeschoss."))))
   #'ort-21)
-
 
 
 (defun ort-26 ()
@@ -747,7 +688,6 @@ Beispiel: (würfelwurf) => 4"
 			(auswahl '(ort-43 ort-28 ort-27 ort-35 ort-34 ort-9) "Von hier aus kannst du weiter zur Waldhausener Straße (1), dem Kapuzinerplatz (2), dem Marktstieg (3), ebenso kannst du den Abteiberg hinunter (4), hinüber zur Hindenburgstraße (5) oder weiter zum Haus deines Großvaters (6)")))))
 
 
-
 (defun ort-27 ()
   (textausgabe "Atemlos kommst du an der Ecke Stadtmauer/Marktstieg an. Du denkst nicht, daß der Dreistelzer in der Ferne dich bemerkt hat.")
   (if (> (w6) 4)
@@ -757,7 +697,6 @@ Beispiel: (würfelwurf) => 4"
 	  (progn
 		(textausgabe "Du bewegst dich an der Hauswand entlang bis zur Ecke.")
 		(auswahl '(ort-34 ort-26 ort-28 ort-45 ort-29) "Möchtest du von hier aus weiter zur Hindenburgstraße (1), zum Alten Markt (2), zum Kapuzinerplatz (3), zur Wallstraße (4) oder zur Kaiserstraße (5)?"))))
-
 
 
 (defun ort-28 ()
@@ -779,7 +718,6 @@ Beispiel: (würfelwurf) => 4"
 		(auswahl '(ort-26 ort-44 ort-30 ort-29 ort-27 ort-9) "Von hier aus kannst du zum Alten Markt (1), zur Turmstiege (2), das Haus Zoar betreten (3), zur Kaiserstraße (4), zum Marktstieg (5) oder in das Haus deines Großvaters (6)"))))
 
 
-
 (defun ort-29 ()
   (when (> (w6) 4)
 	(textausgabe "Vermutlich wirst du dich niemals daran gewöhnen, daß die Autos jetzt in verkehrter Richtung die Kaiserstraße und die Regentenstraße entlang fahren."))
@@ -796,7 +734,6 @@ Beispiel: (würfelwurf) => 4"
   (auswahl '(ort-31 ort-45 ort-27 ort-28) "Möchtest du die Straße hinab zur Blücherstraße (1), zur Wallstraße (2), zum Marktstieg (3) oder zum Kapuzinerplatz (4)?"))
 
 
-
 (defun ort-30 ()
   (when (> (w6) 4)
 	(textausgabe "Du näherst dich dem Haus in dem du in deiner Jugend oftmals Billard gespielt hast, bis dieser Irre aus Hephata mit einer Pistole auf dich geschossen hatte. Vergessen hast du den Tag niemals, er war für dich wie eine Wiedergeburt. Du hast das Drumherum nie vergessen. Wenn du genau drüber nachdenkst, sah der Blödmann Chico tatsächlich so aus, wie einer der Zeichner der MAD-Comics."))
@@ -808,7 +745,6 @@ Beispiel: (würfelwurf) => 4"
 	  (progn
 		(textausgabe "Die Eingangstüren hängen nur lose in den Angeln. Jemand hat sich bereits Zutritt verschafft. Vorsicht gehst du in das Innere, aber alles ist ruhig. Du schleichst die Treppe herunter. Es sieht immer noch so aus wie in deiner Jugend. Der Kicker und der Billardtisch, nichts hat sich hier verändert, selbst die beiden Sofas sind noch da. In der Turnhalle brennt eine Notlampe - und ein Fenster steht weit offen.")
 		(auswahl '(or-28 ort-29) "Willst du zurück auf den Kapuzinerplatz (1) oder durch das geöffnete Fenster hinabspringen und hinüber zum Beginn der Kaiserstraße laufen (2)?"))))
-
 
 
 (defun ort-31 ()
@@ -824,7 +760,6 @@ Beispiel: (würfelwurf) => 4"
 	(when (> (w6) 4)
 	  (textausgabe "Du erinnerst dich, das ein Stück weiter geradeaus, Nikos Mutter ihr Geschät hatte, während Niko auf der Regentenstraße wohnte. Das letzte Mal, als du etwas von ihm hörtest, war seine Stimme, aus dem Radio. Die kanntest viele Leute, die auf der Regentenstraße wohnten. Dagmar, Nicola, ihren Bruder den Nazi (den du nicht abkonntest, weil er ihr Bruder war - und weil er Nazi war) - und Thomas, der Computerfreak und Ärztehörer, Dietrich der Tänzer lebte auch dort und Dirk, der total auf Adam Ant abfuhrt. Für dich war die Regentenstraße immer der Ort, wo du deine Grundschule besuchtest, Fußball spieltest und dir ab und zu bei der Apotheke dein Junior-Heft oder eine Dose Pullmoll holtest."))
 	(auswahl '(ort-29 ort-50 ort-32) "Willst du den Hügel hinauf die Kaiserstraße entlang (1), der Kleiststraße folgen (2) oder der Stadtbibliothek deine Aufwartung machen (3)?")))
-
 
 
 (defun ort-32 ()
@@ -843,7 +778,6 @@ Beispiel: (würfelwurf) => 4"
   #'ort-31)
 
 
-
 (defun ort-33 ()
   (textausgabe "Der Lichthof sieht aus wie ein Scherbenmeer. Hier muß es bereits zu heftigen Kämpfen gekommen sein. Die angrenzende Passage ist voller Rauch.")
   (when (ereignis 'dreistelzer)
@@ -860,7 +794,6 @@ Beispiel: (würfelwurf) => 4"
 	   (auswahl '(ort-50 ort-34 ort-51) "Willst du die Passage hinauf zur Kleistraße laufen (1) oder kehrst du lieber um und läufst die Hindenburgstraße hinauf (2) oder hinab (3)?")))))
 
 
-
 (defun ort-34 ()
   (when (ereignis 'dreistelzer)
 	(textausgabe "Von hier aus kannst du sehen, das sich am unteren Teil der Hindenburgstraße, hinter dem Knick beim Kaffeehausröster, sich ein weiterer Dreistelzer befindet. Du kannst nicht ihn selber sehen, aber ab und an sieht man den Schimmer seiner Flammenwaffe auf den Häuserfassaden und in den Fenstern wiederspiegeln. Es wäre nicht gerade klug, sich in die Richtung zu wagen. Ähnlich sieht es auch an der Stepgesstraße aus, auch von dort kommen die grauenvollen mechanischen Geräusche der Dreistelzer. Der dritte im Bunde steht immer noch neben dem Polizeirevier und verunstaltet das Gebäude.")
@@ -874,7 +807,6 @@ Beispiel: (würfelwurf) => 4"
 	(when (eql (ort-113) 'ende)
 	  (return-from ort-34 'ende)))
   (auswahl '(ort-33 ort-51 ort-45 ort-26 ort-35 ort-29) "Von hier aus kannst du weiter die in Richtung Lichthof (1), in Richtung des Hauptbahnhofs (2), zur Wallstraße (3), in Richtung des Alten Markts (4) oder in Richtung Abteiberg (5). Du kannst es auch die Croonsallee entlang zur Kaiserstraße (6)."))
-
 
 
 (defun ort-35 ()
@@ -898,7 +830,6 @@ Beispiel: (würfelwurf) => 4"
 	(auswahl '(ort-26 ort-34 ort-37 ort-36 ort-52) "Möchtest du von hier aus zum Alten Markt (1), die Hindenburgstraße hinab (2), den Vorplatz am Münster entlang (3), das alte Rathaus betreten (4)? oder zum Park am Spatzenberg (5)?")))
 
 
-
 (defun ort-36 ()
   (textausgabe "Das alte Rathaus von Mönchengladbach ist vermutlich viel weniger alt, als der Name vermuten läßt. Es hat eine große Toreinfahrt - und man kann von ihm aus in den Innenhof des Münsters gelangen, wenn du dich nicht irrst. Etwas idiotisch ist der Parpkatz davor - und die Straße die nach Links zum Abteiberg-Museum abbiegt. Nur ein Spiegel soll die Autofahrer davor schützen, das sie an dieser uneinsehbaren stelle mit ihren Autos Unfälle bauen. Viel intelligenter wäre es wohl, die Durchfahrt hier bautechnisch nicht mehr zu ermöglichen, aber wer bist du, daß dich solche Gedanken überhaupt interessieren?")
   (when (> (w6) 4)
@@ -918,7 +849,6 @@ Beispiel: (würfelwurf) => 4"
 		   (return-from ort-36 'ende)))
 		(auswahl '(ort-41 ort-35 ort-37 ort-51) "Du bist dir nicht sicher, ob es eine gute Idee ist, zum Alten Markt zu laufen. Immerhin bleibt dir noch der Rückzug in den Innenhof des Münsters (1), du könntest auch den Abteiberg hinunterlaufen, der Hügel sieht zu steil für den Dreistelzer aus (2), oder den Vorplatz des Münsters entlanglaufen (3) in der Hoffnung, es vielleicht zum Geroweiher zu schaffen. Zu guter letzt bleibt dir noch die Flucht durch die Gasse, in der Hoffnung, die Hindenburgstraße zu erreichen (4)"))))
   (auswahl '(ort-35 ort-41) "Möchtest du hinaus auf den Abteiberg (1) oder den Innenhof betreten (2)?"))
-
 
 
 (defun ort-37 ()
@@ -943,7 +873,6 @@ Beispiel: (würfelwurf) => 4"
 	(auswahl '(ort-35 ort-46 ort-38) "Willst du weiter in Richtung des Abteibergs (1), die Treppen hinab zum Geroweiher (2) oder willst du in das Gladbacher Münster hinein (3)?")))
 
 
-
 (defun ort-38 ()
   (if (ereignis 'dreistelzer)
 	  (textausgabe "Jetzt wo die Dreistelzer da draußen lauern, bist du dir nicht sicher, ob dieser uralte Bau dich noch lange schützen wird. Doch für einen Augenblick nimmst du dir Zeit. Die Zeit darüber nachzudenken, warum zum Teufel diese Typen da draußen sind - und deine Geburtsstadt in Schutt und Asche legen. Zu einer Erklärung gelangst du aber leider nicht.")
@@ -952,11 +881,9 @@ Beispiel: (würfelwurf) => 4"
   (auswahl '(ort-37 ort-39) "Willst du das Münster verlassen (1) oder den Seitengang betreten (2)?"))
 
 
-
 (defun ort-39 ()
   (textausgabe "Der Gang spannt sich um den Innenhof des Münsters. Glas gibt an jeder Stelle den Blick darauf frei, ebenso wie auf die Steinumtafelte Treppe, die in der Mitte des Rasenhofs nach unten führt. Auf der rechten Seite führt eine kurze Treppe hinab in die Gruft unter dem Hauptschiff.")
   (auswahl '(ort-38 ort-41 ort-40) "Möchtest du in das Hauptschiff des Münsters (1), den Innenhof betreten (2) oder die Treppe zur Gruft hinuntersteigen (3)?"))
-
 
 
 (defun ort-40 ()
@@ -983,10 +910,8 @@ Beispiel: (würfelwurf) => 4"
   #'ort-39)
 
 
-
 (defun ort-41 ()
   (auswahl '(ort-39 ort-36 ort-42) "Durch eine Türe gelangst du in das Münster (1), ein weiterer Durchgang führt in das alte Rathaus (2). Eine Treppe in der Mitte des Innenhofes führt zu einer Stahltüre hinab (3)."))
-
 
 
 (defun ort-42 ()
@@ -999,7 +924,6 @@ Beispiel: (würfelwurf) => 4"
 		#'ort-41)))
 
 
-
 (defun ort-43 ()
   (textausgabe "Die Waldhausener Straße war früher das Herzstück der Mönchengladbacher Altstadt. Hier reihten sich die Kneipen und Diskotheken nur so aneinander, doch in den Anfangszeit der 1990er Jahre, hatten die christdemokratischen Hohlbirnen der Stadt dem ein Ende bereitet - und damit nachhaltig dem Flair der Stadt geschadet. Vor deinem geistigen Auge stellst du dir das ehemalige Blumengeschäfft der Schallenburgers vor. Du erinnerst dich daran, wie deine Mutter und ihr Mann oftmals in den Herbstmonaten dort Kränze gebunden hatten. Und daran, wie sie von den Schallenburgers die alte Nähmaschine bekamen, in der 10.000 Mark versteckt waren. Glücklicherweise waren sie so ehrlich, Micky und seiner Mutter das Geld zurückzugeben. Trotzdem wurde Micky nicht alt, und die Schallenburgers und die Geschichte ihres Blumen- und Friedhofsgeschäftes endeten bald darauf.")
   (if (ereignis 'dreistelzer)
@@ -1009,12 +933,10 @@ Beispiel: (würfelwurf) => 4"
 	  (auswahl '(ort-26 ort-44 ort-52) "Die Straße führt hinauf zum Alten Markt (1), neben dem Dicken Turm verläuft die Turmstiege (2) und ein weiterer Weg führt durch den kleinen Grünbereich des Fliescherberges (3)")))
 
 
-
 (defun ort-44 ()
   (textausgabe "Die Turmstiege ist herrlich geschützt. An ihrem Ende zur Waldhausener Straße hin führt eine Treppe neben dem Dicken Turm hinab, von ihr selber eine Stiege den Turm hinauf und die lange Mauer ermöglicht es, dank der hervorragenden Steine an ihr hinaufzuklettern. Das taten deine Freunde und du schon als Kinder - und das tust du auch jetzt noch manchmal, den oben in der kleinen Zinne sieht einen Niemand.")
   (mahlzeit)
   (auswahl '(ort-43 ort-26 ort-28 ort-9) "Von hier aus hast du die Möglichkeit zur Waldhausener Straße zu gelangen (1), durch die Passage zum Alten Markt zu gehen (2) oder zum Kapuzinerplatz(3), wenn du schnell genug spurtest schaffst du es vielleicht sogar bis zum Haus deines Großvaters (4)"))
-
 
 
 (defun ort-45 ()
@@ -1024,7 +946,6 @@ Beispiel: (würfelwurf) => 4"
 	(textausgabe "Deine Gedanken schweifen ab zu Marios, der früher über dem Cafe wohnte. Oben in seiner Wohnung hattet ihr Commodore Basiclistings in den PC eingehämmert und stundenlang dann mit den Ergebnissen gespielt. Von hier aus seid ihr auch oft mit Dimmi zum Fußballspielen aufgebrochen. In der Bäckerei wohnte Michaela mit ihren Eltern, die die Backstube betrieben. Du hast leider nie erfahren, warum sie nach Ende der dritten Klasse nicht in die Schule zurückkehrte - oder wieso plötzlich die Bäckerei weg war."))
   (textausgabe "Du hast die Wallstraße immer gerne als Abkürzung benutzt, um zur Hindenburgstraße zu gelangen, nicht zuletzt wegen des Bücherladens, an dem du dir täglich am Schaufenster die Nase platt gedrückt hast, wo du dir das erste mal Michael Moorcocks \"Elric von Melnibone - Die Sage vom Ende der Zeit\" holtest, jenes Buch, das du dir sechs Mal kaufen mußtest, weil niemand es zurückgab, wenn man es ihm auch nur einmal auslieh. Und immer nach seinem Neuerwerb, hast du es nochmal gelesen. Du erinnerst dich auch noch an deine schräge Klassenkameradin, die einerseits total schüchtern her war vom Wesen - und die dennoch wie Boy George herumlief - und auch die Musik die ganze Zeit über hörte.")
   (auswahl '(ort-34 ort-29 ort-27 ort-28) "Du kannst von hier aus zur Hindenburgstraße (1), die Kaiserstraße hinab (2), den Marktstieg entlang (3) oder am Haus Zoar vorbei zum Kapuzinerplatz (4)"))
-
 
 
 (defun ort-46 ()
@@ -1039,7 +960,6 @@ Beispiel: (würfelwurf) => 4"
 		(auswahl '(ort-52 ort-35 ort-37) "Du kannst den Spatzenberg hinauf (1), oder den Abteiberg (2) oder die Treppen zum Münstervorplatz nehmen (3)"))))
 
 
-
 (defun ort-47 ()
   (if (ereignis 'dreistelzer)
 	  (progn
@@ -1048,7 +968,6 @@ Beispiel: (würfelwurf) => 4"
 	  (progn
 		(textausgabe "Ein Dreibeiner steht neben der Kaiser-Friedrich-Halle und bedeckt ihr Dach mit einem blau-grünlichen Flamme. Glücklicherweise ist er damit soweit weg, daß wohl kaum die Gefahr besteht, bemerkt zu werden.")
 		(auswahl '(ort-51 ort-48) "Der Weg ist soweit sicher die Hindenburgstraße hinauf (1) oder weiter hinab bis zum Vorplatz des Hauptbahnhofs (2)"))))
-
 
 
 (defun ort-48 ()
@@ -1060,14 +979,12 @@ Beispiel: (würfelwurf) => 4"
   (auswahl '(ort-47 ort-49) "Du kannst von hier aus entweder die Hindenburgstraße entlang in Richtung Alter Markt gehen (1) oder das Innere des Hauptbahnhofs betreten (2)"))
 
 
-
 (defun ort-49 ()
   (ereignis 'dreistelzer-gesehen 't)
   (when (> (w6) 4)
 	(textausgabe "Während du auf die Doppeltüren des Bahnhofs zuschreitest kommt dir ein Bild aus deiner Erinnerung. Du wolltest dir das neueste Lustige Taschenbuch holen - und es war Sonntag. Normalerweise kam es erst Montags heraus, so wie auch das Yps-Heft, aber am Kiosk des Hauptbahnhofs gab es alles einen Tag früher. Und so fragtest du damals im Kiosk nach, aber dort sagte man, daß die Hefte noch nicht geliefert wurden - das es aber in der nächsten Stunde geschehen würde. Und so ging ich an die Modelleisenbahn, die dort stand - und spielte damit für die nächste Stunde. Und als ich mich schließlich wieder erinnerte warum ich gekommen war, holte mir die Verkäuferin das frisch gedruckte Taschenbuch aus dem Karton heraus. Ich pflückte mir noch das neue Yps mit seinem Gimmick aus dem Verkaufsständer, bezahlte und machte mich freudig auf den Nachhauseweg. Herr Jansen der Wirt war bei meinen Eltern, daran erinnerte ich mich, er hatte mir das Geld für das Taschenbuch gegeben."))
   (textausgabe "Beim Öffnen der Türe entfaltet sich ein grauenhafter Anblick vor mir, die Bahnhofshalle gleicht eher einem Schlachthaus und riecht strenger als eine Leichenhalle. Und am Ende des Bahnhofs sehe ich die metallenen Beine eines Dreistelzers. Mir bleibt nichts anderes übrig, als mich umzudrehen und das Weite zu suchen.")
 	#'ort-48)
-
 
 
 (defun ort-50 ()
@@ -1082,7 +999,6 @@ Beispiel: (würfelwurf) => 4"
 	(auswahl '(ort-31 ort-33) "Du kannst am Adenauerplatz vorbei zur Blücherstraße (1) oder Richtung Hindenburgstraße in den Lichthof (2)")))
 
 
-
 (defun ort-51 ()
   (let ((raum (second *zug*)))
 	(when (eql raum 'ort-36)
@@ -1092,7 +1008,6 @@ Beispiel: (würfelwurf) => 4"
 	  (textausgabe "Mit Mühe und Not gelingt es dir, die Bismarkstraße unbemerkt zu überqueren. Du hältst dich dicht an die Häuserfassade gedrückt, damit dich der andere Dreibeiner nicht bemerkt, der am Lichthof gegenüber der Friedrichstraße sein Zerstörungswerk fortsetzt. Belustigt denkst du an die Kuh Martina zurück. Zurück in der Realität rennst du so schnell dich deine Beine tragen in die Albertusstraße hinein, vorbei an dem Gebäude früher der Buchclub war, in dem deine Mutter sich seit einem halben Jahrhundert Mitgliedschaft durchgequält hat, vorbei an der Bank... Uff, das hätte auch schlecht ausgehen können. Auch hier ist eine Bank, aber noch kein Dreistelzer. Du läuftst weiter bis zum Adenauerplatz und rennst quer über diesen, bis du an die Ecke zur Blücherstraße kommst.")
 	  (return-from ort-51 #'ort-31))
 	(auswahl '(ort-34 ort-47 ort-33) "Von hier aus kannst du der Hindenburgstraße bergauf folgen (1) oder in die Gegenrichtung auf den Hauptbahnhof zu (2), oder Richtung Kleiststraße durch den Lichthof (3)")))
-
 
 
 (defun ort-52 ()
@@ -1107,7 +1022,6 @@ Beispiel: (würfelwurf) => 4"
 		(auswahl '(ort-35 ort-46 ort-43) "Du kannst von hier aus zum Abteiberg hinaufgehen (1), hinab zum Geroweiher (2) oder hinüber zur Waldhausener Straße (3)"))))
 
 
-
 (defun ort-53 ()
   (let ((raum (second *zug*)))
   	(if (eql raum 'ort-42)
@@ -1115,7 +1029,6 @@ Beispiel: (würfelwurf) => 4"
 		(textausgabe "Ganz im Westen ist der Gang eine Sackgasse. Du weißt, daß dort eine Türe ist, aber sie ist zu perfekt eingefasst - und du findest nichts, um sie zu öffnen. So gibst du nach einer Weile des Suchens auf und folgst dem Gang nach Osten."))
 	(ereignis 'sargdeckel-verschoben)
 	#'ort-54))
-
 
 
 (defun ort-54 ()
@@ -1128,7 +1041,6 @@ Beispiel: (würfelwurf) => 4"
 		(textausgabe "In der Südostecke des Raumes hat sich ein Stück des Bodens verschoben. Dort ist ein Loch im Boden, in dem eine Rutsche ist. Nachdem du sie dir näher angesehen und betastet hast, kommst du zu dem Ergebnis, daß das Metall zu glatt ist - um im Falle eines Falles dort wieder hochklettern zu können - hingegen wäre es wohl eine Leichtigkeit - hinunterzurutschen.")
 		(auswahl '(ort-53 ort-55 ort-56) "Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Du könntest einen von ihnen nehmen - oder aber eine ungewisse Rutschpartie wagen (3)."))
 	  (auswahl '(ort-53 ort-55) "Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Welchen möchtest du einschlagen?")))
-
 
 
 (defun ort-55 ()
@@ -1150,7 +1062,6 @@ Beispiel: (würfelwurf) => 4"
 			  #'ort-54)))))
 
 
-
 (defun ort-56 ()
   (let ((raum (second *zug*)))
 	(when (eql raum 'ort-54)
@@ -1166,7 +1077,6 @@ Beispiel: (würfelwurf) => 4"
 	(rotiere-plattform)
 	(textausgabe "Du befindest dich in einer Art Naturhöhle mit einem großen Teich. Das Wasser ist kristallklar. Die weit entfernte Nordwand ist spiegelglatt - nicht jene natürliche Glätte eines gebrochenen Felsens, sondern künstliche Glätte die Rückschlüsse auf eine Bearbeitung läßt. Mitten in dieser befindet sich ein beinahe mannsgroßes Loch. Das ist der Ausgang der Röhre, durch die du hierhin gerutscht bist. Die Höhle ist bewachsen mit einer seltsamen Pflanze oder Wurzel, die luminiszierend ist und ein angenehmes gelbliches Licht ausstrahlt. Das Ufer ist nicht sandig, wie du es von Stränden kennst, dafür liegen dort viele Kieselsteine. Soweit du sonst erkennen kannst, ist die Höhle leer. Im Süden führt ein Weg aus ihr hinaus. Da es hier nichts gibt, was dich hält, drehst du dich um und folgst dem Weg hinaus aus der Höhle.")
 	#'ort-59))
-
 
 
 (defun ort-57 ()
@@ -1186,7 +1096,6 @@ Beispiel: (würfelwurf) => 4"
 	   (auswahl '(ort-58 ort-131 ort-63) "Du kannst dem Tunnel nach Osten folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)")))))
 
 
-
 (defun ort-58 ()
   (rotiere-plattform)
   (let ((raum (second *zug*)))
@@ -1201,9 +1110,164 @@ Beispiel: (würfelwurf) => 4"
 	   (auswahl '(ort-59 ort-57 ort-64 ort-212) "Möchtest du nach rechts gehen (1) oder nach links (2) oder drehst du dich um und gehst zurück (3)? Wenn du magst, kannst du auch nach Geheimwänden suchen (4)")))))
 
 
-
 (defun ort-59 ()
-  )
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-56
+	   (textausgabe "Du folgst dem Weg. Er wird nach kurzer Zeit zu einem behauenen Gang, der in einen Tunnel mündet. Zu deinem Bedauern mußt du feststellen, daß dein Kompass hier verrückt spielt.")
+	   (auswahl '(ort-60 ort-58 ort-56 ort212) "Willst du dem Tunnel nach links folgen (1) oder nach rechts (2) oder umdrehen und zurückgehen (3)? Wenn du es für möglich hältst, das hier ein Geheimgang ist, kannst du auch nach diesem suchen (4)"))
+	  (ort-58
+	   (textausgabe "Du gelangst an eine Abbiegung.")
+	   (auswahl '(ort-60 ort-56 ort-58 ort-212) "Möchtest du dem Weg weiter geradeaus folgen (1) oder nach links gehen (2) oder dich umdrehen und zurückgehen (3)? Du kannst gerne auch nach Geheimgängen suchen (4)"))
+	  (ort-60
+	   (textausgabe "Du gelangst an eine Abbiegung.")
+	   (auswahl '(ort-58 ort-56 ort-60 ort-212) "Möchtest du dem Weg weiter geradeaus folgen (1) oder nach rechts gehen (2) oder dich umdrehen und zurückgehen (3)? Du kannst gerne auch nach Geheimgängen suchen (4)")))))
+
+
+(defun ort-60 ()
+  (rotiere-plattform)
+  (textausgabe "Der Gang, dem du folgst, scheint endlos lang zu sein.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-59
+	   (auswahl '(ort-61 ort-59 ort-212) "Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)"))
+	  (ort-61
+	   (auswahl '(ort-59 ort-61 ort-212) "Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)")))))
+
+
+(defun ort-61 ()
+  (rotiere-plattform)
+  (textausgabe "Der Gang, dem du folgst, scheint endlos lang zu sein.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-60
+	   (if (> (w6) 3)
+		   (auswahl '(ort-61 ort-60 ort-212) "Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)")
+		   (auswahl '(ort-62 ort-60 ort-212) "Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)")))
+	  (ort-62
+	   (if (> (w6) 3)
+		   (auswahl '(ort-61 ort-62 ort-212) "Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)")
+		   (auswahl '(ort-60 ort-62 ort-212) "Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)"))))))
+
+
+(defun ort-62 ()
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-60
+	   (if (> (w6) 3)
+		   (progn
+			 (textausgabe "Der Gang, dem du folgst, scheint endlos lang zu sein. Als du es fast schon nicht mehr für möglich hältst, gelangst du dennoch endlich an sein scheinbares Ende, er macht einen Knick nach rechts.")
+			 (auswahl '(ort-135 ort-61 ort-212) "Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)"))
+		   (progn
+			 (textausgabe "Der Gang, dem du folgst, scheint endlos lang zu sein.")
+			 (auswahl '(ort-62 ort-61 ort-212) "Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)"))))
+	  (ort-133
+	   (textausgabe "Der Gang macht hier einen Knick nach links.")
+	   (auswahl '(ort-61 ort-135 ort212) "Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)")))))
+
+
+(defun ort-63 ()
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-57
+	   (textausgabe "In den Schatten der Wand findest du einen Geheimgang. Du folgst ihm, doch schon nach einiger Zeit mußt du kriechen. Er windet sich - und mit der Zeit verlierst du die Orientierung, ja du bist dir nicht einmal sicher, ob du zwischendurch vielleicht nicht auf Abzweigungen gestoßen bist. Doch endlich, nach einer schier endlos langen Zeit, vielen Windungen, Kriechgängen und Hindernissen, die du in der Dunkelheit überwinden mußtest, hast du das Ende erreichst. Du schältst dich aus den Schatten und bist in einem erleuchteten Raum.")
+	   (auswahl '(ort-136 ort-57) "Du kannst dem Tunnel folgen (1) oder dich umdrehen und versuchen den Rückweg durch den Geheimgang zu finden (2)"))
+	  (otherwise
+	   (textausgabe "Das war's dann wohl. Der Tunnel endet hier vor einer groben Felswand, in der es vor scharfen Kanten und tiefen Schatten nur so zu wimmeln scheint.")
+	   (auswahl '(ort-136 ort-57) "Du kannst den Tunnel zurückgehen (1) oder die Wände hier nach Geheimgängen absuchen (2)")))))
+
+
+(defun ort-64 ()
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-58
+	   (auswahl '(ort-139 ort-65 ort-58 ort-212) "Du kannst weiter geradeaus gehen (1) oder nach links abbiegen (2) oder dich umdrehen und zurückgehen (3). Wenn du magst, kannst du aber auch nach Geheimgängen suchen (4)."))
+	  (ort-65
+	   (auswahl '(ort-58 ort-139 ort-65 ort-212) "Du kommst an eine Abzweigung, von wo aus du nur nach rechts gehen kannst (1) oder nach links (2). Natürlich kannst du auch kehrt machen (3) oder versuchen, ob du einen Geheimgang finden kannst (4)"))
+	  (otherwise
+	   (auswahl '(ort-58 ort-65 ort-139 ort-212) "Du kannst weiter geradeaus gehen (1) oder nach rechts abbiegen (2) oder dich umdrehen und zurückgehen (3). Wenn du magst, kannst du aber auch nach Geheimgängen suchen (4).")))))
+
+
+(defun ort-65 ()
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-64
+	   (textausgabe "Du gelangst an eine Abzweigung.")
+	   (auswahl '(ort-133 ort-66 ort-64 ort-212) "Möchtest du weiter geradeaus gehen (1) oder der Abzweigung nach rechts folgen (2) oder dich umdrehen und zurückgehen (3)? Du kannst auch, wenn du magst, nach Geheimgängen suchen (4)"))
+	  (ort-66
+	   (textausgabe "Der Gang mündet an dieser Stelle in einen Tunnel der von links nach rechts führt.")
+	   (auswahl '(ort-64 ort-133 ort-66 ort-212) "Möchtest du nach links gehen (1) oder nach rechts (2) oder dich umdrehen und zurückgehen (3)? Du kannst auch, wenn du magst, nach Geheimgängen suchen (4)"))
+	  (ort-133
+	   (textausgabe "Du gelangst an eine Abzweigung.")
+	   (auswahl '(ort-64 ort-66 ort-133 ort-212) "Möchtest du weiter geradeaus gehen (1) oder der Abzweigung nach links folgen (2) oder dich umdrehen und zurückgehen (3)? Du kannst auch, wenn du magst, nach Geheimgängen suchen (4)")))))
+
+
+(defun ort-66 ()
+  (rotiere-plattform)
+  (let ((raum (second *zug*)))
+	(case raum
+	  ((ort-65 ort-133)
+	   (textausgabe "Du gelangst an eine Abzweigung im Tunnel. Zu deiner großen Verblüffung funktioniert dein Kompass hier wieder."))))
+  
+  (auswahl `(ort-65 ,(elt '(ort-74 ort-73 ort-72 ort-71 ort-70 ort-69 ort-68 ort-67) *richtung*) ort-140) "Du kannst dem Tunnel nach Norden (1) oder nach Süden folgen (2). Du kannst aber auch die Abzweigung nach Osten nehmen (3)"))
+
+
+(defun ort-67 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-67
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case *richtung*
+	(1
+	 (auswahl '(ort-74 ort-68 ort-81 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(2
+	 (auswahl 'ort-74 ort-68 ort-82 ort-67) ("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(3
+	 (auswahl '(ort-74 ort-68 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(4
+	 (auswahl '(ort-74 ort-68 ort-87 ort-77 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)"))
+	(5
+	 (auswahl '(ort-74 ort-68 ort-88 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(6
+	 (auswahl '(ort-74 ort-68 ort-80 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(7
+	 (auswahl '(ort-74 ort-68 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(otherwise
+	 (auswahl '(ort-74 ort-68 ort-66 ort-67) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))))
+
+
+(defun ort-68 ()
+  (rotiere-plattform)
+  (textausgabe "Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.")
+  (let ((raum (second *zug*)))
+	(case raum
+	  (ort-68
+	   (textausgabe "Plötzlich verspürst du, wie der Raum sich bewegt."))))
+  (case *richtung*
+	(1
+	 (auswahl '(ort-67 ort-69 ort-81 ort-68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(2
+	 (auswahl '(ort-67 ort-69 ort-82 ort68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(3
+	 (auswahl '(ort-67 ort-69 ort-68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(4
+	 (auswahl '(ort-67 ort-69 ort-87 ort-77 ort-68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)"))
+	(5
+	 (auswahl '(ort-67 ort-69 ort-88 ort-68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(6
+	 (auswahl '(ort-67 ort-69 ort-80 ort-68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))
+	(7
+	 (auswahl '(ort-67 ort-69 ort-68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)"))
+	(otherwise
+	 (auswahl '(ort-67 ort-69 ort-66 ort-68) "Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)"))))
+
 
 (defun ort-100 ()
   'ende)
