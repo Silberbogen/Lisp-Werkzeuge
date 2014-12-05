@@ -23,15 +23,12 @@
 ;;;; (compile-file "hilfsroutinen.lisp")
 
 
-
 ;;; #############
 ;;; # Variablen #
 ;;; #############
 
 
-
 (defvar *collatz-hash-table* (make-hash-table))
-
 
 
 ;;; ##########
@@ -39,13 +36,11 @@
 ;;; ##########
 
 
-
 (defmacro with-gensym (syms &body body)
   "Generiert ein gensym je Element aus der Liste SYMS."
   `(let ,(mapcar #'(lambda (s) `(,s (gensym)))
 				 syms)
 	 ,@body))
-
 
 
 (defmacro dosequence ((var seq &optional result) &body body
@@ -59,7 +54,6 @@
 		 ,@body))))
 
 
-
 (defmacro for ((var start stop &optional (step 1)) &body body)
   "Eine for-Schleife mit optionaler Schrittweite"
   (with-gensym (gstop)
@@ -71,13 +65,11 @@
 	   ,@body)))
 
 
-
 (defmacro forever (&body body)
   "Eine Endlos-Schleife"
   `(do ()
 	   (nil)
 	 ,@body))
-
 
 
 (defmacro in (obj &rest choices)
@@ -88,12 +80,10 @@
 					 choices)))))
 
 
-
 (defmacro let1 (var val &body body)
   "Dient zum schnellen Anlegen und Zuweisen einer einzigen Variablen."
   `(let ((,var ,val))
 	 ,@body))
-
 
 
 (defmacro mac (form)
@@ -101,11 +91,9 @@
   `(pprint (macroexpand-1 ',form)))
 
 
-
 (defmacro permutations-rang (n lst)
   "Translator zwischen Mensch und Maschine, um die Zählung bei 1 (Mensch) gegen die Zählung bei 0 (Maschine) auszutauschen"
   `(nth-permutation (1- ,n) ,lst))
-
 
 
 (defmacro until (test &body body)
@@ -115,13 +103,11 @@
 	 ,@body))
 
 
-
 (defmacro while (test &body body)
   "Eine while-Kontrollstruktur"
   `(do ()
 	   ((not ,test))
 	 ,@body))
-
 
 
 ;;; ##############
@@ -136,17 +122,14 @@
                       collect (aref array i j))))
 
 
-
 (defun abundante-zahl-p (n)
   "Eine natürliche Zahl heißt abundant (lat. abundans „überladen“), wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) größer ist als die Zahl selbst. Die kleinste abundante Zahl ist 12 (1+2+3+4+6 = 16 > 12). Die ersten geraden abundanten Zahlen lauten 12, 18, 20, 24, 30, 36, 40, 42, …"
   (> (apply #'+ (divisoren n t)) n))
 
 
-
 (defun achteckszahl (n)
   "Gibt die Achteckszahl des gewünschten Rangs aus."
  (* (- (* 3 n) 2) n))
-
 
 
 (defun addiere-ziffern (n &optional (sum 0))
@@ -157,14 +140,12 @@ Beispiel: (addiere-ziffern 125) => 8"
 	  (addiere-ziffern (truncate (/ n 10)) (+ sum (rem n 10)))))
 
 
-
 (defun alle-permutationen (lst)
   "Alle Permutationen einer Liste erzeugen; Beispiel: (alle-permutationen (list 'a 'b 'c 'd 'e))"
   (if (null lst) '(nil)
       (mapcan #'(lambda (x)
 				  (mapcar #'(lambda (y) (cons x y))
 						  (alle-permutationen (remove x lst :count 1)))) lst)))
-
 
 
 (defun alphabetischer-wert (str)
@@ -179,7 +160,6 @@ Beispiel: (arabisch->römisch 1968) => \"MCMLXVIII\""
   (format nil "~@R" n))
 
 
-
 (defun befreundete-zahl-p (n)
   "Zwei verschiedene natürliche Zahlen, von denen wechselseitig jeweils eine Zahl gleich der Summe der echten Teiler der anderen Zahl ist, bilden ein Paar befreundeter Zahlen.
 Das kleinste befreundete Zahlenpaar wird von den Zahlen 220 und 284 gebildet. Man rechnet leicht nach, dass die beiden Zahlen der Definition genügen:
@@ -191,7 +171,6 @@ In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die gr
 	  bz)))
 
 
-
 (defun but-nth (n lst)
   "Gibt die Liste, ohne das nte Element zurück. Die Zählung der Liste beginnt bei NULL.
 Beispiel: (but-nth 4 '(1 2 3 4 5 6 7 8 9)) => (1 2 3 4 6 7 8 9)"
@@ -199,7 +178,6 @@ Beispiel: (but-nth 4 '(1 2 3 4 5 6 7 8 9)) => (1 2 3 4 6 7 8 9)"
 	  (rest lst)
 	  (cons (first lst)
 			(but-nth (1- n) (rest lst)))))
-
 
 
 (defun collatz-rang (n &optional (durchgang 1))
@@ -210,7 +188,6 @@ Beispiel: (but-nth 4 '(1 2 3 4 5 6 7 8 9)) => (1 2 3 4 6 7 8 9)"
 		 (collatz-rang (/ n 2) (1+ durchgang)))
 		(t
 		 (collatz-rang (1+ (* 3 n)) (1+ durchgang)))))
-
 
 
 (defun collatz-sequenz (n &optional (lst nil))
@@ -238,7 +215,6 @@ Beispiel: (collatz-sequenz 19) => (19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 
 				   (collatz-sequenz n lst))))))))
 
 
-
 (defun defiziente-zahl-p (n)
   "Eine natürliche Zahl heißt defizient, wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) kleiner ist als die Zahl selbst. Ist die Teilersumme dagegen gleich der Zahl, spricht man von einer vollkommenen Zahl, ist sie größer, so spricht man von einer abundanten Zahl.
 Beispiele: Die Zahl 10 ist defizient, denn 1+2+5 = 8 < 10.
@@ -246,31 +222,28 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
   (< (apply #'+ (divisoren n t)) n))
 
 
-
 (defun divisoren (n &optional (ohne-selbst nil)
 						 &aux (lows nil) (highs nil) (limit (isqrt n)))
 "(divisoren 28) => (1 2 4 7 14 28)
  (divisoren 8128) => (1 2 4 8 16 32 64 127 254 508 1016 2032 4064 8128)
  (divisoren 2000 t) => (1 2 4 5 8 10 16 20 25 40 50 80 100 125 200 250 400 500 1000)"
-  (do ((feld (make-array (1+ limit) :element-type 'bit :initial-element 1))
-	   (i 1 (1+ i)))
-	  ((> i limit)
-	   (when (= n (* limit limit))
+(let ((feld (make-array (1+ limit) :element-type 'bit :initial-element 1)))
+  (loop for i from 1 to limit
+	   do(unless (zerop (elt feld i))
+		   (multiple-value-bind (quotient remainder)
+			   (floor n i)
+			 (if (zerop remainder)
+				 (progn
+				   (unless (= i quotient)
+					 (push i lows)
+					 (push quotient highs)))
+				 (loop for j from i to limit by i do
+					  (setf (elt feld j) 0))))))
+	   (when (= n (expt limit 2))
 		 (push limit highs))
 	   (if ohne-selbst
 		   (butlast (nreconc lows highs))
-		   (nreconc lows highs)))
-	(unless (zerop (elt feld i))
-	  (multiple-value-bind (quotient remainder)
-		  (floor n i)
-		(if (zerop remainder)
-			(progn
-			  (unless (= i quotient)
-				(push i lows)
-				(push quotient highs)))
-			(loop for j from i to limit by i do
-				 (setf (elt feld j) 0)))))))
-
+		   (nreconc lows highs))))
 
 
 (defun dreieckszahl (n)
@@ -278,12 +251,10 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
   (/ (* n (1+ n)) 2))
 
 
-
 (defun dreieckszahlp (n)
   "Prüft ob eine Zahl eine Dreieckszahl ist."
   (let ((wert (sqrt (1+ (* 8 n)))))
 	(= wert (truncate wert))))
-
 
 
 (defun dreisatz (m n o &optional (modus 'p))
@@ -301,7 +272,6 @@ Beispiel umgekehrt proportional:
 	 (/ (* m n) o))
 	(otherwise
 	 (error "~&Sie haben statt 'p oder 'u den Wert ~A als vierten Parameter angegeben.~%" modus))))
-	
 
 
 (defun durchschnitt (&rest lst)
@@ -314,7 +284,6 @@ Beispiel: (durchschnitt 2 3 4) => 3"
 		 (length lst)))) 
 
 
-
 (defun echte-teilmenge-p (a b)
   "(echte-teilmenge-p liste1 liste2)
 ECHTE-TEILMENGE-P überprüft, ob Liste1 ein wirklicher Subset von Liste2 ist. Das bedeutet, das Liste1 ausschließlich Elemente aus Liste 2 enthält, nicht aber alle Elemente der Liste 2. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
@@ -322,7 +291,6 @@ Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
  (echte-teilmenge-p '(rot schwarz) '(grün blau gelb)) => NIL"
 	   (when (and (subsetp a b) (not (subsetp b a)))
 	     t))
-
 
 
 (defun eingabe (&optional ctrl &rest args)
@@ -339,14 +307,12 @@ Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
 		(return antw)))))
 
 
-
 (defun faktor (n)
   "(faktor zahl)
 FAKTOR berechnet den Faktor einer Zahl.
 Ein Faktor von 6 wird zum Beispiel errechnet, indem man die Werte von 1 bis 6 miteinander malnimmt, also 1 * 2 * 3 * 4 * 5 * 6. Faktoren haben die unangenehme Eigenschaft, das sie sehr schnell sehr groß werden können.
 Beispiel: (faktor 20) =>  2432902008176640000"
   (reduce #'* (loop for i from 1 to n collect i)))
-
 
 
 (defun fibonacci-folge (max)
@@ -360,7 +326,6 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 	(push a lst)))
 
 
-
 (defun fibonaccizahl (n &optional (a 0) (b 1))
  "Bildet die Fibonaccizahl zur n. Zahl; Beispiel: (fibonaccizahl 20) => 6765"
   (if (zerop n)
@@ -368,11 +333,9 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 	  (fibonaccizahl (1- n) b (+ a b))))
 
 
-
 (defun fünfeckszahl (n)
   "Gibt die Fünfeckszahl des gewünschten Rangs aus."
   (/ (* n (1- (* 3 n))) 2))
-
 
 
 (defun fünfeckszahl-folge (max &optional lst (len (length lst)))
@@ -385,7 +348,6 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 	(push (fünfeckszahl i) lst)))
 
 
-
 (defun fünfeckszahlp (n)
   "Prüft ob eine Zahl eine Fünfeckszahl ist."
   (let ((lst (do* ((i 10 (+ i 10))
@@ -396,14 +358,12 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 	  't)))
 
 
-
 (defun gleichwertige-elemente (a b)
   "(gleichwertige-elemente liste1 liste2)
 GLEICHWERTIGE-ELEMENTE überprüft, ob Liste1 und Liste2 über dieselben Elemente verfügen. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
 Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 	   (when (and (subsetp a b) (subsetp b a))
 	     t))
-
 
 
 (defun j-oder-n-p (&optional ctrl &rest args)
@@ -422,7 +382,6 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 			 (return-from j-oder-n-p 'nil))))))
 
 
-
 (defun ja-oder-nein-p (&optional ctrl &rest args)
   "Erzwingt die Beantwortung einer Eingabe mit Ja oder Nein."
   (do ((danach nil t)
@@ -437,7 +396,6 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 			 (return-from ja-oder-nein-p 't))
 			((string-equal antw "nein")
 			 (return-from ja-oder-nein-p 'nil))))))
-
 
 
 (defun kreisförmige-primzahl-p (n)
@@ -457,11 +415,9 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 			  (return nil)))))))
 
 
-
 (defun liste->zahl (lst)
   "Die übergebene Liste wird als Zahl zurückgegeben."
   (reduce #'(lambda (x y) (+ (* 10 x) y)) lst))
-
 
 
 (defun lychrel-zahl-p (n &optional (versuche 50))
@@ -480,7 +436,6 @@ Beispiele
 		(if (palindromp kandidat)
 			nil
 			(lychrel-zahl-p kandidat (1- versuche))))))
-
 
 
 (defun mischen (lst &optional (durchgang (* 2 (length lst))) &aux (len (length lst)))
@@ -504,14 +459,12 @@ Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
 							(1- durchgang)))))))
 
 
-
 (defun münzwurf ()
   "Münzwurf bildet den Wurf einer Münze nach. Es ist möglich, daß die Münze auf der Kante stehen bleibt! Beispiel: (münzwurf) => ZAHL"
        (let ((wurf (random 101)))
 	 (cond ((< wurf 50) 'kopf)
 	       ((> wurf 50) 'zahl)
 	       (t 'kante))))
-
 
 
 (defun nächste-primzahl (&optional (n 0))
@@ -526,7 +479,6 @@ Beispiele:
 		 (do ((i (+ n (if (evenp n) 1 2)) (+ i 2)))
 			 ((primzahlp i)
 			  i)))))
-
 
 
 (defun nth-permutation (n lst)
@@ -544,19 +496,16 @@ Beispiele:
 					(nth-permutation remainder (but-nth quotient lst))))))))
 
 
-
 (defun nur-buchstaben (text)
   "Entfernt die Nicht-Buchstaben eines Textes."
   (remove-if #'(lambda (x) (not (alpha-char-p x)))
 			 text))
 
 
-
 (defun nur-ziffern (text)
   "Entfernt die Nicht-Ziffern eines Textes."
   (remove-if #'(lambda (x) (not (digit-char-p x)))
 			 text))
-
 
 
 (defun palindromp (seq)
@@ -575,7 +524,6 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 	(otherwise nil)))
 
 
-
 (defun pandigitalp (n)
   "Prüft, ob die Zahl n pandigital ist. Eine pandigitale Zahl (aus griechisch παν: „jedes“ und digital) ist eine dezimale ganze Zahl, die jede der zehn Ziffern von 0 bis 9 genau einmal enthält. Die erste Ziffer darf dabei nicht 0 sein."
   (typecase n
@@ -584,7 +532,6 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 			  (if (and (integerp p) (zerop p)) t nil)))
 	(list (equal (sort n #'<) '(1 2 3 4 5 6 7 8 9)))
 	(otherwise nil)))
-
 
 
 (defun phi-tabelle (n &aux (n+1 (1+ n)))
@@ -602,7 +549,6 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
     phi))
 
 
-
 (defun primfaktoren (n)
   "(primfaktoren n)
 Gibt eine Liste der Primfaktoren der Zahl N zurück.
@@ -615,7 +561,6 @@ Beispiel: (primfaktoren 1000) => (2 2 2 5 5 5)"
 	  (when (zerop (mod n i))
 		(return-from primfaktoren
 		  (cons i (primfaktoren (/ n i))))))))
-
 
 
 (defun primzahlp (n)
@@ -635,7 +580,6 @@ Beispiele:
 				  (return nil))))))))
 
 
-
 (defun primzahl-rang (n)
   "Erzeugte die Primzahl eines bestimmten Rangs.
 Beispiele:
@@ -652,11 +596,9 @@ Beispiele:
 	(nth-primzahl n)))
 
 
-
 (defun prozent (x n)
   "Berechnet x Prozent von n."
   (/ (* x n) 100))
-
 
 
 (defun quadratzahl (n)
@@ -664,11 +606,9 @@ Beispiele:
   (expt n 2))
 
 
-
 (defun quadratzahlp (n)
   "Ist die übergebene Zahl N ein perfektes Quadrat?"
   (= n (expt (isqrt n) 2)))
-
 
 
 (defun römisch->arabisch (str)
@@ -683,11 +623,9 @@ Beispiele:
         as (a b) on zahlen if a sum (if (and b (< a b)) (- a) a)))))
 
 
-
 (defun sechseckszahl (n)
   "Gibt die Sechseckszahl des gewünschten Rangs aus."
   (* n (1- (* 2 n))))
-
 
 
 (defun sieb-des-eratosthenes (max)
@@ -700,17 +638,14 @@ Beispiele:
 				 do (setf (bit composites composite) 1)))))
 
 
-
 (defun siebeneckszahl (n)
   "Gibt die Siebeneckszahl des gewünschten Rangs aus."
   (/ (* n(- (* 5 n) 3)) 2))
 
 
-
 (defun sortiere-ziffern (n)
   "Nimmt eine Zahl entgegen und gibt sie als Liste zurück, die Ziffern aufsteigend sortiert."
   (sort (zahl->liste n) #'<))
-
 
 
 (defun string-aufteilen (str &key (trennzeichenp #'(lambda (x)
@@ -723,7 +658,6 @@ Beispiele:
 	 :while end))
 
 
-
 (defun summe-der-farey-folge (n)
   "Bildet die Summe der Farey-Folge 1 bis n"
   (let* ((n+1 (1+ n))
@@ -732,7 +666,6 @@ Beispiele:
          (sum 1))
         ((>= i n+1) sum)
       (incf sum (aref phi i)))))
-
 
 
 (defun summe-fortlaufender-primzahlen (start max)
@@ -747,7 +680,6 @@ Beispiele:
 	(incf anz)))
 
 
-
 (defun tausche-ziffer (n old-dig new-dig)
   "Vertauscht alle Vorkommen einer bestimmten Ziffer einer Zahl gegen eine andere aus."
   (liste->zahl
@@ -755,7 +687,6 @@ Beispiele:
 							 new-dig
 							 x))
 	   (zahl->liste n))))
-
 
 
 (defun temperatur (n &optional (smbl 'celsius))
@@ -770,12 +701,10 @@ Beispiele:
 			  (- (* kelvin 1.8) 459.67)))))
 
 
-
 (defun textausgabe (ctrl &rest args)
   "Eine vereinfachte Ausgabe, die die Ausgabe stets am Anfang der Zeile beginnt und nach der Ausgabe die Zeile abschließt."
   (let ((ctrl (concatenate 'string "~&" ctrl "~%")))
 	(apply #'format t ctrl args)))
-
 
 
 (defun text-auswahl (lst ctrl &rest args &aux mehrfach)
@@ -811,7 +740,6 @@ Beispiele:
 			  (t (format *query-io* "~&Etwas aus ihrer Eingabe ist mir unbekannt!~%")))))))
 
 
-
 (defun trunkierbare-primzahl-p (n)
   "Die Primzahl bleibt eine Primzahl, selbst wenn die Ziffern von vorne oder von hinten abgetrennt werden."
   (if (< n 10)
@@ -823,7 +751,6 @@ Beispiele:
 		(unless (and (primzahlp (truncate (/ n (expt 10 i))))
 					 (primzahlp (rem n (expt 10 i))))
 		  (return nil)))))
-
 
 
 (defun umwandeln (n von nach)
@@ -895,7 +822,6 @@ Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
   (= n (apply #'+ (divisoren n t))))
 
 
-
 (defun wochentag (tag monat jahr)
   "Gibt den Tag der Woche zurück, als Zahl und als Symbol"
   (let ((tag (seventh (multiple-value-list
@@ -905,13 +831,11 @@ Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
 	(values tag (elt name tag))))
 
 
-
 (defun würfelwurf (&optional (n 6))
   "(würfelwurf &optional seiten)
 WÜRFELWURF bildet den Wurf mit einem in Spieleboxen üblichen, voreingestellt 6-seitigen, Würfel nach. Durch einen Aufruf mit einer anderen Seitenzahl wird ein entsprechender über Seiten verfügender Würfel angenommen.
 Beispiel: (würfelwurf) => 4"
   (1+ (random n)))
-
 
 
 (defun zahl->liste (n)
@@ -920,11 +844,9 @@ Beispiel: (würfelwurf) => 4"
 	   (prin1-to-string n)))
 
 
-
 (defun zähle-buchstaben (text)
   "Zählt die Buchstaben eines angegebenen Texts."
 	(length (nur-buchstaben text)))
-
 
 
 (defun ziffer-summe (n)
