@@ -1,4 +1,4 @@
-;-*- coding: utf-8 -*-
+;;;; -*- coding: utf-8 -*-
 ;;;; Dateiname: hilfsroutinen.lisp
 ;;;; Beschreibung: Routinen, die mich bei diversen Aufgaben unterstützen
 ;;;; ------------------------------------------------------------------------
@@ -257,19 +257,19 @@ Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist.
 	(= wert (truncate wert))))
 
 
-(defun dreisatz (m n o &optional (modus 'p))
+(defun dreisatz (menge a b &optional (modus 'p))
   "Ein einfacher Dreisatz-Löser.
 Beispiel proportional:
 Ein Auto fährt mit 12 Litern 162 km weit. Wie weit fährt es mit 20 Litern?
-   (dreisatz 12 162 20 'p) => 270
+   (dreisatz 162 12 20 'p) => 270
 Beispiel umgekehrt proportional:
 8 Pferde fressen in 5 Tagen den gesamten Hafervorat. Wie lange würde dieselbe Menge bei 10 Pferden reichen?
-   (dreisatz 8 5 10 'u) => 4"
+   (dreisatz 5 8 10 'u) => 4"
   (case modus
-	(p
-	 (* (/ n m) o))
-	(u
-	 (/ (* m n) o))
+	((p proportional)
+	 (* (/ menge a) b))
+	((u unproportional umgekehrt-proportional)
+	 (/ (* menge a) b))
 	(otherwise
 	 (error "~&Sie haben statt 'p oder 'u den Wert ~A als vierten Parameter angegeben.~%" modus))))
 
