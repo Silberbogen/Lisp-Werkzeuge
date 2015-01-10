@@ -338,15 +338,15 @@
 
 
 (defun problem-14 (&optional (max (expt 10 6)))
-  (let ((len 0)
-		(n 0))
-	(do ((i 1 (1+ i)))
-		((>= i max)
-		 (values n len))
-	  (let ((c (collatz-sequenz i)))
-		(when (> (length c) len)
-		  (setf len (length c)
-				n (first c)))))))
+  (let ((länge 0)
+        (n 0))
+    (loop for i from 1 to (1- max)
+       for c = (collatz-sequenz i)
+       for l = (length c)
+       when (> l länge)
+       do (setf länge l
+                n c))
+    (first n)))
 
 
 (defun problem-15 ()
