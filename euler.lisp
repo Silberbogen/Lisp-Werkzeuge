@@ -228,7 +228,7 @@
 
 (defun problem-12 ()
   (loop for i upfrom 1
-     for n = (/ (* i (1+ i)) 2)
+     for n = (dreieckszahl i)
      when (> (length (divisoren n)) 500)
      do (return-from problem-12 n)))
 
@@ -350,9 +350,7 @@
 
 
 (defun problem-15 ()
-  (let ((faktor40 (faktor 40))
-		(faktor20 (faktor 20)))
-	(/ faktor40 faktor20 faktor20)))
+  (/ (faktor 40) (faktor 20) (faktor 20)))
 
 
 (defun problem-16 ()
@@ -360,12 +358,9 @@
 
 
 (defun problem-17 ()
-  (do ((i 1 (1+ i))
-	   (anzahl 0)
-	   (fehlende-and (* 3 9 99)))		; die britischen and
-	  ((> i 1000)
-	   (+ anzahl fehlende-and))
-	(incf anzahl (zähle-buchstaben (format nil "~R" i)))))
+  (loop for i from 1 to 1000
+     sum (zähle-buchstaben (format nil "~R" i)) into summe
+     finally (return (+ (* 3 9 99) summe))))
 
 
 (defun problem-18 ()
@@ -406,23 +401,17 @@
 
 
 (defun problem-21 ()
-  (do ((i 1 (1+ i))
-	   (summe 0))
-	  ((>= i 10000)
-	   summe)
-	(let ((befreundete-zahl (befreundete-zahl-p i)))
-	  (when (and befreundete-zahl (/= befreundete-zahl i) (< befreundete-zahl 10000))
-		(incf summe i)))))
+  (loop for i from 1 to (1- max)
+     for bz = (befreundete-zahl-p i)
+     when (and bz (/= i bz) (< bz max))
+     sum i into summe
+     finally (return summe)))
 
 
 (defun problem-22 ()
-  (let* ((namensliste (erstelle-wortliste "Euler/p022_names.txt"))
-		 (länge (length namensliste)))
-	(do ((i 1 (1+ i))
-		 (summe 0))
-		((> i länge)
-		 summe)
-	  (incf summe (* i (alphabetischer-wert (pop namensliste)))))))
+  (let ((namensliste (erstelle-wortliste "Euler/p022_names.txt")))
+    (loop for i from 1 to (length namensliste)
+       sum (* i (alphabetischer-wert (pop namensliste))))))
 
 
 (defun problem-23 (&optional (maximum 28123))
