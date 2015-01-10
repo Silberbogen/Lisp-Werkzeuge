@@ -92,15 +92,13 @@
 
 
 (defun problem-4 ()
-  (do ((i 999 (1- i))
-	   (max-palindrom 0))
-	  ((< i 100)
-	   max-palindrom)
-	(do* ((j i (1- j)))
-		 ((< j 100))
-	  (let ((n (* i j)))
-		(when (and (> n max-palindrom) (palindromp n))
-		  (setf max-palindrom n))))))
+  (loop with max = 0
+     for i from 999 downto 100
+     do (loop for j from i downto 100
+           for n = (* i j)
+           when (and (> n max) (palindromp n))
+           do (setf max n))
+       finally (return max)))
 
 
 (defun problem-5 ()
@@ -123,34 +121,25 @@
   (labels ((wert (x s)
 			 (digit-char-p (char s x)))
 		   (berechne-produkt (index limit zahl &aux (wert 1))
-			 (do ((i 0 (1+ i)))
-				 ((= i limit)
-				  wert)
-			   (let ((m (wert (+ index i) zahl)))
-				 (if (zerop m)
-					 (return-from berechne-produkt 0)
-					 (setf wert (* wert m)))))))
+             (loop for i from 0 below limit
+                for m = (wert (+ index i) zahl)
+                if (zerop m) do (return-from berechne-produkt 0)
+                else do (setf wert (* wert m))
+                finally (return wert))))
 	(let* ((zahl "7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450")
 		   (zahl-länge (length zahl)))
-	  (do ((i 0 (1+ i))
-		   (max-produkt 0))
-		  ((= i (- zahl-länge limit))
-		   max-produkt)
-		(let ((produkt (berechne-produkt i limit zahl)))
-		  (when (> produkt max-produkt)
-			(setf max-produkt produkt)))))))
+      (apply #'max (loop for i from 0 to (- zahl-länge limit)
+                      collect (berechne-produkt i limit zahl))))))
 
 
 (defun problem-9 (&optional (wert 1000))
   (flet ((finde-tripel (wert)
 		   (let ((halb-wert (/ wert 2)))
-			 (do ((a 1 (1+ a)))
-				 ((>= a halb-wert))
-			   (do ((b a (1+ b)))
-				   ((>= b halb-wert))
-				 (let ((c (- wert a b)))
-				   (when (= (+ (expt a 2) (expt b 2)) (expt c 2))
-					 (return-from finde-tripel (* a b c)))))))))
+             (loop for a from 1 below halb-wert
+                do (loop for b from (1+ a) below halb-wert
+                      for c = (- wert a b)
+                      when (= (+ (expt a 2) (expt b 2)) (expt c 2))
+                      do (return-from finde-tripel (* a b c)))))))
 	(finde-tripel wert)))
 
 
@@ -338,15 +327,16 @@
 
 
 (defun problem-14 (&optional (max (expt 10 6)))
-  (let ((länge 0)
-        (n 0))
-    (loop for i from 1 below max
-       for c = (collatz-sequenz i)
-       for l = (length c)
-       when (> l länge)
-       do (setf länge l
-                n c))
-    (first n)))
+  (loop with länge = 0
+     with n = ()
+     for i from 1 below max
+     for c = (collatz-sequenz i)
+     for l = (length c)
+     when (> l länge)
+     do (setf länge l
+              n c)
+     finally (return (first n))))
+
 
 
 (defun problem-15 ()
@@ -386,14 +376,12 @@
 (defun problem-19 ()
   (flet ((sonntagp (tag monat jahr)
 		   (= (wochentag tag monat jahr) 6)))
-	(do ((jahr 1901 (1+ jahr))
-		 (anzahl 0))
-		((> jahr 2000)
-		 anzahl)
-	  (do ((monat 1 (1+ monat)))
-		  ((> monat 12))
-		(when (sonntagp 1 monat jahr)
-		  (incf anzahl))))))
+    (loop for jahr from 1901 to 2000
+       sum (loop with anzahl = 0
+              for monat from 1 to 12
+              when (sonntagp 1 monat jahr)
+              do (incf anzahl)
+                finally (return anzahl)))))
 
 
 (defun problem-20 ()
@@ -529,19 +517,16 @@
 
 (defun problem-32 ()
   (flet ((alle-pandigitalen-produkte ()
-		   (let (liste
-				 (produkt 0))
-			 (do ((i 1 (1+ i)))
-				 ((> i 99)
-				  liste)
-			   (do ((j 100 (1+ j)))
-				   ((> j 9999))
-				 (setf produkt (* i j))
-				 (if (and (< produkt 9999)
-						  (pandigitalp (append (zahl->liste i)
-											   (zahl->liste j)
-											   (zahl->liste produkt))))
-					 (pushnew produkt liste)))))))
+           (loop with liste = ()
+              for i from 1 below 100
+              do (loop for j from 100 below 10000
+                    for produkt = (* i j)
+                    if (and (< produkt 9999)
+                            (pandigitalp (append (zahl->liste i)
+                                                 (zahl->liste j)
+                                                 (zahl->liste produkt))))
+                    do (pushnew produkt liste))
+              finally (return liste))))
 	(reduce #'+ (alle-pandigitalen-produkte))))
 
 
