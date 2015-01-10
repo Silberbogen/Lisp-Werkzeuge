@@ -500,44 +500,31 @@
 
 
 (defun problem-29 ()
-  (let (menge)
-	(do ((a 2 (1+ a)))
-		((> a 100)
-		 (length menge))
-	  (do ((b 2 (1+ b)))
-		  ((> b 100))
-		(pushnew (expt a b) menge)))))
+  (loop with sammlung = ()
+     for a from 2 to 100
+     do (loop for b from 2 to 100
+           do (pushnew (expt a b) sammlung))
+     finally (return (length sammlung))))
 
 
-(defun problem-30 ()
+(defun problem-30 (&optional (max 200000))
   (labels ((expt-ziffern (n p &optional (sum 0))
 			 (if (zerop n)
 				 sum
 				 (expt-ziffern (truncate (/ n 10)) p (+ sum (expt (rem n 10) p))))))
-	(do ((i 2 (1+ i))
-		 (summe 0))
-		((>= i 200000)
-		 summe)
-	  (if (= i (expt-ziffern i 5))
-		  (incf summe i)))))
+    (loop for i from 2 to max
+       if (= i (expt-ziffern i 5))
+       sum i)))
 
 
 (defun problem-31 (&optional (ziel 200))
-  (let ((münzen #(200 100 50 20 10 5 2 1)))
-	(labels ((zähle-möglichkeiten (&optional (ziel 0)
-											 (münztyp 0)
-											 (möglichkeiten 0))
-			   (if (= münztyp 7)
-				   (incf möglichkeiten)
-				   (do ((i münztyp (1+ i)))
-					   ((> i 7)
-						möglichkeiten)
-					 (let ((hand (- ziel (svref münzen i))))
-					   (when (zerop hand)
-						 (incf möglichkeiten))
-					   (when (plusp hand)
-						 (incf möglichkeiten (zähle-möglichkeiten hand i 0))))))))
-	  (zähle-möglichkeiten ziel))))
+  (let ((münzen '(1 2 5 10 20 50 100 200))
+        (wege (make-array 201 :initial-element 0)))
+    (incf (aref wege 0))
+    (loop for i in münzen
+       do (loop for j from i to ziel
+               do (incf (aref wege j) (aref wege (- j i)))))
+    (aref wege ziel)))
 
 
 (defun problem-32 ()
