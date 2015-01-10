@@ -532,28 +532,23 @@
 
 (defun problem-33 ()
   (let (liste)
-    (do ((zähler 11 (1+ zähler)))
-		((> zähler 98))
-      (do ((nenner (1+ zähler) (1+ nenner)))
-		  ((> nenner 99))
-        (when (and (not (zerop (mod zähler 10)))
-                   (not (zerop (mod nenner 10)))
-                   (= (mod zähler 10)
-                      (floor nenner 10))
-                   (= (/ (/ (- zähler (mod zähler 10)) 10)
-                         (mod nenner 10))
-                      (/ zähler nenner)))
-          (push (/ zähler nenner) liste))))
+    (loop for zähler from 11 to 98
+         do (loop for nenner from (1+ zähler) to 99
+               when (and (not (zerop (mod zähler 10)))
+                         (not (zerop (mod nenner 10)))
+                         (= (mod zähler 10)
+                            (floor nenner 10))
+                         (= (/ (/ (- zähler (mod zähler 10)) 10)
+                               (mod nenner 10))
+                            (/ zähler nenner)))
+               do (push (/ zähler nenner) liste)))
     (denominator (reduce #'* liste))))
 
 
-(defun problem-34 ()
-  (do ((i 3 (1+ i))
-	   (summe 0))
-	  ((> i 50000)
-	   summe)
-	(if (= i (reduce #'+ (mapcar #'faktor (zahl->liste i))))
-		(incf summe i))))
+(defun problem-34 (&optional (max (* (faktor 9) 7)))
+  (loop for i from 3 to max
+     when (= i (reduce #'+ (mapcar #'faktor (zahl->liste i))))
+		sum i))
 
 
 (defun problem-35 ()
@@ -565,30 +560,23 @@
 
 (defun problem-36 ()
   (flet ((zweibasiges-palindrom-p (zahl)
-		   (and (palindromp zahl) (palindromp (format nil "~B" zahl)))))
-	(do ((i 1 (1+ i))
-		 (summe 0))
-		((>= i 1000000)
-		 summe)
-	  (when (zweibasiges-palindrom-p i)
-		(incf summe i)))))
+		   (and (palindromp zahl)
+                (palindromp (format nil "~B" zahl)))))
+    (loop for i from 1 below 1000000
+       when (zweibasiges-palindrom-p i)
+         sum i)))
 
 
 (defun problem-37 ()
-  (let ((summe 0)
-		(anzahl 0))
-	(dolist (i (sieb-des-eratosthenes 1000000) summe)
-	  (when (trunkierbare-primzahl-p i)
-		(incf anzahl)
-		(incf summe i)))))
+  (loop for i in (sieb-des-eratosthenes 1000000)
+     when (trunkierbare-primzahl-p i)
+     sum i))
 
 
 (defun problem-38 ()
-  (do ((i 9999 (1- i)))
-	  ((< i 1)
-	   nil)
-	(if (pandigitalp (append (zahl->liste i) (zahl->liste (* 2 i))))
-		(return (list i (* 2 i))))))
+  (loop for i downfrom 9999
+     if (pandigitalp (append (zahl->liste i) (zahl->liste (* 2 i))))
+     do (return (parse-integer (format nil "~a~a" i (* 2 i))))))
 
 
 (defun problem-39 ()
@@ -617,10 +605,9 @@
 
 
 (defun problem-41 ()
-  (let ((maximum 0))
-	(dolist (i (sieb-des-eratosthenes 7654321) maximum)
-	  (if (pandigitalp i)
-		  (setf maximum i)))))
+  (loop for i in (sieb-des-eratosthenes 7654321)
+     if (pandigitalp i)
+     maximize i))
 
 
 (defun problem-42 ()
@@ -704,11 +691,10 @@
 			   (let ((p (- n (* 2 (expt i 2)))))
 				 (when (primzahlp p)
 				   (return (list p i))))))))
-	(do ((i 3 (+ 2 i)))
-		((> i 10000))
-	  (unless (primzahlp i)
-		(when (null (goldbach-aufgliedern i))
-		  (return i))))))
+    (loop for i upfrom 3 by 2
+       unless (primzahlp i)
+       when (null (goldbach-aufgliedern i))
+       do (return i))))
 
 
 (defun problem-47 (&optional (fortlaufend 4) (zahl 645))
@@ -722,25 +708,21 @@
 
 
 (defun problem-48 ()
-  (do ((i 1 (1+ i))
-	   (summe 0))
-	  ((> i 1000)
-	   (last (zahl->liste summe) 10))
-	(incf summe (expt i i))))
+  (liste->zahl (last (zahl->liste (loop for i from 1 to 1000
+                        sum (expt i i)))
+                     10)))
 
 
 (defun problem-49 ()
-  (do ((i 1489 (+ i 2)))
-	  ((= i 4817)
-	   nil)
-	(let ((i2 (+ i 3330))
-		  (i3 (+ i 6660)))
-	  (when (and (primzahlp i) (primzahlp i2) (primzahlp i3))
-		(let ((l1 (remove-duplicates (zahl->liste i)))
-			  (l2 (remove-duplicates (zahl->liste i2)))
-			  (l3 (remove-duplicates (zahl->liste i3))))
-		  (when (and (subsetp l1 l2) (subsetp l1 l3) (subsetp l2 l1) (subsetp l3 l1))
-			(return (list i (+ i 3330) (+ i 6660)))))))))
+  (loop for i upfrom 1489 by 2
+     for i2 = (+ i 3330)
+     for i3 = (+ i 6660)
+     when (and (primzahlp i) (primzahlp i2) (primzahlp i3))
+       do (let ((l1 (remove-duplicates (zahl->liste i)))
+             (l2 (remove-duplicates (zahl->liste i2)))
+             (l3 (remove-duplicates (zahl->liste i3))))
+         (when (and (subsetp l1 l2) (subsetp l1 l3) (subsetp l2 l1) (subsetp l3 l1))
+           (return (parse-integer (format nil "~a~a~a" i (+ i 3330) (+ i 6660))))))))
 
 
 (defun problem-50 ()
