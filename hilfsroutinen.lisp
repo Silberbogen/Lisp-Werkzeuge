@@ -506,11 +506,11 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 	(push a lst)))
 
 
-(defun fibonaccizahl (n &optional (a 0) (b 1))
- "Bildet die Fibonaccizahl zur n. Zahl; Beispiel: (fibonaccizahl 20) => 6765"
-  (if (zerop n)
-      a
-	  (fibonaccizahl (1- n) b (+ a b))))
+(defmemo fibonacci (n)
+  "Bildet die Fibonaccizahl zur n. Zahl; Beispiel: (fibonacci 20) => 6765"
+  (cond ((zerop n) 0)
+        ((= n 1) 1)
+        (t (+ (fibonacci (1- n)) (fibonacci (- n 2))))))
 
 
 (defmemo fünfeckszahl (n)
@@ -873,8 +873,7 @@ Beispiel: (würfelwurf) => 4"
 
 (defun zahl->liste (n)
   "Die übergebene Zahl wird als Liste von Ziffern zurückgegeben."
-  (map 'list #'(lambda (x) (read-from-string (string x)))
-	   (prin1-to-string n)))
+  (map 'list #'digit-char-p (write-to-string n)))
 
 
 (defun zähle-buchstaben (text)
