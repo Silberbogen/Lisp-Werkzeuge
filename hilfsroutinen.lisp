@@ -518,7 +518,7 @@ Beispiel: (faktor 20) =>  2432902008176640000"
   (/ (* n (1- (* 3 n))) 2))
 
 
-(defun fünfeckszahl-folge (max &optional lst (len (length lst)))
+(defun fünfeckszahl-folge (max)
   "Erstellt eine Liste aller Fünfecks-Zahlen von der ersten bis zur MAXten."
   (loop for i from 1 to max collect (fünfeckszahl i)))
 
