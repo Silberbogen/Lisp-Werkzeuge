@@ -82,7 +82,7 @@
 (defun problem-2 ()
   (loop
      for i upfrom 1
-     for x = (fibonaccizahl i)
+     for x = (fibonacci i)
      when (>= x 4000000) return summe
      when (evenp x) sum x into summe))
 
@@ -340,7 +340,7 @@
 (defun problem-14 (&optional (max (expt 10 6)))
   (let ((länge 0)
         (n 0))
-    (loop for i from 1 to (1- max)
+    (loop for i from 1 below max
        for c = (collatz-sequenz i)
        for l = (length c)
        when (> l länge)
@@ -400,8 +400,8 @@
   (addiere-ziffern (faktor 100)))
 
 
-(defun problem-21 ()
-  (loop for i from 1 to (1- max)
+(defun problem-21 (&optional (max 10000))
+  (loop for i from 1 below max
      for bz = (befreundete-zahl-p i)
      when (and bz (/= i bz) (< bz max))
      sum i into summe
@@ -442,9 +442,9 @@
 
 
 (defun problem-25 ()
-  (do ((i 1 (1+ i)))
-	  ((= 1000 (length (zahl->liste (fibonaccizahl i))))
-	   i)))
+  (loop for i upfrom 1
+     when (= (length (zahl->liste (fibonacci i))) 1000)
+     return i))
 
 
 (defun problem-26 ()
@@ -481,29 +481,22 @@
 		  (zahl2 0)
 		  (gezählte-primzahlen 0)
 		  aktuelle-primzahlen)
-	  (do ((a -999 (1+ a)))
-		  ((zerop a)
-		   (* zahl1 zahl2))
-		(dolist (b (sieb-des-eratosthenes 999))
-		  (when (> (setf aktuelle-primzahlen (primzahl-reihe a b))
-				   gezählte-primzahlen)
-			(setf zahl1 a
-				  zahl2 b
-				  gezählte-primzahlen aktuelle-primzahlen)))))))
+      (loop for a from -999 below 0
+         do (loop for b in (sieb-des-eratosthenes 999)
+               when (> (setf aktuelle-primzahlen (primzahl-reihe a b))
+                       gezählte-primzahlen)
+               do (setf zahl1 a
+                       zahl2 b
+                       gezählte-primzahlen aktuelle-primzahlen))
+           finally (return (* zahl1 zahl2))))))
 
 
-(defun problem-28 ()
-  (let ((diagonal 1)
-		(start 1)
-		(inkrement 0)
-		(gezählt 0))
-	(do ((breite 3 (+ breite 2)))
-		((> breite 1001)
-		 diagonal)
-	  (setf inkrement (1- breite)
-			gezählt (* inkrement 4))
-	  (incf diagonal (+ (* start 4) (* inkrement 10)))
-	  (incf start gezählt))))		
+(defun problem-28 (&optional (max 1000))
+  (1+ (loop with kandidat = 1
+         for i from 2 to max by 2
+         sum (loop for j from 1 to 4
+                do (incf kandidat i)
+                sum kandidat))))
 
 
 (defun problem-29 ()
