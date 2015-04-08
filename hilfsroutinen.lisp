@@ -3,60 +3,36 @@
 ;;;; Dateiname: hilfsroutinen.lisp
 ;;;; Beschreibung: Routinen, die mich bei diversen Aufgaben unterstützen
 ;;;; ------------------------------------------------------------------------
-;;;; Author: Sascha Biermanns, <skkd punkt h4k1n9 at yahoo punkt de>
-;;;; Lizenz: ISC
+;;;; Author: Sascha K. Biermanns, <skkd PUNKT h4k1n9 AT yahoo PUNKT de>
+;;;; Lizenz: GPL v3
 ;;;; Copyright (C) 2011-2015 Sascha K. Biermanns
-;;;; Permission to use, copy, modify, and/or distribute this software for any
-;;;; purpose with or without fee is hereby granted, provided that the above
-;;;; copyright notice and this permission notice appear in all copies.
-;;;; THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-;;;; WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-;;;; MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-;;;; ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-;;;; WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-;;;; ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-;;;; OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+;;;; This program is free software; you can redistribute it and/or modify it
+;;;; under the terms of the GNU General Public License as published by the
+;;;; Free Software Foundation; either version 3 of the License, or (at your
+;;;; option) any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful, but
+;;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+;;;; Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License along
+;;;; with this program; if not, see <http://www.gnu.org/licenses/>. 
 ;;;; ------------------------------------------------------------------------
 
-
-;;; ##########################################
-;;; # 1. Memorisieren  von Funktionsaufrufen #
-;;; ##########################################
-
-
-(defmacro defmemo (fn args &body body)
-  "Definiere eine sich erinnernde Funktion."
-  `(memorisiere (defun ,fn ,args ,@body)))
-
-
-(defun lösche-memorisiere (fn-name)
-  "Löscht die Hash-Tabelle einer MEMO-Funktion."
-  (let ((table (get fn-name 'memo)))
-	(when table (clrhash table))))
+;;; ####################
+;;; #      INHALT:     #
+;;; # 1. Makros        #
+;;; # 2. Memorisierung #
+;;; # 3. Variablen     #
+;;; # 4. Prädikate     #
+;;; # 5. Funktionen    #
+;;; ####################
 
 
-(defun memorisiere (fn-name &key (key #'first) (test #'eql))
-  "Ersetzt FN-NAME's globale definition mit einer MEMORIZE-Version."
-  (setf (symbol-function fn-name)
-		(memo (symbol-function fn-name) fn-name key test)))
-
-
-(defun memo (fn name key test)
-  "Liefert eine MEMO-Funktion von FN zurück."
-  (let ((table (make-hash-table :test test)))
-	(setf (get name 'memo) table)
-	#'(lambda (&rest args)
-		(let ((k (funcall key args)))
-		  (multiple-value-bind (val found-p)
-			  (gethash k table)
-			(if found-p
-				val
-				(setf (gethash k table) (apply fn args))))))))
-
-
-;;; #########################
-;;; # 2. Zusätzliche Makros #
-;;; #########################
+;;; #############
+;;; # 1. Makros #
+;;; #############
 
 
 (defmacro with-gensym (syms &body body)
@@ -133,14 +109,73 @@
 	 ,@body))
 
 
-;;; ###########################
-;;; # 3. Hilfreiche Prädikate #
-;;; ###########################
+;;; ####################
+;;; # 2. Memorisierung #
+;;; ####################
+
+
+(defmacro defmemo (fn args &body body)
+  "Definiere eine sich erinnernde Funktion."
+  `(memorisiere (defun ,fn ,args ,@body)))
+
+
+(defun lösche-memorisiere (fn-name)
+  "Löscht die Hash-Tabelle einer MEMO-Funktion."
+  (let ((table (get fn-name 'memo)))
+	(when table (clrhash table))))
+
+
+(defun lösche-alle-memos ()
+  "Löscht alle Memorisierungen."
+  (dolist (i '(achteckszahl
+               dreieckszahl
+               faktor
+               fibonacci
+               fünfeckszahl
+               nächste-primzahl
+               nth-permutation
+               primfaktoren
+               primzahl
+               siebeneckszahl))
+    (lösche-memorisiere i)))
+
+
+(defun memorisiere (fn-name &key (key #'first) (test #'eql))
+  "Ersetzt FN-NAME's globale definition mit einer MEMORIZE-Version."
+  (setf (symbol-function fn-name)
+		(memo (symbol-function fn-name) fn-name key test)))
+
+
+(defun memo (fn name key test)
+  "Liefert eine MEMO-Funktion von FN zurück."
+  (let ((table (make-hash-table :test test)))
+	(setf (get name 'memo) table)
+	#'(lambda (&rest args)
+		(let ((k (funcall key args)))
+		  (multiple-value-bind (val found-p)
+			  (gethash k table)
+			(if found-p
+				val
+				(setf (gethash k table) (apply fn args))))))))
+
+
+;;; ################
+;;; # 3. Variablen #
+;;; ################
+
+
+(defvar *collatz-hash-table* (make-hash-table)
+  "Enthält alle bereits berechneten Collatz-Zahlen.")
+
+
+;;; ################
+;;; # 4. Prädikate #
+;;; ################
 
 
 (defun abundante-zahl-p (n)
   "Eine natürliche Zahl heißt abundant (lat. abundans „überladen“), wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) größer ist als die Zahl selbst. Die kleinste abundante Zahl ist 12 (1+2+3+4+6 = 16 > 12). Die ersten geraden abundanten Zahlen lauten 12, 18, 20, 24, 30, 36, 40, 42, …"
-  (> (apply #'+ (divisoren n t)) n))
+  (> (apply #'+ (echte-teiler n)) n))
 
 
 (defun befreundete-zahl-p (n)
@@ -148,17 +183,17 @@
 Das kleinste befreundete Zahlenpaar wird von den Zahlen 220 und 284 gebildet. Man rechnet leicht nach, dass die beiden Zahlen der Definition genügen:
     Die Summe der echten Teiler von 220 ergibt 1 + 2 + 4 + 5 + 10 + 11 + 20 + 22 + 44 + 55 + 110 = 284 und die Summe der echten Teiler von 284 ergibt 1 + 2 + 4 + 71 + 142 = 220.
 In einem befreundeten Zahlenpaar ist stets die kleinere Zahl abundant und die größere Zahl defizient."
-  (let* ((bz (apply #'+ (divisoren n t)))
-		 (bz-sum (apply #'+ (divisoren bz t))))
-	(when (= n bz-sum)
-	  bz)))
+  (let ((bz (apply #'+ (echte-teiler n))))
+    (if (= n (apply #'+ (echte-teiler bz)))
+        bz
+        'nil)))
 
 
 (defun defiziente-zahl-p (n)
   "Eine natürliche Zahl heißt defizient, wenn ihre echte Teilersumme (die Summe aller Teiler ohne die Zahl selbst) kleiner ist als die Zahl selbst. Ist die Teilersumme dagegen gleich der Zahl, spricht man von einer vollkommenen Zahl, ist sie größer, so spricht man von einer abundanten Zahl.
 Beispiele: Die Zahl 10 ist defizient, denn 1+2+5 = 8 < 10.
 Ebenso sind alle Primzahlen defizient, da ihre echte Teilersumme immer Eins ist."
-  (< (apply #'+ (divisoren n t)) n))
+  (< (apply #'+ (echte-teiler n)) n))
 
 
 (defun dreieckszahlp (n)
@@ -178,12 +213,8 @@ Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
 
 (defun fünfeckszahlp (n)
   "Prüft ob eine Zahl eine Fünfeckszahl ist."
-  (let ((lst (do* ((i 10 (+ i 10))
-				   (lst (fünfeckszahl-folge i) (fünfeckszahl-folge i lst)))
-				  ((>= (first (last lst)) n)
-				   lst))))
-	(when (member n lst)
-	  't)))
+  (let ((p (/ (1+ (sqrt (1+ (* 24 n)))) 6)))
+    (= p (truncate p))))
 
 
 (defun j-oder-n-p (&optional ctrl &rest args)
@@ -235,6 +266,8 @@ Beispiele: (echte-teilmenge-p '(rot grün) '(grün blau rot gelb)) => T
 			  (return nil)))))))
 
 
+
+
 (defun lychrel-zahl-p (n &optional (versuche 50))
   "Jede natürliche Zahl n, die nicht durch eine endliche Anzahl von Inversionen und Additionen zu einem Zahlen-Palindrom führt, wird als Lychrel-Zahl bezeichnet. Als Inversion versteht man hier das Bilden der spiegelverkehrten Zahl m. Führt die Addition n+m dabei zu einem Zahlenpalindrom, ist der Algorithmus beendet. Falls nicht, wird durch erneute Inversion und Addition dieser Vorgang solange ausgeführt, bis das Ergebnis ein Palindrom ist.
 Beispiele
@@ -245,12 +278,13 @@ Beispiele
         15565 + 56551 = 72116
         72116 + 61127 = 133243
         133243 + 342331 = 475574 (ein Palindrom)"
-  (if (zerop versuche)
-	  t
-	  (let ((kandidat (+ n (liste->zahl (reverse (zahl->liste n))))))
-		(if (palindromp kandidat)
-			nil
-			(lychrel-zahl-p kandidat (1- versuche))))))
+  (cond ((palindromp n)
+         (return-from lychrel-zahl-p 'nil))
+        ((zerop versuche)
+         (return-from lychrel-zahl-p 't))
+        (t
+         (lychrel-zahl-p (+ n (liste->zahl (reverse (zahl->liste n))))
+                         (1- versuche)))))
 
 
 (defun palindromp (seq)
@@ -284,16 +318,15 @@ Beispiele: (palindromp '(1 2 3 4 3 2 1)) => T
 Beispiele:
    (primzahlp 24) => NIL
    (primzahlp 29) => T
-   (primzahlp 1299709) => T"  
-  (when (and (integerp n) (> n 1))
-	(let ((max-d (isqrt n)))
-	  (do ((d 2 (incf d (if (evenp d)
-							1
-							2))))
-		  ((cond ((> d max-d)
-				  (return t))
-				 ((zerop (rem n d))
-				  (return nil))))))))
+   (primzahlp 1299709) => T"
+  (cond ((<= n 3)
+         (return-from primzahlp (>= n 2)))
+        ((or (evenp n) (zerop (mod n 3)))
+         (return-from primzahlp 'nil)))
+  (loop for i from 5 to (1+ (sqrt n)) by 6
+     when (or (zerop (mod n i)) (zerop (mod n (+ i 2))))
+     return 'nil
+     finally (return 't)))
 
 
 (defun quadratzahlp (n)
@@ -316,21 +349,12 @@ Beispiele:
 
 (defun vollkommene-zahl-p (n)
   "Eine natürliche Zahl n wird vollkommene Zahl (auch perfekte Zahl) genannt, wenn sie gleich der Summe σ*(n) aller ihrer (positiven) Teiler außer sich selbst ist. Eine äquivalente Definition lautet: eine vollkommene Zahl n ist eine Zahl, die halb so groß ist wie die Summe aller ihrer positiven Teiler (sie selbst eingeschlossen), d. h. σ(n) = 2n. Die kleinsten drei vollkommenen Zahlen sind 6, 28 und 496. Alle bekannten vollkommenen Zahlen sind gerade und von Mersenne-Primzahlen abgeleitet."
-  (= n (apply #'+ (divisoren n t))))
+  (= n (apply #'+ (echte-teiler n))))
 
 
-;;; ###########################
-;;; # 4. Notwendige Variablen #
-;;; ###########################
-
-
-(defvar *collatz-hash-table* (make-hash-table)
-  "Enthält alle bereits berechneten Collatz-Zahlen.")
-
-
-;;; ###########################
-;;; # 5. Nützliche Funktionen #
-;;; ###########################
+;;; #################
+;;; # 5. Funktionen #
+;;; #################
 
 
 (defun 2d-array->list (array)
@@ -345,20 +369,13 @@ Beispiele:
  (* (- (* 3 n) 2) n))
 
 
-(defun addiere-ziffern (n &optional (sum 0))
-  "Nimmt eine Zahl entgegen und gibt die Summe all ihrer Ziffern zurück.
-Beispiel: (addiere-ziffern 125) => 8"
-  (if (zerop n)
-	  sum
-	  (addiere-ziffern (truncate (/ n 10)) (+ sum (rem n 10)))))
-
-
 (defun alle-permutationen (lst)
   "Alle Permutationen einer Liste erzeugen; Beispiel: (alle-permutationen (list 'a 'b 'c 'd 'e))"
-  (if (null lst) '(nil)
-      (mapcan #'(lambda (x)
-				  (mapcar #'(lambda (y) (cons x y))
-						  (alle-permutationen (remove x lst :count 1)))) lst)))
+  (cond ((endp lst) nil)
+		(t (mapcan #'(lambda (x)
+					   (mapcar #'(lambda (y) (cons x y))
+							   (alle-permutationen (remove x lst :count 1))))
+				   lst))))
 
 
 (defun alphabetischer-wert (str)
@@ -382,14 +399,11 @@ Beispiel: (but-nth 4 '(1 2 3 4 5 6 7 8 9)) => (1 2 3 4 6 7 8 9)"
 			(but-nth (1- n) (rest lst)))))
 
 
-(defun collatz-rang (n &optional (durchgang 1))
+(defun collatz (n &optional (durchgang 1))
   "Gibt die Länge der Sequenz der Collatz-Folge beginnend mit n zurück."
-  (cond ((= n 1)
-		 (return-from collatz-rang durchgang))
-		((evenp n)
-		 (collatz-rang (/ n 2) (1+ durchgang)))
-		(t
-		 (collatz-rang (1+ (* 3 n)) (1+ durchgang)))))
+  (cond ((= n 1) (return-from collatz durchgang))
+		((evenp n) (collatz (/ n 2) (1+ durchgang)))
+		(t (collatz (1+ (* 3 n)) (1+ durchgang)))))
 
 
 (defun collatz-sequenz (n &optional (lst nil))
@@ -401,44 +415,14 @@ Beispiel: (collatz-sequenz 19) => (19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 
 					  lst1)
 			 (append lst1 lst2)))
 	(let ((n-lst (gethash n *collatz-hash-table* 'nil)))
-	  (if n-lst
-		  (progn
-			(let ((nr (nreverse lst)))
-			  (zurück nr n-lst)))
-		  (progn
-			(push n lst)
-			(cond ((= n 1)
-				   (zurück (reverse lst)))
-				  ((evenp n)
-				   (setf n (/ n 2))
-				   (collatz-sequenz n lst))
-				  (t
-				   (setf n (1+ (* 3 n)))
-				   (collatz-sequenz n lst))))))))
-
-
-(defun divisoren (n &optional (ohne-selbst nil)
-						 &aux (lows nil) (highs nil) (limit (isqrt n)))
-"(divisoren 28) => (1 2 4 7 14 28)
- (divisoren 8128) => (1 2 4 8 16 32 64 127 254 508 1016 2032 4064 8128)
- (divisoren 2000 t) => (1 2 4 5 8 10 16 20 25 40 50 80 100 125 200 250 400 500 1000)"
-(let ((feld (make-array (1+ limit) :element-type 'bit :initial-element 1)))
-  (loop for i from 1 to limit
-	   do(unless (zerop (elt feld i))
-		   (multiple-value-bind (quotient remainder)
-			   (floor n i)
-			 (if (zerop remainder)
-				 (progn
-				   (unless (= i quotient)
-					 (push i lows)
-					 (push quotient highs)))
-				 (loop for j from i to limit by i do
-					  (setf (elt feld j) 0))))))
-	   (when (= n (expt limit 2))
-		 (push limit highs))
-	   (if ohne-selbst
-		   (butlast (nreconc lows highs))
-		   (nreconc lows highs))))
+	  (cond (n-lst (zurück (nreverse lst) n-lst))
+			(t (push n lst)
+			   (cond ((= n 1) (zurück (reverse lst)))
+					 ((evenp n)
+					  (setf n (/ n 2))
+					  (collatz-sequenz n lst))
+					 (t (setf n (1+ (* 3 n)))
+						(collatz-sequenz n lst))))))))
 
 
 (defmemo dreieckszahl (n)
@@ -446,45 +430,53 @@ Beispiel: (collatz-sequenz 19) => (19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 
   (/ (* n (1+ n)) 2))
 
 
-(defun dreisatz (menge a b &optional (modus 'p))
+(defun dreisatz (&key a b c (modus :proportional))
   "Ein einfacher Dreisatz-Löser.
 Beispiel proportional:
 Ein Auto fährt mit 12 Litern 162 km weit. Wie weit fährt es mit 20 Litern?
-   (dreisatz 162 12 20 'p) => 270
+Der Lösungsansatz hier ist proportional. A (162 km) verhält sich zu B (12 l)
+wie X zu C (20 l), oder: je mehr Liter man zu Verfügung hat, umso weiter rollt
+das Automobil.
+   (dreisatz :a 162 :b 12 :c 20) => 270
 Beispiel umgekehrt proportional:
 8 Pferde fressen in 5 Tagen den gesamten Hafervorat. Wie lange würde dieselbe Menge bei 10 Pferden reichen?
-   (dreisatz 5 8 10 'u) => 4"
+Der Lösungsansatz ist hier umgekehrt proportional. B (8 Pferde) fressen in A (5 Tagen) den gesamten Hafervorrat. Wie lange würde dieselbe Menge X bei C (10 Pferden) reichen, oder je mehr Pferde, desto weniger Tage reicht der Futtervorrat.
+   (dreisatz :b 8 :a 5 :c 10 :modus :unproportional) => 4"
   (case modus
-	((p proportional)
-	 (* (/ menge a) b))
-	((u unproportional umgekehrt-proportional)
-	 (/ (* menge a) b))
+	((:p :proportional)
+	 (* (/ a b ) c))
+	((:u :unproportional :umgekehrt-proportional)
+	 (/ (* a b ) c))
 	(otherwise
-	 (error "~&Sie haben statt 'p oder 'u den Wert ~A als vierten Parameter angegeben.~%" modus))))
+	 (error "~&Sie haben statt :p oder :u den Wert ~A als :MODUS angegeben.~%" modus))))
 
 
 (defun durchschnitt (&rest lst)
   "(durchschnitt lst)
 DURCHSCHNITT ermöglicht es, den Durchschnitt einer Reihe von Zahlen zu berechnen.
 Beispiel: (durchschnitt 2 3 4) => 3"
-  (if (null lst)
-      nil
-      (/ (reduce #'+ lst) 
-		 (length lst)))) 
+  (if lst (/ (reduce #'+ lst) (length lst)) 
+	  (error "~&Sie haben keinerlei Werte zur Berechnung eines Durchschnitts übergeben.~%")))
+
+
+(defun echte-teiler (n)
+  "(echte-teiler 28) => (1 2 4 7 14)
+ (echte-teiler 8128) => (1 2 4 8 16 32 64 127 254 508 1016 2032 4064)
+ (echte-teiler 2000) => (1 2 4 5 8 10 16 20 25 40 50 80 100 125 200 250 400 500 1000)"
+  (teiler n t))
 
 
 (defun eingabe (&optional ctrl &rest args)
   "Erzwingt eine Eingabe."
   (do ((danach nil t)
-	   (ctrl (concatenate 'string "~&" ctrl " > ")))
-	  (nil)
-	(when danach
-	  (format *query-io* "~&Bitte tippe deine Antwort ein und drücke dann die Eingabe-Taste.~%"))
+	   (ctrl (concatenate 'string "~&" ctrl " > "))
+	   (antwort ""))
+	  ((string/= antwort "")
+	   antwort)
+	(when danach (format *query-io* "~&Bitte tippe deine Antwort ein und drücke dann die Eingabe-Taste.~%"))
 	(apply #'format *query-io* ctrl args)
 	(force-output *query-io*)
-	(let ((antw (string-trim " " (read-line *query-io*))))
-	  (unless (string-equal antw "")
-		(return antw)))))
+	(setf antwort (string-trim " " (read-line *query-io*)))))
 
 
 (defmemo faktor (n)
@@ -493,6 +485,13 @@ FAKTOR berechnet den Faktor einer Zahl.
 Ein Faktor von 6 wird zum Beispiel errechnet, indem man die Werte von 1 bis 6 miteinander malnimmt, also 1 * 2 * 3 * 4 * 5 * 6. Faktoren haben die unangenehme Eigenschaft, das sie sehr schnell sehr groß werden können.
 Beispiel: (faktor 20) =>  2432902008176640000"
   (reduce #'* (loop for i from 1 to n collect i)))
+
+
+(defmemo fibonacci (n)
+  "Bildet die Fibonaccizahl zur n. Zahl; Beispiel: (fibonacci 20) => 6765"
+  (cond ((zerop n) 0)
+        ((= n 1) 1)
+        (t (+ (fibonacci (1- n)) (fibonacci (- n 2))))))
 
 
 (defun fibonacci-folge (max)
@@ -504,13 +503,6 @@ Beispiel: (faktor 20) =>  2432902008176640000"
 	  ((> i max)
 	   (nreverse lst))
 	(push a lst)))
-
-
-(defmemo fibonacci (n)
-  "Bildet die Fibonaccizahl zur n. Zahl; Beispiel: (fibonacci 20) => 6765"
-  (cond ((zerop n) 0)
-        ((= n 1) 1)
-        (t (+ (fibonacci (1- n)) (fibonacci (- n 2))))))
 
 
 (defmemo fünfeckszahl (n)
@@ -527,8 +519,7 @@ Beispiel: (faktor 20) =>  2432902008176640000"
   "(gleichwertige-elemente liste1 liste2)
 GLEICHWERTIGE-ELEMENTE überprüft, ob Liste1 und Liste2 über dieselben Elemente verfügen. Die Reihenfolge der Elemente spielt hierbei keinerlei Rolle.
 Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
-	   (when (and (subsetp a b) (subsetp b a))
-	     t))
+	   (when (and (subsetp a b) (subsetp b a)) t))
 
 
 (defun liste->zahl (lst)
@@ -541,28 +532,20 @@ Beispiel: (gleichwertige-elemente '(rot blau grün) '(grün rot blau)) => "T
 MISCHEN dient dazu, eine Liste mit einer frei wählbaren Anzahl an Durchgängen zu mischen. Wird keine Anzahl an Durchgängen genannt, so wird der Vorgang 20 Mal durchgeführt.
 Beispiel: (mischen '(1 2 3 4 5)) => (5 2 1 4 3)"
   (let ((zn (random len))) ; Zufallszahl
-	(cond ((zerop durchgang)
-		   lst)
-		  ((oddp zn)
-		   (mischen (append (reverse (nthcdr zn lst))
-							(butlast lst (- len zn)))
-					(1- durchgang)))
-		  ((evenp zn)
-		   (mischen (append (nthcdr zn lst)
-							(butlast lst (- len zn)))
-					(1- durchgang)))
-		  (t
-		   (mischen (append (nthcdr zn lst)
-							(reverse (butlast lst (- len zn)))
-							(1- durchgang)))))))
+	(cond ((zerop durchgang) lst)
+		  ((oddp zn) (mischen (append (reverse (nthcdr zn lst))
+									  (butlast lst (- len zn)))
+							  (1- durchgang)))
+		  (t (mischen (append (nthcdr zn lst)
+									   (butlast lst (- len zn)))
+							   (1- durchgang))))))
 
 
-(defun münzwurf ()
+(defun münzwurf (&optional (maximum 10000001) &aux (hälfte (ash maximum -1)) (wurf (random maximum)))
   "Münzwurf bildet den Wurf einer Münze nach. Es ist möglich, daß die Münze auf der Kante stehen bleibt! Beispiel: (münzwurf) => ZAHL"
-       (let ((wurf (random 101)))
-	 (cond ((< wurf 50) 'kopf)
-	       ((> wurf 50) 'zahl)
-	       (t 'kante))))
+	(cond ((< wurf hälfte) :kopf)
+		  ((> wurf hälfte) :zahl)
+		  (t :kante)))
 
 
 (defmemo nächste-primzahl (&optional (n 0))
@@ -571,39 +554,31 @@ Beispiele:
    (nächste-primzahl 19) => 23
    (nächste-primzahl 20) => 23
    (nächste-primzahl 23) => 29"
-  (cond ((< n 2)
-		 2)
-		(t
-		 (do ((i (+ n (if (evenp n) 1 2)) (+ i 2)))
-			 ((primzahlp i)
-			  i)))))
+  (if (< n 2) 2
+      (loop for i upfrom (+ n (if (evenp n) 1 2)) by 2
+         when (primzahlp i) return i)))
 
 
 (defmemo nth-permutation (n lst)
   "Gibt die nte Permutation einer Liste zurück. Die Zählung beginnt bei NULL."
-  (if (zerop n)
-	  lst
-	  (let* ((len (length lst))
-			 (sublen (1- len))
-			 (modulus (faktor sublen)))
-		(if (> n (* len modulus))
-			(format t "Die Liste mit der Länge ~A ermöglicht keine ~A Permutationen." len n)
-			(multiple-value-bind (quotient remainder)
-				(floor n modulus)
-			  (cons (nth quotient lst)
-					(nth-permutation remainder (but-nth quotient lst))))))))
+  (cond ((zerop n) lst)
+		(t (let* ((len (length lst))
+				  (sublen (1- len))
+				  (modulus (faktor sublen)))
+			 (cond ((> n (* len modulus))
+					(error "Die Liste mit der Länge ~S ermöglicht keine ~S Permutationen." len n))
+				   (t (multiple-value-bind (quotient remainder) (floor n modulus)
+						(cons (nth quotient lst) (nth-permutation remainder (but-nth quotient lst))))))))))
 
 
 (defun nur-buchstaben (text)
   "Entfernt die Nicht-Buchstaben eines Textes."
-  (remove-if #'(lambda (x) (not (alpha-char-p x)))
-			 text))
+  (remove-if #'(lambda (x) (not (alpha-char-p x))) text))
 
 
 (defun nur-ziffern (text)
   "Entfernt die Nicht-Ziffern eines Textes."
-  (remove-if #'(lambda (x) (not (digit-char-p x)))
-			 text))
+  (remove-if #'(lambda (x) (not (digit-char-p x))) text))
 
 
 (defun phi-tabelle (n &aux (n+1 (1+ n)))
@@ -611,14 +586,13 @@ Beispiele:
   (let ((phi (make-array n+1 :initial-element 1)))
     (do ((k 2 (1+ k)))
         ((>= k n+1))
-      (if (= 1 (aref phi k))
-          (let ((m (/ (1- k) k)))
-            (do ((i k (+ k i)))
-                ((>= i n+1))
-              (setf (aref phi i) (* (aref phi i) m))))))
-    (dotimes (i n+1)
-      (setf (aref phi i) (* i (aref phi i))))
-    phi))
+      (when (= 1 (aref phi k))
+		(do* ((m (/ (1- k) k))
+			  (i k (+ k i)))
+			 ((>= i n+1))
+		  (setf (aref phi i) (* (aref phi i) m)))))
+    (dotimes (i n+1 phi)
+      (setf (aref phi i) (* i (aref phi i))))))
 
 
 (defmemo primfaktoren (n)
@@ -626,22 +600,20 @@ Beispiele:
 Gibt eine Liste der Primfaktoren der Zahl N zurück.
 Beispiel: (primfaktoren 1000) => (2 2 2 5 5 5)"  
   (when (> n 1)
-	(do ((i 2 (1+ i))
+	(do ((i 2 (nächste-primzahl i))
 		 (limit (1+ (isqrt n))))
 		((> i limit)
 		 (list n))
 	  (when (zerop (mod n i))
-										;		(return-from primfaktoren
-		(return
-		  (cons i (primfaktoren (/ n i))))))))
+		(return (cons i (primfaktoren (/ n i))))))))
 
 
-(defmemo primzahl-rang (n)
+(defmemo primzahl (n)
   "Erzeugte die Primzahl eines bestimmten Rangs.
 Beispiele:
-   (primzahl-rang 1) => 2
-   (primzahl-rang 1000) => 7919
-   (primzahl-rang 100000) => 1299709"
+   (primzahl 1) => 2
+   (primzahl 1000) => 7919
+   (primzahl 100000) => 1299709"
   (labels ((nth-primzahl (x &optional (rang 1) (last-x 0))
 			 (cond ((< x 1)
 					nil)
@@ -660,6 +632,14 @@ Beispiele:
 (defun quadratzahl (n)
   "Berechne die Quadratzahl von n."
   (expt n 2))
+
+
+(defun quersumme (n &optional (sum 0))
+  "Nimmt eine Zahl entgegen und gibt die Summe all ihrer Ziffern zurück.
+Beispiel: (quersumme 125) => 8"
+  (if (zerop n)
+	  sum
+	  (quersumme (truncate (/ n 10)) (+ sum (rem n 10)))))
 
 
 (defun römisch->arabisch (str)
@@ -709,35 +689,49 @@ Beispiele:
 	 :while end))
 
 
-(defun summe-der-farey-folge (n)
+(defun summe-der-farey-folge (n &aux (n+1 (1+ n)))
   "Bildet die Summe der Farey-Folge 1 bis n"
-  (let* ((n+1 (1+ n))
-		 (phi (phi-tabelle n)))
-    (do ((i 1 (1+ i))
-         (sum 1))
-        ((>= i n+1) sum)
-      (incf sum (aref phi i)))))
+    (do ((phi (phi-tabelle n))
+		 (i 1 (1+ i))
+		 (sum 1))
+		((>= i n+1) sum)
+      (incf sum (aref phi i))))
 
 
 (defun summe-fortlaufender-primzahlen (start max)
-  (unless (primzahlp start)
-	(setf start (nächste-primzahl start)))
-  (do ((i start (nächste-primzahl i))
-	   (sum 0)
-	   (anz 0))
+  "Bildet die Summe aller Primzahlen im Bereich von START bis MAX, wobei weder START noch MAX Primzahlen sein müssen."
+  (unless (primzahlp start)	(setf start (nächste-primzahl start)))
+  (do* ((i start (nächste-primzahl i))
+	   (sum i (+ sum i))
+	   (anz 1 (1+ anz)))
 	  ((> (+ sum i) max)
-	   (list sum anz))
-	(incf sum i)
-	(incf anz)))
+	   (values sum anz))))
 
 
 (defun tausche-ziffer (n old-dig new-dig)
   "Vertauscht alle Vorkommen einer bestimmten Ziffer einer Zahl gegen eine andere aus."
-  (liste->zahl
-   (mapcar #'(lambda (x) (if (= x old-dig)
-							 new-dig
-							 x))
-	   (zahl->liste n))))
+  (liste->zahl (mapcar #'(lambda (x) (if (= x old-dig) new-dig x))
+					   (zahl->liste n))))
+
+
+(defun teiler (n &optional (ohne-selbst nil)
+			   &aux (lows nil) (highs nil) (limit (isqrt n)))
+  "(teiler 28) => (1 2 4 7 14 28)
+ (teiler 8128) => (1 2 4 8 16 32 64 127 254 508 1016 2032 4064 8128)
+ (teiler 2000 t) => (1 2 4 5 8 10 16 20 25 40 50 80 100 125 200 250 400 500 1000)"
+  (let ((feld (make-array (1+ limit) :element-type 'bit :initial-element 1)))
+	(loop for i from 1 to limit
+	   unless (zerop (elt feld i))
+	   do(multiple-value-bind (quotient remainder) (floor n i)
+		   (cond ((zerop remainder)
+				  (unless (= i quotient)
+					(push i lows)
+					(push quotient highs)))
+				 (t (loop for j from i to limit by i
+					   do(setf (elt feld j) 0))))))
+	(when (= n (expt limit 2)) (push limit highs))
+	(cond (ohne-selbst (butlast (nreconc lows highs)))
+		  (t (nreconc lows highs)))))
 
 
 (defun temperatur (n &optional (smbl 'celsius))
@@ -746,10 +740,9 @@ Beispiele:
 				  ((celsius c) (+ n 273.15))
 				  ((fahrenheit f) (* (+ n 459.67) 5/9))
 				  ((kelvin k) n))))
-    (when kelvin
-      (values kelvin
-			  (- kelvin 273.15)
-			  (- (* kelvin 1.8) 459.67)))))
+    (when kelvin (values kelvin
+						 (- kelvin 273.15)
+						 (- (* kelvin 1.8) 459.67)))))
 
 
 (defun textausgabe (ctrl &rest args)
@@ -758,37 +751,27 @@ Beispiele:
 	(apply #'format t ctrl args)))
 
 
-(defun text-auswahl (lst ctrl &rest args &aux mehrfach)
+(defun text-auswahl (lst ctrl &rest args)
   "Erzwingt die Auswahl aus einer Liste."
-  (when (member 'alles lst)
-	(setf mehrfach 't
-		  lst (set-difference lst '(alles))))
   (do ((danach nil t)
 	   (ctrl (concatenate 'string ctrl " > ")))
 	  (nil)
-	(when danach
-	  (if mehrfach
-		  (format *query-io* "~&Bitte wählen sie, was sie benötigen, aus der Liste aus. Geben sie \"nichts\" ein, wenn sie nichts möchten oder \"alles\" wenn sie gerne alles hätten.~%")
-		  (format *query-io* "~&Bitte wählen sie, was sie benötigen, aus der Liste aus. Geben sie \"nichts\" ein, wenn sie nichts möchten.~%")))
+	(when danach (format *query-io* "~&Bitte wählen sie aus der Liste aus. Geben sie \"nichts\" ein, wenn sie nichts möchten.~%"))
 	(apply #'format *query-io* ctrl args)
 	(force-output *query-io*)
 	(let* ((antw (string-trim " " (read-line *query-io*)))
 		   (antw-lst (string-aufteilen antw))
-		   antwort)
+		   auswahl)
 	  (dolist (i antw-lst)
-		(push (read-from-string i) antwort))
-	  (unless (null antwort)
-		(cond ((not mehrfach)
-			   (if (null (rest antwort))
-				   (return-from text-auswahl (first antwort))
-				   (format *query-io* "~&Sie dürfen nur eines auswählen!~%")))
-			  ((subsetp antwort lst)
-			   (return-from text-auswahl antwort))
-			  ((eql (first antwort) 'alles)
-			   (return-from text-auswahl lst))
-			  ((eql (first antwort) 'nichts)
-			   (return-from text-auswahl 'nil))
-			  (t (format *query-io* "~&Etwas aus ihrer Eingabe ist mir unbekannt!~%")))))))
+		(push (read-from-string i) auswahl))
+	  (format t "Auswahl: ~S: ~S~%" auswahl (length auswahl))
+	  (cond ((subsetp auswahl lst)
+			 (return-from text-auswahl auswahl))
+			((and (eql (first auswahl) 'alles) (= 1 (length auswahl)))
+			 (return-from text-auswahl lst))
+			((and (eql (first auswahl) 'nichts) (= 1 (length auswahl)))
+			 (return-from text-auswahl 'nil))
+			(t (format *query-io* "~&Etwas aus ihrer Eingabe ist mir unbekannt!~%"))))))
 
 
 (defun umwandeln (n von nach)
@@ -869,6 +852,13 @@ Beispiel: (umwandeln 10 'cm 'mm) => 100 MM"
 WÜRFELWURF bildet den Wurf mit einem in Spieleboxen üblichen, voreingestellt 6-seitigen, Würfel nach. Durch einen Aufruf mit einer anderen Seitenzahl wird ein entsprechender über Seiten verfügender Würfel angenommen.
 Beispiel: (würfelwurf) => 4"
   (1+ (random n)))
+
+
+(defun wurzel (n &optional (x 2))
+  "(wurzel n &optional x)
+WURZEL zieht die Xte Wurzel aus N. Wird X nicht explizit angegeben, so wird X als 2 angenommen, wodurch die Quadratwurzel gezogen wird.
+Beispiel: (wurzel 81 4) => 3.0"
+  (expt n (/ x)))
 
 
 (defun zahl->liste (n)

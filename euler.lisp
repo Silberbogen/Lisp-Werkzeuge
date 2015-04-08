@@ -3,28 +3,39 @@
 ;;;; Dateiname: euler.lisp
 ;;;; Beschreibung: Lösungen diverser Aufgaben von Projekt Euler
 ;;;; ------------------------------------------------------------------------
-;;;; Author: Sascha Biermanns, <skkd punkt h4k1n9 at yahoo punkt de>
-;;;; Lizenz: ISC
-;;;; Copyright (C) 2011-2015 Sascha Biermanns
-;;;; Permission to use, copy, modify, and/or distribute this software for any
-;;;; purpose with or without fee is hereby granted, provided that the above
-;;;; copyright notice and this permission notice appear in all copies.
-;;;; THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-;;;; WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-;;;; MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-;;;; ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-;;;; WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-;;;; ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-;;;; OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+;;;; Author: Sascha K. Biermanns, <skkd PUNKT h4k1n9 AT yahoo PUNKT de>
+;;;; Lizenz: GPL v3
+;;;; Copyright (C) 2011-2015 Sascha K. Biermanns
+;;;; This program is free software; you can redistribute it and/or modify it
+;;;; under the terms of the GNU General Public License as published by the
+;;;; Free Software Foundation; either version 3 of the License, or (at your
+;;;; option) any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful, but
+;;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+;;;; Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License along
+;;;; with this program; if not, see <http://www.gnu.org/licenses/>. 
 ;;;; ------------------------------------------------------------------------
 
 
-(load "~/src/lisp/hilfsroutinen.lisp")
+(load "~/Quellen/git/Lisp-Werkzeuge/hilfsroutinen.lisp")
+(use-package :drakma)
 
 
-;;; -----------------------------------------------------------
-;;; Aufgaben übergreifende Routinen, die sinnlos sind im Alltag
-;;; -----------------------------------------------------------
+;;; ##################################################################
+;;; #                            INHALT                              #
+;;; # 1. Aufgaben übergreifende Routinen, die sinnlos sind im Alltag #
+;;; # 2. Die Lösungen zu den einzelnen Aufgaben                      #
+;;; # 3. Die Testumgebung                                            #
+;;; ##################################################################
+
+
+;;; ##################################################################
+;;; # 1. Aufgaben übergreifende Routinen, die sinnlos sind im Alltag #
+;;; ##################################################################
 
 
 (defun route-dreieck (lst)
@@ -46,7 +57,8 @@
 (defun erstelle-wortliste (stream-name)
   "Einleseformat: TextKommaTextKommaText ohne Leerzeichen"
   (let ((wortliste nil))
-	(with-open-file (stream stream-name)
+                                        ;	(with-open-file (stream stream-name)
+    (with-input-from-string (stream stream-name)
 	  (do ((i (read stream nil)
 			  (read stream nil)))
 		  ((null i)
@@ -58,7 +70,7 @@
 (defun erstelle-zahlenliste (stream-name)
   "Einleseformat: ZahlKommaZahlKommaZahl ohne Leerzeichen"
   (let ((zahlenliste nil))
-	(with-open-file (stream stream-name)
+	(with-input-from-string (stream stream-name)
 	  (do ((i (read stream nil)
 			  (read stream nil)))
 		  ((null i)
@@ -67,9 +79,9 @@
 		(read-char-no-hang stream nil)))))
 
 
-;;; ----------------------------------------
-;;;  Die Lösungen zu den einzelnen Aufgaben
-;;; ----------------------------------------
+;;; #############################################
+;;; # 2. Die Lösungen zu den einzelnen Aufgaben #
+;;; #############################################
 
 
 (defun problem-1 ()
@@ -114,7 +126,7 @@
 
 
 (defun problem-7 ()
-  (primzahl-rang 10001))
+  (primzahl 10001))
 
 
 (defun problem-8 (&optional (limit 13))
@@ -218,7 +230,7 @@
 (defun problem-12 ()
   (loop for i upfrom 1
      for n = (dreieckszahl i)
-     when (> (length (divisoren n)) 500)
+     when (> (length (teiler n)) 500)
      do (return-from problem-12 n)))
 
 
@@ -344,7 +356,7 @@
 
 
 (defun problem-16 ()
-  (addiere-ziffern (expt 2 1000)))
+  (quersumme (expt 2 1000)))
 
 
 (defun problem-17 ()
@@ -385,7 +397,7 @@
 
 
 (defun problem-20 ()
-  (addiere-ziffern (faktor 100)))
+  (quersumme (faktor 100)))
 
 
 (defun problem-21 (&optional (max 10000))
@@ -397,7 +409,8 @@
 
 
 (defun problem-22 ()
-  (let ((namensliste (erstelle-wortliste "Euler/p022_names.txt")))
+  (let* ((datei (drakma:http-request "https://projecteuler.net/project/resources/p022_names.txt")) 
+         (namensliste (erstelle-wortliste datei)))
     (loop for i from 1 to (length namensliste)
        sum (* i (alphabetischer-wert (pop namensliste))))))
 
@@ -426,7 +439,7 @@
 
 
 (defun problem-24 ()
-  (permutations-rang 1000000 '(0 1 2 3 4 5 6 7 8 9)))
+  (liste->zahl (permutations-rang 1000000 '(0 1 2 3 4 5 6 7 8 9))))
 
 
 (defun problem-25 ()
@@ -611,7 +624,8 @@
 
 
 (defun problem-42 ()
-  (let* ((wortliste (erstelle-wortliste "Euler/p042_words.txt"))
+  (let* ((datei (drakma:http-request "https://projecteuler.net/project/resources/p042_words.txt"))
+         (wortliste (erstelle-wortliste datei))
 		 (länge (length wortliste)))
 	(do ((i 1 (1+ i))
 		 (anzahl 0))
@@ -900,24 +914,24 @@
 		   (erstelle-kartenliste (stream-name)
 			 "Einleseformat: 10 durch Leerzeichen getrennte Daten je Zeile"
 			 (let (kartenliste)
-			   (with-open-file (stream stream-name)
+			   (with-input-from-string (stream stream-name)
 				 (do ((i (read-line stream nil)
 						 (read-line stream nil)))
 					 ((null i)
 					  (reverse kartenliste))
 				   (push (string-aufteilen i) kartenliste))))))
 	;; ---------- ENDE der Unterprogramme ----------------------------------------
-	(let ((kartenliste (erstelle-kartenliste "Euler/p054_poker.txt")))
+	(let* ((datei (drakma:http-request "https://projecteuler.net/project/resources/p054_poker.txt"))
+          (kartenliste (erstelle-kartenliste datei)))
 	  (loop for blatt-paar in kartenliste
 		 when (blatt< (nthcdr 5 blatt-paar) (butlast blatt-paar 5))
 		 sum 1))))
 
 
 (defun problem-55 ()
-  (let ((anzahl 0))
-	(dotimes (i 10000 anzahl)
-	  (when (lychrel-zahl-p i)
-		(incf anzahl)))))
+  (loop for i from 1 to 10000
+     when (lychrel-zahl-p i)
+       count i))
 
 
 (defun problem-56 ()
@@ -974,10 +988,11 @@
 										 (incf summe d)
 										 (write-char (code-char d) sstr))))))
 			   (if (and (search " the " entschlüsselt) (search ". " entschlüsselt))
-				   (list summe entschlüsselt)
+				   (values summe entschlüsselt)
 				   nil)))
 		   (entschlüssle-alles ()
-			 (let ((crypto-text (erstelle-zahlenliste "Euler/p059_cipher.txt")))
+			 (let* ((datei (drakma:http-request "https://projecteuler.net/project/resources/p059_cipher.txt"))
+                    (crypto-text (erstelle-zahlenliste datei)))
 			   (do ((i 97 (1+ i)))
 				   ((> i 122))
 				 (do ((j 97 (1+ j)))
@@ -1090,6 +1105,39 @@
 	(finde-anzahl)))
 
 
+(defun problem-64 (&optional (limit 10000))
+  (flet ((finde-ungerade-periode (x)
+           (let* ((a (isqrt x)))
+             (when (= (expt a 2) x)
+               (return-from finde-ungerade-periode 'nil))
+             (let ((a0 a)
+                   (m 0)
+                   (d 1)
+                   (n nil))
+               (while (/= a (* a0 2))
+                 (setf n (not n))
+                 (setf m (- (* d a) m))
+                 (setf d (truncate (/ (- x (expt m 2)) d)))
+                 (setf a (truncate (/ (+ a0 m) d))))
+               n))))
+    (loop for i from 2 to limit
+       count (finde-ungerade-periode i))))
+
+
+(defun problem-65 (&optional (limit 100))
+  (labels ((annäherung-an-e (von bis)
+             (cond ((= von bis)
+                    0)
+                   ((zerop von)
+                    (+ 2 (annäherung-an-e (+ 1 von) bis)))
+                   ((= 2 (mod von 3))
+                    (/ 1 (+ (* 2 (/ (+ 1 von) 3))
+                            (annäherung-an-e (+ 1 von) bis))))
+                   (t
+                    (/ 1 (+ 1 (annäherung-an-e (+ 1 von) bis)))))))
+    (quersumme (numerator (annäherung-an-e 0 limit)))))
+
+
 (defun problem-66 (&optional (limit 1000))
   (flet ((pellsche-gleichung (n)
 		   (do* ((b0 (isqrt n))
@@ -1119,13 +1167,14 @@
 (defun problem-67 ()
   (flet ((erstelle-zahlenpyramide (stream-name)
 		   (let (zahlenliste)
-			 (with-open-file (stream stream-name)
+			 (with-input-from-string (stream stream-name)
 			   (do ((i (read-line stream nil)
 					   (read-line stream nil)))
 				   ((null i)
 					zahlenliste)
 				 (push (mapcar #'parse-integer (string-aufteilen i))  zahlenliste))))))
-	(first (route-dreieck (erstelle-zahlenpyramide "Euler/p067_triangle.txt")))))
+    (let ((datei (drakma:http-request "https://projecteuler.net/project/resources/p067_triangle.txt")))
+      (first (route-dreieck (erstelle-zahlenpyramide datei))))))
 
 
 (defun problem-68 ()
@@ -1305,7 +1354,7 @@
 (defun problem-79 ()
   (labels ((erstelle-keylogliste (stream-name)
 			 (let (zahlenliste)
-			   (with-open-file (stream stream-name)
+			   (with-input-from-string (stream stream-name)
 				 (do ((i (read stream nil)
 						 (read stream nil)))
 					 ((null i)
@@ -1326,12 +1375,13 @@
 			 (dolist (i kandidaten nil)
 			   (when (teste-ziffer-p i liste)
 				 (return i)))))
-	(let ((keylog (mapcar #'zahl->liste (erstelle-keylogliste "Euler/p079_keylog.txt")))
+	(let* ((datei (drakma:http-request "https://projecteuler.net/project/resources/p079_keylog.txt"))
+           (keylog (mapcar #'zahl->liste (erstelle-keylogliste datei)))
 		  (kandidaten '(1 2 3 4 5 6 7 8 9 0)))
 	  (do ((i 1 (1+ i))
-		   lösung)
+           lösung)
 		  ((> i 10)
-		   (delete nil (reverse lösung)))
+		   (liste->zahl (delete nil (reverse lösung))))
 		(push (suche-ziffer kandidaten keylog) lösung)
 		(setf kandidaten (delete (first lösung) kandidaten))
 		(setf keylog (entferne-ziffer (first lösung) keylog))))))
@@ -1342,7 +1392,7 @@
 		   (let ((matrix (make-array (list zeilen spalten)))
 				 (*readtable* (copy-readtable)))
 			 (set-syntax-from-char #\, #\Space)
-			 (with-open-file (stream dateiname)
+			 (with-input-from-string (stream dateiname)
 			   (do ((i 0 (1+ i)))
 				   ((>= i 80)
 					matrix)
@@ -1369,7 +1419,8 @@
 		 (berechne-minimale-kosten (zeilen spalten dateiname)
 		   (let ((matrix (read-matrix zeilen spalten dateiname)))
 			 (aref (filtere-kosten zeilen spalten matrix) (1- zeilen) (1- spalten)))))
-	(berechne-minimale-kosten 80 80 "Euler/p081_matrix.txt")))
+	(let ((datei (drakma:http-request "https://projecteuler.net/project/resources/p081_matrix.txt")))
+     (berechne-minimale-kosten 80 80 datei))))
 
 
 (defun problem-84 ()
@@ -1454,7 +1505,7 @@
 (defun problem-89 ()
   (labels ((erstelle-ziffernliste (stream-name)
 			 (let (ziffernliste)
-			   (with-open-file (stream stream-name)
+			   (with-input-from-string (stream stream-name)
 				 (do ((i (read stream nil)
 						 (read stream nil)))
 					 ((null i)
@@ -1467,7 +1518,8 @@
 			   (if (< zahl 4000)
 				   (kleiner-als-4000 römische-zahl)
 				   (kleiner-als-4000 (remove #\M römische-zahl :count 1)))))) 
-	(let ((lang-liste (erstelle-ziffernliste "Euler/p089_roman.txt"))
+	(let* ((datei (drakma:http-request "https://projecteuler.net/project/resources/p089_roman.txt"))
+           (lang-liste (erstelle-ziffernliste datei))
 		  (gespart 0))
 	  (dolist (i lang-liste gespart)
 		(incf gespart (berechne-wert i))))))
@@ -1579,7 +1631,7 @@
 		   (erstelle-sudokuliste (stream-name)
 			 "Einleseformat: 1.Zeile: Sudokuname, 2.-10. Zeile je 9 Ziffern pro Zeile"
 			 (let (sudokuliste)
-			   (with-open-file (stream stream-name)
+			   (with-input-from-string (stream stream-name)
 				 (dotimes (i 50 (nreverse sudokuliste))
 				   (read-line stream nil)
 				   (let ((sudoku (make-array '(9 9))))
@@ -1590,7 +1642,8 @@
 					 (push sudoku sudokuliste))))))
 		   (löse-sudokuliste ()
 			 "Löst alles Sudokus"
-			 (let ((sudoku-liste (erstelle-sudokuliste "Euler/p096_sudoku.txt"))
+			 (let* ((datei (drakma:http-request "https://projecteuler.net/project/resources/p096_sudoku.txt"))
+                    (sudoku-liste (erstelle-sudokuliste datei))
 				   gelöste-sudoku)
 			   (dolist (sudoku sudoku-liste (nreverse gelöste-sudoku))
 				 (push (löse-sudoku sudoku) gelöste-sudoku))))
@@ -1607,42 +1660,44 @@
   (mod (1+ (* 28433 (expt 2 7830457))) (expt 10 10)))
 
 
-(defun problem-99 (&optional (stream-name "Euler/p099_base_exp.txt"))
-  (with-open-file (stream stream-name)
-	(let ((max-zahl 1)
-		  (richtige-zeile))
-	  (do ((i (read-line stream nil)
-			  (read-line stream nil))
-		   (zeile 1 (1+ zeile)))
-		  ((null i)
-		   richtige-zeile)
-		(let* ((basis (parse-integer (subseq i 0 (position #\, i))))
-			   (exponent (parse-integer (subseq i (1+ (position #\, i)))))
-			   (zahl (* (log basis) exponent)))
-		  (when (> zahl max-zahl)
-			(setf max-zahl zahl
-				  richtige-zeile zeile)))))))
+(defun problem-99 ()
+  (let ((datei (drakma:http-request "https://projecteuler.net/project/resources/p099_base_exp.txt")))
+    (with-input-from-string (stream datei)
+      (let ((max-zahl 1)
+            (richtige-zeile))
+        (do ((i (read-line stream nil)
+                (read-line stream nil))
+             (zeile 1 (1+ zeile)))
+            ((null i)
+             richtige-zeile)
+          (let* ((basis (parse-integer (subseq i 0 (position #\, i))))
+                 (exponent (parse-integer (subseq i (1+ (position #\, i)))))
+                 (zahl (* (log basis) exponent)))
+            (when (> zahl max-zahl)
+              (setf max-zahl zahl
+                    richtige-zeile zeile))))))))
 
 
-(defun problem-102 (&optional (stream-name "Euler/p102_triangles.txt"))
-  (with-open-file (stream stream-name)
-	(let ((anzahl 0))
-	  (do ((i (read-line stream nil)
-			  (read-line stream nil)))
-		  ((null i)
-		   anzahl)
-		(let* ((lst (mapcar #'parse-integer (string-aufteilen i)))
-			   (ax (first lst))
-			   (ay (second lst))
-			   (bx (third lst))
-			   (by (fourth lst))
-			   (cx (fifth lst))
-			   (cy (sixth lst))
-			   (a (plusp (- (* ax by) (* ay bx))))
-			   (b (plusp (- (* bx cy) (* by cx))))
-			   (c (plusp (- (* cx ay) (* cy ax)))))
-		  (when (or (and a b c) (and (not a) (not b) (not c)))
-			(incf anzahl)))))))
+(defun problem-102 ()
+  (let ((datei (drakma:http-request "https://projecteuler.net/project/resources/p102_triangles.txt")))
+    (with-input-from-string (stream datei)
+      (let ((anzahl 0))
+        (do ((i (read-line stream nil)
+                (read-line stream nil)))
+            ((null i)
+             anzahl)
+          (let* ((lst (mapcar #'parse-integer (string-aufteilen i)))
+                 (ax (first lst))
+                 (ay (second lst))
+                 (bx (third lst))
+                 (by (fourth lst))
+                 (cx (fifth lst))
+                 (cy (sixth lst))
+                 (a (plusp (- (* ax by) (* ay bx))))
+                 (b (plusp (- (* bx cy) (* by cx))))
+                 (c (plusp (- (* cx ay) (* cy ax)))))
+            (when (or (and a b c) (and (not a) (not b) (not c)))
+              (incf anzahl))))))))
 
 
 (defun problem-104 ()
@@ -1679,15 +1734,12 @@
 
 (defun problem-211 (&optional (max 64000000))
   (let ((sieb (make-array (+ max 1) :initial-element 1)))
-	;; Fülle das Sieb ...
-	(loop for i from 2 to max do
-		 (let ((wert (expt i 2)))
-		   (loop for j from i to max by i do
-				(incf (svref sieb j) wert))))
-	;; ... finde die gesuchten Zahlen, summiere sie ...
-	(loop for i from 1 to max
-	   when (quadratzahlp (svref sieb i))
-	   sum i)))
+	(1+ (loop for i from 2 to max
+           for wert = (expt i 2)
+           do (loop for j from i to max by i
+                 do (incf (svref sieb j) wert))
+           when (quadratzahlp (svref sieb i))
+           sum i))))
 
 
 (defun problem-243 (&optional (r 15499/94744))
@@ -1702,4 +1754,113 @@
 				 (return-from finde-d (* d i)))))))
 	(finde-d r)))
 
+
+;;; #######################
+;;; # 3. Die Testumgebung #
+;;; #######################
+
+
+(defun teste-problem (fn wert)
+  (format t "~&~A: " fn)
+  (let ((ergebnis (funcall fn)))
+    (lösche-alle-memos)
+    (if (= wert ergebnis)
+        (format t "... bestätigt~%")
+        (cerror "~&FEHLER in ~A:  ~A statt ~A~%" fn ergebnis wert))))
+
+(defun teste-alle-probleme ()
+  (teste-problem #'problem-1 233168)
+  (teste-problem #'problem-2 4613732)
+  (teste-problem #'problem-3 6857)
+  (teste-problem #'problem-4 906609)
+  (teste-problem #'problem-5 232792560)
+  (teste-problem #'problem-6 25164150)
+  (teste-problem #'problem-7 104743)
+  (teste-problem #'problem-8 23514624000)
+  (teste-problem #'problem-9 31875000)
+  (teste-problem #'problem-10 142913828922)
+  (teste-problem #'problem-11 70600674)
+  (teste-problem #'problem-12 76576500)
+  (teste-problem #'problem-13 5537376230)
+  (teste-problem #'problem-14 837799)
+  (teste-problem #'problem-15 137846528820)
+  (teste-problem #'problem-16 1366)
+  (teste-problem #'problem-17 21124)
+  (teste-problem #'problem-18 1074)
+  (teste-problem #'problem-19 171)
+  (teste-problem #'problem-20 648)
+  (teste-problem #'problem-21 31626)
+  (teste-problem #'problem-22 871198282)
+  (teste-problem #'problem-23 4179871)
+  (teste-problem #'problem-24 2783915460)
+  (teste-problem #'problem-25 4782)
+  (teste-problem #'problem-26 983)
+  (teste-problem #'problem-27 -59231)
+  (teste-problem #'problem-28 669171001)
+  (teste-problem #'problem-29 9183)
+  (teste-problem #'problem-30 443839)
+  (teste-problem #'problem-31 73682)
+  (teste-problem #'problem-32 45228)
+  (teste-problem #'problem-33 100)
+  (teste-problem #'problem-34 40730)
+  (teste-problem #'problem-35 55)
+  (teste-problem #'problem-36 872187)
+  (teste-problem #'problem-37 748317)
+  (teste-problem #'problem-38 932718654)
+  (teste-problem #'problem-39 840)
+  (teste-problem #'problem-40 210)
+  (teste-problem #'problem-41 7652413)
+  (teste-problem #'problem-42 162)
+  (teste-problem #'problem-43 16695334890)
+  (teste-problem #'problem-44 5482660)
+  (teste-problem #'problem-45 1533776805)
+  (teste-problem #'problem-46 5777)
+  (teste-problem #'problem-47 134043)
+  (teste-problem #'problem-48 9110846700)
+  (teste-problem #'problem-49 296962999629)
+  (teste-problem #'problem-50 997651)
+  (teste-problem #'problem-51 121313)
+  (teste-problem #'problem-52 142857)
+  (teste-problem #'problem-53 4075)
+  (teste-problem #'problem-54 376)
+  (teste-problem #'problem-55 249)
+  (teste-problem #'problem-56 972)
+  (teste-problem #'problem-57 153)
+  (teste-problem #'problem-58 26241)
+  (teste-problem #'problem-59 107359)
+  (teste-problem #'problem-60 26033)
+  (teste-problem #'problem-61 28684)
+  (teste-problem #'problem-62 127035954683)
+  (teste-problem #'problem-63 49)
+  (teste-problem #'problem-64 1322)
+  (teste-problem #'problem-65 272)
+  (teste-problem #'problem-66 661)
+  (teste-problem #'problem-67 7273)
+  (teste-problem #'problem-68 6531031914842725)
+  (teste-problem #'problem-69 510510)
+  (teste-problem #'problem-70 8319823)
+  (teste-problem #'problem-71 428570)
+  (teste-problem #'problem-72 303963552391)
+  (teste-problem #'problem-73 7295372)
+  (teste-problem #'problem-74 402)
+  (teste-problem #'problem-75 161667)
+  (teste-problem #'problem-76 190569291)
+  (teste-problem #'problem-77 71)
+  (teste-problem #'problem-79 73162890)
+  (teste-problem #'problem-81 427337)
+  (teste-problem #'problem-84 101524)
+  (teste-problem #'problem-89 743)
+  (teste-problem #'problem-92 8581146)
+  (teste-problem #'problem-95 14316)
+  (teste-problem #'problem-96 24702)
+  (teste-problem #'problem-97 8739992577)
+  (teste-problem #'problem-99 709)
+  (teste-problem #'problem-102 228)
+  (teste-problem #'problem-104 329468)
+  (teste-problem #'problem-125 2906969179)
+  (teste-problem #'problem-211 1922364685)
+  (teste-problem #'problem-243 892371480))
+  
+
+  
 
